@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy
@@ -20,20 +21,32 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        public TalkTextApi(BuddyTalkTextInstance instance)
+        public TalkTextApi(BuddyTalkTextInstance instance, BuddyTalkTextEventBroker eventBroker)
         {
             _instance = instance;
+            _eventBroker = eventBroker;
+            SubscribeInstance();
         }
 
         private readonly BuddyTalkTextInstance _instance;
+        private readonly BuddyTalkTextEventBroker _eventBroker;
+
+        private void SubscribeInstance()
+        {
+            
+            _instance.ItemDequeued
+                .Subscribe(item => _eventBroker.DequeueItem(item.WithApi(this)))
+                .AddTo(_instance);
+            _instance.ItemFinished
+                .Subscribe(item => _eventBroker.FinishItem(item.WithApi(this)))
+                .AddTo(_instance);
+        }
 
         public event Action<ITalkTextItem> ItemDequeued;
         public event Action<ITalkTextItem> ItemFinished;
         
-        //TODO: ScriptEventInvokerから呼び出してほしい
-        internal void OnItemDequeued(ITalkTextItem item) => ItemDequeued?.Invoke(item);
-        internal void OnItemFinished(ITalkTextItem item) => ItemFinished?.Invoke(item);
-        internal bool IsApiOfInstance(BuddyTalkTextInstance instance) => _instance == instance;
+        internal void InvokeItemDequeued(ITalkTextItem item) => ItemDequeued?.Invoke(item);
+        internal void InvokeItemFinished(ITalkTextItem item) => ItemFinished?.Invoke(item);
 
         public ITalkTextItem GetCurrentPlayingItem()
         {

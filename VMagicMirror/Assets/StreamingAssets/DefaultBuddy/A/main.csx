@@ -283,7 +283,7 @@ class Sleeper
     const float SleepBahaviorPeriod = 10f;
     // NOTE: アバター出力が取れないときにあんまり長時間寝かせてもいけないので、最長でもあんまり寝ないようにはしておく
     const float SleepMaxTime = 15f;
-    const float SleepMinTime = 5f;
+    const float SleepMinTime = 3f;
 
     const float MaxTiltAngle = 10f;
 
@@ -313,6 +313,7 @@ class Sleeper
         // NOTE: この2つとは別で「寝てるときに話しかけると起きる」も仕込んである
         Api.Input.KeyboardKeyDown += _ => ReceiveInput();
         Api.Input.GamepadButtonDown += _ => ReceiveInput();
+        _status.Sprite.PointerDown += _ => ReceiveInput();
 
         // びっくりして起きるとき、横方向にのみVibrateさせる
         _status.Sprite.Effects.Vibrate.IntensityX = 3f;
@@ -600,6 +601,7 @@ class InputBasedJumper
     {
         Api.Input.GamepadButtonDown += _ => JumpByInput();
         Api.Input.KeyboardKeyDown += _ => JumpByInput();
+        _status.Sprite.PointerDown += _ => JumpByInput();
     }
 
     public void Update(float deltaTime)

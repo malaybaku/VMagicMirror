@@ -29,55 +29,63 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private CameraController cameraController = null;
+        [SerializeField] private CameraController cameraController;
 
-        private float _windowPositionCheckCount = 0;
-        private Vector2Int _prevWindowPosition = Vector2Int.zero;
+        private float _windowPositionCheckCount;
 
-        private uint defaultWindowStyle = 0;
-        private uint defaultExWindowStyle = 0;
+        private uint _defaultWindowStyle;
+        private uint _defaultExWindowStyle;
 
-        private bool _isTransparent = false;
-        private bool _isWindowFrameHidden = false;
+        private bool _isTransparent;
+        private bool _isWindowFrameHidden;
         private bool _windowDraggableWhenFrameHidden = true;
-        private bool _preferIgnoreMouseInput = false;
+        private bool _preferIgnoreMouseInput;
 
-        private int _hitTestJudgeCountDown = 0;
+        private int _hitTestJudgeCountDown;
         //private bool _isMouseLeftButtonDownPreviousFrame = false;
-        private bool _isDragging = false;
+        private bool _isDragging;
         private Vector2Int _dragStartMouseOffset = Vector2Int.zero;
 
-        private bool _prevMousePositionInitialized = false;
+        private bool _prevMousePositionInitialized;
         private Vector2 _prevMousePosition = Vector2.zero;
 
-        private Renderer[] _renderers = new Renderer[0];
+        private Renderer[] _renderers = Array.Empty<Renderer>();
 
-        private Texture2D _colorPickerTexture = null;
-        private bool _isOnOpaquePixel = false;
-        private bool _isClickThrough = false;
+        private Texture2D _colorPickerTexture;
+        // NOTE: このフラグはアバターのバウンディングボックス内の不透明ピクセルにのみ反応し、
+        // アクセサリーやサブキャラの不透明部分に対して反応することは保証されない
+        private bool _isOnAvatarBoundingBoxOpaquePixel;
+        // NOTE: こっちのフラグはcameraのRaycastベースで判定できるようなものに対する判定
+        private bool _isOnNonAvatarOpaqueArea;
+        private bool IsOnOpaquePixel => _isOnAvatarBoundingBoxOpaquePixel || _isOnNonAvatarOpaqueArea;
+        
+        private bool _isClickThrough;
         //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
         private bool _isTopMost = true;
 
-        int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
-        byte _wholeWindowAlphaWhenTransparent = 0x80;
+        private int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
+        private byte _wholeWindowAlphaWhenTransparent = 0x80;
         //ふつうに起動したら不透明ウィンドウ
-        byte _currentWindowAlpha = 0xFF;
-        const float AlphaLerpFactor = 0.2f;
+        private byte _currentWindowAlpha = 0xFF;
+        private const float AlphaLerpFactor = 0.2f;
 
         private CameraUtilWrapper _camera;
+        private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
-        private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
+        private readonly WindowAreaIo _windowAreaIo = new();
 
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             IMessageReceiver receiver, 
             IKeyMouseEventSource keyboardEventSource,
-            CameraUtilWrapper cameraUtilWrapper
+            CameraUtilWrapper cameraUtilWrapper,
+            Buddy.BuddyObjectRaycastChecker buddyObjectRaycastChecker
             )
         {
             _camera = cameraUtilWrapper;
+            _buddyObjectRaycastChecker = buddyObjectRaycastChecker;
 
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -136,14 +144,16 @@ namespace Baku.VMagicMirror
 
         private void Awake()
         {
-            IntPtr hWnd = GetUnityWindowHandle();
-#if !UNITY_EDITOR
-            defaultWindowStyle = GetWindowLong(hWnd, GWL_STYLE);
-            defaultExWindowStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-            //半透明許可のため、デフォルトで常時レイヤードウィンドウにしておく
-            defaultExWindowStyle |= WS_EX_LAYERED;
-            SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
-#endif
+            var hWnd = GetUnityWindowHandle();
+            if (!Application.isEditor)
+            {
+                _defaultWindowStyle = GetWindowLong(hWnd, GWL_STYLE);
+                _defaultExWindowStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+                //半透明許可のため、デフォルトで常時レイヤードウィンドウにしておく
+                _defaultExWindowStyle |= WS_EX_LAYERED;
+                SetWindowLong(hWnd, GWL_EXSTYLE, _defaultExWindowStyle);
+            }
+
             CheckSettingFileDirect();
             _windowAreaIo.LoadAsync(this.GetCancellationTokenOnDestroy()).Forget();
             _windowPositionCheckCount = windowPositionCheckInterval;            
@@ -160,6 +170,7 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
+            UpdatePointerOnNonAvatarOpaqueArea();
             UpdateClickThrough();
             UpdateDragStatus();
             UpdateWindowPositionCheck();
@@ -169,6 +180,8 @@ namespace Baku.VMagicMirror
         private void OnDestroy()
         {
             _windowAreaIo.Save();
+            _mouseObserve?.Dispose();
+            _mouseObserve = null;
         }
 
         private void CheckSettingFileDirect()
@@ -183,6 +196,18 @@ namespace Baku.VMagicMirror
                 SetWindowFrameVisibility(false);
                 cameraController.SetCameraBackgroundColor(0, 0, 0, 0);
             }
+        }
+
+        private void UpdatePointerOnNonAvatarOpaqueArea()
+        {
+            if (!_isTransparent)
+            {
+                // 不透明ウィンドウの場合、フラグが使われないので判定をサボっておく
+                _isOnNonAvatarOpaqueArea = false;
+                return;
+            }
+
+            _isOnNonAvatarOpaqueArea = _buddyObjectRaycastChecker.IsPointerOnBuddyObject();
         }
 
         private void UpdateClickThrough()
@@ -202,7 +227,7 @@ namespace Baku.VMagicMirror
             }
 
             //透明であり、クリックはとってほしい = マウス直下のピクセル状態で判断
-            SetClickThrough(!_isOnOpaquePixel);
+            SetClickThrough(!IsOnOpaquePixel);
         }
 
         private void UpdateDragStatus()
@@ -210,7 +235,7 @@ namespace Baku.VMagicMirror
             if (_isWindowFrameHidden &&
                 _windowDraggableWhenFrameHidden &&
                 _hitTestJudgeCountDown == 1 &&
-                _isOnOpaquePixel
+                IsOnOpaquePixel
                 )
             {
                 _hitTestJudgeCountDown = 0;
@@ -219,12 +244,14 @@ namespace Baku.VMagicMirror
                     SetUnityWindowActive();
                 }
                 _isDragging = true;
-#if !UNITY_EDITOR
-                var mousePosition = GetWindowsMousePosition();
-                var windowPosition = GetUnityWindowPosition();
-                //以降、このオフセットを保てるようにウィンドウを動かす
-                _dragStartMouseOffset = mousePosition - windowPosition;
-#endif
+
+                if (!Application.isEditor)
+                {
+                    var mousePosition = GetWindowsMousePosition();
+                    var windowPosition = GetUnityWindowPosition();
+                    //以降、このオフセットを保てるようにウィンドウを動かす
+                    _dragStartMouseOffset = mousePosition - windowPosition;
+                }
             }
 
             //タッチスクリーンでパッと見の操作が破綻しないために…。
@@ -235,13 +262,14 @@ namespace Baku.VMagicMirror
 
             if (_isDragging)
             {
-#if !UNITY_EDITOR
-                var mousePosition = GetWindowsMousePosition();
-                SetUnityWindowPosition(
-                    mousePosition.x - _dragStartMouseOffset.x, 
-                    mousePosition.y - _dragStartMouseOffset.y
+                if (!Application.isEditor)
+                {
+                    var mousePosition = GetWindowsMousePosition();
+                    SetUnityWindowPosition(
+                        mousePosition.x - _dragStartMouseOffset.x, 
+                        mousePosition.y - _dragStartMouseOffset.y
                     );
-#endif
+                }
             }
 
             if (_hitTestJudgeCountDown > 0)
@@ -271,14 +299,17 @@ namespace Baku.VMagicMirror
                     //何もしない: 0xFFで不透明になればOK
                     break;
                 case TransparencyLevel.WhenDragDisabledAndOnCharacter:
-                    if (!_windowDraggableWhenFrameHidden &&
-                        _isOnOpaquePixel)
+                    //NOTE: ここではalphaが変わるときサブキャラにインタラクトできないので、
+                    //ポインターがメインアバターとサブキャラどちらにポインターが当たっても半透明にし、「操作できなさそう」感を出す
+                    if (!_windowDraggableWhenFrameHidden && IsOnOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;
                     }
                     break;
                 case TransparencyLevel.WhenOnCharacter:
-                    if (_isOnOpaquePixel)
+                    //NOTE: この条件ではIsOnOpaquePixelは使わず、サブキャラやセリフにポインターが当たったときは不透明のままにする。
+                    // これにより、サブキャラやセリフUIへマウスオーバーしたときの「操作できそう」感を残す
+                    if (_isOnAvatarBoundingBoxOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;
                     }
@@ -291,8 +322,6 @@ namespace Baku.VMagicMirror
                     break;
                 case TransparencyLevel.Always:
                     alpha = _wholeWindowAlphaWhenTransparent;
-                    break;
-                default:
                     break;
             }
 
@@ -309,36 +338,40 @@ namespace Baku.VMagicMirror
 
         private void MoveWindow(int x, int y)
         {
-#if !UNITY_EDITOR
-            SetUnityWindowPosition(x, y);
-#endif
+            if (!Application.isEditor)
+            {
+                SetUnityWindowPosition(x, y);
+            }
         }
 
         private void ResetWindowSize()
         {
-#if !UNITY_EDITOR
-            SetUnityWindowSize(DefaultWindowWidth, DefaultWindowHeight);
-#endif
+            if (!Application.isEditor)
+            {
+                SetUnityWindowSize(DefaultWindowWidth, DefaultWindowHeight);
+            }
         }
 
         private void SetWindowFrameVisibility(bool isVisible)
         {
             _isWindowFrameHidden = !isVisible;
             var hwnd = GetUnityWindowHandle();
-            uint windowStyle = isVisible ? defaultWindowStyle : WS_POPUP | WS_VISIBLE;
-#if !UNITY_EDITOR
-            SetWindowLong(hwnd, GWL_STYLE, windowStyle);
-            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
-#endif
+            uint windowStyle = isVisible ? _defaultWindowStyle : WS_POPUP | WS_VISIBLE;
+            if (!Application.isEditor)
+            {
+                SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+                SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
+            }
         }
 
         private void SetWindowTransparency(bool isTransparent)
         {
             _isTransparent = isTransparent;
-#if !UNITY_EDITOR
-            SetDwmTransparent(isTransparent);
-            ForceWindowResizeEvent();
-#endif
+            if (!Application.isEditor)
+            {
+                SetDwmTransparent(isTransparent);
+                ForceWindowResizeEvent();
+            }
         }
         
         private void ForceWindowResizeEvent()
@@ -363,9 +396,10 @@ namespace Baku.VMagicMirror
         {
             _isTopMost = isTopMost;
             //NOTE: 背景透過をしてない = 普通のウィンドウが出てる間は別にTopMostじゃなくていいのがポイント
-#if !UNITY_EDITOR
-            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
-#endif
+            if (!Application.isEditor)
+            {
+                SetUnityWindowTopMost(isTopMost && _isWindowFrameHidden);
+            }
         }
 
         private void SetWindowDraggable(bool isDraggable)
@@ -436,7 +470,7 @@ namespace Baku.VMagicMirror
             if (!_camera.PixelRectContains(mousePos) ||
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
-                _isOnOpaquePixel = false;
+                _isOnAvatarBoundingBoxOpaquePixel = false;
                 return;
             }
 
@@ -447,19 +481,20 @@ namespace Baku.VMagicMirror
                 Color color = _colorPickerTexture.GetPixel(0, 0);
 
                 // アルファ値がしきい値以上ならば不透過
-                _isOnOpaquePixel = (color.a >= opaqueThreshold);
+                _isOnAvatarBoundingBoxOpaquePixel = (color.a >= opaqueThreshold);
             }
-#if UNITY_EDITOR
             catch (Exception ex)
             {
-                // 稀に範囲外になるとのこと(元ブログに記載あり)
-                Debug.LogError(ex.Message);
-#else
-            catch (Exception)
-            {
-                // こっちのケースではex使う用事がないので、コンパイラのご機嫌為にこう書いてます
-#endif
-                _isOnOpaquePixel = false;
+                if (Application.isEditor)
+                {
+                    // 稀に範囲外になるとのこと(元ブログに記載あり)
+                    Debug.LogError(ex.Message);
+                }
+                else
+                {
+                    // runtimeではexは無視し、単に透明ピクセルだった事にしておく
+                    _isOnAvatarBoundingBoxOpaquePixel = false;
+                }
             }
         }
 
@@ -467,9 +502,9 @@ namespace Baku.VMagicMirror
         {
             var ray = _camera.ScreenPointToRay(mousePosition);
             //個別のメッシュでバウンディングボックスを調べることで大まかな判定になる仕組み。
-            for (int i = 0; i < _renderers.Length; i++)
+            foreach (var r in _renderers)
             {
-                if (_renderers[i].bounds.IntersectRay(ray))
+                if (r.bounds.IntersectRay(ray))
                 {
                     return true;
                 }
@@ -489,11 +524,12 @@ namespace Baku.VMagicMirror
             var hwnd = GetUnityWindowHandle();
             uint exWindowStyle = _isClickThrough ?
                 WS_EX_LAYERED | WS_EX_TRANSPARENT :
-                defaultExWindowStyle;
+                _defaultExWindowStyle;
 
-#if !UNITY_EDITOR
-            SetWindowLong(hwnd, GWL_EXSTYLE, exWindowStyle);
-#endif
+            if (!Application.isEditor)
+            {
+                SetWindowLong(hwnd, GWL_EXSTYLE, exWindowStyle);
+            }
         }
 
         private void SetAlpha(byte alpha)
@@ -539,20 +575,22 @@ namespace Baku.VMagicMirror
         {
             if (PlayerPrefs.HasKey(InitialPositionXKey) && PlayerPrefs.HasKey(InitialPositionYKey))
             {
-#if !UNITY_EDITOR
                 var x = PlayerPrefs.GetInt(InitialPositionXKey);
                 var y = PlayerPrefs.GetInt(InitialPositionYKey);
-                _prevWindowPosition = new Vector2Int(x, y);
-                SetUnityWindowPosition(x, y);
-#endif
+                if (!Application.isEditor)
+                {
+                    _prevWindowPosition = new Vector2Int(x, y);
+                    SetUnityWindowPosition(x, y);
+                }
             }
             else
             {
-#if !UNITY_EDITOR
-                _prevWindowPosition = GetUnityWindowPosition();
-                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
-                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
-#endif
+                if (!Application.isEditor)
+                {
+                    _prevWindowPosition = GetUnityWindowPosition();
+                    PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                    PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+                }
             }
 
             //前回起動時と同じモニター内にウィンドウを配置し終わってからサイズを適用するために待つ。
@@ -563,9 +601,10 @@ namespace Baku.VMagicMirror
             var height = PlayerPrefs.GetInt(InitialHeightKey, 0);
             if (width > 100 && height > 100)
             {
-#if !UNITY_EDITOR
-                SetUnityWindowSize(width, height);
-#endif
+                if (!Application.isEditor)
+                {
+                    SetUnityWindowSize(width, height);
+                }
             }
 
             AdjustIfWindowPositionInvalid();
@@ -574,16 +613,17 @@ namespace Baku.VMagicMirror
         /// <summary> アプリ起動中に呼び出すことで、ウィンドウが移動していればその位置を記録します。 </summary>
         public void Check() 
         {
-#if !UNITY_EDITOR
-            var pos = GetUnityWindowPosition();
-            if (pos.x != _prevWindowPosition.x ||
-                pos.y != _prevWindowPosition.y)
+            if (!Application.isEditor)
             {
-                _prevWindowPosition = pos;
-                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
-                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+                var pos = GetUnityWindowPosition();
+                if (pos.x != _prevWindowPosition.x ||
+                    pos.y != _prevWindowPosition.y)
+                {
+                    _prevWindowPosition = pos;
+                    PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                    PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+                }
             }
-#endif
         }
         
         /// <summary> アプリ終了時に呼び出すことで、終了時のウィンドウ位置、およびサイズを記録します。 </summary>
@@ -591,12 +631,13 @@ namespace Baku.VMagicMirror
         {
             if (GetWindowRect(GetUnityWindowHandle(), out var rect))
             {
-#if !UNITY_EDITOR
-                PlayerPrefs.SetInt(InitialPositionXKey, rect.left);
-                PlayerPrefs.SetInt(InitialPositionYKey, rect.top);
-                PlayerPrefs.SetInt(InitialWidthKey, rect.right - rect.left);
-                PlayerPrefs.SetInt(InitialHeightKey, rect.bottom - rect.top);
-#endif
+                if (!Application.isEditor)
+                {
+                    PlayerPrefs.SetInt(InitialPositionXKey, rect.left);
+                    PlayerPrefs.SetInt(InitialPositionYKey, rect.top);
+                    PlayerPrefs.SetInt(InitialWidthKey, rect.right - rect.left);
+                    PlayerPrefs.SetInt(InitialHeightKey, rect.bottom - rect.top);
+                }
             }
         }
 
@@ -666,16 +707,17 @@ namespace Baku.VMagicMirror
                 selfRect.top, primaryWindowRect.top + 100, primaryWindowRect.bottom - 100 - height
                 );
 
-#if !UNITY_EDITOR
-            _prevWindowPosition = new Vector2Int(x, y);
-            PlayerPrefs.SetInt(InitialPositionXKey, x);
-            PlayerPrefs.SetInt(InitialPositionYKey, y);
-            PlayerPrefs.SetInt(InitialWidthKey, width);
-            PlayerPrefs.SetInt(InitialHeightKey, height);
+            if (!Application.isEditor)
+            {
+                _prevWindowPosition = new Vector2Int(x, y);
+                PlayerPrefs.SetInt(InitialPositionXKey, x);
+                PlayerPrefs.SetInt(InitialPositionYKey, y);
+                PlayerPrefs.SetInt(InitialWidthKey, width);
+                PlayerPrefs.SetInt(InitialHeightKey, height);
 
-            SetUnityWindowPosition(x, y);
-            SetUnityWindowSize(width, height);
-#endif
+                SetUnityWindowPosition(x, y);
+                SetUnityWindowSize(width, height);
+            }
         }
     }
 }

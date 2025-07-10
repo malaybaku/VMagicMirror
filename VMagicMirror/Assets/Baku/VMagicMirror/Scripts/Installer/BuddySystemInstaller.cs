@@ -41,6 +41,7 @@ namespace Baku.VMagicMirror
             Container.Bind<ScreenApiImplement>().AsSingle();
             Container.Bind<BuddyAudioEventBroker>().AsSingle();
             Container.Bind<BuddyTalkTextEventBroker>().AsSingle();
+            Container.Bind<BuddySpriteEventBroker>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioApiImplement>().AsSingle();
             Container.Bind<AvatarLoadApiImplement>().AsSingle();
             Container.Bind<AvatarPoseApiImplement>().AsSingle();

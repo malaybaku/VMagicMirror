@@ -184,8 +184,13 @@ namespace Baku.VMagicMirror.Buddy.Api
             var instance = _spriteCanvas.CreateSpriteInstance(
                 BuddyFolder, _settingsRepository, _apiImplementBundle.AvatarFacialApi
                 );
-            var result = new Sprite2DApi(BuddyFolder, instance, _logger);
-            return result;
+            return new Sprite2DApi(
+                BuddyFolder,
+                instance,
+                _apiImplementBundle.BuddySpriteEventBroker,
+                _apiImplementBundle.BuddyTalkTextEventBroker,
+                _logger
+                );
         }
 
         public ISprite3D Create3DSprite()

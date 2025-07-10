@@ -20,6 +20,9 @@ namespace Baku.VMagicMirror.Installer
 
             container.BindInterfacesTo<AntiAliasSettingSetter>().AsSingle();
             container.BindInterfacesAndSelfTo<LanguageSettingRepository>().AsSingle();
+            
+            // NOTE: サブキャラに依存している
+            container.BindInterfacesAndSelfTo<Buddy.BuddyObjectRaycastChecker>().AsSingle();
         }
     }
 }

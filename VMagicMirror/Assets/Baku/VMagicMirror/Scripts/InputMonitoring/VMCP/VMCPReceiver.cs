@@ -35,7 +35,10 @@ namespace Baku.VMagicMirror.VMCP
         private readonly ReactiveProperty<int> _connectedValue = new(0);
 
         private readonly float[] _disconnectCountDown = new float[OscServerCount];
-        
+
+        private readonly ReactiveProperty<bool> _isLocomotionReceiveSettingActive = new(false);
+        //NOTE: 通信でデータが受信できていなくとも、下半身モーションを受信しようとする設定ならtrueになる
+        public IReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
         
         [Inject]
         public VMCPReceiver(
@@ -223,6 +226,8 @@ namespace Baku.VMagicMirror.VMCP
                 _handPose.SetHumanoid(null);
 
                 _lowerBodyPose.SetInactive();
+
+                _isLocomotionReceiveSettingActive.Value = false;
                 return;
             }
 
@@ -283,6 +288,9 @@ namespace Baku.VMagicMirror.VMCP
                 server.port = source.Port;
                 server.StartServer();
             }
+
+            // NOTE: `_optionEnabled &&` も条件になっているが、この行まで来てるということは受信が(多分)有効なのでフラグは立ててしまう
+            _isLocomotionReceiveSettingActive.Value = lowerBodyPoseRefIndex >= 0;
         }
 
         private void UpdateConnectedStatus(int index, bool connected)

@@ -210,6 +210,10 @@
         ShadowYaw,
         ShadowPitch,
         ShadowDepthOffset,
+        FixedShadowAlwaysEnable,
+        FixedShadowWhenLocomotionActiveEnable,
+        FixedShadowYaw,
+        FixedShadowPitch,
 
         BloomIntensity,
         BloomThreshold,

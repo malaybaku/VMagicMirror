@@ -592,6 +592,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Shadow_Yaw">向き(横)[deg]</sys:String>
     <sys:String x:Key="Shadow_Pitch">向き(上下)[deg]</sys:String>
     <sys:String x:Key="Shadow_DepthOffset">奥行きの調整 [cm]</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_Header">全身表示用シャドウの設定 (クリックで展開)</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_UseAlways">つねに全身表示用シャドウを適用</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">下半身モーションの適用時には適用</sys:String>
         
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>

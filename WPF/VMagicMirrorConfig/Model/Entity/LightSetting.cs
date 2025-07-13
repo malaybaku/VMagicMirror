@@ -80,6 +80,10 @@
         public int WindStrength { get; set; } = 100;
         public int WindInterval { get; set; } = 100;
         public int WindYaw { get; set; } = 90;
+        public bool EnableFixedShadowAlways { get; set; } = false;
+        public bool EnableFixedShadowWhenLocomotionActive { get; set; } = true;
+        public int FixedShadowYaw { get; internal set; } = 50;
+        public int FixedShadowPitch { get; internal set; } = -30;
 
         #endregion
 

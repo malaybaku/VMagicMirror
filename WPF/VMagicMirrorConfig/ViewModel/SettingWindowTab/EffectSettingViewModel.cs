@@ -150,6 +150,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> ShadowPitch => _model.ShadowPitch;
         public RProperty<int> ShadowDepthOffset => _model.ShadowDepthOffset;
 
+        public RProperty<bool> EnableFixedShadowAlways => _model.EnableFixedShadowAlways;
+        public RProperty<bool> EnableFixedShadowWhenLocomotionActive => _model.EnableFixedShadowWhenLocomotionActive;
+        public RProperty<int> FixedShadowYaw => _model.FixedShadowYaw;
+        public RProperty<int> FixedShadowPitch => _model.FixedShadowPitch;
+
         #endregion
 
         #region Ambient Occlusion

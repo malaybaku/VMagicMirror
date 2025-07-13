@@ -166,8 +166,9 @@ namespace Baku.VMagicMirror.VMCP
         {
             //誰かが使ったデータはもう使えない…という定義の仕方をする
             var receiveHeadPose = false;
-            var receiveFacial = false;
             var receiveHandPose = false;
+            var receiveLowerBodyPose = false;
+            var receiveFacial = false;
             
             for (var i = 0; i < _dataPassSettings.Length; i++)
             {
@@ -186,13 +187,15 @@ namespace Baku.VMagicMirror.VMCP
 
                 _dataPassSettings[i] = new VMCPDataPassSettings(
                     !receiveHeadPose && src.ReceiveHeadPose,
-                    !receiveFacial && src.ReceiveFacial,
-                    !receiveHandPose && src.ReceiveHandPose
+                    !receiveHandPose && src.ReceiveHandPose,
+                    !receiveLowerBodyPose && src.ReceiveLowerBodyPose,
+                    !receiveFacial && src.ReceiveFacial
                 );
 
                 receiveHeadPose = receiveHeadPose || _dataPassSettings[i].ReceiveHeadPose;
-                receiveFacial = receiveFacial || _dataPassSettings[i].ReceiveFacial;
                 receiveHandPose = receiveHandPose || _dataPassSettings[i].ReceiveHandPose;
+                receiveLowerBodyPose = receiveLowerBodyPose || _dataPassSettings[i].ReceiveLowerBodyPose;
+                receiveFacial = receiveFacial || _dataPassSettings[i].ReceiveFacial;
             }
         }
 

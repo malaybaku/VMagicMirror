@@ -73,8 +73,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 Name = Name.Value,
                 Port = port,
                 ReceiveHeadPose = ReceiveHeadPose.Value,
-                ReceiveFacial = ReceiveFacial.Value,
                 ReceiveHandPose = ReceiveHandPose.Value,
+                ReceiveLowerBodyPose = ReceiveLowerBodyPose.Value,
+                ReceiveFacial = ReceiveFacial.Value,
             };
         }
 

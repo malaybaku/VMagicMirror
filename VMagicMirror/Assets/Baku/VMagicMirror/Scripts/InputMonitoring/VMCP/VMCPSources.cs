@@ -48,6 +48,9 @@ namespace Baku.VMagicMirror.VMCP
         public bool ReceiveFacial { get; }
         public bool ReceiveHandPose { get; }
 
+        // TODO: ctorからちゃんとフラグを受け取って、手とは別の設定にする
+        public bool ReceiveLowerBodyPose => ReceiveHandPose;
+
         public VMCPDataPassSettings(
             bool receiveHeadPose, bool receiveFacial, bool receiveHandPose)
         {

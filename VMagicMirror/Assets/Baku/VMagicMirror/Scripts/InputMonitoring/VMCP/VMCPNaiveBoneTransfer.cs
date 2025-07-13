@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VeryAnimation;
 using Zenject;
 
 namespace Baku.VMagicMirror.VMCP
@@ -10,9 +11,10 @@ namespace Baku.VMagicMirror.VMCP
     public class VMCPNaiveBoneTransfer : MonoBehaviour
     {
         //NOTE:
-        // - このクラスの守備範囲はSpine ~ Headまでと両腕のShoulder ~ Handまで。
+        // - このクラスの守備範囲はFinger以外のボーン全般
         //   - Headを送ってるSourceがSpine~Headのボーン回転を指定できる
         //   - Handを送ってるSourceがShoulder~Handのボーン回転を指定できる
+        // - - LowerBodyを送ってるSourceはHips~Toesのボーン回転を指定できる
         // - 指ボーンは取得できている場合、VMCPHandに基づいてVMCPBasedFingerSetterが処理するので、ここでの処理は不要
         private static readonly HumanBodyBones[] UpperBodyBones = new[]
         {
@@ -23,6 +25,19 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.Head,
         };
 
+        private static readonly HumanBodyBones[] LowerBodyBones = new[]
+        {
+            HumanBodyBones.Hips,
+            HumanBodyBones.LeftUpperLeg,
+            HumanBodyBones.LeftLowerLeg,
+            HumanBodyBones.LeftFoot,
+            HumanBodyBones.LeftToes,
+            HumanBodyBones.RightUpperLeg,
+            HumanBodyBones.RightLowerLeg,
+            HumanBodyBones.RightFoot,
+            HumanBodyBones.RightToes,
+        };
+        
         private static readonly HumanBodyBones[] ArmBones = new[]
         {
             HumanBodyBones.LeftShoulder,
@@ -35,12 +50,16 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.RightHand,
         };
 
-        //NOTE: 腕以外でSpine ~ Head
+        // 腕以外でSpine ~ Head
         private readonly Dictionary<string, Transform> _upperBodyBones = new();
 
-        //Shoulder~Handまでの両腕ぶん
+        // Hips ~ Toesまでの両脚ぶん
+        private readonly Dictionary<string, Transform> _lowerBodyBones = new();
+
+        // Shoulder~Handまでの両腕ぶん
         private readonly Dictionary<string, Transform> _armBones = new();
 
+        
         private bool _hasModel;
         private bool _boneTransferEnabled;
 
@@ -48,6 +67,7 @@ namespace Baku.VMagicMirror.VMCP
         private IVRMLoadable _vrmLoadable;
         private VMCPHandPose _vmcpHand;
         private VMCPHeadPose _vmcpHead;
+        private VMCPLowerBodyPose _vmcpLowerBodyPose;
 
         //NOTE: WordToMotionで上半身を動かすときweightを下げる
         private CancellationTokenSource _weightCts;
@@ -55,13 +75,17 @@ namespace Baku.VMagicMirror.VMCP
 
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver, IVRMLoadable vrmLoadable,
-            VMCPHandPose vmcpHand, VMCPHeadPose vmcpHead)
+            IMessageReceiver receiver,
+            IVRMLoadable vrmLoadable,
+            VMCPHandPose vmcpHand,
+            VMCPHeadPose vmcpHead,
+            VMCPLowerBodyPose vmcpLowerBodyPose)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _vmcpHand = vmcpHand;
             _vmcpHead = vmcpHead;
+            _vmcpLowerBodyPose = vmcpLowerBodyPose;
 
             _receiver.AssignCommandHandler(
                 VmmCommands.SetVMCPNaiveBoneTransfer,
@@ -80,6 +104,15 @@ namespace Baku.VMagicMirror.VMCP
                     }
                 }
 
+                foreach (var bone in LowerBodyBones)
+                {
+                    var t = a.GetBoneTransform(bone);
+                    if (t != null)
+                    {
+                        _lowerBodyBones[bone.ToString()] = t;
+                    }
+                }
+                
                 foreach (var bone in ArmBones)
                 {
                     var t = a.GetBoneTransform(bone);
@@ -96,6 +129,7 @@ namespace Baku.VMagicMirror.VMCP
             {
                 _hasModel = false;
                 _upperBodyBones.Clear();
+                _lowerBodyBones.Clear();
                 _armBones.Clear();
             };
         }
@@ -120,6 +154,23 @@ namespace Baku.VMagicMirror.VMCP
             if (_vmcpHand.IsConnected.Value)
             {
                 SetBoneRotations(_vmcpHand.Humanoid, _armBones);
+            }
+
+            if (_vmcpLowerBodyPose.IsConnected.Value)
+            {
+                var lowerBodyHumanoid = _vmcpLowerBodyPose.Humanoid;
+                SetBoneRotations(lowerBodyHumanoid, _lowerBodyBones);
+                // 本アバターのRootBone自体は動かさず、Hipsを目標位置に持っていく
+                if (lowerBodyHumanoid.RootPose is { } rootPose && 
+                    lowerBodyHumanoid.HipsLocalPosition is { } hipsPosition)
+                {
+                    var hipsWorldPosition = rootPose.position + rootPose.rotation * hipsPosition;
+                    var hipsWorldRotation = 
+                        rootPose.rotation * _vmcpHand.Humanoid.GetLocalRotation(nameof(HumanBodyBones.Hips));
+                    _lowerBodyBones[nameof(HumanBodyBones.Hips)].SetPositionAndRotation(
+                        hipsWorldPosition, hipsWorldRotation
+                    );
+                }
             }
         }
 

@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesAndSelfTo<AvatarBoneInitialLocalOffsets>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPHandPose>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPHeadPose>().AsSingle();
+            Container.Bind<VMCPLowerBodyPose>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPBasedFingerSetter>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPBlendShape>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPActiveness>().AsSingle();

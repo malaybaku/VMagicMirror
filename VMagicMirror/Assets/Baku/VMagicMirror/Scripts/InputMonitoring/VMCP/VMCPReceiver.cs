@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly VMCPBlendShape _blendShape;
         private readonly VMCPHeadPose _headPose;
         private readonly VMCPHandPose _handPose;
+        private readonly VMCPLowerBodyPose _lowerBodyPose;
 
         //NOTE: oscServerはOnDisableで止まるので、アプリ終了時の停止はこっちから呼ばないでよい
         private readonly uOscServer[] _servers = new uOscServer[OscServerCount];
@@ -31,7 +32,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private readonly bool[] _connected = new bool[OscServerCount];
         //NOTE: ビットフラグで_connectedの状態を表す値(0~7)を入れる。変化検知のために使い、値そのものは読まない
-        private readonly ReactiveProperty<int> _connectedValue = new ReactiveProperty<int>(0);
+        private readonly ReactiveProperty<int> _connectedValue = new(0);
 
         private readonly float[] _disconnectCountDown = new float[OscServerCount];
         
@@ -44,7 +45,8 @@ namespace Baku.VMagicMirror.VMCP
             AvatarBoneInitialLocalOffsets boneOffsets,
             VMCPBlendShape blendShape,
             VMCPHeadPose headPose,
-            VMCPHandPose handPose
+            VMCPHandPose handPose,
+            VMCPLowerBodyPose lowerBodyPose
             )
         {
             _messageReceiver = messageReceiver;
@@ -54,6 +56,7 @@ namespace Baku.VMagicMirror.VMCP
             _blendShape = blendShape;
             _headPose = headPose;
             _handPose = handPose;
+            _lowerBodyPose = lowerBodyPose;
         }
 
         public override void Initialize()
@@ -212,8 +215,11 @@ namespace Baku.VMagicMirror.VMCP
                 }
                 _blendShape.SetActive(false);
                 _headPose.SetInactive();
+                
                 _handPose.SetActive(false);
                 _handPose.SetHumanoid(null);
+
+                _lowerBodyPose.SetInactive();
                 return;
             }
 
@@ -233,6 +239,16 @@ namespace Baku.VMagicMirror.VMCP
                 _headPose.SetInactive();
             }
 
+            var lowerBodyPoseRefIndex = Array.FindIndex(_dataPassSettings, s => s.ReceiveLowerBodyPose);
+            if (lowerBodyPoseRefIndex >= 0)
+            {
+                _lowerBodyPose.SetActive(_receiverHumanoids[lowerBodyPoseRefIndex]);
+            }
+            else
+            {
+                _lowerBodyPose.SetInactive();
+            }
+            
             _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
 
@@ -304,6 +320,19 @@ namespace Baku.VMagicMirror.VMCP
                     }
                 }
             }
+            
+            if (_lowerBodyPose.IsActive.Value)
+            {
+                for (var i = 0; i < _dataPassSettings.Length; i++)
+                {
+                    var setting = _dataPassSettings[i];
+                    if (setting.ReceiveLowerBodyPose)
+                    {
+                        _lowerBodyPose.SetConnected(_connected[i]);
+                        break;
+                    }
+                }
+            }
         }
         
         private void OnOscDataReceived(int sourceIndex, uOSC.Message message)
@@ -314,6 +343,12 @@ namespace Baku.VMagicMirror.VMCP
             var messageType = message.GetMessageType();
             switch (messageType)
             {
+                case VMCPMessageType.DefineRoot:
+                    if (settings.ReceiveLowerBodyPose)
+                    {
+                        ApplyRootPose(message, _receiverHumanoids[sourceIndex]);
+                    }
+                    break;
                 case VMCPMessageType.TrackerPose:
                     if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
                     {
@@ -348,6 +383,7 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        //NOTE: NOTE: ここの下では基本的にデータフォーマットをvalidateしない (パフォーマンス優先)
         private void ApplyTrackerPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
         {
             var poseType = message.GetTrackerPoseType(out _);
@@ -356,7 +392,6 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
-            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
             var (pos, rot) = message.GetPose();
             switch (poseType)
             {
@@ -377,10 +412,15 @@ namespace Baku.VMagicMirror.VMCP
 
         private void ApplyBoneLocalPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
         {
-            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
             var boneName = message.GetForwardKinematicBoneName();
             var (pos, rot) = message.GetPose();
             humanoid.SetLocalPose(boneName, pos, rot);
+        }
+        
+        private void ApplyRootPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
+        {
+            var (pos, rot) = message.GetPose();
+            humanoid.SetRootPose(pos, rot);
         }
 
         private void SetBlendShapeValue(uOSC.Message message)

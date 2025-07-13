@@ -110,8 +110,9 @@ namespace Baku.VMagicMirror.VMCP
             HasBoneOffsetsSource = _boneOffsets != null;
         }
 
-        // Root姿勢を一回以上受け取ると非null値が入る
-        public Pose? RootPose { get; private set; }
+        // NOTE: Root姿勢を一回も受け取ってない場合は identity が入る(= ワールド原点にアバターが立ってるアプリからのデータ送信と見なす)
+        public Pose RootPose { get; private set; } = Pose.identity;
+
         // Hipsのローカル位置を一回以上受け取ると非null値が入る
         public Vector3? HipsLocalPosition { get; private set; }
         
@@ -259,7 +260,7 @@ namespace Baku.VMagicMirror.VMCP
                 UnityEngine.Object.Destroy(_root.gameObject);
             }
 
-            RootPose = null;
+            RootPose = Pose.identity;
             HipsLocalPosition = null;
             _root = null;
             _hips = null;

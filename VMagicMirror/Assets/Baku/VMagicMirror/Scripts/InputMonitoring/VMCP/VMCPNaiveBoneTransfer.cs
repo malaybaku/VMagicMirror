@@ -161,12 +161,15 @@ namespace Baku.VMagicMirror.VMCP
                 var lowerBodyHumanoid = _vmcpLowerBodyPose.Humanoid;
                 SetBoneRotations(lowerBodyHumanoid, _lowerBodyBones);
                 // 本アバターのRootBone自体は動かさず、Hipsを目標位置に持っていく
-                if (lowerBodyHumanoid.RootPose is { } rootPose && 
-                    lowerBodyHumanoid.HipsLocalPosition is { } hipsPosition)
+                if (lowerBodyHumanoid.HipsLocalPosition is { } hipsPosition)
                 {
+                    // root - hips のヒエラルキー相当の計算でHipsの姿勢を計算 + 適用する。
+                    // この処理はHipsをワールド座標で固定するため、BodyOffsetManagerとかFBBIKの結果を完全に無視して適用される
+                    var rootPose = lowerBodyHumanoid.RootPose;
                     var hipsWorldPosition = rootPose.position + rootPose.rotation * hipsPosition;
                     var hipsWorldRotation = 
                         rootPose.rotation * _vmcpHand.Humanoid.GetLocalRotation(nameof(HumanBodyBones.Hips));
+
                     _lowerBodyBones[nameof(HumanBodyBones.Hips)].SetPositionAndRotation(
                         hipsWorldPosition, hipsWorldRotation
                     );

@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v4.0.1
+v4.1.0
 
 * Author: Baxter
-* 2025/Jun/13
+* 2025/Jul/13
 
 The VRM avatar application without any special device.
 
@@ -44,7 +44,6 @@ Please see [Manual](https://malaybaku.github.io/VMagicMirror/) for the detail.
 ## 3. Contact
 
 * [Twitter](https://twitter.com/baku_dreameater)
-* [Blog](https://www.baku-dreameater.net/)
 
 note: Contact in English or Japanese is very helpful for the author.
 
@@ -65,27 +64,23 @@ Maintainer's environment is as following.
 
 ### 4.2. Asset install
 
-* [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-* [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
-* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
-* SharpDX.DirectInput 4.2.0
-    * [SharpDX](https://www.nuget.org/packages/SharpDX)
-    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
-* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
-* DOTween (from Asset Store)
-* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
-* [LaserLightShader](https://noriben.booth.pm/items/2141514)
-* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
-* Roslyn Scripting (see the last part of this section for detail)
+* From Asset Store:
+    * DOTween
+    * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* Other
+    * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
+    * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
+    * SharpDX.DirectInput 4.2.0
+        * [SharpDX](https://www.nuget.org/packages/SharpDX)
+        * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+    * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+    * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+    * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+    * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+    * Roslyn Scripting (see the last part of this section for detail)
 
 Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
-
-[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
@@ -106,21 +101,6 @@ RawInput.Sharp can be installed with almost same work flow.
 
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
-
-Also there are some UPM based dependencies.
-
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
-* [UniRx](https://github.com/neuecc/UniRx)
-* [KlakSpout](https://github.com/keijiro/KlakSpout)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
-    * This is fork repository and not the original.
-
-You will get compile errors for the first time. To solve this, confirm `NuGetForUnity` is installed, and open `NAudioLipSyncContext.cs` to uncomment `#define` line at the start of the script. This will solve compile errors and NuGet download will start. After download completed, comment out the line to enable actual lipsync implementation.
-
-```
-//uncomment this line once, and comment out after NAudio is downloaded
-#define TEMP_SUPPRESS_ERROR
-```
 
 To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
 
@@ -146,7 +126,26 @@ In maintainers' project, the folder and file structure is as following.
     - `System.Runtime.Loader-v4.0.0/Plugins`
         - System.Runtime.Loader.dll
 
-Note that NuGetForUnity might get the packages above correctly, though it is not tested yet.
+*NuGetForUnity might get the packages related to Roslyn Scripting correctly, though it is not tested yet.
+
+I recommend to create `Assets/Ignored` folder and move `Assets/*` folders introduced by above steps. You should do this if you want to ignore those 3rd party assets in version control.
+
+Also there are some UPM based dependencies.
+
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [KlakSpout](https://github.com/keijiro/KlakSpout)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * This is fork repository and not the original.
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
+
+Following packages are installed via NuGetForUnity.
+
+* [NAudio](https://github.com/naudio/NAudio)
+
 
 ### 4.3. Build
 

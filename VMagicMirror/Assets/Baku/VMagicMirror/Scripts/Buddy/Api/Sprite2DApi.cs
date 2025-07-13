@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using VMagicMirror.Buddy;
+using UniRx;
 using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
@@ -20,23 +22,61 @@ namespace Baku.VMagicMirror.Buddy.Api
     public class Sprite2DApi : ISprite2D
     {
         private readonly BuddySprite2DInstance _instance;
+        private readonly BuddySpriteEventBroker _eventBroker;
+        private readonly BuddyTalkTextEventBroker _talkTextEventBroker;
         private readonly BuddyLogger _logger;
-        private BuddyFolder BuddyFolder { get; }
+        internal BuddyFolder BuddyFolder { get; }
 
-        internal Sprite2DApi(BuddyFolder buddyFolder, BuddySprite2DInstance instance, BuddyLogger logger)
+        internal Sprite2DApi(
+            BuddyFolder buddyFolder,
+            BuddySprite2DInstance instance,
+            BuddySpriteEventBroker eventBroker, 
+            BuddyTalkTextEventBroker talkTextEventBroker,
+            BuddyLogger logger)
         {
             BuddyFolder = buddyFolder;
             _instance = instance;
+            _eventBroker = eventBroker;
+            _talkTextEventBroker = talkTextEventBroker;
             _logger = logger;
 
             Transform = new Transform2D(instance.GetTransform2DInstance());
             DefaultSpritesSetting = new DefaultSpritesSettingApi(_instance.DefaultSpritesSetting);
+            SubscribeInstancePointerEvents();
         }
         
         public override string ToString() => nameof(ISprite2D);
 
         public ITransform2D Transform { get; }
         public IDefaultSpritesSetting DefaultSpritesSetting { get; }
+
+        private TalkTextApi _talkText = null;
+        public ITalkText TalkText
+        {
+            get
+            {
+                if (_talkText == null)
+                {
+                    var talkTextInstance = _instance.CreateTalkTextInstance();
+                    talkTextInstance.Sprite2DInstance = _instance;
+                    _talkText = new TalkTextApi(talkTextInstance, _talkTextEventBroker);
+                }
+                
+                return _talkText;
+            }    
+        }
+
+        public event Action<Pointer2DData> PointerEnter;
+        public event Action<Pointer2DData> PointerLeave;
+        public event Action<Pointer2DData> PointerDown;
+        public event Action<Pointer2DData> PointerUp;
+        public event Action<Pointer2DData> PointerClick;
+
+        internal void InvokePointerEnter(Pointer2DData data) => PointerEnter?.Invoke(data);
+        internal void InvokePointerLeave(Pointer2DData data) => PointerLeave?.Invoke(data);
+        internal void InvokePointerDown(Pointer2DData data) => PointerDown?.Invoke(data);
+        internal void InvokePointerUp(Pointer2DData data) => PointerUp?.Invoke(data);
+        internal void InvokePointerClick(Pointer2DData data) => PointerClick?.Invoke(data);
         
         BuddyApi.Vector2 ISprite2D.Size
         {
@@ -164,6 +204,25 @@ namespace Baku.VMagicMirror.Buddy.Api
                 (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
             );
             return (Sprite2DTransitionStyle)clamped;
+        }
+
+        private void SubscribeInstancePointerEvents()
+        {
+            _instance.PointerDown
+                .Subscribe(_ => _eventBroker.InvokeOnPointerDown(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerUp
+                .Subscribe(_ => _eventBroker.InvokeOnPointerUp(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerClick
+                .Subscribe(_ => _eventBroker.InvokeOnPointerClick(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerEnter
+                .Subscribe(_ => _eventBroker.InvokeOnPointerEnter(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerLeave
+                .Subscribe(_ => _eventBroker.InvokeOnPointerLeave(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
         }
     }
 }

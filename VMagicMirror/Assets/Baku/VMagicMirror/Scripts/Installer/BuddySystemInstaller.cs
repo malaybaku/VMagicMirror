@@ -32,6 +32,7 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<BuddyRuntimeObjectUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddySpriteShadowSettingUpdater>().AsSingle();
             Container.Bind<BuddySprite2DUpdater>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BuddyTalkTextUpdater>().AsSingle();
 
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
 
@@ -39,6 +40,8 @@ namespace Baku.VMagicMirror
 
             Container.Bind<ScreenApiImplement>().AsSingle();
             Container.Bind<BuddyAudioEventBroker>().AsSingle();
+            Container.Bind<BuddyTalkTextEventBroker>().AsSingle();
+            Container.Bind<BuddySpriteEventBroker>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioApiImplement>().AsSingle();
             Container.Bind<AvatarLoadApiImplement>().AsSingle();
             Container.Bind<AvatarPoseApiImplement>().AsSingle();

@@ -115,6 +115,43 @@ namespace Baku.VMagicMirror.Buddy
                 () => _api.AudioInternal.InvokeAudioStopped
             );
             
+            ConnectOneArgFunc(
+                _apiImplements.BuddySpriteEventBroker.OnPointerEnterForBuddy(_api.BuddyId),
+                src => src.api.InvokePointerEnter,
+                src => src.data
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddySpriteEventBroker.OnPointerLeaveForBuddy(_api.BuddyId),
+                src => src.api.InvokePointerLeave,
+                src => src.data
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddySpriteEventBroker.OnPointerDownForBuddy(_api.BuddyId),
+                src => src.api.InvokePointerDown,
+                src => src.data
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddySpriteEventBroker.OnPointerUpForBuddy(_api.BuddyId),
+                src => src.api.InvokePointerUp,
+                src => src.data
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddySpriteEventBroker.OnPointerClickForBuddy(_api.BuddyId),
+                src => src.api.InvokePointerClick,
+                src => src.data
+            );
+            
+            ConnectOneArgFunc(
+                _apiImplements.BuddyTalkTextEventBroker.ItemDequeued(_api.BuddyId),
+                src => src.api.InvokeItemDequeued,
+                src => src.item
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddyTalkTextEventBroker.ItemFinished(_api.BuddyId),
+                src => src.api.InvokeItemFinished,
+                src => src.item
+            );
+            
             InvokeCallbackAsync(_cts.Token).Forget();
         }
 
@@ -205,10 +242,11 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        // TSource == TArg であり、値の変換も不要なケース
+        // TSource == TArg であり、値の変換も不要なケース。なるべくこれに帰着するのがシンプルで望ましい
         private void ConnectOneArgFunc<TSource>(IObservable<TSource> source, Func<Action<TSource>> funcGetter)
             => ConnectOneArgFunc(source, funcGetter, v => v);
 
+        // TSourceがApi用の型ではないので変換が必要なケース
         private void ConnectOneArgFunc<TSource, TArg>(
             IObservable<TSource> source, Func<Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
         {
@@ -225,6 +263,24 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
+        // IO<T>のTの部分が(TCaller, TArg)のタプルになっているケース。動的生成したインスタンスのイベントハンドラを扱うのに使う
+        private void ConnectOneArgFunc<TSource, TArg>(
+            IObservable<TSource> source, Func<TSource, Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
+        {
+            source.Subscribe(v =>
+                {
+                    var func = funcGetter(v);
+                    if (func == null)
+                    {
+                        return;
+                    }
+                    var arg = argConverter(v);
+                    _callbackQueue.Enqueue(() => func.Invoke(arg));
+                })
+                .AddTo(this);
+        }
+
+        
         private void ConnectTwoArgFunc<TSource, TArg0, TArg1>(
             IObservable<TSource> source,
             Func<Action<TArg0, TArg1>> funcGetter,

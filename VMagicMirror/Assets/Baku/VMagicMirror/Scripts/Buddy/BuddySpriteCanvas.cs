@@ -8,9 +8,13 @@ namespace Baku.VMagicMirror.Buddy
     [RequireComponent(typeof(Canvas))]
     public class BuddySpriteCanvas : MonoBehaviour
     {
+        public const float CanvasWidthDefault = 1280f;
+        public const float CanvasHeightDefault = 720f;
+
         [SerializeField] private Canvas canvas;
         [SerializeField] private BuddySprite2DInstance spriteInstancePrefab;
         [SerializeField] private BuddyManifestTransform2DInstance transform2DInstancePrefab;
+        [SerializeField] private BuddyTalkTextInstance talkTextInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
@@ -18,6 +22,8 @@ namespace Baku.VMagicMirror.Buddy
 
         private readonly Subject<BuddySprite2DInstance> _spriteCreated = new();
         public IObservable<BuddySprite2DInstance> SpriteCreated => _spriteCreated;
+        private readonly Subject<BuddyTalkTextInstance> _talkTextCreated = new();
+        public IObservable<BuddyTalkTextInstance> TalkTextCreated => _talkTextCreated;
         
         public RectTransform RectTransform => (RectTransform)transform;
 
@@ -38,7 +44,19 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         /// <returns></returns>
         public BuddyManifestTransform2DInstance CreateManifestTransform2DInstance()
-            => Instantiate(transform2DInstancePrefab, RectTransform);
+        {
+            return Instantiate(transform2DInstancePrefab, RectTransform);
+        }
+
+        public BuddyTalkTextInstance CreateTalkTextInstance(BuddySprite2DInstance sprite2DInstance)
+        {
+            // TODO?: セリフのSiblingをLast側にもってく必要があるかも (Sprite2Dが2つ以上あると気になってくる)
+            // やる場合、SpriteInstanceやMT2Dの生成後もケアする必要がある
+            var result = Instantiate(talkTextInstancePrefab, RectTransform);
+            result.Sprite2DInstance = sprite2DInstance;
+            _talkTextCreated.OnNext(result);
+            return result;
+        }
         
         private Camera _mainCamera;
         private BuddyPresetResources _presetResources;

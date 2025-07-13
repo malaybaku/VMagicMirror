@@ -17,6 +17,13 @@
       "dependencies": {},
       "hash": "33d32baea4d50040e0601b725a694dcf3dcf6640"
     },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity#v4.4.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f8f1902ebec77284fd4ac83d043e0ef664d31831"
+    },
     "com.github.homuler.mediapipe": {
       "version": "file:com.github.homuler.mediapipe",
       "depth": 0,
@@ -25,6 +32,20 @@
         "com.unity.ugui": "1.0.0",
         "com.unity.test-framework": "1.0.0"
       }
+    },
+    "com.hecomi.uosc": {
+      "version": "https://github.com/hecomi/uOSC.git#upm@2.2.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3788ab28702c44330bfea7323b2e05bc4d23c213"
+    },
+    "com.hecomi.uwindowcapture": {
+      "version": "https://github.com/hecomi/uWindowCapture.git#upm@1.1.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0412fe09e11d3720197707a935f8114cc2454639"
     },
     "com.malaybaku.managed-midijack": {
       "version": "https://github.com/malaybaku/MidiJack.git?path=/Assets/MidiJack",
@@ -39,6 +60,13 @@
       "source": "git",
       "dependencies": {},
       "hash": "284d5c50d3f1ddd9fa7df3d382ea904732a9c2ff"
+    },
+    "com.svermeulen.extenject": {
+      "version": "https://github.com/Mathijs-Bakker/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#9.3.1",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "8495d61cebe4175b358370a3599b32ae976d6de6"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -264,6 +292,12 @@
         "com.unity.modules.screencapture": "1.0.0"
       },
       "url": "https://registry.npmjs.com"
+    },
+    "nuget-packages": {
+      "version": "file:nuget-packages",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

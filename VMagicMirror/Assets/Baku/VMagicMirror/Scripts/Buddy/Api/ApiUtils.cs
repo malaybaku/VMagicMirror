@@ -143,4 +143,20 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         #endregion
     }
+
+    public static class EventDataExtensions
+    {
+        // NOTE: まだPointer2DDataにfieldがないので値は使わないが、原理的に値を引き取って使うべきなので拡張メソッドになっている
+        public static BuddyApi.Pointer2DData ToApiValue(this Pointer2DDataInternal item) => new();
+
+        public static BuddyApi.ITalkTextItem ToApiValue(this TalkTextItemInternal item)
+        {
+            return item.Type switch
+            {
+                TalkTextItemTypeInternal.Text => new TextTalkItem(item.Text, item.Key, item.ScheduledDuration),
+                TalkTextItemTypeInternal.Wait => new WaitTalkItem(item.Key, item.ScheduledDuration),
+                _ => null,
+            };
+        }
+    }
 }

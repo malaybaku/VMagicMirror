@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UniRx;
+using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using Zenject;
 
@@ -40,7 +41,7 @@ namespace Baku.VMagicMirror
         private bool _enableOutlineEffect = false;
         
         [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public void Initialize(IMessageReceiver receiver, FixedShadowController fixedShadowController)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.LightIntensity,
@@ -63,10 +64,16 @@ namespace Baku.VMagicMirror
                 message=> SetLightPitch(message.ToInt())
                 );
 
-            receiver.AssignCommandHandler(
-                VmmCommands.ShadowEnable,
-                message => EnableShadow(message.ToBoolean())
-                );
+            // 固定シャドウが有効になると固定シャドウが勝つ…という優先度があるので注意。同時に作用させてはいけない
+            var shadowEnabled = new ReactiveProperty<bool>(false);
+            receiver.BindBoolProperty(VmmCommands.ShadowEnable, shadowEnabled);
+            shadowEnabled.CombineLatest(
+                fixedShadowController.FixedShadowEnabled,
+                (x, y) => x && !y
+                )
+                .Subscribe(value => EnableShadow(value))
+                .AddTo(this);
+
             receiver.AssignCommandHandler(
                 VmmCommands.ShadowIntensity,
                 message => SetShadowIntensity(message.ParseAsPercentage())

@@ -13,8 +13,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Port = new("");
             PortNumberIsInvalid = new(false);
             ReceiveHeadPose = new(false);
-            ReceiveFacial = new(false);
             ReceiveHandPose = new(false);
+            ReceiveLowerBodyPose = new(false);
+            ReceiveFacial = new(false);
             ResetCommand = new ActionCommand(ResetContent);
             _setDirtyAction = null;
         }
@@ -35,8 +36,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             });
 
             ReceiveHeadPose = new RProperty<bool>(model.ReceiveHeadPose, _ => SetDirty());
-            ReceiveFacial = new RProperty<bool>(model.ReceiveFacial, _ => SetDirty());
             ReceiveHandPose = new RProperty<bool>(model.ReceiveHandPose, _ => SetDirty());
+            ReceiveLowerBodyPose = new RProperty<bool>(model.ReceiveLowerBodyPose, _ => SetDirty());
+            ReceiveFacial = new RProperty<bool>(model.ReceiveFacial, _ => SetDirty());
 
             ResetCommand = new ActionCommand(ResetContent);
         }
@@ -50,8 +52,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> PortNumberIsInvalid { get; }
 
         public RProperty<bool> ReceiveHeadPose { get; set; }
-        public RProperty<bool> ReceiveFacial { get; set; }
         public RProperty<bool> ReceiveHandPose { get; set; }
+        public RProperty<bool> ReceiveLowerBodyPose { get; set; }
+        public RProperty<bool> ReceiveFacial { get; set; }
 
         public RProperty<bool> Connected { get; } = new(false);
 
@@ -89,8 +92,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 Name.Value = "";
                 Port.Value = "0";
                 ReceiveHeadPose.Value = false;
-                ReceiveFacial.Value = false;
                 ReceiveHandPose.Value = false;
+                ReceiveLowerBodyPose.Value = false;
+                ReceiveFacial.Value = false;
             }
         }
 

@@ -198,10 +198,11 @@
     <sys:String x:Key="VMCP_GridLabel_AppName">アプリ名</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Connected">接続</sys:String>
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">手</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_LowerBodyPose">足・腰</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
     <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
     <sys:String x:Key="VMCP_PortInputError">*ポート番号には0 ~ 65535の範囲の値を指定して下さい。</sys:String>
     <sys:String x:Key="VMCP_ShouldApply">*未適用の変更があります</sys:String>

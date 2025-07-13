@@ -72,10 +72,11 @@
                             <RowDefinition Height="40"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="30" />
@@ -95,30 +96,34 @@
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="3"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
+                                   Text="{DynamicResource VMCP_GridLabel_LowerBodyPose}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="4"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
+                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="5"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="6"
                                    HorizontalAlignment="Center"
                                    Text="{DynamicResource VMCP_GridLabel_Connected}"
                                    />
 
                         <Rectangle Grid.Row="1"
-                                   Grid.ColumnSpan="5"
+                                   Grid.ColumnSpan="6"
                                    Height="1"
                                    Fill="{StaticResource MahApps.Brushes.Gray2}"
                                    />
 
-                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source1}"
                                              />
-                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source2}"
                                              />
-                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source3}"
                                              />
                     </Grid>

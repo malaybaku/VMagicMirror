@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -18,28 +15,15 @@ namespace Baku.VMagicMirrorConfig
     {
         public SerializedVMCPSource[]? Sources { get; set; }
 
-        public string ToJson()
-        {
-            var sb = new StringBuilder();
-            using var writer = new StringWriter(sb);
-            using var jsonWriter = new JsonTextWriter(writer);
-            var serializer = new JsonSerializer();
-            serializer.Serialize(jsonWriter, this);
-            return sb.ToString();
-        }
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.None);
 
-        public VMCPSources ToSetting() => new VMCPSources(
-            Sources?.Select(s => s.ToSource()) ?? Enumerable.Empty<VMCPSource>()
-            );
+        public VMCPSources ToSetting() => new(Sources?.Select(s => s.ToSource()) ?? []);
 
         public static SerializedVMCPSources FromJson(string json)
         {
             try
             {
-                using var reader = new StringReader(json);
-                using var jsonReader = new JsonTextReader(reader);
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize<SerializedVMCPSources>(jsonReader) ?? Empty;
+                return JsonConvert.DeserializeObject<SerializedVMCPSources>(json) ?? Empty;
             }
             catch (Exception ex)
             {
@@ -58,7 +42,6 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-
         public static SerializedVMCPSources Empty => FromSetting(VMCPSources.Default);
     }
 
@@ -72,6 +55,7 @@ namespace Baku.VMagicMirrorConfig
         public bool ReceiveHeadPose { get; set; }
         public bool ReceiveFacial { get; set; }
         public bool ReceiveHandPose { get; set; }
+        public bool ReceiveLowerBodyPose { get; set; }
 
         public SerializedVMCPSource()
         {
@@ -84,6 +68,7 @@ namespace Baku.VMagicMirrorConfig
             ReceiveHeadPose = source.ReceiveHeadPose,
             ReceiveFacial = source.ReceiveFacial,
             ReceiveHandPose = source.ReceiveHandPose,
+            ReceiveLowerBodyPose = source.ReceiveLowerBodyPose,
         };
 
         public VMCPSource ToSource() => new VMCPSource()
@@ -93,6 +78,7 @@ namespace Baku.VMagicMirrorConfig
             ReceiveHeadPose = ReceiveHeadPose,
             ReceiveFacial = ReceiveFacial,
             ReceiveHandPose = ReceiveHandPose,
+            ReceiveLowerBodyPose = ReceiveLowerBodyPose,
         };
     }
 }

@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         {
             Container.BindInstance(fixedShadowLight).WhenInjectedInto<FixedShadowController>();
             Container.BindInstance(fixedShadowBoard).WhenInjectedInto<FixedShadowController>();
-            Container.BindInterfacesTo<FixedShadowController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<FixedShadowController>().AsSingle();
         }
     }
 }

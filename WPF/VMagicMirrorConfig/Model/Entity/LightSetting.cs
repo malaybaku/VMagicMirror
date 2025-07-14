@@ -82,8 +82,8 @@
         public int WindYaw { get; set; } = 90;
         public bool EnableFixedShadowAlways { get; set; } = false;
         public bool EnableFixedShadowWhenLocomotionActive { get; set; } = true;
-        public int FixedShadowYaw { get; internal set; } = 50;
-        public int FixedShadowPitch { get; internal set; } = -30;
+        public int FixedShadowYaw { get; set; } = 50;
+        public int FixedShadowPitch { get; set; } = -30;
 
         #endregion
 

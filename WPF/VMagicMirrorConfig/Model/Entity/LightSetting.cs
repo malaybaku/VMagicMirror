@@ -40,6 +40,11 @@
         public int ShadowPitch { get; set; } = 8;
         public int ShadowDepthOffset { get; set; } = 40;
 
+        public bool EnableFixedShadowAlways { get; set; } = false;
+        public bool EnableFixedShadowWhenLocomotionActive { get; set; } = true;
+        public int FixedShadowYaw { get; set; } = -130;
+        public int FixedShadowPitch { get; set; } = 60;
+
         #endregion
 
         #region Ambient Occlusion
@@ -80,10 +85,6 @@
         public int WindStrength { get; set; } = 100;
         public int WindInterval { get; set; } = 100;
         public int WindYaw { get; set; } = 90;
-        public bool EnableFixedShadowAlways { get; set; } = false;
-        public bool EnableFixedShadowWhenLocomotionActive { get; set; } = true;
-        public int FixedShadowYaw { get; set; } = 50;
-        public int FixedShadowPitch { get; set; } = -30;
 
         #endregion
 

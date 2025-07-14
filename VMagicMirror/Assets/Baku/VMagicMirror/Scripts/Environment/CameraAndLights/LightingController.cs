@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror
                 );
 
             // 固定シャドウが有効になると固定シャドウが勝つ…という優先度があるので注意。同時に作用させてはいけない
-            var shadowEnabled = new ReactiveProperty<bool>(false);
+            var shadowEnabled = new ReactiveProperty<bool>(true);
             receiver.BindBoolProperty(VmmCommands.ShadowEnable, shadowEnabled);
             shadowEnabled.CombineLatest(
                 fixedShadowController.FixedShadowEnabled,

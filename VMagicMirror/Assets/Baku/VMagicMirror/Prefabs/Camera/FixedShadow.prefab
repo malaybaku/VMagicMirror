@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7066798782588894111}
   - component: {fileID: 6645669196216135191}
   - component: {fileID: 528410738657893106}
-  - component: {fileID: 7513310332246015929}
   m_Layer: 10
   m_Name: ShadowBoard
   m_TagString: Untagged
@@ -87,19 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7513310332246015929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6454580405595947783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c576c1d95adf15e4798e96b11c05b941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 0}
 --- !u!1 &8350776202964844118
 GameObject:
   m_ObjectHideFlags: 0

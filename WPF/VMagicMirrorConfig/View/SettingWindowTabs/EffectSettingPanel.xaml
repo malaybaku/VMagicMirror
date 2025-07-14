@@ -404,7 +404,7 @@
                                                Text="{DynamicResource Shadow_Pitch}" />
                                     <Slider Grid.Row="1" Grid.Column="1"
                                             x:Name="sliderFixedShadowPitch"
-                                            Minimum="-90"
+                                            Minimum="20"
                                             Maximum="90"
                                             Value="{Binding FixedShadowPitch.Value, Mode=TwoWay}"
                                             />

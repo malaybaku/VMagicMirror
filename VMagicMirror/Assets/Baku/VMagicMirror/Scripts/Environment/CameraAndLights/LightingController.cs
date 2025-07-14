@@ -71,7 +71,10 @@ namespace Baku.VMagicMirror
                 fixedShadowController.FixedShadowEnabled,
                 (x, y) => x && !y
                 )
-                .Subscribe(value => EnableShadow(value))
+                .DistinctUntilChanged()
+                // 初期値はprefabに焼きこんであるので無視でOK / Awake前のコンポーネントを見に行くリスクを避けるのも兼ねて無視しとく
+                .Skip(1)
+                .Subscribe(EnableShadow)
                 .AddTo(this);
 
             receiver.AssignCommandHandler(

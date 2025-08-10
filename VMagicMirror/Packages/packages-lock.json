@@ -63,13 +63,6 @@
       "dependencies": {},
       "hash": "5a4c5b8ccfb7a73b9ced2f05e741f3caec3add3f"
     },
-    "com.neuecc.unirx": {
-      "version": "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx/Scripts",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "6baeccf6c544c155497164327cca72f28163a578"
-    },
     "com.svermeulen.extenject": {
       "version": "https://github.com/Mathijs-Bakker/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#9.3.1",
       "depth": 0,

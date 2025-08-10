@@ -102,7 +102,7 @@ namespace Baku.VMagicMirror.IK
         {
             if (_useCarHandle && _leanMode is GamepadLeanModes.GamepadLeanLeftButtons)
             {
-                _stickAxisX = _gamepad.ArrowButtonsStickPosition.x * StickValueToRateFactor;
+                _stickAxisX = _gamepad.ArrowButtonsStickPosition.CurrentValue.x * StickValueToRateFactor;
             }
 
             var hasInput =

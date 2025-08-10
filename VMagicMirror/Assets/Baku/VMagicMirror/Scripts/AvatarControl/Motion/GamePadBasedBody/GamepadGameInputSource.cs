@@ -129,7 +129,7 @@ namespace Baku.VMagicMirror.GameInput
 
             if (_keyAssign.DPadLeft != GameInputStickAction.None)
             {
-                _gamepad.ObserveEveryValueChanged(g => g.ArrowButtonsStickPosition)
+                _gamepad.ArrowButtonsStickPosition
                     .Subscribe(v => OnStickUpdated(v, _keyAssign.DPadLeft))
                     .AddTo(_disposable);
             }

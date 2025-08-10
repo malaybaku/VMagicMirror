@@ -10,6 +10,15 @@
       },
       "hash": "d9f02dc13711c4988baaaa944d322e41aa989aca"
     },
+    "com.cysharp.r3": {
+      "version": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity#1.3.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.imgui": "1.0.0"
+      },
+      "hash": "329ca7915713417f2e0837b0e0a80b4da074db4a"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.3.1",
       "depth": 0,
@@ -59,7 +68,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "284d5c50d3f1ddd9fa7df3d382ea904732a9c2ff"
+      "hash": "6baeccf6c544c155497164327cca72f28163a578"
     },
     "com.svermeulen.extenject": {
       "version": "https://github.com/Mathijs-Bakker/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#9.3.1",

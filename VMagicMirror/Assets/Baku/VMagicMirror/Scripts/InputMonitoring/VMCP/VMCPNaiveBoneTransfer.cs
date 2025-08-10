@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using VeryAnimation;
 using Zenject;
 
 namespace Baku.VMagicMirror.VMCP

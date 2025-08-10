@@ -21,9 +21,9 @@ namespace Baku.VMagicMirror.Buddy
         [SerializeField] private float canvasWidth = 1280f;
 
         private readonly Subject<BuddySprite2DInstance> _spriteCreated = new();
-        public IObservable<BuddySprite2DInstance> SpriteCreated => _spriteCreated;
+        public Observable<BuddySprite2DInstance> SpriteCreated => _spriteCreated;
         private readonly Subject<BuddyTalkTextInstance> _talkTextCreated = new();
-        public IObservable<BuddyTalkTextInstance> TalkTextCreated => _talkTextCreated;
+        public Observable<BuddyTalkTextInstance> TalkTextCreated => _talkTextCreated;
         
         public RectTransform RectTransform => (RectTransform)transform;
 

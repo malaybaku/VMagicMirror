@@ -34,10 +34,10 @@ namespace Baku.VMagicMirror.Buddy
         private readonly string[] _keys = new string[InstanceCount];
         
         private readonly Subject<(BuddyId, string)> _audioCompleted = new();
-        public IObservable<(BuddyId id, string key)> AudioCompleted => _audioCompleted;
+        public Observable<(BuddyId id, string key)> AudioCompleted => _audioCompleted;
 
         private readonly Subject<(BuddyId, string)> _audioInterrupted = new();
-        public IObservable<(BuddyId id, string key)> AudioInterrupted => _audioInterrupted;
+        public Observable<(BuddyId id, string key)> AudioInterrupted => _audioInterrupted;
 
         private void Update()
         {

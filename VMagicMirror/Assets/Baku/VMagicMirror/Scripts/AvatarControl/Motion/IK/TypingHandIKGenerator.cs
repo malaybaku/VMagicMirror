@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror.IK
         public HandIkGeneratorDependency Dependency { get; private set; }
 
         private readonly Subject<(ReactedHand hand, string key)> _keyDownMotionStarted = new();
-        public IObservable<(ReactedHand hand, string key)> KeyDownMotionStarted => _keyDownMotionStarted;
+        public Observable<(ReactedHand hand, string key)> KeyDownMotionStarted => _keyDownMotionStarted;
         
         #region settings (WPFから飛んでくる想定のもの)
 

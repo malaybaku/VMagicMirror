@@ -17,18 +17,18 @@ namespace Baku.VMagicMirror
 
         private readonly XInputCapture _xInputCapture = new();
         
-        public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
+        public Observable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
         //TODO: 動作が壊れないことを評価したうえで普通にReactivePropertyに置き換えたい…
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
-        public IObservable<Vector2Int> RightStickPosition => _rightStick;
+        public Observable<Vector2Int> RightStickPosition => _rightStick;
 
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
-        public IObservable<Vector2Int> LeftStickPosition => _leftStick;
+        public Observable<Vector2Int> LeftStickPosition => _leftStick;
 
         /// <summary>
         /// 矢印キーの押下状態からスティック位置に相当する情報を作成し、取得する。

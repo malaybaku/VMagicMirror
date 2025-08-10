@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState RightHandState => _rightHandState;
 
         private readonly Subject<GamepadKey> _buttonDownMotionStarted = new();
-        public IObservable<GamepadKey> ButtonDownMotionStarted => _buttonDownMotionStarted;
+        public Observable<GamepadKey> ButtonDownMotionStarted => _buttonDownMotionStarted;
 
         public ArcadeStickHandIKGenerator(
             HandIkGeneratorDependency dependency, 

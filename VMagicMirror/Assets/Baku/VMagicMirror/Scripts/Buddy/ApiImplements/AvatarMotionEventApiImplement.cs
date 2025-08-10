@@ -20,33 +20,33 @@ namespace Baku.VMagicMirror.Buddy
         /// - キー名はごく一部(ENTERとか)だけが取得でき、大体のキーは空文字列になる (主にプライバシー観点がモチベ)
         /// TODO: 左手と右手どっちが動いたかくらいは教えたいかも？
         /// </summary>
-        public IObservable<string> KeyboardKeyDown => _keyboardKeyDown;
+        public Observable<string> KeyboardKeyDown => _keyboardKeyDown;
 
         private readonly Subject<Unit> _touchPadMouseButtonDown = new();
         /// <summary>
         /// タッチパッドが表示された状態でアバターがクリック動作をしたとき、押し込みに対して発火する。どのボタンをクリックしたかは公開されない
         /// </summary>
-        public IObservable<Unit> TouchPadMouseButtonDown => _touchPadMouseButtonDown;
+        public Observable<Unit> TouchPadMouseButtonDown => _touchPadMouseButtonDown;
 
         private readonly Subject<Unit> _penTabletMouseButtonDown = new();
         /// <summary>
         /// ペンタブレットが表示された状態でアバターがクリック動作をしたとき、押し込みに対して発火する。どのボタンをクリックしたかは公開されない
         /// </summary>
-        public IObservable<Unit> PenTabletMouseButtonDown => _penTabletMouseButtonDown;
+        public Observable<Unit> PenTabletMouseButtonDown => _penTabletMouseButtonDown;
 
         private readonly Subject<(ReactedHand, GamepadKey)> _gamepadButtonDown = new();
         /// <summary>
         /// ゲームパッドが表示された状態で何らかのゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティック入力に対しては発火しない
         /// </summary>
-        public IObservable<(ReactedHand, GamepadKey)> GamepadButtonDown => _gamepadButtonDown;
+        public Observable<(ReactedHand, GamepadKey)> GamepadButtonDown => _gamepadButtonDown;
 
         private readonly Subject<GamepadKey> _arcadeStickButtonDown = new();
         /// <summary>
         /// アーケードスティックが表示された状態でゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティックには反応せず、かつアーケードスティック上で対応していないボタンを押した場合も反応しない
         /// </summary>
-        public IObservable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
+        public Observable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
 
         private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly BodyMotionModeController _bodyMotionModeController;

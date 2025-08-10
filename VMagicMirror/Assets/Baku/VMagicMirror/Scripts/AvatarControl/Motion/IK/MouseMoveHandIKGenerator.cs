@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.IK
         private readonly IKDataRecord _blendedRightHand = new();
 
         private readonly Subject<string> _mouseClickMotionStarted = new();
-        public IObservable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
+        public Observable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
         
         #region IHandIkState
 

@@ -30,6 +30,6 @@ namespace Baku.VMagicMirror
     {
         public bool HasData => false;
         public byte[] GetData() => Array.Empty<byte>();
-        public IObservable<Unit> ReloadRequested => Observable.Empty<Unit>();
+        public Observable<Unit> ReloadRequested => Observable.Empty<Unit>();
     }
 }

@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.WordToMotion
     public class EmptyRequestSource : IRequestSource
     {
         public SourceType SourceType => SourceType.None;
-        public IObservable<int> RunMotionRequested { get; } = Observable.Empty<int>();
+        public Observable<int> RunMotionRequested { get; } = Observable.Empty<int>();
 
         public void SetActive(bool active)
         {

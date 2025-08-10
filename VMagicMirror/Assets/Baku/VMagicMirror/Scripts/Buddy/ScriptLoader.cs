@@ -30,11 +30,11 @@ namespace Baku.VMagicMirror.Buddy
 
         private readonly Subject<IScriptCaller> _scriptLoading = new();
         /// <summary> スクリプトを新しくロードするときに発火する。APIを差し込んだりするのに使う </summary>
-        public IObservable<IScriptCaller> ScriptLoading => _scriptLoading;
+        public Observable<IScriptCaller> ScriptLoading => _scriptLoading;
 
         private readonly Subject<IScriptCaller> _scriptDisposing = new();
         /// <summary> スクリプトを破棄するときに発火する。リソースの解放とか破棄に使う </summary>
-        public IObservable<IScriptCaller> ScriptDisposing => _scriptDisposing;
+        public Observable<IScriptCaller> ScriptDisposing => _scriptDisposing;
         
         [Inject]
         public ScriptLoader(

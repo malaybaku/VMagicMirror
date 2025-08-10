@@ -9,8 +9,8 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly Subject<TalkTextItemInternal> _itemDequeued = new();
         private readonly Subject<TalkTextItemInternal> _itemFinished = new();
-        public IObservable<(TalkTextApi api, ITalkTextItem item)> ItemDequeued(BuddyId id) => ForBuddy(_itemDequeued, id);
-        public IObservable<(TalkTextApi api, ITalkTextItem item)> ItemFinished(BuddyId id) => ForBuddy(_itemFinished, id);
+        public Observable<(TalkTextApi api, ITalkTextItem item)> ItemDequeued(BuddyId id) => ForBuddy(_itemDequeued, id);
+        public Observable<(TalkTextApi api, ITalkTextItem item)> ItemFinished(BuddyId id) => ForBuddy(_itemFinished, id);
 
         private IObservable<(TalkTextApi api, ITalkTextItem item)> ForBuddy(IObservable<TalkTextItemInternal> src, BuddyId buddyId) => src
             .Where(item => item.BuddyId.Equals(buddyId))

@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror.Buddy
         private Vector2 _lastDragPos;
 
         private readonly Subject<bool> _userScrollHappened = new();
-        public IObservable<bool> UserScrollHappened => _userScrollHappened;
+        public Observable<bool> UserScrollHappened => _userScrollHappened;
         private void InvokeUserScroll(bool isUp) => _userScrollHappened.OnNext(isUp);
 
         public override void OnScroll(PointerEventData data)

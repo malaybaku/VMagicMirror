@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.IK
         public bool ReverseGamepadStickLeanVertical { get; set; } = false;
 
         private readonly Subject<(ReactedHand hand, GamepadKey key)> _buttonDownMotionStarted = new();
-        public IObservable<(ReactedHand hand, GamepadKey key)> ButtonDownMotionStarted => _buttonDownMotionStarted;
+        public Observable<(ReactedHand hand, GamepadKey key)> ButtonDownMotionStarted => _buttonDownMotionStarted;
         
         public GamepadHandIKGenerator(
             HandIkGeneratorDependency dependency, 

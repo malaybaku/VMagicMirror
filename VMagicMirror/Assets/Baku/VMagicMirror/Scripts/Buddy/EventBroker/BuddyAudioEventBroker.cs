@@ -9,10 +9,10 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<(BuddyId id, AudioStartedInfo info)> _audioStarted = new();
         private readonly Subject<(BuddyId id, AudioStoppedInfo info)> _audioStopped = new();
         
-        public IObservable<AudioStartedInfo> AudioStartedForBuddy(BuddyId id)
+        public Observable<AudioStartedInfo> AudioStartedForBuddy(BuddyId id)
             => _audioStarted.Where(x => x.id.Equals(id)).Select(x => x.info);
 
-        public IObservable<AudioStoppedInfo> AudioStoppedForBuddy(BuddyId id)
+        public Observable<AudioStoppedInfo> AudioStoppedForBuddy(BuddyId id)
             => _audioStopped.Where(x => x.id.Equals(id)).Select(x => x.info);
         
         public void InvokeAudioStarted(BuddyId id, string key, float length)

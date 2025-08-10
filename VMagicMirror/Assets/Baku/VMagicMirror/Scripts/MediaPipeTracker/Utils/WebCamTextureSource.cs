@@ -58,7 +58,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         /// Webカメラのテクスチャが更新されたフレームで発火する。
         /// 購読側では発火に対してDelayつきで画像を読み出そうとしたとき、正しく読めることは保証されない。
         /// </summary>
-        public IObservable<WebCamImageSource> ImageUpdated => _imageUpdated;
+        public Observable<WebCamImageSource> ImageUpdated => _imageUpdated;
 
         public int Width { get; private set; }
         public int Height { get; private set; }

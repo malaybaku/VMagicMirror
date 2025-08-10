@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState RightHandState => this;
 
         private readonly Subject<string> _mouseClickMotionStarted = new();
-        public IObservable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
+        public Observable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
 
         private Vector3 _targetPosition = Vector3.zero;
 

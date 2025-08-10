@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror.Buddy
         
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
-        public IObservable<Unit> Blinked => _blinkDetector
+        public Observable<Unit> Blinked => _blinkDetector
             .Blinked()
             .Where(_ => InteractionApiEnabled);
 

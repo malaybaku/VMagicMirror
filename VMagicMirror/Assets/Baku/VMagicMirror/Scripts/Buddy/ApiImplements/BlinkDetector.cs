@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         private readonly Subject<Unit> _blinked = new();
-        public IObservable<Unit> Blinked() => _blinked.ThrottleFirst(TimeSpan.FromSeconds(CoolDownTime));
+        public Observable<Unit> Blinked() => _blinked.ThrottleFirst(TimeSpan.FromSeconds(CoolDownTime));
         
         public override void Initialize()
         {

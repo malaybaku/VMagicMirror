@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror
             [SerializeField] private VRM10MetaLicenseItemView thirdPartyLicenseUrlItem;
             [SerializeField] private VRM10MetaLicenseItemView otherLicenseUrlItem;
 
-            public IObservable<string> OpenUrlRequested => Observable.Merge(
+            public Observable<string> OpenUrlRequested => Observable.Merge(
                 licenseUrlItem.OpenUrlRequested,
                 thirdPartyLicenseUrlItem.OpenUrlRequested,
                 otherLicenseUrlItem.OpenUrlRequested
@@ -298,7 +298,7 @@ namespace Baku.VMagicMirror
         private PreviewUILocale _locale = PreviewUILocale.English;
         private Meta _meta = null;
 
-        public IObservable<string> OpenUrlRequested => inputs.OpenUrlRequested;
+        public Observable<string> OpenUrlRequested => inputs.OpenUrlRequested;
 
         public void SetMeta(Meta metaData)
         {

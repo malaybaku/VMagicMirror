@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.Buddy
         [SerializeField] Scrollbar targetScrollbar;
         
         private readonly Subject<bool> _userScrollHappenedHappened = new();
-        public IObservable<bool> UserScrollHappened => _userScrollHappenedHappened;
+        public Observable<bool> UserScrollHappened => _userScrollHappenedHappened;
 
         private bool _isDragging;
         private float _lastValue;

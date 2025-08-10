@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
         public SourceType SourceType => SourceType.KeyboardTyping;
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
-        public IObservable<int> RunMotionRequested => _runMotionRequested;
+        public Observable<int> RunMotionRequested => _runMotionRequested;
 
         private readonly WordToMotionRequestRepository _repository;
         private readonly IKeyMouseEventSource _keyMouseEventSource;

@@ -94,7 +94,7 @@ namespace Baku.VMagicMirror.VMCP
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly VMCPHandIkState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
-        public IReadOnlyReactiveProperty<bool> IsActive => _vmcpHandPose.IsActive;
+        public ReadOnlyReactiveProperty<bool> IsActive => _vmcpHandPose.IsActive;
 
         private readonly SerialDisposable _raiseRequestDisposable = new SerialDisposable();
         private float _connectedRate = 0f;

@@ -28,19 +28,19 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
 
         private readonly ReactiveProperty<bool> _mangaEffectActive = new(false);
-        public IReadOnlyReactiveProperty<bool> MangaEffectActive => _mangaEffectActive;
+        public ReadOnlyReactiveProperty<bool> MangaEffectActive => _mangaEffectActive;
         
         // 下記3つはそれぞれデバイスが表示されてて実際に使ってそうな場合のみ、-1以外の値を取る
         private readonly ReactiveProperty<int> _keyboardParticleIndex = new(-1);
-        public IReadOnlyReactiveProperty<int> KeyboardParticleIndex => _keyboardParticleIndex;
+        public ReadOnlyReactiveProperty<int> KeyboardParticleIndex => _keyboardParticleIndex;
 
         private readonly ReactiveProperty<int> _midiParticleIndex = new(-1);
-        public IReadOnlyReactiveProperty<int> MidiParticleIndex => _keyboardParticleIndex;
+        public ReadOnlyReactiveProperty<int> MidiParticleIndex => _keyboardParticleIndex;
 
         private readonly ReactiveProperty<int> _arcadeStickParticleIndex = new(-1);
-        public IReadOnlyReactiveProperty<int> ArcadeStickParticleIndex => _keyboardParticleIndex;
+        public ReadOnlyReactiveProperty<int> ArcadeStickParticleIndex => _keyboardParticleIndex;
 
-        private IReadOnlyReactiveProperty<BodyMotionMode> MotionMode => _bodyMotionModeController.MotionMode;
+        private ReadOnlyReactiveProperty<BodyMotionMode> MotionMode => _bodyMotionModeController.MotionMode;
         
         public override void Initialize()
         {

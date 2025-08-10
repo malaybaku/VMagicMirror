@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _fixedShadowEnabledWhenLocomotionActive = new(true);
         
         private readonly ReactiveProperty<bool> _fixedShadowEnabled = new(false);
-        public IReactiveProperty<bool> FixedShadowEnabled => _fixedShadowEnabled;
+        public ReactiveProperty<bool> FixedShadowEnabled => _fixedShadowEnabled;
 
         //TODOかも: +- の扱い
         private Vector3 _fixedShadowLightRotationEuler = new(30, 50, 0);

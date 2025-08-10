@@ -40,10 +40,10 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _rawHideUnusedDevices = new();
         private readonly ReactiveProperty<bool> _hideUnusedDevices = new();
         
-        public IReadOnlyReactiveProperty<bool> HidVisible => _hidVisible;
-        public IReadOnlyReactiveProperty<bool> PenVisible => _penVisible;
-        public IReadOnlyReactiveProperty<bool> GamepadVisible => _gamepadVisible;
-        public IReadOnlyReactiveProperty<bool> MidiControllerVisible => _midiControllerVisible;
-        public IReadOnlyReactiveProperty<bool> HideUnusedDevices => _hideUnusedDevices;
+        public ReadOnlyReactiveProperty<bool> HidVisible => _hidVisible;
+        public ReadOnlyReactiveProperty<bool> PenVisible => _penVisible;
+        public ReadOnlyReactiveProperty<bool> GamepadVisible => _gamepadVisible;
+        public ReadOnlyReactiveProperty<bool> MidiControllerVisible => _midiControllerVisible;
+        public ReadOnlyReactiveProperty<bool> HideUnusedDevices => _hideUnusedDevices;
     }
 }

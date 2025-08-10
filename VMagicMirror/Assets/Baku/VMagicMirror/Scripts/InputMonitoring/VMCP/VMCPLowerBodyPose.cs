@@ -8,8 +8,8 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _isActive = new(false);
         private readonly ReactiveProperty<bool> _isConnected = new(false);
 
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
-        public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
         public VMCPBasedHumanoid Humanoid { get; private set; }
 
         public void SetActive(VMCPBasedHumanoid humanoid)

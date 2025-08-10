@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
         public static void BindBoolProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<bool> target)
+            ReactiveProperty<bool> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ToBoolean());
         }
@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
         public static void BindIntProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<int> target)
+            ReactiveProperty<int> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ToInt());
         }
@@ -62,7 +62,7 @@ namespace Baku.VMagicMirror
         public static void BindEnumProperty<T>(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<T> target) where T : Enum
+            ReactiveProperty<T> target) where T : Enum
         {
             receiver.AssignCommandHandler(command, 
                 c => target.Value = (T)Enum.ToObject(typeof(T), c.ToInt())
@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror
         public static void BindPercentageProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<float> target)
+            ReactiveProperty<float> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsPercentage());
         }
@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror
         public static void BindCentimeterProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<float> target)
+            ReactiveProperty<float> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsCentimeter());
         }
@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror
         public static void BindColorProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<Color> target)
+            ReactiveProperty<Color> target)
         {
             receiver.AssignCommandHandler(command, c =>
             {
@@ -100,7 +100,7 @@ namespace Baku.VMagicMirror
         public static void BindStringProperty(
             this IMessageReceiver receiver,
             VmmCommands command,
-            IReactiveProperty<string> target
+            ReactiveProperty<string> target
         )
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.GetStringValue());

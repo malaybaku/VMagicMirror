@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.WordToMotion
     public interface IRequestSource
     {
         SourceType SourceType { get; }
-        IObservable<int> RunMotionRequested { get; }
+        Observable<int> RunMotionRequested { get; }
         void SetActive(bool active);
     }
 

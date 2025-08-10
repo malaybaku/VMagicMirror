@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private readonly ReactiveProperty<bool> _isLocomotionReceiveSettingActive = new(false);
         //NOTE: 通信でデータが受信できていなくとも、下半身モーションを受信しようとする設定ならtrueになる
-        public IReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
+        public ReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
         
         [Inject]
         public VMCPReceiver(

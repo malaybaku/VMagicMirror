@@ -260,8 +260,8 @@ namespace Baku.VMagicMirror
         //NOTE: 値自体はCurrentRightHand.TargetTypeとかと等しい。値を他のIKに露出するために使う
         private readonly ReactiveProperty<HandTargetType> _leftTargetType = new(HandTargetType.Keyboard);
         private readonly ReactiveProperty<HandTargetType> _rightTargetType = new(HandTargetType.Keyboard);
-        public IReadOnlyReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
-        public IReadOnlyReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
+        public ReadOnlyReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
+        public ReadOnlyReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
 
         #region API
 

@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly Dictionary<string, ExpressionKey> _stringToKeyCache = new();
 
         private readonly ReactiveProperty<bool> _isActive = new(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
         private readonly RecordFaceTrackBlendShapes _faceSwitchBlendShapes = new();
         // NOTE: この値は「受信値がPerfect SyncっぽければFace Switchの入力値にしていい値」として公開する。
@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.VMCP
         public IFaceTrackBlendShapes FaceTrackBlendShapes => _faceSwitchBlendShapes;
 
         private readonly ReactiveProperty<bool> _seemsToHavePerfectSyncData = new();
-        public IReadOnlyReactiveProperty<bool> SeemsToHavePerfectSyncData => _seemsToHavePerfectSyncData;
+        public ReadOnlyReactiveProperty<bool> SeemsToHavePerfectSyncData => _seemsToHavePerfectSyncData;
         private readonly HashSet<string> _receivedPerfectSyncKeys = new();
         
         private bool _hasModel;

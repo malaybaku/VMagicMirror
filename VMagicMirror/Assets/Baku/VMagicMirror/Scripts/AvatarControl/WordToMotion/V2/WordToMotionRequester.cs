@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionRequestRepository _repository;
         
         private readonly ReactiveProperty<bool> _previewIsActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> PreviewIsActive => _previewIsActive;
+        public ReadOnlyReactiveProperty<bool> PreviewIsActive => _previewIsActive;
 
         private readonly Subject<MotionRequest> _runRequested = new Subject<MotionRequest>();
         public Observable<MotionRequest> RunRequested => _runRequested;

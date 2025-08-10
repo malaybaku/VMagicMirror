@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
 
         private readonly ReactiveProperty<FaceControlModes> _faceControlMode 
             = new(FaceControlModes.WebCamLowPower);
-        public IReadOnlyReactiveProperty<FaceControlModes> FaceControlMode => _faceControlMode;
+        public ReadOnlyReactiveProperty<FaceControlModes> FaceControlMode => _faceControlMode;
 
         public void SetFaceControlMode(FaceControlModes mode) => _faceControlMode.Value = mode;
         

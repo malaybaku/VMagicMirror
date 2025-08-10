@@ -44,11 +44,11 @@ namespace Baku.VMagicMirror.Buddy
         private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
         
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
-        public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
+        public ReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
 
         public bool UsePerfectSync => _faceControlConfig.PerfectSyncActive;
 
-        public IReadOnlyReactiveProperty<bool> IsTalking => _voiceOnOffParser.IsTalking;
+        public ReadOnlyReactiveProperty<bool> IsTalking => _voiceOnOffParser.IsTalking;
         
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい

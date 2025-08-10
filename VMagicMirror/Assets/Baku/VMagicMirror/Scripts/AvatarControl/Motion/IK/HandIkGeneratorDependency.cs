@@ -81,12 +81,12 @@ namespace Baku.VMagicMirror.IK
         private readonly Func<ReactedHand, HandTargetType, bool> _checkCooldownFunc;
         private readonly Func<bool> _checkKeyboardAndMouseHandsCanMoveDown;
 
-        public IReadOnlyReactiveProperty<HandTargetType> LeftTarget { get; }
-        public IReadOnlyReactiveProperty<HandTargetType> RightTarget { get; }
-        public IReadOnlyReactiveProperty<bool> IsAlwaysHandDown { get; }
-        public IReadOnlyReactiveProperty<KeyboardAndMouseMotionModes> KeyboardAndMouseMotionMode { get; }
-        public IReadOnlyReactiveProperty<GamepadMotionModes> GamepadMotionMode { get; }
-        public IReadOnlyReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; }
+        public ReadOnlyReactiveProperty<HandTargetType> LeftTarget { get; }
+        public ReadOnlyReactiveProperty<HandTargetType> RightTarget { get; }
+        public ReadOnlyReactiveProperty<bool> IsAlwaysHandDown { get; }
+        public ReadOnlyReactiveProperty<KeyboardAndMouseMotionModes> KeyboardAndMouseMotionMode { get; }
+        public ReadOnlyReactiveProperty<GamepadMotionModes> GamepadMotionMode { get; }
+        public ReadOnlyReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; }
 
         //NOTE: この辺は値というよりメソッドライクなものなので、RP<T>にせずにgetter methodを使います
         public bool CheckCoolDown(ReactedHand hand, HandTargetType targetType) 

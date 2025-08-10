@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         byte[] GetData();
 
         /// <summary> MainViewerシーンの起動よりも後でVRMの再読み込みが要求されると発火します。 </summary>
-        IObservable<Unit> ReloadRequested { get; }
+        Observable<Unit> ReloadRequested { get; }
     }
 
     /// <summary>

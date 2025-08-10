@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror.Buddy
         /// アバターのボーンを親にする場合、そのボーンを返す。
         /// アバターのボーンを親にしない場合は <see cref="HumanBodyBones.LastBone"/> を返す
         /// </summary>
-        public IReadOnlyReactiveProperty<HumanBodyBones> ParentBone => _parentBone;
+        public ReadOnlyReactiveProperty<HumanBodyBones> ParentBone => _parentBone;
 
         public ParentTypes ParentType { get; private set; } = ParentTypes.None;
         

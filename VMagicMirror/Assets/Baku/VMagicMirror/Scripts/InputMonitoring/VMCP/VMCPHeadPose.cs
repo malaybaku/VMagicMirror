@@ -9,10 +9,10 @@ namespace Baku.VMagicMirror.VMCP
         private const float ResetLerpFactor = 6f;
 
         private readonly ReactiveProperty<bool> _isActive = new(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
         private readonly ReactiveProperty<bool> _isConnected = new(true);
-        public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
+        public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
         /// <summary>
         /// NOTE: <see cref="IsActive"/>がtrueのときだけ非nullになれる

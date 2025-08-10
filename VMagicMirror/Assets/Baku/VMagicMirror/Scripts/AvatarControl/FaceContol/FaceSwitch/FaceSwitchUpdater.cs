@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror
         // NOTE: 上記の値に対してExpressionKeyへの変換、およびトラッキングロスしたケースもケアした、公開可能なFaceSwitchの値
         private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue
             = new(FaceSwitchKeyApplyContent.Empty());
-        public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
+        public ReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
         
         public bool HasClipToApply => _currentValue.Value.HasValue;
         // NOTE: `HasValue &&` もチェックしたほうがロバストだが、冗長なはずなのでやってない

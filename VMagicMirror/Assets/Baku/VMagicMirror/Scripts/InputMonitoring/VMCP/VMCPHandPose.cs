@@ -44,10 +44,10 @@ namespace Baku.VMagicMirror
             };
         }
 
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
-        public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
-        public IReadOnlyReactiveProperty<IKDataStruct> LeftHandPose => _leftHandPose;
-        public IReadOnlyReactiveProperty<IKDataStruct> RightHandPose => _rightHandPose;
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
+        public ReadOnlyReactiveProperty<IKDataStruct> LeftHandPose => _leftHandPose;
+        public ReadOnlyReactiveProperty<IKDataStruct> RightHandPose => _rightHandPose;
         public VMCPBasedHumanoid Humanoid { get; private set; }
 
         public void ApplyFingerLocalPose()

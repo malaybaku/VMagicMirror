@@ -8,10 +8,10 @@ namespace Baku.VMagicMirror.Buddy
     public class AvatarMotionEventApiImplement : PresenterBase
     {
         private readonly ReactiveProperty<string> _leftHandTargetType = new();
-        public IReadOnlyReactiveProperty<string> LeftHandTargetType => _leftHandTargetType;
+        public ReadOnlyReactiveProperty<string> LeftHandTargetType => _leftHandTargetType;
 
         private readonly ReactiveProperty<string> _rightHandTargetType = new();
-        public IReadOnlyReactiveProperty<string> RightHandTargetType => _rightHandTargetType;
+        public ReadOnlyReactiveProperty<string> RightHandTargetType => _rightHandTargetType;
 
         private readonly Subject<string> _keyboardKeyDown = new();
         /// <summary>

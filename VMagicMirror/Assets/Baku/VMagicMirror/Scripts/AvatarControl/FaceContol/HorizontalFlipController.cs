@@ -10,10 +10,10 @@ namespace Baku.VMagicMirror
         private readonly BodyMotionModeController _bodyMotionModeController;
         
         private readonly ReactiveProperty<bool> _disableFaceHorizontalFlip = new(false);
-        public IReadOnlyReactiveProperty<bool> DisableFaceHorizontalFlip => _disableFaceHorizontalFlip;
+        public ReadOnlyReactiveProperty<bool> DisableFaceHorizontalFlip => _disableFaceHorizontalFlip;
         
         private readonly ReactiveProperty<bool> _disableHandHorizontalFlip = new(false);
-        public IReadOnlyReactiveProperty<bool> DisableHandHorizontalFlip => _disableHandHorizontalFlip;
+        public ReadOnlyReactiveProperty<bool> DisableHandHorizontalFlip => _disableHandHorizontalFlip;
 
         // NOTE: 書いてる通り、UI上では手以外と手の反転オプションが独立の存在するので、そこは注意。
         private readonly ReactiveProperty<bool> _uiOptionDisablesFaceHorizontalFlip = new(false);

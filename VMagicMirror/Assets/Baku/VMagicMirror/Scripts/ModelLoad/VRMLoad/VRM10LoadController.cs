@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
         private Vrm10Instance _instance = null;
         
         private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
-        public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
+        public ReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
         
         [Inject]
         public VRM10LoadController(

@@ -188,11 +188,11 @@ namespace Baku.VMagicMirror.IK
             
             //出力系で、公開する値
             private readonly ReactiveProperty<Pose> _currentPose = new (Pose.identity);
-            public IReadOnlyReactiveProperty<Pose> CurrentPose => _currentPose;
+            public ReadOnlyReactiveProperty<Pose> CurrentPose => _currentPose;
 
             //NOTE: 指の制御のために使ってもいいような値
             private readonly ReactiveProperty<bool> _isGripping = new(false);
-            public IReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
+            public ReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
 
             private bool _isInitialized = false;
             //NOTE: ハンドルの持ち替え回数を示す値で、1回握り直すたびに増える

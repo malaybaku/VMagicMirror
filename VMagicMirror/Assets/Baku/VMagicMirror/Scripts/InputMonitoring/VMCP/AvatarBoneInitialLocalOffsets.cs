@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly IVRMLoadable _vrmLoadable;
 
         private readonly ReactiveProperty<bool> _hasModel = new ReactiveProperty<bool>();
-        public IReadOnlyReactiveProperty<bool> HasModel => _hasModel;
+        public ReadOnlyReactiveProperty<bool> HasModel => _hasModel;
 
         private readonly Dictionary<HumanBodyBones, Vector3> _initialLocalOffsets
             = new Dictionary<HumanBodyBones, Vector3>();

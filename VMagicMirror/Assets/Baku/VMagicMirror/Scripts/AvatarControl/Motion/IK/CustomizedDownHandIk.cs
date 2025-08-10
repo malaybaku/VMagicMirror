@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
+        public ReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKData LeftHand => _leftHand;

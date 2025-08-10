@@ -33,9 +33,9 @@ namespace Baku.VMagicMirror
             private readonly IIKData _x;
             private readonly IIKData _y;
             //NOTE: Funcを持たすほどでもないので手抜きしてます
-            private readonly IReadOnlyReactiveProperty<bool> _useX;
+            private readonly ReadOnlyReactiveProperty<bool> _useX;
 
-            public SwitchIKData(IIKData x, IIKData y, IReadOnlyReactiveProperty<bool> useX)
+            public SwitchIKData(IIKData x, IIKData y, ReadOnlyReactiveProperty<bool> useX)
             {
                 _x = x;
                 _y = y;

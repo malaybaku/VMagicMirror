@@ -1,14 +1,14 @@
-﻿using System;
+﻿using R3;
 
 namespace Baku.VMagicMirror
 {
     public interface IKeyMouseEventSource
     {
-        IObservable<string> RawKeyDown { get; }
-        IObservable<string> RawKeyUp { get; }
-        IObservable<string> KeyDown { get; }
-        IObservable<string> KeyUp { get; }
-        IObservable<string> MouseButton { get; }
+        Observable<string> RawKeyDown { get; }
+        Observable<string> RawKeyUp { get; }
+        Observable<string> KeyDown { get; }
+        Observable<string> KeyUp { get; }
+        Observable<string> MouseButton { get; }
     }
 
     public static class MouseButtonEventNames

@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror.IK
         /// <summary>
         /// -1 ~ +1 の範囲を取る値。角度は<see cref="HandleAngle"/>で取得できる
         /// </summary>
-        public IReadOnlyReactiveProperty<float> HandleRate => _handleRate;
+        public ReadOnlyReactiveProperty<float> HandleRate => _handleRate;
 
         public float HandleAngle => _handleRate.Value * MaxAngle;
 

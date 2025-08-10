@@ -1,5 +1,5 @@
 using Baku.VMagicMirror.Buddy;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {

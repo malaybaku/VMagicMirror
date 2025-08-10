@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using mattatz.TransformControl;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {

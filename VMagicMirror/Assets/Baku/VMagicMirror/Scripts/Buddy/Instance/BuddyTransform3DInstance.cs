@@ -1,4 +1,4 @@
-using UniRx;
+using R3;
 using UnityEngine;
 using BuddyApi = VMagicMirror.Buddy;
 

@@ -1,6 +1,6 @@
 using System;
 using ModestTree;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {

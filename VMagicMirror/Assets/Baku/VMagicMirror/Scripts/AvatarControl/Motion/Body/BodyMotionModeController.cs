@@ -1,6 +1,6 @@
 using System;
 using Baku.VMagicMirror.GameInput;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror

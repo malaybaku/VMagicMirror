@@ -1,6 +1,6 @@
 using System;
 using Baku.VMagicMirror.Buddy.Api;
-using UniRx;
+using R3;
 using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy

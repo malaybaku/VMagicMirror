@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using Baku.VMagicMirror.IK;
 using mattatz.TransformControl;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror

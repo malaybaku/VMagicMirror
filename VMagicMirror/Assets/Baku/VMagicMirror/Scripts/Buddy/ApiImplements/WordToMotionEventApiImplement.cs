@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Baku.VMagicMirror.WordToMotion;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {

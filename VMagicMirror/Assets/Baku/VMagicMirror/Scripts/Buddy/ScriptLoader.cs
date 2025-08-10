@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror.Buddy

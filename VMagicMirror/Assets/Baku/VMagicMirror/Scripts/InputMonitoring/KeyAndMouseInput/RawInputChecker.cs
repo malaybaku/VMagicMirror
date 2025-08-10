@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
-using UniRx;
+using R3;
 using Zenject;
 using Random = UnityEngine.Random;
 

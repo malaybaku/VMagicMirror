@@ -1,7 +1,7 @@
 ﻿using Baku.VMagicMirror.GameInput;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 

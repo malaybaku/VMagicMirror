@@ -1,7 +1,7 @@
 using System;
 using TMPro;
 using UniGLTF.Extensions.VRMC_vrm;
-using UniRx;
+using R3;
 using UnityEngine;
 using UnityEngine.UI;
 

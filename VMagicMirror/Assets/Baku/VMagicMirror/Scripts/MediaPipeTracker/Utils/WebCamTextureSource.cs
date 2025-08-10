@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK

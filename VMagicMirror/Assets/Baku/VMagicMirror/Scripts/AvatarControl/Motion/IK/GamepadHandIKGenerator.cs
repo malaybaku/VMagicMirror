@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.IK
 {

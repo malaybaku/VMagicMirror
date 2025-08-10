@@ -1,6 +1,6 @@
 using System;
 using Baku.VMagicMirror.Buddy;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 

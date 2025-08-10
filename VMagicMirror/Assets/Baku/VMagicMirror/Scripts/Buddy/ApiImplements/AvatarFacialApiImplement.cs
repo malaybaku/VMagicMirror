@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Baku.VMagicMirror.ExternalTracker;
-using UniRx;
+using R3;
 using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy

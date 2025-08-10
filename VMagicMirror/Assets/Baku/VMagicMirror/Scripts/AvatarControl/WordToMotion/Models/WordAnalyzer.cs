@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror

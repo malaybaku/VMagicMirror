@@ -1,6 +1,6 @@
 using System;
 using UniGLTF.Extensions.VRMC_vrm;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using UniVRM10.Migration;

@@ -1,5 +1,5 @@
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror

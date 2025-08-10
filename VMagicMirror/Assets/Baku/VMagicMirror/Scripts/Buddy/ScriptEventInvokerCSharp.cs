@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Baku.VMagicMirror.Buddy.Api;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 

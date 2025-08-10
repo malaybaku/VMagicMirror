@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Baku.VMagicMirror.MotionExporter;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.WordToMotion

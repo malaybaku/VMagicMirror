@@ -2,7 +2,7 @@
 using Baku.VMagicMirror.Buddy;
 using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 

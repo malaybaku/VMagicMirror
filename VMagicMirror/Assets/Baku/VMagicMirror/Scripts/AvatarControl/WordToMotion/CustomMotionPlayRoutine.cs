@@ -1,6 +1,6 @@
 using System;
 using Baku.VMagicMirror.MotionExporter;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.WordToMotion

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {

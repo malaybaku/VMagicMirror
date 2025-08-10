@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using R3;
-using UniRx.Triggers;
+using R3.Triggers;
 using UnityEngine;
 using Zenject;
 

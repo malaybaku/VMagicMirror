@@ -109,8 +109,8 @@ namespace Baku.VMagicMirror
                 WidthFactorLerp * Time.deltaTime
             );
 
-            _ik.solver.leftArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.LeftTargetType.Value);
-            _ik.solver.rightArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.RightTargetType.Value);
+            _ik.solver.leftArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.LeftTargetType.CurrentValue);
+            _ik.solver.rightArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.RightTargetType.CurrentValue);
 
             //TODO: とくに画像ベースでハンドトラッキングしているとき、胴体や胸に手が食い込むのをBendGoalの位置調整で対策したい
             // が、bendGoalだけで頑張るのが結構ムズそうなので一旦見送っている

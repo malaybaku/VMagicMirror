@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
 
         private float _mouseActionCount = 0f;
 
-        private HandTargetType RightHandTargetType => handIKIntegrator.RightTargetType.Value;
+        private HandTargetType RightHandTargetType => handIKIntegrator.RightTargetType.CurrentValue;
         
         [Inject]
         public void Initialize(
@@ -225,8 +225,8 @@ namespace Baku.VMagicMirror
         private bool IsGameInputAndThirdPersonViewMode()
         {
             return 
-                _motionModeController.MotionMode.Value == BodyMotionMode.GameInputLocomotion &&
-                _motionModeController.CurrentGameInputLocomotionStyle.Value != GameInputLocomotionStyle.FirstPerson;
+                _motionModeController.MotionMode.CurrentValue == BodyMotionMode.GameInputLocomotion &&
+                _motionModeController.CurrentGameInputLocomotionStyle.CurrentValue != GameInputLocomotionStyle.FirstPerson;
         }
 
         private class CameraBasedLookAtIk : IIKData

@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -17,8 +17,8 @@ namespace Baku.VMagicMirror
 
         private readonly Subject<Unit> _preRuntimeProcessed = new();
         private readonly Subject<Unit> _postRuntimeProcessed = new();
-        public IObservable<Unit> PostRuntimeProcess => _postRuntimeProcessed;
-        public IObservable<Unit> PreRuntimeProcess => _preRuntimeProcessed;
+        public Observable<Unit> PostRuntimeProcess => _postRuntimeProcessed;
+        public Observable<Unit> PreRuntimeProcess => _preRuntimeProcessed;
         
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)

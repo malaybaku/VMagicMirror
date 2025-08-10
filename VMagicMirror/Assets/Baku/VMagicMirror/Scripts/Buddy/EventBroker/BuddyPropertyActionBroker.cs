@@ -1,12 +1,12 @@
 using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.Buddy
 {
     public class BuddyPropertyActionBroker
     {
         private readonly Subject<BuddyPropertyAction> _actionRequested = new();
-        public IObservable<string> ActionRequestedForBuddy(BuddyId id) => _actionRequested
+        public Observable<string> ActionRequestedForBuddy(BuddyId id) => _actionRequested
             .Where(a => a.BuddyId.Equals(id))
             .Select(a => a.PropertyName);
         

@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -29,11 +29,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public bool IsHandTrackingActive { get; set; }
 
         private readonly ReactiveProperty<bool> _shouldUseLipSyncResult = new(true);
-        public IReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
+        public ReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
         public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
 
         private readonly ReactiveProperty<bool> _shouldUsePerfectSyncResult = new();
-        public IReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
+        public ReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
         public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;
         public bool EnableBodyMoveZAxis { get; set; }
 

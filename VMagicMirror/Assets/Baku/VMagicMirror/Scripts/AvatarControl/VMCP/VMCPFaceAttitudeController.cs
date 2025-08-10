@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror
         private void LateUpdate()
         {
             if (!_hasModel || 
-                !_vmcpHeadPose.IsActive.Value ||
+                !_vmcpHeadPose.IsActive.CurrentValue ||
                 _faceControlConfiguration.ControlMode != FaceControlModes.VMCProtocol)
             {
                 _prevRotation = Quaternion.identity;

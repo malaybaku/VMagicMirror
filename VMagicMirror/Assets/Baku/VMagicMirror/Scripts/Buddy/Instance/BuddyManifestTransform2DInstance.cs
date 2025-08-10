@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private readonly Subject<Unit> _layoutUpdated = new();
         /// <summary> ギズモを使ってドラッグ操作によりレイアウトを編集すると、ドラッグ操作の終了時に発火する </summary>
-        public IObservable<Unit> LayoutUpdated => _layoutUpdated;
+        public Observable<Unit> LayoutUpdated => _layoutUpdated;
 
         public BuddyId BuddyId { get; set; } = BuddyId.Empty;
         public string InstanceName { get; set; } = "";

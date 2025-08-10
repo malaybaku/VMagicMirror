@@ -76,7 +76,7 @@ namespace Baku.VMagicMirror.Buddy
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
-                    .WithEmitDebugInformation(_settings.DeveloperModeActive.Value)
+                    .WithEmitDebugInformation(_settings.DeveloperModeActive.CurrentValue)
                     // Buddysより上のフォルダのスクリプトのロードを塞ぐ
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
                     // #r を全面的に制限

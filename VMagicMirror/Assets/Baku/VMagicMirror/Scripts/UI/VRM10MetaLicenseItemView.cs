@@ -1,6 +1,6 @@
 using System;
 using TMPro;
-using UniRx;
+using R3;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private TextMeshProUGUI urlText = null;
 
         //NOTE: 勝手にApplication.OpenUrlしてもそんなに害はないが、いちおうMetaViewControllerに読ます
-        public IObservable<string> OpenUrlRequested => openUrlButton
+        public Observable<string> OpenUrlRequested => openUrlButton
             .OnClickAsObservable()
             .Select(_ => urlText.text);
 

@@ -1,17 +1,17 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.Buddy
 {
     public class AvatarMotionEventApiImplement : PresenterBase
     {
         private readonly ReactiveProperty<string> _leftHandTargetType = new();
-        public IReadOnlyReactiveProperty<string> LeftHandTargetType => _leftHandTargetType;
+        public ReadOnlyReactiveProperty<string> LeftHandTargetType => _leftHandTargetType;
 
         private readonly ReactiveProperty<string> _rightHandTargetType = new();
-        public IReadOnlyReactiveProperty<string> RightHandTargetType => _rightHandTargetType;
+        public ReadOnlyReactiveProperty<string> RightHandTargetType => _rightHandTargetType;
 
         private readonly Subject<string> _keyboardKeyDown = new();
         /// <summary>
@@ -20,40 +20,40 @@ namespace Baku.VMagicMirror.Buddy
         /// - キー名はごく一部(ENTERとか)だけが取得でき、大体のキーは空文字列になる (主にプライバシー観点がモチベ)
         /// TODO: 左手と右手どっちが動いたかくらいは教えたいかも？
         /// </summary>
-        public IObservable<string> KeyboardKeyDown => _keyboardKeyDown;
+        public Observable<string> KeyboardKeyDown => _keyboardKeyDown;
 
         private readonly Subject<Unit> _touchPadMouseButtonDown = new();
         /// <summary>
         /// タッチパッドが表示された状態でアバターがクリック動作をしたとき、押し込みに対して発火する。どのボタンをクリックしたかは公開されない
         /// </summary>
-        public IObservable<Unit> TouchPadMouseButtonDown => _touchPadMouseButtonDown;
+        public Observable<Unit> TouchPadMouseButtonDown => _touchPadMouseButtonDown;
 
         private readonly Subject<Unit> _penTabletMouseButtonDown = new();
         /// <summary>
         /// ペンタブレットが表示された状態でアバターがクリック動作をしたとき、押し込みに対して発火する。どのボタンをクリックしたかは公開されない
         /// </summary>
-        public IObservable<Unit> PenTabletMouseButtonDown => _penTabletMouseButtonDown;
+        public Observable<Unit> PenTabletMouseButtonDown => _penTabletMouseButtonDown;
 
         private readonly Subject<(ReactedHand, GamepadKey)> _gamepadButtonDown = new();
         /// <summary>
         /// ゲームパッドが表示された状態で何らかのゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティック入力に対しては発火しない
         /// </summary>
-        public IObservable<(ReactedHand, GamepadKey)> GamepadButtonDown => _gamepadButtonDown;
+        public Observable<(ReactedHand, GamepadKey)> GamepadButtonDown => _gamepadButtonDown;
 
         private readonly Subject<GamepadKey> _arcadeStickButtonDown = new();
         /// <summary>
         /// アーケードスティックが表示された状態でゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティックには反応せず、かつアーケードスティック上で対応していないボタンを押した場合も反応しない
         /// </summary>
-        public IObservable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
+        public Observable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
 
         private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly HandIKIntegrator _handIKIntegrator;
         private readonly CancellationTokenSource _cts = new();
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
         
         public AvatarMotionEventApiImplement(
             BuddySettingsRepository buddySettingsRepository,
@@ -147,14 +147,14 @@ namespace Baku.VMagicMirror.Buddy
         private void OnKeyboardKeyDownMotionStarted(ReactedHand hand, string keyName)
         {
             if (hand == ReactedHand.None ||
-                _bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+                _bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }
 
             var actualTarget = hand == ReactedHand.Left
-                ? _handIKIntegrator.LeftTargetType.Value
-                : _handIKIntegrator.RightTargetType.Value;
+                ? _handIKIntegrator.LeftTargetType.CurrentValue
+                : _handIKIntegrator.RightTargetType.CurrentValue;
             if (actualTarget != HandTargetType.Keyboard)
             {
                 return;
@@ -179,7 +179,7 @@ namespace Baku.VMagicMirror.Buddy
                 return false;
             }
 
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return false;
             }
@@ -188,7 +188,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnGamepadButtonDownMotionStarted(ReactedHand hand, GamepadKey key)
         {
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }
@@ -203,7 +203,7 @@ namespace Baku.VMagicMirror.Buddy
         
         private void OnArcadeStickButtonDownMotionStarted(GamepadKey key)
         {
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }

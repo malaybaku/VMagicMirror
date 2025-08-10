@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Baku.VMagicMirror.MediaPipeTracker;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -51,7 +51,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower && _mediaPipeFacialValueRepository.IsTracked);
 
         private readonly ReactiveProperty<bool> _isExternalTrackerPerfectSyncEnabled = new();
-        private IReadOnlyReactiveProperty<bool> WebCamHighPowerModePerfectSyncEnabled => 
+        private ReadOnlyReactiveProperty<bool> WebCamHighPowerModePerfectSyncEnabled => 
             _mediaPipeTrackerRuntimeSettings.ShouldUsePerfectSyncResult;
 
         [Inject]

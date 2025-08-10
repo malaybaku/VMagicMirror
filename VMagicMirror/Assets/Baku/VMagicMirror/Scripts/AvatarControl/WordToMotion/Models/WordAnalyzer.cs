@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         public event Action<string> WordDetected;
 
         private readonly Subject<string> _wordDetected = new Subject<string>();
-        public IObservable<string> WordDetectedAsObservable => _wordDetected;
+        public Observable<string> WordDetectedAsObservable => _wordDetected;
 
         //キューの方がいいかも
         private readonly StringBuilder _sb = new StringBuilder(64);

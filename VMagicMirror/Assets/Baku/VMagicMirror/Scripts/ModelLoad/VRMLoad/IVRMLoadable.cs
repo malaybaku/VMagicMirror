@@ -1,5 +1,5 @@
 ﻿using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -21,6 +21,6 @@ namespace Baku.VMagicMirror
         public event Action LocalVrmLoadEnded;
         
         /// <summary> 現在のモデルがVRM 0.xなのかVRM 1.0なのかが分かるプロパティ </summary>
-        IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }
+        ReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }
     }
 }

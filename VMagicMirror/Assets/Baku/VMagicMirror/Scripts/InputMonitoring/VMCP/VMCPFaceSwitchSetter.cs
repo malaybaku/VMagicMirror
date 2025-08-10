@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             // NOTE: 単にブレンドシェイプを受信していることだけでなく、
             // 「パーフェクトシンクっぽいデータを受け取っている」という条件もつけていることに注意
-            if (_blendShape.IsActive.Value && _blendShape.SeemsToHavePerfectSyncData.Value)
+            if (_blendShape.IsActive.CurrentValue && _blendShape.SeemsToHavePerfectSyncData.CurrentValue)
             {
                 _faceSwitch.Update(_blendShape.FaceTrackBlendShapes);
             }

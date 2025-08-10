@@ -1,5 +1,5 @@
 using System.Linq;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -215,7 +215,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     (cameraDeviceName, x, y, z) => (cameraDeviceName, useWebCam: x || y || z)
                 )
                 // NOTE: 「ハンドトラッキングを停止し、すぐにハンド + 表情トラッキングを開始」のようなケースの場合に最後の状態だけ通すようにしたい
-                .ThrottleFrame(1)
+                .DebounceFrame(1)
                 .DistinctUntilChanged()
                 .Subscribe(value => _webCamTextureSource.SetActive(value.useWebCam, value.cameraDeviceName))
                 .AddTo(this);

@@ -1,7 +1,7 @@
 ﻿using Baku.VMagicMirror.IK;
 using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -260,8 +260,8 @@ namespace Baku.VMagicMirror
         //NOTE: 値自体はCurrentRightHand.TargetTypeとかと等しい。値を他のIKに露出するために使う
         private readonly ReactiveProperty<HandTargetType> _leftTargetType = new(HandTargetType.Keyboard);
         private readonly ReactiveProperty<HandTargetType> _rightTargetType = new(HandTargetType.Keyboard);
-        public IReadOnlyReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
-        public IReadOnlyReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
+        public ReadOnlyReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
+        public ReadOnlyReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
 
         #region API
 
@@ -573,7 +573,7 @@ namespace Baku.VMagicMirror
                 return false;
             }
             
-            if (_vmcpHand.IsActive.Value && target != HandTargetType.VMCPReceiveResult && 
+            if (_vmcpHand.IsActive.CurrentValue && target != HandTargetType.VMCPReceiveResult && 
                 target != HandTargetType.ClapMotion && target != HandTargetType.AlwaysDown
                )
             {

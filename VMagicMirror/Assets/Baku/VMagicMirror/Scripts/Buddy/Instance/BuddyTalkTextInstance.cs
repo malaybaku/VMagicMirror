@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
@@ -43,10 +43,10 @@ namespace Baku.VMagicMirror.Buddy
 
         // NOTE: IO<T>を最終的にScriptEventInvokerの発火に帰着させたい
         private readonly Subject<TalkTextItemInternal> _itemDequeued = new();
-        public IObservable<TalkTextItemInternal> ItemDequeued => _itemDequeued;
+        public Observable<TalkTextItemInternal> ItemDequeued => _itemDequeued;
 
         private readonly Subject<TalkTextItemInternal> _itemFinished = new();
-        public IObservable<TalkTextItemInternal> ItemFinished => _itemFinished;
+        public Observable<TalkTextItemInternal> ItemFinished => _itemFinished;
 
         private void Start()
         {

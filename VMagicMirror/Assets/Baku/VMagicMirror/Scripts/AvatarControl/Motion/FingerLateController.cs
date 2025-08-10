@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {

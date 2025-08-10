@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror
                 !_enableHighPowerMode.Value &&
                 !_enableExTracker.Value &&
                 !_enableHandTracking.Value &&
-                (!_vmcpActiveness.IsActive.Value || !_disableCameraDuringVmcpActive.Value);
+                (!_vmcpActiveness.IsActive.CurrentValue || !_disableCameraDuringVmcpActive.Value);
 
             if (useCameraForLowPowerFaceTracking)
             {

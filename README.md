@@ -133,7 +133,8 @@ Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要な
 * [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
-* [UniRx](https://github.com/neuecc/UniRx)
+* [R3](https://github.com/Cysharp/R3)
+* [UniTask](https://github.com/Cysharp/UniTask)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。
@@ -142,6 +143,7 @@ Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要な
 
 NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
 
+* [R3](https://github.com/Cysharp/R3)
 * [NAudio](https://github.com/naudio/NAudio)
 
 

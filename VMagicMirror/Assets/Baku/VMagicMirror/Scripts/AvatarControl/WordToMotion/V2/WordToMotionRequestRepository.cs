@@ -1,6 +1,6 @@
 using System;
 using ModestTree;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.WordToMotion
     {
         private readonly ReactiveProperty<MotionRequest[]> _requests =
             new ReactiveProperty<MotionRequest[]>(Array.Empty<MotionRequest>());
-        public IReadOnlyReactiveProperty<MotionRequest[]> Requests => _requests;
+        public ReadOnlyReactiveProperty<MotionRequest[]> Requests => _requests;
 
         public bool TryGet(int i, out MotionRequest result)
         {

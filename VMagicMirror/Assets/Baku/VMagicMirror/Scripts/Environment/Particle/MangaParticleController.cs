@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -95,31 +95,31 @@ namespace Baku.VMagicMirror
             // - Throttleの長さはパーティクルごとに違ってよいことに注意
 
             _runKeyDownParticle
-                .Where(_ => _motionModeController.MotionMode.Value == BodyMotionMode.Default)
+                .Where(_ => _motionModeController.MotionMode.CurrentValue == BodyMotionMode.Default)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
                 .Subscribe(_ => _view.RunNormalKeyDownEffect())
                 .AddTo(this);
 
             _runEnterKeyDownParticle
-                .Where(_ => _motionModeController.MotionMode.Value == BodyMotionMode.Default)
+                .Where(_ => _motionModeController.MotionMode.CurrentValue == BodyMotionMode.Default)
                 .ThrottleFirst(TimeSpan.FromSeconds(1.5f))
                 .Subscribe(_ => _view.RunEnterKeyDownEffect())
                 .AddTo(this);
 
             _runMouseClickParticle
-                .Where(_ => _motionModeController.MotionMode.Value == BodyMotionMode.Default)
+                .Where(_ => _motionModeController.MotionMode.CurrentValue == BodyMotionMode.Default)
                 .ThrottleFirst(TimeSpan.FromSeconds(1.2f))
                 .Subscribe(_ => _view.RunMouseKeyDownEffect())
                 .AddTo(this);
 
             _runGamepadButtonParticle
-                .Where(_ => _motionModeController.MotionMode.Value == BodyMotionMode.Default)
+                .Where(_ => _motionModeController.MotionMode.CurrentValue == BodyMotionMode.Default)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.52f))
                 .Subscribe(_ => _view.RunGamepadButtonDownEffect())
                 .AddTo(this);
 
             _runGamepadStickParticle
-                .Where(_ => _motionModeController.MotionMode.Value == BodyMotionMode.Default)
+                .Where(_ => _motionModeController.MotionMode.CurrentValue == BodyMotionMode.Default)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.87f))
                 .Subscribe(_ => _view.RunGamepadStickMoveEffect())
                 .AddTo(this);

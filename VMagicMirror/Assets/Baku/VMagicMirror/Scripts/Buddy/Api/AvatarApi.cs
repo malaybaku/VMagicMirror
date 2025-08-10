@@ -49,7 +49,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             get
             {
                 _impl.RegisterApiInstanceAsMicrophoneRequire(this);
-                return _impl.IsTalking.Value;
+                return _impl.IsTalking.CurrentValue;
             }
         }
         

@@ -5,7 +5,7 @@ using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
 using RootMotion.FinalIK;
 using UniGLTF.Extensions.VRMC_vrm;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using UniVRM10.Migration;
@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
         private Vrm10Instance _instance = null;
         
         private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
-        public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
+        public ReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
         
         [Inject]
         public VRM10LoadController(

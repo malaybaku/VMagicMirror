@@ -106,7 +106,7 @@ namespace Baku.VMagicMirror
             
             var offset = _vmcpHeadPose.PositionOffset;
 
-            var goal = _vmcpHeadPose.IsConnected.Value
+            var goal = _vmcpHeadPose.IsConnected.CurrentValue
                 ? new Vector3(
                     Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
                     Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
@@ -114,7 +114,7 @@ namespace Baku.VMagicMirror
                 )
                 : Vector3.zero;
 
-            if (_vmcpHeadPose.IsConnected.Value)
+            if (_vmcpHeadPose.IsConnected.CurrentValue)
             {
                 var addedLerp = 
                     _currentLerpFactor +

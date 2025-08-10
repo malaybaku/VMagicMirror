@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
                 .Subscribe(fov =>
                 {
                     _cameraForRay.fieldOfView = fov;
-                    if (_spoutSenderController.NeedFovModify.Value)
+                    if (_spoutSenderController.NeedFovModify.CurrentValue)
                     {
                         _mainCamera.fieldOfView = GetModifiedFov(fov);
                     }

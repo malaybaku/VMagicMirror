@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Baku.VMagicMirror.Buddy.Api;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy

@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             //TODO: Word to Motionのモーション実行中も指の状態適用をスキップすべきではある
             //ハンドトラッキング中にWtMの手モーションするか？と思ったためいったん保留している
-            if (_hasAction && _bodyMotionModeController.MotionMode.Value != BodyMotionMode.GameInputLocomotion)
+            if (_hasAction && _bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.GameInputLocomotion)
             {
                 _lateUpdateAction();
             }

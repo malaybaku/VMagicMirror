@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror.IK
         /// <summary>
         /// -1 ~ +1 の範囲を取る値。角度は<see cref="HandleAngle"/>で取得できる
         /// </summary>
-        public IReadOnlyReactiveProperty<float> HandleRate => _handleRate;
+        public ReadOnlyReactiveProperty<float> HandleRate => _handleRate;
 
         public float HandleAngle => _handleRate.Value * MaxAngle;
 
@@ -102,11 +102,11 @@ namespace Baku.VMagicMirror.IK
         {
             if (_useCarHandle && _leanMode is GamepadLeanModes.GamepadLeanLeftButtons)
             {
-                _stickAxisX = _gamepad.ArrowButtonsStickPosition.x * StickValueToRateFactor;
+                _stickAxisX = _gamepad.ArrowButtonsStickPosition.CurrentValue.x * StickValueToRateFactor;
             }
 
             var hasInput =
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default &&
                 _useCarHandle && 
                 Mathf.Abs(_stickAxisX) > StickThreshold;
 

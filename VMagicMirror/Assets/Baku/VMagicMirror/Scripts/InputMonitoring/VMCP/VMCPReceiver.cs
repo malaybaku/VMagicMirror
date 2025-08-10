@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using UniRx;
+using R3;
 using UnityEngine;
 using uOSC;
 using Zenject;
@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private readonly ReactiveProperty<bool> _isLocomotionReceiveSettingActive = new(false);
         //NOTE: 通信でデータが受信できていなくとも、下半身モーションを受信しようとする設定ならtrueになる
-        public IReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
+        public ReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
         
         [Inject]
         public VMCPReceiver(
@@ -86,7 +86,7 @@ namespace Baku.VMagicMirror.VMCP
             //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく
             // 最初の1回はアプリケーション起動後のやつなので無視
             _connectedValue
-                .Throttle(TimeSpan.FromSeconds(0.5f))
+                .Debounce(TimeSpan.FromSeconds(0.5f))
                 .Skip(1)
                 .Subscribe(_ => NotifyConnectStatus())
                 .AddTo(this);
@@ -306,7 +306,7 @@ namespace Baku.VMagicMirror.VMCP
             // - BlendShapeの受信状態は単に受信が停止したら検知可能なので、こういうケアをしないでよい
             // - 非ActiveなときはHeadPose/HandPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
 
-            if (_headPose.IsActive.Value)
+            if (_headPose.IsActive.CurrentValue)
             {
                 for (var i = 0; i < _dataPassSettings.Length; i++)
                 {
@@ -319,7 +319,7 @@ namespace Baku.VMagicMirror.VMCP
                 }
             }
 
-            if (_handPose.IsActive.Value)
+            if (_handPose.IsActive.CurrentValue)
             {
                 for (var i = 0; i < _dataPassSettings.Length; i++)
                 {
@@ -332,7 +332,7 @@ namespace Baku.VMagicMirror.VMCP
                 }
             }
             
-            if (_lowerBodyPose.IsActive.Value)
+            if (_lowerBodyPose.IsActive.CurrentValue)
             {
                 for (var i = 0; i < _dataPassSettings.Length; i++)
                 {

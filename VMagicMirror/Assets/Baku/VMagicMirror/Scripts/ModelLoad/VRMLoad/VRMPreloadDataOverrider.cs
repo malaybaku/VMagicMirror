@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
         public bool ShouldIgnoreNonPreloadData { get; private set; }
 
         private readonly Subject<PreloadDataLoadRequest> _loadRequested = new();
-        public IObservable<PreloadDataLoadRequest> LoadRequested => _loadRequested;
+        public Observable<PreloadDataLoadRequest> LoadRequested => _loadRequested;
         
         public override void Initialize()
         {

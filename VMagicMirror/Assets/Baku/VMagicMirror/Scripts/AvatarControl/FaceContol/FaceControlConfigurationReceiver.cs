@@ -1,5 +1,5 @@
 ﻿using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror
             var webCamHighPowerModeActive = _enableWebCamHighPowerMode.Value || _enableHandTracking.Value;
 
             _config.SetFaceControlMode(
-                _vmcpHeadPose.IsActive.Value ? FaceControlModes.VMCProtocol :
+                _vmcpHeadPose.IsActive.CurrentValue ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
                 (_enableWebCamTracking.Value && webCamHighPowerModeActive) ? FaceControlModes.WebCamHighPower :
                 _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :

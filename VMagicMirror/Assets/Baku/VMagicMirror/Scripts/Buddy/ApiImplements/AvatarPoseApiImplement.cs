@@ -29,15 +29,15 @@ namespace Baku.VMagicMirror.Buddy
 
         private bool _isLoaded;
         private bool InteractionApiEnabled =>
-            _buddySettingsRepository.InteractionApiEnabled.Value;
+            _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
 
         public bool UseGameInputMotion =>
             InteractionApiEnabled && 
-            _bodyMotionMode.MotionMode.Value is BodyMotionMode.GameInputLocomotion;
+            _bodyMotionMode.MotionMode.CurrentValue is BodyMotionMode.GameInputLocomotion;
 
         public bool UseStandingOnlyMode =>
             InteractionApiEnabled &&
-            _bodyMotionMode.MotionMode.Value is BodyMotionMode.StandingOnly;
+            _bodyMotionMode.MotionMode.CurrentValue is BodyMotionMode.StandingOnly;
         
         public bool HasBone(HumanBodyBones bone)
         {

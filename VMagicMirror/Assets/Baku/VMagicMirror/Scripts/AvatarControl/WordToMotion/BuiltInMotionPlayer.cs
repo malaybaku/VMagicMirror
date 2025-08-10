@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror.WordToMotion

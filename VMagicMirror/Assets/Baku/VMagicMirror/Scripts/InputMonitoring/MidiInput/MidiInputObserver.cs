@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UniRx;
+using R3;
 using MidiJack;
 
 namespace Baku.VMagicMirror
@@ -9,10 +9,10 @@ namespace Baku.VMagicMirror
     {
         //NOTE: MIDI入力はWPF側からUWPのAPIで読み取った方がいいかもしれないので、気になったら変える
         private readonly Subject<int> _noteOn = new Subject<int>();
-        public IObservable<int> NoteOn => _noteOn;
+        public Observable<int> NoteOn => _noteOn;
         
         private readonly Subject<(int, float)> _knobValue = new Subject<(int, float)>();
-        public IObservable<(int, float)> KnobValue => _knobValue;
+        public Observable<(int, float)> KnobValue => _knobValue;
         
         private void Start()
         {

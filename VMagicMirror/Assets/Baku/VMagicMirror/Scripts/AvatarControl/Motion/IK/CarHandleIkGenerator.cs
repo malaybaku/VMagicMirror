@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
@@ -49,8 +49,8 @@ namespace Baku.VMagicMirror.IK
             //該当モードでスティックに触ると両手がハンドル用IKになる: 片手ずつでもいいかもだが
             dependency.Events.MoveLeftGamepadStick += v =>
             {
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.CarController)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.CarController)
                 {
                     return;
                 }
@@ -61,8 +61,8 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.MoveRightGamepadStick += v =>
             {
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.CarController)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.CarController)
                 {
                     return;
                 }
@@ -94,8 +94,8 @@ namespace Baku.VMagicMirror.IK
         
         public override void Update()
         {
-            if (!(Dependency.Config.LeftTarget.Value is HandTargetType.CarHandle ||
-                Dependency.Config.RightTarget.Value is HandTargetType.CarHandle))
+            if (!(Dependency.Config.LeftTarget.CurrentValue is HandTargetType.CarHandle ||
+                Dependency.Config.RightTarget.CurrentValue is HandTargetType.CarHandle))
             {
                 return;
             }
@@ -117,9 +117,9 @@ namespace Baku.VMagicMirror.IK
 
         private void UpdateFingerState()
         {
-            if (Dependency.Config.LeftTarget.Value is HandTargetType.CarHandle)
+            if (Dependency.Config.LeftTarget.CurrentValue is HandTargetType.CarHandle)
             {
-                if (_leftHandState.IsGripping.Value)
+                if (_leftHandState.IsGripping.CurrentValue)
                 {
                     _fingerController.GripLeftHand();
                 }
@@ -129,9 +129,9 @@ namespace Baku.VMagicMirror.IK
                 }
             }
 
-            if (Dependency.Config.RightTarget.Value is HandTargetType.CarHandle)
+            if (Dependency.Config.RightTarget.CurrentValue is HandTargetType.CarHandle)
             {
-                if (_rightHandState.IsGripping.Value)
+                if (_rightHandState.IsGripping.CurrentValue)
                 {
                     _fingerController.GripRightHand();
                 }
@@ -188,11 +188,11 @@ namespace Baku.VMagicMirror.IK
             
             //出力系で、公開する値
             private readonly ReactiveProperty<Pose> _currentPose = new (Pose.identity);
-            public IReadOnlyReactiveProperty<Pose> CurrentPose => _currentPose;
+            public ReadOnlyReactiveProperty<Pose> CurrentPose => _currentPose;
 
             //NOTE: 指の制御のために使ってもいいような値
             private readonly ReactiveProperty<bool> _isGripping = new(false);
-            public IReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
+            public ReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
 
             private bool _isInitialized = false;
             //NOTE: ハンドルの持ち替え回数を示す値で、1回握り直すたびに増える

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
         public SourceType SourceType => SourceType.KeyboardTyping;
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
-        public IObservable<int> RunMotionRequested => _runMotionRequested;
+        public Observable<int> RunMotionRequested => _runMotionRequested;
 
         private readonly WordToMotionRequestRepository _repository;
         private readonly IKeyMouseEventSource _keyMouseEventSource;
@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 .AddTo(this);
 
             _keyMouseEventSource.RawKeyDown
-                .Throttle(TimeSpan.FromSeconds(KeyInputForgetTime))
+                .Debounce(TimeSpan.FromSeconds(KeyInputForgetTime))
                 .Subscribe(_ => _wordAnalyzer.Clear())
                 .AddTo(this);
 

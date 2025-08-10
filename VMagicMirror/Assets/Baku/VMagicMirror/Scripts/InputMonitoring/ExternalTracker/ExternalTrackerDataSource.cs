@@ -237,7 +237,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
         #region トラッキングデータの内訳
 
-        public bool DisableHorizontalFlip => _horizontalFlipController?.DisableFaceHorizontalFlip.Value ?? false;
+        public bool DisableHorizontalFlip => _horizontalFlipController?.DisableFaceHorizontalFlip.CurrentValue ?? false;
         
         /// <summary>
         /// 現在の顔トラッキング情報を取得します。

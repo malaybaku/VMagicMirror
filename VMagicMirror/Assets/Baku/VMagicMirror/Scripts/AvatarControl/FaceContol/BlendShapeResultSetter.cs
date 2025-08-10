@@ -93,7 +93,7 @@ namespace Baku.VMagicMirror
                     _wtmBlendShape.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
-                else if (_vmcpBlendShape.IsActive.Value)
+                else if (_vmcpBlendShape.IsActive.CurrentValue)
                 {
                     _wtmBlendShape.Accumulate(_accumulator);
                     _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
@@ -123,7 +123,7 @@ namespace Baku.VMagicMirror
                     _faceSwitchUpdater.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
-                else if (_vmcpBlendShape.IsActive.Value)
+                else if (_vmcpBlendShape.IsActive.CurrentValue)
                 {
                     _faceSwitchUpdater.Accumulate(_accumulator);
                     _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
@@ -161,7 +161,7 @@ namespace Baku.VMagicMirror
             }
             
             //VMCPで表情を適用 -> 全部入れる。VMCPで一部の表情だけ指定するのは認めない。
-            if (_vmcpBlendShape.IsActive.Value)
+            if (_vmcpBlendShape.IsActive.CurrentValue)
             {
                 _vmcpBlendShape.AccumulateAllBlendShape(_accumulator);
                 neutralClipSettings.AccumulateNeutralClip(_accumulator);
@@ -215,7 +215,7 @@ namespace Baku.VMagicMirror
             }
             
             //VMCPで表情を適用 > Perfect Syncと類似したマナーで捌くが、リップシンクのマイクを使わない等、いくつかの処理がシンプルになる
-            if (_vmcpBlendShape.IsActive.Value)
+            if (_vmcpBlendShape.IsActive.CurrentValue)
             {
                 _vmcpBlendShape.AccumulateAllBlendShape(
                     _accumulator,
@@ -242,13 +242,13 @@ namespace Baku.VMagicMirror
         {
             if (_wtmBlendShape.HasBlendShapeToApply)
             {
-                _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.Value);
+                _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.CurrentValue);
             }
             else if (_faceSwitchUpdater.HasClipToApply)
             {
-                _resultRepository.SetFaceSwitchResult(_faceSwitchUpdater.CurrentValue.Value);
+                _resultRepository.SetFaceSwitchResult(_faceSwitchUpdater.CurrentValue.CurrentValue);
             }
-            else if (_vmcpBlendShape.IsActive.Value)
+            else if (_vmcpBlendShape.IsActive.CurrentValue)
             {
                 _resultRepository.SetVmcpResult(_vmcpBlendShape.GetCurrentValues());
             }

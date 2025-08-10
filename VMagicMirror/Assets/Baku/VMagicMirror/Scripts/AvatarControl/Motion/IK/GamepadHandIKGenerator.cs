@@ -94,8 +94,8 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.MoveLeftGamepadStick += v =>
             {
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.Gamepad)
                 {
                     return;
                 }
@@ -107,8 +107,8 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.MoveRightGamepadStick += v =>
             {
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.Gamepad)
                 {
                     return;
                 }
@@ -121,8 +121,8 @@ namespace Baku.VMagicMirror.IK
             dependency.Events.GamepadButtonDown += key =>
             {
                 ButtonDown(key);
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.Gamepad)
                 {
                     return;
                 }
@@ -132,7 +132,7 @@ namespace Baku.VMagicMirror.IK
                 {
                     _leftHandState.RaiseRequest();
                     dependency.Reactions.GamepadFinger.ButtonDown(key);
-                    if (dependency.Config.LeftTarget.Value == HandTargetType.Gamepad)
+                    if (dependency.Config.LeftTarget.CurrentValue == HandTargetType.Gamepad)
                     {
                         _buttonDownMotionStarted.OnNext((hand, key));
                     }
@@ -141,7 +141,7 @@ namespace Baku.VMagicMirror.IK
                 {
                     _rightHandState.RaiseRequest();
                     dependency.Reactions.GamepadFinger.ButtonDown(key);
-                    if (dependency.Config.RightTarget.Value == HandTargetType.Gamepad)
+                    if (dependency.Config.RightTarget.CurrentValue == HandTargetType.Gamepad)
                     {
                         _buttonDownMotionStarted.OnNext((hand, key));
                     }
@@ -151,8 +151,8 @@ namespace Baku.VMagicMirror.IK
             dependency.Events.GamepadButtonUp += key =>
             {
                 ButtonUp(key);
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.Gamepad)
                 {
                     return;
                 }
@@ -172,8 +172,8 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.GamepadButtonStick += pos =>
             {
-                if (dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.Gamepad)
                 {
                     return;
                 }
@@ -187,7 +187,7 @@ namespace Baku.VMagicMirror.IK
                 {
                     _handIsOnController =
                         t == HandTargetType.Gamepad ||
-                        dependency.Config.RightTarget.Value == HandTargetType.Gamepad;
+                        dependency.Config.RightTarget.CurrentValue == HandTargetType.Gamepad;
                 })
                 .AddTo(dependency.Component);
 
@@ -196,7 +196,7 @@ namespace Baku.VMagicMirror.IK
                 {
                     _handIsOnController =
                         t == HandTargetType.Gamepad ||
-                        dependency.Config.LeftTarget.Value == HandTargetType.Gamepad;
+                        dependency.Config.LeftTarget.CurrentValue == HandTargetType.Gamepad;
                 })
                 .AddTo(dependency.Component);
             

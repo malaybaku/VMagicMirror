@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.WordToMotion
         public CustomMotionPlayState(
             HumanPoseHandler humanPoseHandler,
             HumanoidAnimationSetter setter, 
-            IObservable<Unit> lateUpdateSource)
+            Observable<Unit> lateUpdateSource)
         {
             _humanPoseHandler = humanPoseHandler;
             _setter = setter;
@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private readonly HumanPoseHandler _humanPoseHandler;
         private readonly HumanoidAnimationSetter _setter;
-        private readonly IObservable<Unit> _lateUpdateSource;
+        private readonly Observable<Unit> _lateUpdateSource;
 
         //NOTE: HumanPoseHandlerで使うだけ
         private HumanPose _humanPose;

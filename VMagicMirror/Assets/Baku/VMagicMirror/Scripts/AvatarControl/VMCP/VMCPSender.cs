@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror.VMCP
         private bool CanSendPose()
         {
             return !(
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.GameInputLocomotion &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.GameInputLocomotion &&
                 BlockMotionSendDuringGameInputLocomotion
                 );
         }

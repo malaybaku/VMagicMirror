@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly HandIKIntegrator _handIKIntegrator;
         private readonly CancellationTokenSource _cts = new();
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
         
         public AvatarMotionEventApiImplement(
             BuddySettingsRepository buddySettingsRepository,
@@ -147,14 +147,14 @@ namespace Baku.VMagicMirror.Buddy
         private void OnKeyboardKeyDownMotionStarted(ReactedHand hand, string keyName)
         {
             if (hand == ReactedHand.None ||
-                _bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+                _bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }
 
             var actualTarget = hand == ReactedHand.Left
-                ? _handIKIntegrator.LeftTargetType.Value
-                : _handIKIntegrator.RightTargetType.Value;
+                ? _handIKIntegrator.LeftTargetType.CurrentValue
+                : _handIKIntegrator.RightTargetType.CurrentValue;
             if (actualTarget != HandTargetType.Keyboard)
             {
                 return;
@@ -179,7 +179,7 @@ namespace Baku.VMagicMirror.Buddy
                 return false;
             }
 
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return false;
             }
@@ -188,7 +188,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnGamepadButtonDownMotionStarted(ReactedHand hand, GamepadKey key)
         {
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }
@@ -203,7 +203,7 @@ namespace Baku.VMagicMirror.Buddy
         
         private void OnArcadeStickButtonDownMotionStarted(GamepadKey key)
         {
-            if (_bodyMotionModeController.MotionMode.Value != BodyMotionMode.Default)
+            if (_bodyMotionModeController.MotionMode.CurrentValue != BodyMotionMode.Default)
             {
                 return;
             }

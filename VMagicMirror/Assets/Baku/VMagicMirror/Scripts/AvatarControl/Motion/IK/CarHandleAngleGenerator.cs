@@ -106,7 +106,7 @@ namespace Baku.VMagicMirror.IK
             }
 
             var hasInput =
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default &&
                 _useCarHandle && 
                 Mathf.Abs(_stickAxisX) > StickThreshold;
 

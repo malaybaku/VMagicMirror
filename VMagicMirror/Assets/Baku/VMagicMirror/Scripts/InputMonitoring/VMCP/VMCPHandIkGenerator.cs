@@ -59,11 +59,11 @@ namespace Baku.VMagicMirror.VMCP
 
         public override void Update()
         {
-            if (_vmcpHandPose.IsActive.Value)
+            if (_vmcpHandPose.IsActive.CurrentValue)
             {
                 var diff = Time.deltaTime * ConnectedBlendRate;
                 _connectedRate =
-                    Mathf.Clamp01(_vmcpHandPose.IsConnected.Value ? _connectedRate + diff : _connectedRate - diff);
+                    Mathf.Clamp01(_vmcpHandPose.IsConnected.CurrentValue ? _connectedRate + diff : _connectedRate - diff);
                 var rate = Mathf.SmoothStep(0, 1, _connectedRate);
                 _leftHandState.ApplyWithRate(rate);
                 _rightHandState.ApplyWithRate(rate);
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror.VMCP
         private void LateUpdateCallback()
         {
             //指を適用する: FingerController経由じゃないことには注意
-            if (_vmcpHandPose.IsActive.Value)
+            if (_vmcpHandPose.IsActive.CurrentValue)
             {
                 _vmcpHandPose.ApplyFingerLocalPose();
             }

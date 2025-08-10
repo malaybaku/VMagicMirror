@@ -61,11 +61,11 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: そもそもAvatarFacialImplement.OnBlinkが遮断されたらここで判定しないでもよい
         private bool SyncBlink => 
             _instance.DefaultSpritesSetting.SyncBlinkBlendShapeToMainAvatar &&
-            _settingsRepository.InteractionApiEnabled.Value;
+            _settingsRepository.InteractionApiEnabled.CurrentValue;
         
         private bool SyncMouth =>
             _instance.DefaultSpritesSetting.SyncMouthBlendShapeToMainAvatar &&
-            _settingsRepository.InteractionApiEnabled.Value;
+            _settingsRepository.InteractionApiEnabled.CurrentValue;
 
         public void Initialize()
         {

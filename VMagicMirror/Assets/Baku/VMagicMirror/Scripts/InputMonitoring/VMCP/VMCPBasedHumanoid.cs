@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             // ヒエラルキー構築はしたいが、ヒエラルキーのリファレンスになるべきモデルのロードが終わってない→何もしない
-            if (HasBoneOffsetsSource && !_boneOffsets.HasModel.Value)
+            if (HasBoneOffsetsSource && !_boneOffsets.HasModel.CurrentValue)
             {
                 return;
             }

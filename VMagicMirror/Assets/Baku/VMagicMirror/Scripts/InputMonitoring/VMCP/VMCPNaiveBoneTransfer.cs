@@ -146,17 +146,17 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             //NOTE: HeadとHandが同一ソースの場合、結果的に単一ソースからボーン回転が読み出される
-            if (_vmcpHead.IsConnected.Value)
+            if (_vmcpHead.IsConnected.CurrentValue)
             {
                 SetBoneRotations(_vmcpHead.Humanoid, _upperBodyBones);
             }
 
-            if (_vmcpHand.IsConnected.Value)
+            if (_vmcpHand.IsConnected.CurrentValue)
             {
                 SetBoneRotations(_vmcpHand.Humanoid, _armBones);
             }
 
-            if (_vmcpLowerBodyPose.IsConnected.Value)
+            if (_vmcpLowerBodyPose.IsConnected.CurrentValue)
             {
                 var lowerBodyHumanoid = _vmcpLowerBodyPose.Humanoid;
                 SetBoneRotations(lowerBodyHumanoid, _lowerBodyBones);

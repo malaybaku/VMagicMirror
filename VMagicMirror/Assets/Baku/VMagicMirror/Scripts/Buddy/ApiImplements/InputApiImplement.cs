@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
 
         /// <summary>
         /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。

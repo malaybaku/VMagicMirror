@@ -41,7 +41,7 @@ namespace Baku.VMagicMirror.Buddy
             _voiceOnOffParser = voiceOnOffParser;
         }
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
         
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
         public ReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;

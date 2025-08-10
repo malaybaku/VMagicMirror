@@ -25,7 +25,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private float BlendShapeMin => _settings.LipSyncBlendShapeMin;
         private float BlendShapeMax => _settings.LipSyncBlendShapeMax;
-        public bool IsEnabledAndTracked => _runtimeSettings.ShouldUseLipSyncResult.Value && _facialValueRepository.IsTracked;
+        public bool IsEnabledAndTracked => _runtimeSettings.ShouldUseLipSyncResult.CurrentValue && _facialValueRepository.IsTracked;
 
         void ITickable.Tick()
         {

@@ -134,7 +134,7 @@ namespace Baku.VMagicMirror.IK
 
         private void OnKeyDown(string keyName)
         {
-            var motionMode = Dependency.Config.KeyboardAndMouseMotionMode.Value;
+            var motionMode = Dependency.Config.KeyboardAndMouseMotionMode.CurrentValue;
             bool isLeftHandOnly =
                 motionMode == KeyboardAndMouseMotionModes.Presentation ||
                 motionMode == KeyboardAndMouseMotionModes.PenTablet;
@@ -148,7 +148,7 @@ namespace Baku.VMagicMirror.IK
             if (hand == ReactedHand.Left)
             {
                 _leftHandState.RaiseRequest();
-                if (Dependency.Config.LeftTarget.Value == HandTargetType.Keyboard)
+                if (Dependency.Config.LeftTarget.CurrentValue == HandTargetType.Keyboard)
                 {
                     ResetLeftHandDownTimeout(false);
                 }
@@ -156,13 +156,13 @@ namespace Baku.VMagicMirror.IK
             else if (hand == ReactedHand.Right)
             {
                 _rightHandState.RaiseRequest();
-                if (Dependency.Config.RightTarget.Value == HandTargetType.Keyboard)
+                if (Dependency.Config.RightTarget.CurrentValue == HandTargetType.Keyboard)
                 {
                     ResetRightHandDownTimeout(false);
                 }
             }
 
-            if (!Dependency.Config.IsAlwaysHandDown.Value)
+            if (!Dependency.Config.IsAlwaysHandDown.CurrentValue)
             {
                 Dependency.Reactions.FingerController.HoldTypingKey(keyName, isLeftHandOnly);
             }
@@ -176,7 +176,7 @@ namespace Baku.VMagicMirror.IK
 
         private void OnKeyUp(string keyName)
         {
-            var motionMode = Dependency.Config.KeyboardAndMouseMotionMode.Value;
+            var motionMode = Dependency.Config.KeyboardAndMouseMotionMode.CurrentValue;
             bool isLeftHandOnly =
                 motionMode == KeyboardAndMouseMotionModes.Presentation ||
                 motionMode == KeyboardAndMouseMotionModes.PenTablet;
@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror.IK
             if (hand == ReactedHand.Left)
             {
                 _leftHandState.RaiseRequest();
-                if (Dependency.Config.LeftTarget.Value == HandTargetType.Keyboard)
+                if (Dependency.Config.LeftTarget.CurrentValue == HandTargetType.Keyboard)
                 {
                     ResetLeftHandDownTimeout(false);
                 }
@@ -198,13 +198,13 @@ namespace Baku.VMagicMirror.IK
             else if (hand == ReactedHand.Right)
             {
                 _rightHandState.RaiseRequest();
-                if (Dependency.Config.RightTarget.Value == HandTargetType.Keyboard)
+                if (Dependency.Config.RightTarget.CurrentValue == HandTargetType.Keyboard)
                 {
                     ResetRightHandDownTimeout(false);
                 }
             }
 
-            if (!Dependency.Config.IsAlwaysHandDown.Value)
+            if (!Dependency.Config.IsAlwaysHandDown.CurrentValue)
             {
                 Dependency.Reactions.FingerController.ReleaseTypingKey(keyName, isLeftHandOnly);
             }

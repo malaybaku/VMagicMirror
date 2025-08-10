@@ -54,16 +54,16 @@ namespace Baku.VMagicMirror
         {
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。ただし手下げモードのときは表示するほうに寄せておく
             var settingBasedResult =
-                _deviceVisibilityRepository.HidVisible.Value &&
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
-                _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is not KeyboardAndMouseMotionModes.None;
+                _deviceVisibilityRepository.HidVisible.CurrentValue &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
+                _bodyMotionModeController.KeyboardAndMouseMotionMode.CurrentValue is not KeyboardAndMouseMotionModes.None;
 
             if (!settingBasedResult)
             {
                 return false;
             }
             
-            if (!_deviceVisibilityRepository.HideUnusedDevices.Value)
+            if (!_deviceVisibilityRepository.HideUnusedDevices.CurrentValue)
             {
                 return true;
             }
@@ -71,9 +71,9 @@ namespace Baku.VMagicMirror
             // NOTE: マウスパッド操作中は「キーマウ操作」という括りで考えてキーボードも表示する
             // ペンタブやプレゼンテーションモードの右手はマウスの一種とは見なさない (このケースではキー入力が全部左手扱いになっているはず)
             return
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default && 
-                _handIkIntegrator.LeftTargetType.Value is HandTargetType.Keyboard ||
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.Keyboard or HandTargetType.Mouse;
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default && 
+                _handIkIntegrator.LeftTargetType.CurrentValue is HandTargetType.Keyboard ||
+                _handIkIntegrator.RightTargetType.CurrentValue is HandTargetType.Keyboard or HandTargetType.Mouse;
         }
     }
 }

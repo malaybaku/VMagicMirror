@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
                 .Subscribe(fov =>
                 {
                     _cameraForRay.fieldOfView = fov;
-                    if (_spoutSenderController.NeedFovModify.Value)
+                    if (_spoutSenderController.NeedFovModify.CurrentValue)
                     {
                         _mainCamera.fieldOfView = GetModifiedFov(fov);
                     }

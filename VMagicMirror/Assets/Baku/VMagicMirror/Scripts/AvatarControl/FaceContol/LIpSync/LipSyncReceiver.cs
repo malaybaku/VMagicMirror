@@ -115,8 +115,8 @@ namespace Baku.VMagicMirror
             _lipSyncContext.StopRecording();
 
             var shouldStartReceive =
-                _buddyAvatarFacialApi.RequireMicrophoneRecording.Value || (
-                    !_vmcpBlendShape.IsActive.Value &&
+                _buddyAvatarFacialApi.RequireMicrophoneRecording.CurrentValue || (
+                    !_vmcpBlendShape.IsActive.CurrentValue &&
                     _isMicrophoneLipSyncActive.Value &&
                     !_isImageBaseLipSyncActive.Value
                 );

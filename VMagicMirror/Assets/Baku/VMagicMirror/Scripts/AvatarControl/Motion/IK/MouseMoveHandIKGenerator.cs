@@ -86,12 +86,12 @@ namespace Baku.VMagicMirror.IK
             //読み方はそのままで、タッチパッドを使いたいときマウス移動イベントが届いたらマウスに切り替えたくなる
             dependency.Events.MoveMouse += _ =>
             {
-                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                if (dependency.Config.KeyboardAndMouseMotionMode.CurrentValue ==
                       KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
                 {
                     RequestToUse?.Invoke(this);
 
-                    if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
+                    if (dependency.Config.RightTarget.CurrentValue == HandTargetType.Mouse)
                     {
                         dependency.Reactions.ParticleStore.RequestMouseMoveParticle(ReferenceTouchpadPosition);
                         ResetHandDownTimeout(false);
@@ -101,7 +101,7 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.OnMouseButton += eventName =>
             {
-                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                if (dependency.Config.KeyboardAndMouseMotionMode.CurrentValue ==
                     KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
                 {
                     RequestToUse?.Invoke(this);
@@ -109,7 +109,7 @@ namespace Baku.VMagicMirror.IK
 
                 //マウスはButtonUpでもエフェクトを出す。
                 //ちょっとうるさくなるが、意味的にはMouseのButtonUpはけっこうデカいアクションなので
-                if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
+                if (dependency.Config.RightTarget.CurrentValue == HandTargetType.Mouse)
                 {
                     dependency.Reactions.FingerController.OnMouseButton(eventName);
                     dependency.Reactions.ParticleStore.RequestMouseClickParticle();

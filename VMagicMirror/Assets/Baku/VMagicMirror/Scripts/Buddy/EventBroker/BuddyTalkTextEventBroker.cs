@@ -1,4 +1,3 @@
-using System;
 using Baku.VMagicMirror.Buddy.Api;
 using R3;
 using VMagicMirror.Buddy;
@@ -12,7 +11,7 @@ namespace Baku.VMagicMirror.Buddy
         public Observable<(TalkTextApi api, ITalkTextItem item)> ItemDequeued(BuddyId id) => ForBuddy(_itemDequeued, id);
         public Observable<(TalkTextApi api, ITalkTextItem item)> ItemFinished(BuddyId id) => ForBuddy(_itemFinished, id);
 
-        private IObservable<(TalkTextApi api, ITalkTextItem item)> ForBuddy(IObservable<TalkTextItemInternal> src, BuddyId buddyId) => src
+        private Observable<(TalkTextApi api, ITalkTextItem item)> ForBuddy(Observable<TalkTextItemInternal> src, BuddyId buddyId) => src
             .Where(item => item.BuddyId.Equals(buddyId))
             .Select(item => (item.Api, item.ToApiValue()));
 

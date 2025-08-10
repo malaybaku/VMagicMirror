@@ -14,16 +14,16 @@ namespace Baku.VMagicMirror.GameInput
 
         #region Interface 
         
-        IObservable<Vector2> IGameInputSource.MoveInput => _moveInput;
-        IObservable<Vector2> IGameInputSource.LookAroundInput => _lookAroundInput;
+        Observable<Vector2> IGameInputSource.MoveInput => _moveInput;
+        Observable<Vector2> IGameInputSource.LookAroundInput => _lookAroundInput;
 
-        IObservable<bool> IGameInputSource.IsCrouching => _isCrouching;
-        IObservable<bool> IGameInputSource.IsRunWalkToggleActive => _isRunning;
-        IObservable<bool> IGameInputSource.GunFire => _gunFire;
-        IObservable<Unit> IGameInputSource.Jump => _jump;
-        IObservable<Unit> IGameInputSource.Punch => _punch;
-        IObservable<string> IGameInputSource.StartCustomMotion => _customMotion;
-        IObservable<string> IGameInputSource.StopCustomMotion => _stopCustomMotion;
+        Observable<bool> IGameInputSource.IsCrouching => _isCrouching;
+        Observable<bool> IGameInputSource.IsRunWalkToggleActive => _isRunning;
+        Observable<bool> IGameInputSource.GunFire => _gunFire;
+        Observable<Unit> IGameInputSource.Jump => _jump;
+        Observable<Unit> IGameInputSource.Punch => _punch;
+        Observable<string> IGameInputSource.StartCustomMotion => _customMotion;
+        Observable<string> IGameInputSource.StopCustomMotion => _stopCustomMotion;
         
         #endregion
         

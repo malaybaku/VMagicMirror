@@ -573,7 +573,7 @@ namespace Baku.VMagicMirror
                 return false;
             }
             
-            if (_vmcpHand.IsActive.Value && target != HandTargetType.VMCPReceiveResult && 
+            if (_vmcpHand.IsActive.CurrentValue && target != HandTargetType.VMCPReceiveResult && 
                 target != HandTargetType.ClapMotion && target != HandTargetType.AlwaysDown
                )
             {

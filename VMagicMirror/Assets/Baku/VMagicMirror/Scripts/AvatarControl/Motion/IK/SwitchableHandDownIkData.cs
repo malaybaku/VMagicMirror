@@ -42,8 +42,8 @@ namespace Baku.VMagicMirror
                 _useX = useX;
             }
 
-            public Vector3 Position => _useX.Value ? _x.Position : _y.Position;
-            public Quaternion Rotation => _useX.Value ? _x.Rotation : _y.Rotation;
+            public Vector3 Position => _useX.CurrentValue ? _x.Position : _y.Position;
+            public Quaternion Rotation => _useX.CurrentValue ? _x.Rotation : _y.Rotation;
         }
     }
 }

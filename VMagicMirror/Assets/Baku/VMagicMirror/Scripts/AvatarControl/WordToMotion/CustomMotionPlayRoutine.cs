@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.WordToMotion
             HumanPoseHandler humanPoseHandler,
             HumanoidAnimationSetter setterFront,
             HumanoidAnimationSetter setterBack,
-            IObservable<Unit> lateUpdateSource)
+            Observable<Unit> lateUpdateSource)
         {
             _currentState = new CustomMotionPlayState(humanPoseHandler, setterFront, lateUpdateSource);
             _prevState = new CustomMotionPlayState(humanPoseHandler, setterBack, lateUpdateSource);

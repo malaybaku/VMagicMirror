@@ -46,23 +46,23 @@ namespace Baku.VMagicMirror
         {
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。ただし手下げモードのときは表示するほうに寄せておく
             var settingBasedResult =
-                _deviceVisibilityRepository.HidVisible.Value &&
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
-                _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is KeyboardAndMouseMotionModes.PenTablet;
+                _deviceVisibilityRepository.HidVisible.CurrentValue &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
+                _bodyMotionModeController.KeyboardAndMouseMotionMode.CurrentValue is KeyboardAndMouseMotionModes.PenTablet;
 
             if (!settingBasedResult)
             {
                 return false;
             }
             
-            if (!_deviceVisibilityRepository.HideUnusedDevices.Value)
+            if (!_deviceVisibilityRepository.HideUnusedDevices.CurrentValue)
             {
                 return true;
             }
             
             return 
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default && 
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.PenTablet;
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default && 
+                _handIkIntegrator.RightTargetType.CurrentValue is HandTargetType.PenTablet;
         }
     }
 }

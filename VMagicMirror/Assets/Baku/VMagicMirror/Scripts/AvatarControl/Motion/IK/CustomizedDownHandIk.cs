@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror
             {
                 yield return eof;
                 //NOTE: デフォルトの手下ろしとは更新タイミングが微妙に違う事に注意。何か起こるかもしれない…
-                if (EnableCustomHandDownPose.Value)
+                if (EnableCustomHandDownPose.CurrentValue)
                 {
                     UpdateIk();
                 }
@@ -213,7 +213,7 @@ namespace Baku.VMagicMirror
                     SetPose(pose);
                 }
 
-                if (EnableCustomHandDownPose.Value)
+                if (EnableCustomHandDownPose.CurrentValue)
                 {
                     var hipsPos = _hips.position;
                     _leftUpperArmPosOffset = (_leftUpperArm.position - hipsPos) - _defaultHipsToLeftUpperArm;

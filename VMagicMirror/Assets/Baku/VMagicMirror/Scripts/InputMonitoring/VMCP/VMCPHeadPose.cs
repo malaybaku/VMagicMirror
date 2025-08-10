@@ -8,10 +8,10 @@ namespace Baku.VMagicMirror.VMCP
     {
         private const float ResetLerpFactor = 6f;
 
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _isActive = new(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
-        private readonly ReactiveProperty<bool> _isConnected = new ReactiveProperty<bool>(true);
+        private readonly ReactiveProperty<bool> _isConnected = new(true);
         public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror.VMCP
             Humanoid = null;
         }
 
-        void SetActiveInternal(bool active)
+        private void SetActiveInternal(bool active)
         {
             _isActive.Value = active;
             if (!active)

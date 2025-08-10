@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror.VMCP
 
         public IReadOnlyList<VMCPSource> Sources { get; }
 
-        public static VMCPSources Empty { get; } = new VMCPSources(Enumerable.Empty<VMCPSource>());
+        public static VMCPSources Empty { get; } = new(Enumerable.Empty<VMCPSource>());
     }
 
     public readonly struct VMCPSource
@@ -20,22 +20,29 @@ namespace Baku.VMagicMirror.VMCP
         public string Name { get; }
         public int Port { get; }
         public bool ReceiveHeadPose { get; }
-        public bool ReceiveFacial { get; }
         public bool ReceiveHandPose { get; }
+        public bool ReceiveLowerBodyPose { get; }
+        public bool ReceiveFacial { get; }
 
         public bool HasValidSetting() =>
             Port > 0 && Port < 65536 &&
-            (ReceiveHeadPose || ReceiveFacial || ReceiveHandPose);
+            (ReceiveHeadPose || ReceiveHandPose || ReceiveLowerBodyPose || ReceiveFacial );
 
         public VMCPSource(
-            string name, int port, 
-            bool receiveHeadPose, bool receiveFacial, bool receiveHandPose)
+            string name,
+            int port, 
+            bool receiveHeadPose,
+            bool receiveHandPose,
+            bool receiveLowerBodyPose,
+            bool receiveFacial
+            )
         {
             Name = name;
             Port = port;
             ReceiveHeadPose = receiveHeadPose;
-            ReceiveFacial = receiveFacial;
             ReceiveHandPose = receiveHandPose;
+            ReceiveLowerBodyPose = receiveLowerBodyPose;
+            ReceiveFacial = receiveFacial;
         }
     }
 
@@ -46,16 +53,18 @@ namespace Baku.VMagicMirror.VMCP
     {
         public bool ReceiveHeadPose { get; }
         public bool ReceiveFacial { get; }
+        public bool ReceiveLowerBodyPose { get; }
         public bool ReceiveHandPose { get; }
 
         public VMCPDataPassSettings(
-            bool receiveHeadPose, bool receiveFacial, bool receiveHandPose)
+            bool receiveHeadPose, bool receiveHandPose, bool receiveLowerBodyPose, bool receiveFacial)
         {
             ReceiveHeadPose = receiveHeadPose;
-            ReceiveFacial = receiveFacial;
             ReceiveHandPose = receiveHandPose;
+            ReceiveLowerBodyPose = receiveLowerBodyPose;
+            ReceiveFacial = receiveFacial;
         }
 
-        public static VMCPDataPassSettings Empty { get; } = new VMCPDataPassSettings(false, false, false);
+        public static VMCPDataPassSettings Empty { get; } = new(false, false, false, false);
     }
 }

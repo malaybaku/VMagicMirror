@@ -1,5 +1,4 @@
 ﻿using Baku.VMagicMirror;
-using System.Collections.Generic;
 
 // NOTE: 「static memberにできます」の警告が出るが、ここは意図してinstance memberなので無視しとく
 #pragma warning disable CA1822
@@ -297,6 +296,12 @@ namespace Baku.VMagicMirrorConfig
         public static Message ShadowYaw(int angleDeg) => IntContent(VmmCommands.ShadowYaw, angleDeg);
         public static Message ShadowPitch(int angleDeg) => IntContent(VmmCommands.ShadowPitch, angleDeg);
         public static Message ShadowDepthOffset(int depthCentimeter) => IntContent(VmmCommands.ShadowDepthOffset, depthCentimeter);
+
+        public static Message FixedShadowAlwaysEnable(bool enable) => BoolContent(VmmCommands.FixedShadowAlwaysEnable, enable);
+        public static Message FixedShadowWhenLocomotionActiveEnable(bool enable) 
+            => BoolContent(VmmCommands.FixedShadowWhenLocomotionActiveEnable, enable);
+        public static Message FixedShadowYaw(int angleDeg) => IntContent(VmmCommands.FixedShadowYaw, angleDeg);
+        public static Message FixedShadowPitch(int angleDeg) => IntContent(VmmCommands.FixedShadowPitch, angleDeg);
 
         public static Message BloomColor(int r, int g, int b) => IntArrayContent(VmmCommands.BloomColor, [r, g, b]);
         public static Message BloomIntensity(int intensityPercent) => IntContent(VmmCommands.BloomIntensity, intensityPercent);

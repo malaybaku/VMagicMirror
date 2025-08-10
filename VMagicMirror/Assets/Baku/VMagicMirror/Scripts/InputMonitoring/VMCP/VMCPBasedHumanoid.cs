@@ -90,10 +90,10 @@ namespace Baku.VMagicMirror.VMCP
         //NOTE:
         //boneMapには常に任意ボーンも含めた全ボーンが用意される。
         //この実装方式でいいのは、VMMで最終的に使う情報がIK相当の値であるのと、基本的にはFKのlocalRotationだけ気にすればよいため
-        private readonly Dictionary<string, VMCPBone> _boneMap = new Dictionary<string, VMCPBone>(55);
+        private readonly Dictionary<string, VMCPBone> _boneMap = new(55);
 
         //NOTE: IKポーズは単体で保存する、こっちはヒエラルキーに何かを用意する必要はない
-        private readonly Dictionary<string, Pose> _trackerPoses = new Dictionary<string, Pose>(6);
+        private readonly Dictionary<string, Pose> _trackerPoses = new(6);
 
         private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
         private readonly bool HasBoneOffsetsSource;
@@ -110,6 +110,12 @@ namespace Baku.VMagicMirror.VMCP
             HasBoneOffsetsSource = _boneOffsets != null;
         }
 
+        // NOTE: Root姿勢を一回も受け取ってない場合は identity が入る(= ワールド原点にアバターが立ってるアプリからのデータ送信と見なす)
+        public Pose RootPose { get; private set; } = Pose.identity;
+
+        // Hipsのローカル位置を一回以上受け取ると非null値が入る
+        public Vector3? HipsLocalPosition { get; private set; }
+        
         /// <summary>
         /// NOTE: この関数を呼ぶとHumanoidBoneの階層を持つGameObjectが生成される(ので、早すぎるタイミングでは呼んではいけない)
         /// </summary>
@@ -189,6 +195,11 @@ namespace Baku.VMagicMirror.VMCP
                 _boneMap[boneName].Transform.localPosition = _boneOffsets.GetLocalOffset(bone);
             }
         }
+
+        public void SetRootPose(Vector3 position, Quaternion rotation)
+        {
+            RootPose = new Pose(position, rotation);
+        }
         
         public void SetTrackerPose(string boneName, Vector3 position, Quaternion rotation)
         {
@@ -215,9 +226,14 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
-            // VMM側のボーン情報を正とする場合、モデル側のは無視
-            if (boneName != HipsBoneName && !HasBoneOffsetsSource)
+            if (boneName == HipsBoneName)
             {
+                // NOTE: Hipsは通常のFKでは動かす必要がないのでビルドしたHumanoidには適用しない
+                HipsLocalPosition = position;
+            }
+            else if (!HasBoneOffsetsSource)
+            {
+                // NOTE: 受信したVMMのボーンを再構築するために値を入れている。もしVMM側のボーン情報を正とする場合、モデル側のは無視する手もある
                 bone.Transform.localPosition = position;
             }
             bone.Transform.localRotation = rotation;
@@ -244,6 +260,8 @@ namespace Baku.VMagicMirror.VMCP
                 UnityEngine.Object.Destroy(_root.gameObject);
             }
 
+            RootPose = Pose.identity;
+            HipsLocalPosition = null;
             _root = null;
             _hips = null;
             _head = null;

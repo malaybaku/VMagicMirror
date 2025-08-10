@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror
         /// <param name="accumulator"></param>
         public void Accumulate(ExpressionAccumulator accumulator)
         {
-            if (!_hasModel || !_currentValue.HasValue)
+            if (!_hasModel || !_currentValue.CurrentValue.HasValue)
             {
                 return;
             }

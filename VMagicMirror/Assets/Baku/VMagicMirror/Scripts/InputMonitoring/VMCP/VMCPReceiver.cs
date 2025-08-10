@@ -86,7 +86,7 @@ namespace Baku.VMagicMirror.VMCP
             //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく
             // 最初の1回はアプリケーション起動後のやつなので無視
             _connectedValue
-                .Throttle(TimeSpan.FromSeconds(0.5f))
+                .Debounce(TimeSpan.FromSeconds(0.5f))
                 .Skip(1)
                 .Subscribe(_ => NotifyConnectStatus())
                 .AddTo(this);

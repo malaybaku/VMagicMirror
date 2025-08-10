@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 .AddTo(this);
 
             _keyMouseEventSource.RawKeyDown
-                .Throttle(TimeSpan.FromSeconds(KeyInputForgetTime))
+                .Debounce(TimeSpan.FromSeconds(KeyInputForgetTime))
                 .Subscribe(_ => _wordAnalyzer.Clear())
                 .AddTo(this);
 

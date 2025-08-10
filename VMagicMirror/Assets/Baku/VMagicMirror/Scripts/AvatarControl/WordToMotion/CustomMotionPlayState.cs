@@ -133,7 +133,7 @@ namespace Baku.VMagicMirror.WordToMotion
                     _count > duration - FadeDuration ? Mathf.Clamp01((duration - _count) / FadeDuration) :
                     1f;
                 WriteCurrentPose(useRate, rate);
-                await _lateUpdateSource.ToUniTask(true, cancellationToken);
+                await _lateUpdateSource.FirstAsync(cancellationToken: cancellationToken);
                 _count += Time.deltaTime;
 
                 if (_phase == PlayPhase.FadeIn && _count > FadeDuration)
@@ -169,7 +169,7 @@ namespace Baku.VMagicMirror.WordToMotion
                         var rate = useRate ? _count / FadeDuration : 1f;
                         WriteCurrentPose(useRate, rate);
 
-                        await _lateUpdateSource.ToUniTask(true, cancellationToken);
+                        await _lateUpdateSource.FirstAsync(cancellationToken: cancellationToken);
                         _count += Time.deltaTime;
 
                         if (isFirstRun && _count > FadeDuration)
@@ -222,7 +222,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 item.Motion.Evaluate(_count);
                 WriteCurrentPose(true, rate);
 
-                await _lateUpdateSource.ToUniTask(true, cancellationToken);
+                await _lateUpdateSource.FirstAsync(cancellationToken: cancellationToken);
                 _count += Time.deltaTime;
             }
             

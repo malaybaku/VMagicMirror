@@ -7,7 +7,9 @@ namespace Baku.VMagicMirror
 {
     //TODO: BodyOffsetの提供クラスをinterface-nizeすることを検討すべき
     /// <summary>
-    /// VMCProtocolで頭部姿勢を受け取っているとき、そのオフセットを提供する
+    /// VMCProtocolで頭部姿勢を受け取っているとき、そのオフセットを提供するクラス。
+    /// ただし、<see cref="VMCPNaiveBoneTransfer"/> によって下半身ベースでの移動も考慮した場合は、
+    /// <see cref="VMCPNaiveBoneTransfer"/> でアバターのHipsを最終的に制御した値のほうが優先になる
     /// </summary>
     public class VMCPBodyOffset : MonoBehaviour
     {

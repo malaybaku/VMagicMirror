@@ -140,6 +140,13 @@ namespace Baku.VMagicMirror.VMCP
                 SetBoneRotations(_vmcpHead.Humanoid, _upperBodyBones);
             }
 
+            // TODO: 実行タイミング的に問題ないかは要チェック
+            // NOTE: 接続してなくても受信の意思があれば指は制御してしまう
+            if (_vmcpHand.IsActive.CurrentValue)
+            {
+                _vmcpHand.ApplyFingerLocalPose();
+            }
+
             if (_vmcpHand.IsConnected.CurrentValue)
             {
                 SetBoneRotations(_vmcpHand.Humanoid, _handBones);

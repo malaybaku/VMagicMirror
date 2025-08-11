@@ -112,21 +112,6 @@ namespace Baku.VMagicMirror.VMCP
                     _headPose.SetPoseOnHips(headPose);
                 }
 
-                if (_dataPassSettings[i].ReceiveHandPose)
-                {
-                    //NOTE: IKがあったらIK優先したいんだけどな～
-                    var leftHandPose = _receiverHumanoids[i].GetFKLeftHandPoseFromHips();
-                    var rightHandPose = _receiverHumanoids[i].GetFKRightHandPoseFromHips();
-                    _handPose.SetLeftHandPoseOnHips(
-                        leftHandPose.position,
-                        leftHandPose.rotation
-                    );
-                    _handPose.SetRightHandPoseOnHips(
-                        rightHandPose.position,
-                        rightHandPose.rotation
-                    );
-                }
-
                 //一定時間データを受信しなかった受信元は切断扱いになる
                 if (_disconnectCountDown[i] > 0f)
                 {

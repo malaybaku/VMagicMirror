@@ -11,8 +11,8 @@ namespace Baku.VMagicMirror.VMCP
     {
         //NOTE:
         // - このクラスの守備範囲はFinger以外のボーン全般
-        //   - Headを送ってるSourceがSpine~Headのボーン回転を指定できる
-        //   - Handを送ってるSourceがShoulder~Handのボーン回転を指定できる
+        //   - Headを送ってるSourceは上半身のうち、Handとその子要素を除くボーン回転を指定できる
+        //   - Handを送ってるSourceはHandのボーン回転を指定できる
         // - - LowerBodyを送ってるSourceはHips~Toesのボーン回転を指定できる
         // - 指ボーンは取得できている場合、VMCPHandに基づいてVMCPBasedFingerSetterが処理するので、ここでの処理は不要
         private static readonly HumanBodyBones[] UpperBodyBones = new[]
@@ -22,6 +22,13 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.UpperChest,
             HumanBodyBones.Neck,
             HumanBodyBones.Head,
+
+            HumanBodyBones.LeftShoulder,
+            HumanBodyBones.LeftUpperArm,
+            HumanBodyBones.LeftLowerArm,
+            HumanBodyBones.RightShoulder,
+            HumanBodyBones.RightUpperArm,
+            HumanBodyBones.RightLowerArm,
         };
 
         private static readonly HumanBodyBones[] LowerBodyBones = new[]
@@ -37,15 +44,9 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.RightToes,
         };
         
-        private static readonly HumanBodyBones[] ArmBones = new[]
+        private static readonly HumanBodyBones[] HandBones = new[]
         {
-            HumanBodyBones.LeftShoulder,
-            HumanBodyBones.LeftUpperArm,
-            HumanBodyBones.LeftLowerArm,
             HumanBodyBones.LeftHand,
-            HumanBodyBones.RightShoulder,
-            HumanBodyBones.RightUpperArm,
-            HumanBodyBones.RightLowerArm,
             HumanBodyBones.RightHand,
         };
 
@@ -56,7 +57,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly Dictionary<string, Transform> _lowerBodyBones = new();
 
         // Shoulder~Handまでの両腕ぶん
-        private readonly Dictionary<string, Transform> _armBones = new();
+        private readonly Dictionary<string, Transform> _handBones = new();
 
         
         private bool _hasModel;
@@ -102,12 +103,12 @@ namespace Baku.VMagicMirror.VMCP
                     }
                 }
                 
-                foreach (var bone in ArmBones)
+                foreach (var bone in HandBones)
                 {
                     var t = a.GetBoneTransform(bone);
                     if (t != null)
                     {
-                        _armBones[bone.ToString()] = t;
+                        _handBones[bone.ToString()] = t;
                     }
                 }
 
@@ -119,7 +120,7 @@ namespace Baku.VMagicMirror.VMCP
                 _hasModel = false;
                 _upperBodyBones.Clear();
                 _lowerBodyBones.Clear();
-                _armBones.Clear();
+                _handBones.Clear();
             };
         }
 
@@ -141,7 +142,7 @@ namespace Baku.VMagicMirror.VMCP
 
             if (_vmcpHand.IsConnected.CurrentValue)
             {
-                SetBoneRotations(_vmcpHand.Humanoid, _armBones);
+                SetBoneRotations(_vmcpHand.Humanoid, _handBones);
             }
 
             if (_vmcpLowerBodyPose.IsConnected.CurrentValue)

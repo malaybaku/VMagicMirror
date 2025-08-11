@@ -278,8 +278,6 @@
         // VMCP (recv)
         EnableVMCP,
         SetVMCPSources,
-        SetVMCPNaiveBoneTransfer,
-        SetDisableCameraDuringVMCPActive,
 
         // VMCP (send)
         EnableVMCPSend,

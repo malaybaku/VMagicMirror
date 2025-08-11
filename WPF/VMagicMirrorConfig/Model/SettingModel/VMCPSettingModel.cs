@@ -20,15 +20,6 @@ namespace Baku.VMagicMirrorConfig
             SerializedVMCPSourceSetting = new(
                 setting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.SetVMCPSources(v)));
 
-            DisableCameraDuringVMCPActive = new(
-                setting.DisableCameraDuringVMCPActive,
-                v => SendMessage(MessageFactory.SetDisableCameraDuringVMCPActive(v))
-                );
-            EnableNaiveBoneTransfer = new(
-                setting.EnableNaiveBoneTransfer,
-                v => SendMessage(MessageFactory.SetVMCPNaiveBoneTransfer(v))
-                );
-
             VMCPSendEnabled = new(
                 setting.VMCPSendEnabled,
                 v => SendMessage(MessageFactory.EnableVMCPSend(v))
@@ -48,9 +39,6 @@ namespace Baku.VMagicMirrorConfig
         // 受信系のプロパティ
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
-
-        public RProperty<bool> EnableNaiveBoneTransfer { get; }
-        public RProperty<bool> DisableCameraDuringVMCPActive { get; }
 
         private readonly VMCPReceiveStatus _receiveStatus = new();
         public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
@@ -168,9 +156,8 @@ namespace Baku.VMagicMirrorConfig
             var defaultSetting = VMCPSetting.Default;
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
             SerializedVMCPSourceSetting.Value = defaultSetting.SerializedVMCPSourceSetting;
-            DisableCameraDuringVMCPActive.Value = defaultSetting.DisableCameraDuringVMCPActive;
 
-            VMCPEnabled.Value = defaultSetting.VMCPEnabled;
+            VMCPSendEnabled.Value = defaultSetting.VMCPSendEnabled;
             SerializedVMCPSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;
             ShowEffectDuringVMCPSendEnabled.Value = defaultSetting.ShowEffectDuringVMCPSendEnabled;
         }

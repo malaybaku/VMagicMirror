@@ -211,8 +211,6 @@ Send:
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">Apply received bone pose without any adjust</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
     
     <sys:String x:Key="VMCP_Send_Enable">Enable VMC Protocol Data Send</sys:String>
     <sys:String x:Key="VMCP_Send_DestAddress">Target Address</sys:String>

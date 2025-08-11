@@ -199,7 +199,8 @@ Send:
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Connected">Status</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">Port</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_UpperBodyPose" xml:space="preserve">Upper
+Body</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HandPose">Hand</sys:String>
     <sys:String x:Key="VMCP_GridLabel_LowerBodyPose">Leg</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>

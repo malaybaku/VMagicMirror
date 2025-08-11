@@ -88,7 +88,7 @@
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="1"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_HeadPose}"
+                                   Text="{DynamicResource VMCP_GridLabel_UpperBodyPose}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="2"
                                    HorizontalAlignment="Center"
@@ -185,22 +185,6 @@
                                 />
                         </StackPanel>
                     </md:Card>
-                    
-                    <TextBlock Style="{StaticResource HeaderText}"
-                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
-                                Margin="5,20,5,10"
-                                />
-
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_NaiveBoneTransfer}"
-                              Margin="15,5"
-                              IsChecked="{Binding EnableNaiveBoneTransfer.Value, Mode=TwoWay}"
-                              />
-
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableCameraDuringActive}"
-                              Margin="15,5"
-                              IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
-                              />
-
                 </StackPanel>
             </Border>
 

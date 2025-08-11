@@ -1,6 +1,7 @@
 using Baku.VMagicMirror.VMCP;
 using R3;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -21,8 +22,9 @@ namespace Baku.VMagicMirror
         public ReactiveProperty<bool> FixedShadowEnabled => _fixedShadowEnabled;
 
         //TODOかも: +- の扱い
-        private Vector3 _fixedShadowLightRotationEuler = new(30, 50, 0);
+        private Vector3 _fixedShadowLightRotationEuler = new(60, -130, 0);
         
+        [Inject]
         public FixedShadowController(
             IMessageReceiver receiver,
             BodyMotionModeController bodyMotionModeController,

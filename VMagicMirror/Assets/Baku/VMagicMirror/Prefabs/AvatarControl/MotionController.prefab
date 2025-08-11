@@ -171,7 +171,6 @@ MonoBehaviour:
   offsetToBodyRotEulerFactorWhenNoHandTrack: {x: 0, y: 0, z: 0}
   speedFactor: 12
   timeScaleFactor: 0.3
-  enableBodyLeanZ: 0
 --- !u!114 &5813678808713813113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +284,6 @@ GameObject:
   - component: {fileID: 5813678809054739211}
   - component: {fileID: 7319070492286949183}
   - component: {fileID: 5813678809054739210}
-  - component: {fileID: 5753114841520320764}
   - component: {fileID: 1338865419136667663}
   - component: {fileID: 3373783041301125446}
   - component: {fileID: 3163774597481480951}
@@ -347,22 +345,6 @@ MonoBehaviour:
   deadZoneLeaveCount: 3
   deadZoneEnterRange: {x: 50, y: 6, z: 6}
   deadZoneEnterCount: 6
---- !u!114 &5753114841520320764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678809054739212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf664d46ab8ca294790737c9076c29d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  angleApplyFactor: 0.8
-  pitchFactor: 0.8
-  pitchLimitDeg: 25
-  lerpFactor: 18
 --- !u!114 &1338865419136667663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,6 +460,7 @@ MonoBehaviour:
   bodyRollRateToElbowWidthPlusFactor: -0.2
   bodyRollRateToElbowWidthMinusFactor: 1
   bendGoalZOffset: -0.2
+  ikWeightMinOnImageHandTracking: 0.8
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0

@@ -60,9 +60,6 @@ namespace Baku.VMagicMirror.VMCP
 
         
         private bool _hasModel;
-        private bool _boneTransferEnabled;
-
-        private IMessageReceiver _receiver;
         private IVRMLoadable _vrmLoadable;
         private VMCPHandPose _vmcpHand;
         private VMCPHeadPose _vmcpHead;
@@ -74,22 +71,15 @@ namespace Baku.VMagicMirror.VMCP
 
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             VMCPHandPose vmcpHand,
             VMCPHeadPose vmcpHead,
             VMCPLowerBodyPose vmcpLowerBodyPose)
         {
-            _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _vmcpHand = vmcpHand;
             _vmcpHead = vmcpHead;
             _vmcpLowerBodyPose = vmcpLowerBodyPose;
-
-            _receiver.AssignCommandHandler(
-                VmmCommands.SetVMCPNaiveBoneTransfer,
-                command => _boneTransferEnabled = command.ToBoolean()
-            );
 
             _vrmLoadable.VrmLoaded += info =>
             {
@@ -138,8 +128,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private void LateUpdate()
         {
-            //設定がオフ -> 何もしない
-            if (!_hasModel || !_boneTransferEnabled)
+            if (!_hasModel)
             {
                 return;
             }

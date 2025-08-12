@@ -47,8 +47,8 @@ namespace Baku.VMagicMirror.ExternalTracker
         public bool IsActive { get; private set; }
         
         public bool IsConnected => 
-            (_faceControlConfig.ControlMode is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
-            (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower && _mediaPipeFacialValueRepository.IsTracked);
+            (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
+            (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower && _mediaPipeFacialValueRepository.IsTracked);
 
         private readonly ReactiveProperty<bool> _isExternalTrackerPerfectSyncEnabled = new();
         private ReadOnlyReactiveProperty<bool> WebCamHighPowerModePerfectSyncEnabled => 
@@ -103,7 +103,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 .Subscribe(v => _faceControlConfig.UseWebCamHighPowerModePerfectSync = v)
                 .AddTo(this);
 
-            _faceControlConfig.FaceControlMode.CombineLatest(
+            _faceControlConfig.HeadMotionControlMode.CombineLatest(
                     _isExternalTrackerPerfectSyncEnabled,
                     WebCamHighPowerModePerfectSyncEnabled,
                     (mode, exTrackerPerfectSync, webCamPerfectSync) =>
@@ -118,7 +118,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 })
                 .AddTo(this);
             
-            _faceControlConfig.FaceControlMode.CombineLatest(
+            _faceControlConfig.HeadMotionControlMode.CombineLatest(
                     _preferExternalTrackerLipSyncThanMic,
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
                     (mode, exTrackerLipSync, webCamLipSync) =>
@@ -139,8 +139,8 @@ namespace Baku.VMagicMirror.ExternalTracker
                 }
 
                 var result = 
-                    (_faceControlConfig.ControlMode is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
-                    (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower &&
+                    (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
+                    (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower &&
                         _mediaPipeFacialValueRepository.IsTracked);
                 return result;
             }
@@ -174,7 +174,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             // HACK: iFacialMocapとMediaPipeでブレンドシェイプの左右で一貫性がうまく取れてないので、if分岐のためにsourceの実体をチェックする
             // TODO: ホントはこうじゃなくて IFaceTrackBlendShapes の左右の扱いが揃うようになっていてほしい…
 
-            var sourceIsExTracker = _faceControlConfig.ControlMode is FaceControlModes.ExternalTracker;
+            var sourceIsExTracker = _faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker;
             var source = sourceIsExTracker
                 ? _externalTracker.CurrentSource
                 : _mediaPipeFacialValueRepository.CorrectedBlendShapes;

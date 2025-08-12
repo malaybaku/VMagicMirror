@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
             _count = 0;
             
-            if (_faceConfig.ControlMode != FaceControlModes.ExternalTracker ||
+            if (_faceConfig.HeadMotionControlModeValue != FaceControlModes.ExternalTracker ||
                 !receiver.IsRunning ||
                 !dataSource.Connected)
             {

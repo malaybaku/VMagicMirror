@@ -11,43 +11,46 @@ namespace Baku.VMagicMirror
         #region GUIの設定だけで確定する値
 
         /// <summary>
-        /// 顔のトラッキング全体にかんする制御モードを取得、設定します。
+        /// 頭部の動作を制御している処理の種類を取得します。
+        ///
+        /// とくにVMCProtocolの利用中は、この値が <see cref="FaceControlModes.VMCProtocol"/> であるものの、
+        /// 表情は別で処理をする、つまり <see cref="BlendShapeControlMode"/> の最新値は他の値である…というケースもあることに注意して下さい。
         /// </summary>
-        /// <remarks>
-        /// setterを呼んでいいのは適切なメッセージをIPCで受信しているクラスだけです。
-        /// </remarks>
-        public FaceControlModes ControlMode => _faceControlMode.Value;
-
-        private readonly ReactiveProperty<FaceControlModes> _faceControlMode 
-            = new(FaceControlModes.WebCamLowPower);
-        public ReadOnlyReactiveProperty<FaceControlModes> FaceControlMode => _faceControlMode;
-
-        public void SetFaceControlMode(FaceControlModes mode) => _faceControlMode.Value = mode;
+        public FaceControlModes HeadMotionControlModeValue => _headMotionControlMode.Value;
         
+        private readonly ReactiveProperty<FaceControlModes> _headMotionControlMode = new(FaceControlModes.WebCamLowPower);
+        /// <summary> 頭部動作を制御している処理の種類を取得します。 </summary>
+        public ReadOnlyReactiveProperty<FaceControlModes> HeadMotionControlMode => _headMotionControlMode;
+
+        private readonly ReactiveProperty<FaceControlModes> _blendShapeControlMode = new(FaceControlModes.WebCamLowPower);
+
+        /// <summary> ブレンドシェイプを制御している処理の種類を取得します。 </summary>
+        public ReadOnlyReactiveProperty<FaceControlModes> BlendShapeControlMode => _blendShapeControlMode;
+        
+        public void SetFaceControlMode(FaceControlModes headMotionMode, FaceControlModes blendShapeMode)
+        {
+            _headMotionControlMode.Value = headMotionMode;
+            _blendShapeControlMode.Value = blendShapeMode;
+        }
+
         /// <summary>
         /// パーフェクトシンクのon/offを取得、設定します。
-        /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がExternalTrackerの場合はパーフェクトシンクがオンです。
+        /// このフラグがtrueであり、かつ<see cref="HeadMotionControlModeValue"/>がExternalTrackerの場合はパーフェクトシンクがオンです。
         /// </summary>
         public bool UseExternalTrackerPerfectSync { get; set; }
 
         /// <summary>
         /// Webカメラの高負荷モードにおいてパーフェクトシンクを使用するかどうかを取得、設定します。
-        /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がWebCamHighPowerの場合はパーフェクトシンクがオンです。
+        /// このフラグがtrueであり、かつ<see cref="HeadMotionControlModeValue"/>がWebCamHighPowerの場合はパーフェクトシンクがオンです。
         /// </summary>
         public bool UseWebCamHighPowerModePerfectSync { get; set; }
-        
-        /// <summary>
-        /// VMCPによるBlendShapeの適用が有効かどうかを取得、設定します。
-        /// このフラグがtrueの場合、Word To Motion, Face Switchに次いでVMCPのBlendShapeが優先されます。
-        /// </summary>
-        public bool UseVMCPFacial { get; set; }
 
         /// <summary>
         /// 外部トラッキング機能またはWebカメラ機能に基づいてパーフェクトシンクを適用する場合はtrue、そうでなければfalse
         /// </summary>
         public bool PerfectSyncActive =>
-            (ControlMode is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
-            (ControlMode is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
+            (BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
+            (BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
         
         #endregion
         
@@ -90,6 +93,7 @@ namespace Baku.VMagicMirror
         public bool ShouldSkipNonMouthBlendShape => FaceSwitchActive;
     }
 
+    // TODO: 「PoseはVMCP受信だけど表情は他のやつ」みたいな組み合わせを認められる建付けに拡張したい
     /// <summary>
     /// 顔トラッキングの仕組みとしてどれが有効かの一覧。
     /// </summary>

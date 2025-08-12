@@ -100,7 +100,7 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            if (_config.ControlMode != FaceControlModes.VMCProtocol)
+            if (_config.HeadMotionControlModeValue != FaceControlModes.VMCProtocol)
             {
                 BodyOffset = Vector3.zero;
                 return;

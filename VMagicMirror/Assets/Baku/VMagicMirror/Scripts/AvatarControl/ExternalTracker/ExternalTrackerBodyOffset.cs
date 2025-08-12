@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            if (_config.ControlMode != FaceControlModes.ExternalTracker ||
+            if (_config.HeadMotionControlModeValue != FaceControlModes.ExternalTracker ||
                 !_externalTracker.SupportFacePositionOffset)
             {
                 BodyOffset = Vector3.zero;

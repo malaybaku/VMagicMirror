@@ -62,7 +62,7 @@ namespace Baku.VMagicMirror
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
             DefaultBlendShape.Apply(accumulator);
 
-            var blinkSource = _config.ControlMode switch
+            var blinkSource = _config.BlendShapeControlMode.CurrentValue switch
             {
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
 
             // 眼球運動はモード別で切り替える。
             // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってるので、それをそのまま使う…という話
-            switch (_config.ControlMode)
+            switch (_config.HeadMotionControlModeValue)
             {
                 // NOTE: Trackedではない場合にも各々のEyeJitterに帰着するようにするのもアリ
                 // (「自動のとトラッキングのが頻繁に切り替わると見た目が悪い」みたいな問題が起こったら特に改変すべき)

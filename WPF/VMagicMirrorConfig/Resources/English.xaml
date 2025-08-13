@@ -182,15 +182,14 @@ The properties here only affects during "Web Camera (High Power)" is selected.
 Following features are available.
         
 Receive:
-
-- Head: Head Pose
-- Hand: Hand Pose
-- Facial: Facial BlendShape
+  - Upper Body Pose
+  - Hand and Finger Pose
+  - Lower Body Pose
+  - Facial BlendShape
 
 Send: 
-
-- Pose: Full Body Pose
-- Facial: Facial BlendShape
+  - Full Body Pose
+  - Facial BlendShape
 </sys:String>
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol Data Receive</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>

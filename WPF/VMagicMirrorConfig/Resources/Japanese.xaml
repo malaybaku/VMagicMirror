@@ -184,13 +184,14 @@
 以下の機能が利用できます。
 
 受信:         
-    - 頭部モーション
-    - 表情 (BlendShape)
-    - 両手の位置情報
+  - 上半身モーション
+  - 手・指のモーション
+  - 足・腰のモーション
+  - 表情 (BlendShape)
 
 送信:
-    - 全身のポーズ
-    - 表情 (BlendShape)
+  - 全身のポーズ
+  - 表情 (BlendShape)
 </sys:String>
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>

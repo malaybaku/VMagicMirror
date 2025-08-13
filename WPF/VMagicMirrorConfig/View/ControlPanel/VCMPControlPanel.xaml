@@ -167,6 +167,17 @@
 
                     </StackPanel>
 
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
+                                Margin="5,20,5,10"
+                                />
+
+                    <CheckBox Margin="15,0,10,10" 
+                              Content="{DynamicResource VMCP_EnableReceiveLerp}" 
+                              IsChecked="{Binding EnableVMCPReceiveLerp.Value}"
+                              />
+
+
                     <md:Card Margin="15,5,5,0" 
                          Visibility="{Binding BodyMotionStyleIncorrectForHandTracking.Value,
                                               Converter={StaticResource BooleanToVisibilityConverter}}"

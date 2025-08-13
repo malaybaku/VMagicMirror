@@ -19,6 +19,9 @@ namespace Baku.VMagicMirrorConfig
                 setting.VMCPEnabled, v => SendMessage(MessageFactory.EnableVMCP(v)));
             SerializedVMCPSourceSetting = new(
                 setting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.SetVMCPSources(v)));
+            EnableVMCPReceiveLerp = new(
+                setting.EnableVMCPReceiveLerp, v => SendMessage(MessageFactory.EnableVMCPReceiveLerp(v))
+                );
 
             VMCPSendEnabled = new(
                 setting.VMCPSendEnabled,
@@ -39,6 +42,8 @@ namespace Baku.VMagicMirrorConfig
         // 受信系のプロパティ
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
+        public RProperty<bool> EnableVMCPReceiveLerp { get; }
+
 
         private readonly VMCPReceiveStatus _receiveStatus = new();
         public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
@@ -156,6 +161,7 @@ namespace Baku.VMagicMirrorConfig
             var defaultSetting = VMCPSetting.Default;
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
             SerializedVMCPSourceSetting.Value = defaultSetting.SerializedVMCPSourceSetting;
+            EnableVMCPReceiveLerp.Value = defaultSetting.EnableVMCPReceiveLerp;
 
             VMCPSendEnabled.Value = defaultSetting.VMCPSendEnabled;
             SerializedVMCPSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;

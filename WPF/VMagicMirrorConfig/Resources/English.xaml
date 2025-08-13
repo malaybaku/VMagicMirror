@@ -208,6 +208,7 @@ Body</sys:String>
     <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
+    <sys:String x:Key="VMCP_EnableReceiveLerp">Smooth Received Pose</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>

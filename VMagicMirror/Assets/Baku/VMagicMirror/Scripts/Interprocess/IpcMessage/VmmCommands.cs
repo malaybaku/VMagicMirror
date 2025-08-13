@@ -278,6 +278,7 @@
         // VMCP (recv)
         EnableVMCP,
         SetVMCPSources,
+        EnableVMCPPoseLerp,
 
         // VMCP (send)
         EnableVMCPSend,

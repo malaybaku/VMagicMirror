@@ -85,6 +85,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public VMCPSourceItemViewModel Source2 { get; set; } = new();
         public VMCPSourceItemViewModel Source3 { get; set; } = new();
 
+        public RProperty<bool> EnableVMCPReceiveLerp => _model.EnableVMCPReceiveLerp;
         public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
 
         // Send

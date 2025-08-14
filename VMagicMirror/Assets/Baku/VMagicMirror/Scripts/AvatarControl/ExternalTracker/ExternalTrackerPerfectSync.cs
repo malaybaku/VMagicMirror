@@ -103,7 +103,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 .Subscribe(v => _faceControlConfig.UseWebCamHighPowerModePerfectSync = v)
                 .AddTo(this);
 
-            _faceControlConfig.HeadMotionControlMode.CombineLatest(
+            _faceControlConfig.BlendShapeControlMode.CombineLatest(
                     _isExternalTrackerPerfectSyncEnabled,
                     WebCamHighPowerModePerfectSyncEnabled,
                     (mode, exTrackerPerfectSync, webCamPerfectSync) =>
@@ -118,7 +118,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 })
                 .AddTo(this);
             
-            _faceControlConfig.HeadMotionControlMode.CombineLatest(
+            _faceControlConfig.BlendShapeControlMode.CombineLatest(
                     _preferExternalTrackerLipSyncThanMic,
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
                     (mode, exTrackerLipSync, webCamLipSync) =>

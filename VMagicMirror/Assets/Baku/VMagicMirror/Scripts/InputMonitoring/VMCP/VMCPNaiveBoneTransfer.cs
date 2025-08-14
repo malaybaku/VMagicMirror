@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -9,6 +10,12 @@ namespace Baku.VMagicMirror.VMCP
     //NOTE: このクラスの`Set`はIKの適用より後、かつVRM1.0のRuntimeのProcess()よりは先に呼ばれる必要がある。のでMonoBehaviour。
     public class VMCPNaiveBoneTransfer : MonoBehaviour
     {
+        //NOTE: 60FPSのVMagicMirrorが30FPSアプリからポーズを受信したときに滑らかになる…みたいな志向で調整した値
+        private const float LerpFactor = 18f;
+
+        // 平滑化が有効な場合、 _applyWeight を気にしたうえで補間も効かせる。
+        private const string HipsBoneKey = nameof(HumanBodyBones.Hips);
+        
         //NOTE:
         // - このクラスの守備範囲はFinger以外のボーン全般
         //   - Headを送ってるSourceは上半身のうち、Handとその子要素を除くボーン回転を指定できる
@@ -59,29 +66,39 @@ namespace Baku.VMagicMirror.VMCP
         // Shoulder~Handまでの両腕ぶん
         private readonly Dictionary<string, Transform> _handBones = new();
 
-        
+        private readonly ReactiveProperty<bool> _enableBoneLerp = new();
+
+        // NOTE: 下記は姿勢適用をなめらかにする場合に使う。モデルのリロードや、なめらか適用オプションの無効化が発生するとキャッシュが消える￥
+        private readonly Dictionary<string, Quaternion> _localRotationLerpCache = new();
+        private Vector3? _hipsPositionLerpCache = null;
+
         private bool _hasModel;
+        private IMessageReceiver _receiver;
         private IVRMLoadable _vrmLoadable;
         private VMCPHandPose _vmcpHand;
         private VMCPHeadPose _vmcpHead;
         private VMCPLowerBodyPose _vmcpLowerBodyPose;
 
-        //NOTE: WordToMotionで上半身を動かすときweightを下げる
+        //NOTE: WordToMotionで上半身を動かすときweightを下げていく
         private CancellationTokenSource _weightCts;
         private float _applyWeight = 1f;
 
         [Inject]
         public void Initialize(
+            IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             VMCPHandPose vmcpHand,
             VMCPHeadPose vmcpHead,
             VMCPLowerBodyPose vmcpLowerBodyPose)
         {
+            _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _vmcpHand = vmcpHand;
             _vmcpHead = vmcpHead;
             _vmcpLowerBodyPose = vmcpLowerBodyPose;
 
+            _receiver.BindBoolProperty(VmmCommands.EnableVMCPPoseLerp, _enableBoneLerp);
+            
             _vrmLoadable.VrmLoaded += info =>
             {
                 var a = info.animator;
@@ -121,7 +138,14 @@ namespace Baku.VMagicMirror.VMCP
                 _upperBodyBones.Clear();
                 _lowerBodyBones.Clear();
                 _handBones.Clear();
+                ClearLerpCache();
             };
+
+            // 補間オン/オフを繰り返したときヘンにならないようにしてる
+            _enableBoneLerp
+                .Where(v => !v)
+                .Subscribe(_ => ClearLerpCache())
+                .AddTo(this);
         }
 
         public void FadeInWeight(float duration) => FadeWeight(1f, duration);
@@ -133,11 +157,13 @@ namespace Baku.VMagicMirror.VMCP
             {
                 return;
             }
+            
+            var lerpFactor = Mathf.Clamp01(LerpFactor * Time.deltaTime);
 
             //NOTE: HeadとHandが同一ソースの場合、結果的に単一ソースからボーン回転が読み出される
             if (_vmcpHead.IsConnected.CurrentValue)
             {
-                SetBoneRotations(_vmcpHead.Humanoid, _upperBodyBones);
+                SetBoneRotations(_vmcpHead.Humanoid, _upperBodyBones, lerpFactor);
             }
 
             // TODO: 実行タイミング的に問題ないかは要チェック
@@ -149,13 +175,13 @@ namespace Baku.VMagicMirror.VMCP
 
             if (_vmcpHand.IsConnected.CurrentValue)
             {
-                SetBoneRotations(_vmcpHand.Humanoid, _handBones);
+                SetBoneRotations(_vmcpHand.Humanoid, _handBones, lerpFactor);
             }
 
             if (_vmcpLowerBodyPose.IsConnected.CurrentValue)
             {
                 var lowerBodyHumanoid = _vmcpLowerBodyPose.Humanoid;
-                SetBoneRotations(lowerBodyHumanoid, _lowerBodyBones);
+                SetBoneRotations(lowerBodyHumanoid, _lowerBodyBones, lerpFactor);
                 // 本アバターのRootBone自体は動かさず、Hipsを目標位置に持っていく
                 if (lowerBodyHumanoid.HipsLocalPosition is { } hipsPosition)
                 {
@@ -164,11 +190,9 @@ namespace Baku.VMagicMirror.VMCP
                     var rootPose = lowerBodyHumanoid.RootPose;
                     var hipsWorldPosition = rootPose.position + rootPose.rotation * hipsPosition;
                     var hipsWorldRotation = 
-                        rootPose.rotation * _vmcpHand.Humanoid.GetLocalRotation(nameof(HumanBodyBones.Hips));
+                        rootPose.rotation * _vmcpHand.Humanoid.GetLocalRotation(HipsBoneKey);
 
-                    _lowerBodyBones[nameof(HumanBodyBones.Hips)].SetPositionAndRotation(
-                        hipsWorldPosition, hipsWorldRotation
-                    );
+                    SetHipsPose(hipsWorldPosition, hipsWorldRotation, lerpFactor);
                 }
             }
         }
@@ -180,33 +204,109 @@ namespace Baku.VMagicMirror.VMCP
         }
 
         //NOTE: 同一ボーンに対して毎フレーム最大1回しか呼ばない…という前提で実装されてる (補間の部分が)
-        private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<string, Transform> dest)
+        private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<string, Transform> dest, float lerpFactor)
         {
             if (_applyWeight <= 0f)
             {
                 return;
             }
 
-            if (_applyWeight >= 1f)
-            {
-                foreach (var pair in dest)
-                {
-                    pair.Value.localRotation = source.GetLocalRotation(pair.Key);
-                }
-                return;
-            }
-            
-            //補間が必要なケースだけ補間する
             foreach (var pair in dest)
             {
-                pair.Value.localRotation = Quaternion.Slerp(
-                    pair.Value.localRotation,
-                    source.GetLocalRotation(pair.Key),
-                    _applyWeight
-                );
+                Quaternion targetRotation;
+                if (_applyWeight >= 1f)
+                {
+                    targetRotation = source.GetLocalRotation(pair.Key);
+                }
+                else
+                {
+                    targetRotation = Quaternion.Slerp(
+                        pair.Value.localRotation,
+                        source.GetLocalRotation(pair.Key),
+                        _applyWeight
+                    );
+                }
+
+                SetBoneLocalRotation(pair.Key, pair.Value, targetRotation, lerpFactor);
             }
         }
 
+        private void SetBoneLocalRotation(string key, Transform target, Quaternion rotation, float lerpFactor)
+        {
+            // 平滑化がない場合はシンプルに平滑化しておしまい
+            if (!_enableBoneLerp.CurrentValue)
+            {
+                target.localRotation = rotation;
+                return;
+            }
+
+            // 補間したいがキャッシュが無い場合: 最初の値なのでキャッシュしつつ適用
+            if (!_localRotationLerpCache.TryGetValue(key, out var currentRotation))
+            {
+                _localRotationLerpCache[key] = rotation;
+                target.localRotation = rotation;
+                return;
+            }
+            
+            // 補間のキャッシュがある場合: 補間して適用
+            var nextRotation = Quaternion.Slerp(currentRotation, rotation, lerpFactor);
+            target.localRotation = nextRotation;
+            _localRotationLerpCache[key] = nextRotation;
+        }
+
+        private void SetHipsPose(Vector3 hipsWorldPosition, Quaternion hipsWorldRotation, float lerpFactor)
+        {
+            if (_applyWeight <= 0f)
+            {
+                return;
+            }
+
+            var target = _lowerBodyBones[HipsBoneKey];
+            if (_applyWeight < 1)
+            {
+                var pos = target.position;
+                var rot = target.rotation;
+                hipsWorldPosition = Vector3.Lerp(pos, hipsWorldPosition, _applyWeight);
+                hipsWorldRotation = Quaternion.Slerp(rot, hipsWorldRotation, _applyWeight);
+            }
+
+            // 平滑化しない場合、そのまま適用して終わり
+            if (!_enableBoneLerp.CurrentValue)
+            {
+                target.SetPositionAndRotation(hipsWorldPosition, hipsWorldRotation);
+                return;
+            }
+
+            // 平滑化はしたいがキャッシュがまだない: 初期値をキャッシュして終わり
+            if (_hipsPositionLerpCache == null || !_localRotationLerpCache.ContainsKey(HipsBoneKey))
+            {
+                target.SetPositionAndRotation(hipsWorldPosition, hipsWorldRotation);
+                _hipsPositionLerpCache = hipsWorldPosition;
+                _localRotationLerpCache[HipsBoneKey] = hipsWorldRotation;
+                return;
+            }
+            
+            // 補間のキャッシュがある場合: 補間して適用
+            var currentPosition = _hipsPositionLerpCache.Value;
+            var nextPosition = Vector3.Lerp(
+                currentPosition, hipsWorldPosition, lerpFactor
+            );
+            var currentRotation = _localRotationLerpCache[HipsBoneKey];
+            var nextRotation = Quaternion.Slerp(
+                currentRotation, hipsWorldRotation, lerpFactor
+            );
+
+            target.SetPositionAndRotation(nextPosition, nextRotation);
+            _hipsPositionLerpCache = nextPosition;
+            _localRotationLerpCache[HipsBoneKey] = nextRotation;
+        }
+
+        private void ClearLerpCache()
+        {
+            _localRotationLerpCache.Clear();
+            _hipsPositionLerpCache = null;
+        }
+        
         private void FadeWeight(float target, float duration)
         {
             _weightCts?.Cancel();

@@ -96,18 +96,18 @@ namespace Baku.VMagicMirror.VMCP
         private readonly Dictionary<string, Pose> _trackerPoses = new(6);
 
         private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
-        private readonly bool HasBoneOffsetsSource;
+        private readonly bool _hasBoneOffsetsSource;
 
         public VMCPBasedHumanoid()
         {
             _boneOffsets = null;
-            HasBoneOffsetsSource = false;
+            _hasBoneOffsetsSource = false;
         }
         
         public VMCPBasedHumanoid(AvatarBoneInitialLocalOffsets boneOffsets)
         {
             _boneOffsets = boneOffsets;
-            HasBoneOffsetsSource = _boneOffsets != null;
+            _hasBoneOffsetsSource = _boneOffsets != null;
         }
 
         // NOTE: Root姿勢を一回も受け取ってない場合は identity が入る(= ワールド原点にアバターが立ってるアプリからのデータ送信と見なす)
@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             // ヒエラルキー構築はしたいが、ヒエラルキーのリファレンスになるべきモデルのロードが終わってない→何もしない
-            if (HasBoneOffsetsSource && !_boneOffsets.HasModel.CurrentValue)
+            if (_hasBoneOffsetsSource && !_boneOffsets.HasModel.CurrentValue)
             {
                 return;
             }
@@ -148,7 +148,7 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             BuildBoneHierarchy();
-            if (HasBoneOffsetsSource)
+            if (_hasBoneOffsetsSource)
             {
                 ApplyLocalModelOffsets();
             }
@@ -231,7 +231,7 @@ namespace Baku.VMagicMirror.VMCP
                 // NOTE: Hipsは通常のFKでは動かす必要がないのでビルドしたHumanoidには適用しない
                 HipsLocalPosition = position;
             }
-            else if (!HasBoneOffsetsSource)
+            else if (!_hasBoneOffsetsSource)
             {
                 // NOTE: 受信したVMMのボーンを再構築するために値を入れている。もしVMM側のボーン情報を正とする場合、モデル側のは無視する手もある
                 bone.Transform.localPosition = position;

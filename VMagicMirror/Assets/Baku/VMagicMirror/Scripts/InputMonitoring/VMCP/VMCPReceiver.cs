@@ -289,7 +289,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             //NOTE:
             // - BlendShapeの受信状態は単に受信が停止したら検知可能なので、こういうケアをしないでよい
-            // - 非ActiveなときはHeadPose/HandPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
+            // - 非Activeなときは_headPose/_handPose/_lowerBodyPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
 
             if (_headPose.IsActive.CurrentValue)
             {

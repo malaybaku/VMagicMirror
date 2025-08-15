@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.VMCP
 
         public bool HasValidSetting() =>
             Port > 0 && Port < 65536 &&
-            (ReceiveHeadPose || ReceiveHandPose || ReceiveLowerBodyPose || ReceiveFacial );
+            (ReceiveHeadPose || ReceiveHandPose || ReceiveLowerBodyPose || ReceiveFacial);
 
         public VMCPSource(
             string name,

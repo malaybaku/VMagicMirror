@@ -346,13 +346,13 @@ namespace Baku.VMagicMirror.VMCP
                     }
                     break;
                 case VMCPMessageType.TrackerPose:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
                         ApplyTrackerPose(message, _receiverHumanoids[sourceIndex]);
                     }
                     break;
                 case VMCPMessageType.ForwardKinematics:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
                         ApplyBoneLocalPose(message, _receiverHumanoids[sourceIndex]);
                     }

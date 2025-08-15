@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.VMCP
     public class VMCPNaiveBoneTransfer : MonoBehaviour
     {
         //NOTE: 60FPSのVMagicMirrorが30FPSアプリからポーズを受信したときに滑らかになる…みたいな志向で調整した値
-        private const float LerpFactor = 18f;
+        private const float LerpFactor = 15f;
 
         // 平滑化が有効な場合、 _applyWeight を気にしたうえで補間も効かせる。
         private const string HipsBoneKey = nameof(HumanBodyBones.Hips);
@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror.VMCP
                     var rootPose = lowerBodyHumanoid.RootPose;
                     var hipsWorldPosition = rootPose.position + rootPose.rotation * hipsPosition;
                     var hipsWorldRotation = 
-                        rootPose.rotation * _vmcpHand.Humanoid.GetLocalRotation(HipsBoneKey);
+                        rootPose.rotation * _vmcpLowerBodyPose.Humanoid.GetLocalRotation(HipsBoneKey);
 
                     SetHipsPose(hipsWorldPosition, hipsWorldRotation, lerpFactor);
                 }

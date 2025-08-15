@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.VMCP
     public class VMCPNaiveBoneTransfer : MonoBehaviour
     {
         //NOTE: 60FPSのVMagicMirrorが30FPSアプリからポーズを受信したときに滑らかになる…みたいな志向で調整した値
-        private const float LerpFactor = 15f;
+        private const float LerpFactor = 24f;
 
         // 平滑化が有効な場合、 _applyWeight を気にしたうえで補間も効かせる。
         private const string HipsBoneKey = nameof(HumanBodyBones.Hips);
@@ -40,7 +40,8 @@ namespace Baku.VMagicMirror.VMCP
 
         private static readonly HumanBodyBones[] LowerBodyBones = new[]
         {
-            HumanBodyBones.Hips,
+            // NOTE: HipsはPositionと一緒にWorld座標ベースで動かす特殊な処理をするので、一括の回転処理の対象からは外している
+            //HumanBodyBones.Hips,
             HumanBodyBones.LeftUpperLeg,
             HumanBodyBones.LeftLowerLeg,
             HumanBodyBones.LeftFoot,
@@ -60,8 +61,9 @@ namespace Baku.VMagicMirror.VMCP
         // 腕以外でSpine ~ Head
         private readonly Dictionary<string, Transform> _upperBodyBones = new();
 
-        // Hips ~ Toesまでの両脚ぶん
+        // Hips ~ Toesまでの両脚ぶん。ただしHipsは特別扱いなので分けて持っておく
         private readonly Dictionary<string, Transform> _lowerBodyBones = new();
+        private Transform _hipsBone;
 
         // Shoulder~Handまでの両腕ぶん
         private readonly Dictionary<string, Transform> _handBones = new();
@@ -70,7 +72,7 @@ namespace Baku.VMagicMirror.VMCP
 
         // NOTE: 下記は姿勢適用をなめらかにする場合に使う。モデルのリロードや、なめらか適用オプションの無効化が発生するとキャッシュが消える￥
         private readonly Dictionary<string, Quaternion> _localRotationLerpCache = new();
-        private Vector3? _hipsPositionLerpCache = null;
+        private Pose? _hipsPoseLerpCache = null;
 
         private bool _hasModel;
         private IMessageReceiver _receiver;
@@ -119,6 +121,7 @@ namespace Baku.VMagicMirror.VMCP
                         _lowerBodyBones[bone.ToString()] = t;
                     }
                 }
+                _hipsBone = a.GetBoneTransform(HumanBodyBones.Hips);
                 
                 foreach (var bone in HandBones)
                 {
@@ -137,6 +140,7 @@ namespace Baku.VMagicMirror.VMCP
                 _hasModel = false;
                 _upperBodyBones.Clear();
                 _lowerBodyBones.Clear();
+                _hipsBone = null;
                 _handBones.Clear();
                 ClearLerpCache();
             };
@@ -261,7 +265,7 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
-            var target = _lowerBodyBones[HipsBoneKey];
+            var target = _hipsBone;
             if (_applyWeight < 1)
             {
                 var pos = target.position;
@@ -278,33 +282,30 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             // 平滑化はしたいがキャッシュがまだない: 初期値をキャッシュして終わり
-            if (_hipsPositionLerpCache == null || !_localRotationLerpCache.ContainsKey(HipsBoneKey))
+            if (_hipsPoseLerpCache == null)
             {
                 target.SetPositionAndRotation(hipsWorldPosition, hipsWorldRotation);
-                _hipsPositionLerpCache = hipsWorldPosition;
-                _localRotationLerpCache[HipsBoneKey] = hipsWorldRotation;
+                _hipsPoseLerpCache = new Pose(hipsWorldPosition, hipsWorldRotation);
                 return;
             }
             
             // 補間のキャッシュがある場合: 補間して適用
-            var currentPosition = _hipsPositionLerpCache.Value;
+            var currentPose = _hipsPoseLerpCache.Value;
             var nextPosition = Vector3.Lerp(
-                currentPosition, hipsWorldPosition, lerpFactor
+                currentPose.position, hipsWorldPosition, lerpFactor
             );
-            var currentRotation = _localRotationLerpCache[HipsBoneKey];
             var nextRotation = Quaternion.Slerp(
-                currentRotation, hipsWorldRotation, lerpFactor
+                currentPose.rotation, hipsWorldRotation, lerpFactor
             );
 
             target.SetPositionAndRotation(nextPosition, nextRotation);
-            _hipsPositionLerpCache = nextPosition;
-            _localRotationLerpCache[HipsBoneKey] = nextRotation;
+            _hipsPoseLerpCache = new Pose(nextPosition, nextRotation);
         }
 
         private void ClearLerpCache()
         {
             _localRotationLerpCache.Clear();
-            _hipsPositionLerpCache = null;
+            _hipsPoseLerpCache = null;
         }
         
         private void FadeWeight(float target, float duration)

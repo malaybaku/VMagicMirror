@@ -78,11 +78,11 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            // TODO: VMCPで目ボーンの上書きしたいケースがカバーできてないかも…？
+            // TODO: VMCPで目ボーンの上書きしたいケースがカバーできてなさそう
 
-            // 眼球運動はモード別で切り替える。
-            // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってるので、それをそのまま使う…という話
-            switch (_config.HeadMotionControlModeValue)
+            // 眼球運動は表情の制御モードに応じて切り替える。
+            // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってると考えて、それをそのまま使い、微細運動とかも切っておく
+            switch (_config.BlendShapeControlMode.CurrentValue)
             {
                 // NOTE: Trackedではない場合にも各々のEyeJitterに帰着するようにするのもアリ
                 // (「自動のとトラッキングのが頻繁に切り替わると見た目が悪い」みたいな問題が起こったら特に改変すべき)

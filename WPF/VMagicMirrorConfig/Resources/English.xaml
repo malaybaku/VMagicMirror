@@ -182,15 +182,14 @@ The properties here only affects during "Web Camera (High Power)" is selected.
 Following features are available.
         
 Receive:
-
-- Head: Head Pose
-- Hand: Hand Pose
-- Facial: Facial BlendShape
+  - Upper Body Pose
+  - Hand and Finger Pose
+  - Lower Body Pose
+  - Facial BlendShape
 
 Send: 
-
-- Pose: Full Body Pose
-- Facial: Facial BlendShape
+  - Full Body Pose
+  - Facial BlendShape
 </sys:String>
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol Data Receive</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
@@ -199,7 +198,8 @@ Send:
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Connected">Status</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">Port</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_UpperBodyPose" xml:space="preserve">Upper
+Body</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HandPose">Hand</sys:String>
     <sys:String x:Key="VMCP_GridLabel_LowerBodyPose">Leg</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>
@@ -208,11 +208,8 @@ Send:
     <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
-Use "Default" to apply VMC Protocol based hand pose.</sys:String>
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">Apply received bone pose without any adjust</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
+    <sys:String x:Key="VMCP_EnableReceiveLerp">Smooth Received Pose</sys:String>
+    <sys:String x:Key="VMCP_EnableUpperBodyAdditionalMove">Apply Base Spine Bones Tracking Result</sys:String>    
     
     <sys:String x:Key="VMCP_Send_Enable">Enable VMC Protocol Data Send</sys:String>
     <sys:String x:Key="VMCP_Send_DestAddress">Target Address</sys:String>

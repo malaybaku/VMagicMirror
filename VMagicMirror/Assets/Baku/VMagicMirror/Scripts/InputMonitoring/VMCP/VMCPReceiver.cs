@@ -112,21 +112,6 @@ namespace Baku.VMagicMirror.VMCP
                     _headPose.SetPoseOnHips(headPose);
                 }
 
-                if (_dataPassSettings[i].ReceiveHandPose)
-                {
-                    //NOTE: IKがあったらIK優先したいんだけどな～
-                    var leftHandPose = _receiverHumanoids[i].GetFKLeftHandPoseFromHips();
-                    var rightHandPose = _receiverHumanoids[i].GetFKRightHandPoseFromHips();
-                    _handPose.SetLeftHandPoseOnHips(
-                        leftHandPose.position,
-                        leftHandPose.rotation
-                    );
-                    _handPose.SetRightHandPoseOnHips(
-                        rightHandPose.position,
-                        rightHandPose.rotation
-                    );
-                }
-
                 //一定時間データを受信しなかった受信元は切断扱いになる
                 if (_disconnectCountDown[i] > 0f)
                 {
@@ -304,7 +289,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             //NOTE:
             // - BlendShapeの受信状態は単に受信が停止したら検知可能なので、こういうケアをしないでよい
-            // - 非ActiveなときはHeadPose/HandPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
+            // - 非Activeなときは_headPose/_handPose/_lowerBodyPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
 
             if (_headPose.IsActive.CurrentValue)
             {
@@ -361,13 +346,13 @@ namespace Baku.VMagicMirror.VMCP
                     }
                     break;
                 case VMCPMessageType.TrackerPose:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
                         ApplyTrackerPose(message, _receiverHumanoids[sourceIndex]);
                     }
                     break;
                 case VMCPMessageType.ForwardKinematics:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
                         ApplyBoneLocalPose(message, _receiverHumanoids[sourceIndex]);
                     }

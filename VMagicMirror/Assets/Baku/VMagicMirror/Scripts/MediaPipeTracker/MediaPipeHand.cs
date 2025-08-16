@@ -7,9 +7,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    // TODO: トラッキングロス中は手の回転をFKで決めたいが、テキトーにやってるとぜんぶIKになっちゃうので注意！
-    // - FKのto-beからIK決めてもいいけど、まあそれはそれで面倒なやつ
-    
     /// <summary>
     /// ハンドトラッキングの結果をアバターに適用可能なIK情報に変換するやつ。
     /// - <see cref="HandIKIntegrator"/> では (Left|Right)Hand を参照する

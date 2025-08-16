@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var imageRelatedOffset = _faceControlConfig.ControlMode switch
+            var imageRelatedOffset = _faceControlConfig.HeadMotionControlModeValue switch
             {
                 FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
                 FaceControlModes.VMCProtocol => vmcpBodyOffset.BodyOffset,
@@ -103,7 +103,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var imageRelatedOffset = _faceControlConfig.ControlMode switch
+            var imageRelatedOffset = _faceControlConfig.HeadMotionControlModeValue switch
             {
                 FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
                 FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,

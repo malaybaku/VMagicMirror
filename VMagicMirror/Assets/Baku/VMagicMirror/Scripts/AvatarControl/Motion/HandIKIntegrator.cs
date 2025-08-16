@@ -55,7 +55,6 @@ namespace Baku.VMagicMirror
 
         private AlwaysDownHandIkGenerator _downHand;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
-        private VMCPHandIkGenerator _vmcpHand;
         private MediaPipeHand _mediaPipeHand;
         
         private Transform _rightHandTarget = null;
@@ -216,7 +215,6 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             PenTabletHand = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
-            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
 
             _mediaPipeHand = mediaPipeHand;
             _mediaPipeHand.SetDependency(dependency, _downHand);
@@ -229,7 +227,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, ArcadeStickHand, CarHandle, Presentation, _downHand, PenTabletHand, _vmcpHand, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, ArcadeStickHand, CarHandle, Presentation, _downHand, PenTabletHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -453,7 +451,6 @@ namespace Baku.VMagicMirror
             ArcadeStickHand.Update();
             CarHandle.Update();
             PenTabletHand.Update();
-            _vmcpHand.Update();
 
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
@@ -470,12 +467,6 @@ namespace Baku.VMagicMirror
             PenTabletHand.LateUpdate();
         }
 
-        private void OnDestroy()
-        {
-            _vmcpHand.Dispose();
-            //NOTE: 他でもDisposeしたほうがいいものは追加してOK
-        }
-        
         private void UpdateLeftHand()
         {
             if (_leftHandIkChangeCoolDown > 0)
@@ -555,7 +546,6 @@ namespace Baku.VMagicMirror
             // - 同じ状態には遷移できない
             // - 拍手は実行優先度がすごく高いので、他の状態に遷移できない
             // - 手下げモード有効時は手下げ or 拍手にしか遷移できない
-            // - VMCProtocolが有効だとVMCP or 手下げ or 拍手にしか遷移できない
 
             if (current == target)
             {
@@ -573,12 +563,6 @@ namespace Baku.VMagicMirror
                 return false;
             }
             
-            if (_vmcpHand.IsActive.CurrentValue && target != HandTargetType.VMCPReceiveResult && 
-                target != HandTargetType.ClapMotion && target != HandTargetType.AlwaysDown
-               )
-            {
-                return false;
-            }
             return true; 
         }
         

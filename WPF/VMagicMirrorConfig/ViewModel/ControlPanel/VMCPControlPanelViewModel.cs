@@ -9,23 +9,19 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     public class VMCPControlPanelViewModel : SettingViewModelBase
     {
         public VMCPControlPanelViewModel() : this(
-            ModelResolver.Instance.Resolve<VMCPSettingModel>(),
-            ModelResolver.Instance.Resolve<MotionSettingModel>())
+            ModelResolver.Instance.Resolve<VMCPSettingModel>()
+            )
         {
         }
 
-        internal VMCPControlPanelViewModel(
-            VMCPSettingModel model,
-            MotionSettingModel motionSettingModel)
+        internal VMCPControlPanelViewModel(VMCPSettingModel model)
         {
             _model = model;
-            _motionSettingModel = motionSettingModel;
 
             IsDirty = new RProperty<bool>(false, _ => UpdateReceiveSettingInputValidity());
             ApplyChangeCommand = new ActionCommand(ApplyReceiveSettings);
             RevertChangeCommand = new ActionCommand(RevertReceiveSettingsChange);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
-            FixBodyMotionStyleCommand = new ActionCommand(FixBodyMotionStyle);
 
 
             ApplySendSettingsCommand = new ActionCommand(ApplySendSettings);
@@ -62,18 +58,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _model.SerializedVMCPSourceSetting.AddWeakEventHandler(OnSerializedVMCPSourceSettingChanged);
                 ApplyReceiveConnectionStatus();
 
-                _model.VMCPEnabled.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
-                _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
-
                 _model.SerializedVMCPSendSetting.AddWeakEventHandler(OnSerializedVMCPSendSettingChanged);
-                UpdateBodyMotionStyleCorrectness();
 
                 UpdateSendSettingsValidity();
             }
         }
 
         private readonly VMCPSettingModel _model;
-        private readonly MotionSettingModel _motionSettingModel;
 
         // Receive
         public RProperty<bool> IsDirty { get; }
@@ -85,10 +76,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public VMCPSourceItemViewModel Source2 { get; set; } = new();
         public VMCPSourceItemViewModel Source3 { get; set; } = new();
 
-        public RProperty<bool> EnableNaiveBoneTransfer => _model.EnableNaiveBoneTransfer;
-        public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
-
-        public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
+        public RProperty<bool> EnableVMCPReceiveLerp => _model.EnableVMCPReceiveLerp;
+        public RProperty<bool> EnableUpperBodyAdditionalMove => _model.EnableUpperBodyAdditionalMove;
 
         // Send
 
@@ -124,7 +113,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
-        public ActionCommand FixBodyMotionStyleCommand { get; }
 
         public ActionCommand ApplySendSettingsCommand { get; }
         public ActionCommand RevertSendSettingsCommand { get; }
@@ -162,15 +150,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RaisePropertyChanged(nameof(Source1));
             RaisePropertyChanged(nameof(Source2));
             RaisePropertyChanged(nameof(Source3));
-            UpdateBodyMotionStyleCorrectness();
             IsDirty.Value = false;
         }
 
         private void OnSerializedVMCPSourceSettingChanged(object? sender, PropertyChangedEventArgs e) 
             => LoadCurrentReceiveSettings();
-
-        private void OnBodyMotionStyleCorrectnessMaybeChanged(object? sender, PropertyChangedEventArgs e)
-            => UpdateBodyMotionStyleCorrectness();
 
         private void OnReceiveConnectStatusChanged(object? sender, EventArgs e) => ApplyReceiveConnectionStatus();
 
@@ -203,19 +187,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private void RevertReceiveSettingsChange() => LoadCurrentReceiveSettings();
-
-        private void UpdateBodyMotionStyleCorrectness()
-        {
-            var sourceHasHandTrackingOption =
-                (!Source1.PortNumberIsInvalid.Value && Source1.ReceiveHandPose.Value) ||
-                (!Source2.PortNumberIsInvalid.Value && Source2.ReceiveHandPose.Value) ||
-                (!Source3.PortNumberIsInvalid.Value && Source3.ReceiveHandPose.Value);
-
-            BodyMotionStyleIncorrectForHandTracking.Value =
-                sourceHasHandTrackingOption &&
-                _model.VMCPEnabled.Value && 
-                _motionSettingModel.EnableNoHandTrackMode.Value;
-        }
 
         private void SetSendSettingsDirty()
         {
@@ -286,12 +257,5 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OpenFullEditionUrl() 
             => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040");
-
-        private void FixBodyMotionStyle()
-        {
-            _motionSettingModel.EnableNoHandTrackMode.Value = false;
-            _motionSettingModel.EnableGameInputLocomotionMode.Value = false;
-            SnackbarWrapper.Enqueue(LocalizedString.GetString("Snackbar_BodyMotionStyle_Set_Default"));
-        }
     }
 }

@@ -117,16 +117,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var handRotation = Quaternion.LookRotation(zAxis, yAxis);
             UpdateFingerRotations(wristPose, landmarks, isLeftHand);
 
-            var startBone = isLeftHand
-                ? (int)HumanBodyBones.LeftThumbProximal
-                : (int)HumanBodyBones.RightThumbProximal;
-
-            for (var i = 0; i < 15; i++)
-            {
-                var fingerBone = (HumanBodyBones)(i + startBone);
-                //_kinematicSetter.SetLocalRotationBeforeIK(fingerBone, fingerRotations[i]);
-            }
-
             if (isLeftHand)
             {
                 LeftHandRotation = handRotation;
@@ -209,10 +199,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var proximalAngle =
                 Mathf.Asin(Vector3.Dot((j2 - j3).normalized, wristPose.ZAxis)) * Mathf.Rad2Deg;
             
-            return (
+            var rawResult = (
                 Mathf.Abs(proximalAngle),
                 GetBendAngle(j3, j2, j1),
                 GetBendAngle(j2, j1, tips)
+            );
+
+            // NOTE: 曲げ・伸ばしの中間があんまり発生しないようにしている + 90度以上はあんま曲がらないはずなので無視する
+            return (
+                CubicInOutEase(rawResult.Item1 / 90f) * 90f,
+                CubicInOutEase(rawResult.Item2 / 90f) * 90f,
+                CubicInOutEase(rawResult.Item3 / 90f) * 90f
             );
         }
 
@@ -221,5 +218,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private static Vector3 GetNormalizedVectorOnPlane(Vector3 v, Vector3 normal) 
             => (v - normal * Vector3.Dot(v, normal)).normalized;
+
+        private static float CubicInOutEase(float t)
+        {
+            t = Mathf.Clamp01(t);
+
+            if (t < 0.5f)
+            {
+                return 4 * t * t * t;
+            }
+            else
+            {
+                var f = (t - 1);
+                return 1 + 4 * f * f * f;
+            }
+        }
     }
 }

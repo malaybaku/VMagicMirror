@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
         private void Update()
         {
             //NOTE: FKはLateUpdateのタイミングで適用されるので、その前のUpdate時点で仕込む、みたいな制御。
-            switch (_config.ControlMode)
+            switch (_config.HeadMotionControlModeValue)
             {
             case FaceControlModes.ExternalTracker:
                 externalTrackerAttitude.IsActive = true;
@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
                 break;
             }
 
-            nonImageBasedMotion.FaceControlMode = _config.ControlMode;
+            nonImageBasedMotion.FaceControlMode = _config.HeadMotionControlModeValue;
         }
     }
 }

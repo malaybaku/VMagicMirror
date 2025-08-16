@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror.VMCP
         private static readonly int FingerIndexEnd = (int)HumanBodyBones.RightLittleDistal + 1;
 
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly Dictionary<string, Transform> _modelFingerBones = new Dictionary<string, Transform>();
+        private readonly Dictionary<string, Transform> _modelFingerBones = new();
         private bool _hasModel;
         
         public VMCPBasedFingerSetter(IVRMLoadable vrmLoadable)

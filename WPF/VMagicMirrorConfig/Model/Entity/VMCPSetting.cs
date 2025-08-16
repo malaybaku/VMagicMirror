@@ -4,9 +4,11 @@
     {
         // Receive
         public bool VMCPEnabled { get; set; }
+
         public string SerializedVMCPSourceSetting { get; set; } = "";
-        public bool DisableCameraDuringVMCPActive { get; set; } = true;
-        public bool EnableNaiveBoneTransfer { get; set; } = false;
+        public bool EnableVMCPReceiveLerp { get; set; }
+        public bool EnableUpperBodyAdditionalMove { get; set; }
+
 
         // Send
         public bool VMCPSendEnabled { get; set; }
@@ -17,8 +19,8 @@
         {
             VMCPEnabled = false;
             SerializedVMCPSourceSetting = "";
-            EnableNaiveBoneTransfer = false;
-            DisableCameraDuringVMCPActive = true;
+            EnableVMCPReceiveLerp = false;
+            EnableUpperBodyAdditionalMove = false;
 
             VMCPSendEnabled = false;
             SerializedVMCPSendSetting = "";

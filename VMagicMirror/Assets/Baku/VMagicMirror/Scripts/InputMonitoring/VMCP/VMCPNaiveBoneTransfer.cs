@@ -58,7 +58,7 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.RightHand,
         };
 
-        private static readonly HumanBodyBones[] AdditionalMoveAllowedBones = new[]
+        private static readonly HumanBodyBones[] SpineToHeadBones = new[]
         {
             HumanBodyBones.Spine,
             HumanBodyBones.Chest,
@@ -66,28 +66,36 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.Neck,
             HumanBodyBones.Head,
         };
+
+        // _upperBodyBones ~ _handBones までのボーンが全部入ってるやつ。EndOfFrameでボーンを書き戻す時に使う
+        private readonly Dictionary<HumanBodyBones, Transform> _allBones = new();
         
         // 上半身のボーンのうち手と指以外
-        private readonly Dictionary<string, Transform> _upperBodyBones = new();
+        private readonly Dictionary<HumanBodyBones, Transform> _upperBodyBones = new();
 
         // Spine ~ Headの体幹のボーン。加算処理をやる場合に使う
-        private readonly Dictionary<HumanBodyBones, Transform> _additionalMoveAllowedBones = new();
+        private readonly Dictionary<HumanBodyBones, Transform> _spineToHeadBones = new();
         
         // Hips ~ Toesまでの両脚ぶん。ただしHipsは特別扱いなので分けて持っておく
-        private readonly Dictionary<string, Transform> _lowerBodyBones = new();
+        private readonly Dictionary<HumanBodyBones, Transform> _lowerBodyBones = new();
         private Transform _hipsBone;
 
-        // Shoulder~Handまでの両腕ぶん
-        private readonly Dictionary<string, Transform> _handBones = new();
+        // LeftHand / RightHandのみ
+        private readonly Dictionary<HumanBodyBones, Transform> _handBones = new();
 
         private readonly ReactiveProperty<bool> _enableBoneLerp = new();
 
         // NOTE: 下記は姿勢適用をなめらかにする場合に使う。モデルのリロードや、なめらか適用オプションの無効化が発生するとキャッシュが消える￥
-        private readonly Dictionary<string, Quaternion> _localRotationLerpCache = new();
+        private readonly Dictionary<HumanBodyBones, Quaternion> _localRotationLerpCache = new();
         private Pose? _hipsPoseLerpCache = null;
 
         // Spine~Headに対して加算ベースでVMCPの回転を適用するとき、LateUpdate直前の回転を一時的に入れるキャッシュ
-        private readonly Dictionary<HumanBodyBones, Quaternion> _additionalMoveBaseRotCache = new();
+        private readonly Dictionary<HumanBodyBones, Quaternion> _spineToHeadBoneBaseRotCache = new();
+        
+        // LateUpate中に変更したボーン回転の変更前の値を保持するキャッシュ。
+        // 加算モーションの使用中だけ、毎フレームごとにClear + 再書き込みを行う。また、hipsについてはworld姿勢で値を覚えておく
+        private readonly Dictionary<HumanBodyBones, Quaternion> _overwrittenRotationCache = new();
+        private Pose? _overwrittenHipsPoseCache = null;
         
         private bool _hasModel;
         private IMessageReceiver _receiver;
@@ -122,21 +130,24 @@ namespace Baku.VMagicMirror.VMCP
             _vrmLoadable.VrmLoaded += info =>
             {
                 var a = info.animator;
+                
                 foreach (var bone in UpperBodyBones)
                 {
                     var t = a.GetBoneTransform(bone);
                     if (t != null)
                     {
-                        _upperBodyBones[bone.ToString()] = t;
+                        _upperBodyBones[bone] = t;
+                        _allBones[bone] = t;
                     }
                 }
                 
-                foreach (var bone in AdditionalMoveAllowedBones)
+                foreach (var bone in SpineToHeadBones)
                 {
                     var t = a.GetBoneTransform(bone);
                     if (t != null)
                     {
-                        _additionalMoveAllowedBones[bone] = t;
+                        _spineToHeadBones[bone] = t;
+                        _allBones[bone] = t;
                     }
                 }
 
@@ -145,9 +156,13 @@ namespace Baku.VMagicMirror.VMCP
                     var t = a.GetBoneTransform(bone);
                     if (t != null)
                     {
-                        _lowerBodyBones[bone.ToString()] = t;
+                        _lowerBodyBones[bone] = t;
+                        _allBones[bone] = t;
                     }
                 }
+                
+
+                // Hipsは特別扱いすることに注意
                 _hipsBone = a.GetBoneTransform(HumanBodyBones.Hips);
                 
                 foreach (var bone in HandBones)
@@ -155,7 +170,8 @@ namespace Baku.VMagicMirror.VMCP
                     var t = a.GetBoneTransform(bone);
                     if (t != null)
                     {
-                        _handBones[bone.ToString()] = t;
+                        _handBones[bone] = t;
+                        _allBones[bone] = t;
                     }
                 }
 
@@ -165,12 +181,16 @@ namespace Baku.VMagicMirror.VMCP
             _vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _allBones.Clear();
                 _upperBodyBones.Clear();
-                _additionalMoveAllowedBones.Clear();
+                _spineToHeadBones.Clear();
                 _lowerBodyBones.Clear();
                 _hipsBone = null;
                 _handBones.Clear();
                 ClearLerpCache();
+                
+                _overwrittenHipsPoseCache = null;
+                _overwrittenRotationCache.Clear();
             };
 
             // 補間オン/オフを繰り返したときヘンにならないようにしてる
@@ -183,8 +203,49 @@ namespace Baku.VMagicMirror.VMCP
         public void FadeInWeight(float duration) => FadeWeight(1f, duration);
         public void FadeOutWeight(float duration) => FadeWeight(0f, duration);
 
+        /// <summary>
+        /// VMCPによる姿勢移動が発生していた場合、その前の姿勢戻す。
+        /// この処理は各フレームの Render ~ EndOfFrame の間に呼ばれるのを想定している。
+        /// 1フレーム中に複数回呼んだ場合、最初の呼び出しだけが有効。
+        /// VMCPの姿勢が適用中ではない場合、呼んでも何も起こらない。
+        /// </summary>
+        /// <remarks>
+        /// この関数がpublic APIになっている理由:
+        /// とくに「アバターの現在の姿勢から計算したIK位置を、ワールド姿勢としてキャッシュする」みたいなケースにおいて、
+        /// VMCPによってアバターが大幅に移動してるとIKが直立時の位置から大幅にずれため、次フレームのFBBIKの計算がおかしくなる。
+        /// こういうケースの対策として、「だいたい直立なはずの姿勢に戻す」というAPIを提供している
+        /// </remarks>
+        public void RestoreBoneIfNeededAsync()
+        {
+            if (!_hasModel)
+            {
+                _overwrittenHipsPoseCache = null;
+                _overwrittenRotationCache.Clear();
+                return;
+            }
+            
+            // 加算モーションをやっているとき、通常の直立姿勢の計算とVMCPの計算が両方走るので以下のような面倒ごとがある。
+            // - 直立してる想定でEndOfFrameの姿勢を取るMonoBehaviourがあるが、それが壊れやすい
+            // - 次のFBBIKの計算に対して初期値がだいぶしんどい
+            // これの対策として、LateUpdateで書き換えたボーンをぜんぶ元に戻す
+            foreach (var pair in _overwrittenRotationCache)
+            {
+                _allBones[pair.Key].localRotation = pair.Value;
+            }
+        
+            if (_overwrittenHipsPoseCache.HasValue)
+            {
+                var hipsPose = _overwrittenHipsPoseCache.Value;
+                _hipsBone.SetPositionAndRotation(hipsPose.position, hipsPose.rotation);
+            }
+        }
+
         private void LateUpdate()
         {
+            // この時点で残ってるキャッシュは常に古すぎて邪魔なので、逐一消してよい
+            _overwrittenHipsPoseCache = null;
+            _overwrittenRotationCache.Clear();
+
             if (!_hasModel)
             {
                 return;
@@ -244,7 +305,7 @@ namespace Baku.VMagicMirror.VMCP
         }
 
         //NOTE: 同一ボーンに対して毎フレーム最大1回しか呼ばない…という前提で実装されてる (補間の部分が)
-        private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<string, Transform> dest, float lerpFactor)
+        private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<HumanBodyBones, Transform> dest, float lerpFactor)
         {
             if (_applyWeight <= 0f)
             {
@@ -256,13 +317,13 @@ namespace Baku.VMagicMirror.VMCP
                 Quaternion targetRotation;
                 if (_applyWeight >= 1f)
                 {
-                    targetRotation = source.GetLocalRotation(pair.Key);
+                    targetRotation = source.GetLocalRotation(pair.Key.ToString());
                 }
                 else
                 {
                     targetRotation = Quaternion.Slerp(
                         pair.Value.localRotation,
-                        source.GetLocalRotation(pair.Key),
+                        source.GetLocalRotation(pair.Key.ToString()),
                         _applyWeight
                     );
                 }
@@ -271,16 +332,17 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        private void SetBoneLocalRotation(string key, Transform target, Quaternion rotation, float lerpFactor)
+        private void SetBoneLocalRotation(HumanBodyBones key, Transform target, Quaternion rotation, float lerpFactor)
         {
-            // 平滑化がない場合はシンプルに平滑化しておしまい
+            _overwrittenRotationCache[key] = target.localRotation;
+            
             if (!_enableBoneLerp.CurrentValue)
             {
                 target.localRotation = rotation;
                 return;
             }
 
-            // 補間したいがキャッシュが無い場合: 最初の値なのでキャッシュしつつ適用
+            // 補間したいがキャッシュが無い場合: 最初の値なのでキャッシュしつつ適用し、この時点では補間はしない
             if (!_localRotationLerpCache.TryGetValue(key, out var currentRotation))
             {
                 _localRotationLerpCache[key] = rotation;
@@ -302,6 +364,8 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             var target = _hipsBone;
+            _overwrittenHipsPoseCache = new Pose(target.position, target.rotation);
+            
             if (_applyWeight < 1)
             {
                 var pos = target.position;
@@ -346,18 +410,18 @@ namespace Baku.VMagicMirror.VMCP
 
         private void CacheCurrentSpineToHeadRotations()
         {
-            foreach (var bone in _additionalMoveAllowedBones)
+            foreach (var bone in _spineToHeadBones)
             {
-                _additionalMoveBaseRotCache[bone.Key] = bone.Value.localRotation;
+                _spineToHeadBoneBaseRotCache[bone.Key] = bone.Value.localRotation;
             }
         }
         
         private void ApplyCachedSpineToHeadRotations()
         {
-            foreach (var bone in _additionalMoveAllowedBones)
+            foreach (var bone in _spineToHeadBones)
             {
                 // 左から掛けることに注意: つまり、VMCPの回転のほうをベースの回転と見なす
-                if (_additionalMoveBaseRotCache.TryGetValue(bone.Key, out var baseRot))
+                if (_spineToHeadBoneBaseRotCache.TryGetValue(bone.Key, out var baseRot))
                 {
                     bone.Value.localRotation = baseRot * bone.Value.localRotation;
                 }

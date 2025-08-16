@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Baku.VMagicMirror.VMCP;
 using UnityEngine;
 using Zenject;
 
@@ -32,6 +33,7 @@ namespace Baku.VMagicMirror.IK
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
+        private readonly VMCPNaiveBoneTransfer _vmcpNaiveBoneTransfer;
 
         private bool _hasModel = false;
         private Transform _hips;
@@ -43,10 +45,14 @@ namespace Baku.VMagicMirror.IK
         private Vector3 _rightPosHipsOffset;
         private Vector3 _leftPosHipsOffset;
 
-        public HandDownIkCalculator(IVRMLoadable vrmLoadable, ICoroutineSource coroutineSource)
+        public HandDownIkCalculator(
+            IVRMLoadable vrmLoadable,
+            ICoroutineSource coroutineSource,
+            VMCPNaiveBoneTransfer vmcpNaiveBoneTransfer)
         {
             _vrmLoadable = vrmLoadable;
             _coroutineSource = coroutineSource;
+            _vmcpNaiveBoneTransfer = vmcpNaiveBoneTransfer;
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
             _leftHandLocalFromHips.Rotation = LeftRot;
@@ -117,6 +123,9 @@ namespace Baku.VMagicMirror.IK
                     continue;
                 }
 
+                // NOTE: VMCPによって寝そべった姿勢などが適用されてるとIKの位置が凄いとこに行ってしまうので、それを防いでいる
+                _vmcpNaiveBoneTransfer.RestoreBoneIfNeededAsync();
+                
                 //やること: LateUpdateの時点で手の位置を合わせる。
                 //フレーム終わりじゃないと調整されたあとのボーン位置が拾えないので、このタイミングでわざわざやってます
                 

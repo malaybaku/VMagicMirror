@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _enableWebCamHighPowerMode = new(false);
         private readonly ReactiveProperty<bool> _enableExTracker = new(false);
         private readonly ReactiveProperty<bool> _enableHandTracking = new(false);
+        private readonly ReactiveProperty<bool> _enableVmcpUpperBodyAdditionalMove = new(false);
 
         [Inject]
         public FaceControlConfigurationReceiver(
@@ -40,7 +41,7 @@ namespace Baku.VMagicMirror
             _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _enableWebCamHighPowerMode);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _enableExTracker);
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);
-            
+            _receiver.BindBoolProperty(VmmCommands.EnableVMCPUpperBodyAdditionalMove, _enableVmcpUpperBodyAdditionalMove);
             
             _vmcpHeadPose.IsActive.CombineLatest(
                 _vmcpBlendShape.IsActive,
@@ -48,7 +49,8 @@ namespace Baku.VMagicMirror
                 _enableWebCamHighPowerMode,
                 _enableExTracker,
                 _enableHandTracking,
-                (a0, a1, a2, a3, a4, a5) => Unit.Default
+                _enableVmcpUpperBodyAdditionalMove,
+                (a0, a1, a2, a3, a4, a5, a6) => Unit.Default
                 )
                 .Subscribe(_ => SetFaceControlMode())
                 .AddTo(this);
@@ -59,10 +61,16 @@ namespace Baku.VMagicMirror
             //TODO: 「ハンドトラッキングが有効だと顔トラは低負荷ではなく高負荷になる」という条件が複数箇所に定義されてるのを直したい
             var webCamHighPowerModeActive = _enableWebCamHighPowerMode.Value || _enableHandTracking.Value;
 
-            // NOTE: VMCProtocolの受信ではポーズと表情が分離してあるため、
-            // 「モーションは受信するけど表情は使わない」や「表情は受信するけどモーションは使わない」というケースが発生することに注意
+            // NOTE: VMCProtocolがいろいろ特殊なことに注意
+            // - VMCPについてはポーズ受信と表情の受信が分離してあるため、
+            //   「モーションは受信するけど表情は使わない」や「表情は受信するけどモーションは使わない」というケースが発生する
+            // - VMCPの動作を加算で適用する場合、motionMode自体はVMCPではなくなり、オプションだけ有効になる
+            
+            var useAdditionalVmcpHeadMotion = 
+                _vmcpHeadPose.IsActive.CurrentValue && _enableVmcpUpperBodyAdditionalMove.CurrentValue;
+
             var motionMode = 
-                _vmcpHeadPose.IsActive.CurrentValue ? FaceControlModes.VMCProtocol :
+                (_vmcpHeadPose.IsActive.CurrentValue && !_enableVmcpUpperBodyAdditionalMove.CurrentValue) ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
                 (_enableWebCamTracking.Value && webCamHighPowerModeActive) ? FaceControlModes.WebCamHighPower :
                 _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
@@ -75,7 +83,7 @@ namespace Baku.VMagicMirror
                 _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
                 FaceControlModes.None;
             
-            _config.SetFaceControlMode(motionMode, blendShapeMode);
+            _config.SetFaceControlMode(motionMode, blendShapeMode, useAdditionalVmcpHeadMotion);
         }
     }
 }

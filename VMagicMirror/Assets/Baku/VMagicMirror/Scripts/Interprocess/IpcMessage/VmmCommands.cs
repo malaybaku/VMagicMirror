@@ -279,6 +279,7 @@
         EnableVMCP,
         SetVMCPSources,
         EnableVMCPPoseLerp,
+        EnableVMCPUpperBodyAdditionalMove,
 
         // VMCP (send)
         EnableVMCPSend,

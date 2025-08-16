@@ -7,6 +7,8 @@
 
         public string SerializedVMCPSourceSetting { get; set; } = "";
         public bool EnableVMCPReceiveLerp { get; set; }
+        public bool EnableUpperBodyAdditionalMove { get; set; }
+
 
         // Send
         public bool VMCPSendEnabled { get; set; }
@@ -18,6 +20,7 @@
             VMCPEnabled = false;
             SerializedVMCPSourceSetting = "";
             EnableVMCPReceiveLerp = false;
+            EnableUpperBodyAdditionalMove = false;
 
             VMCPSendEnabled = false;
             SerializedVMCPSendSetting = "";

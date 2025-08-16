@@ -22,6 +22,10 @@ namespace Baku.VMagicMirrorConfig
             EnableVMCPReceiveLerp = new(
                 setting.EnableVMCPReceiveLerp, v => SendMessage(MessageFactory.EnableVMCPReceiveLerp(v))
                 );
+            EnableUpperBodyAdditionalMove = new(
+                setting.EnableUpperBodyAdditionalMove,
+                v => SendMessage(MessageFactory.EnableVMCPUpperBodyAdditionalMove(v))
+                );
 
             VMCPSendEnabled = new(
                 setting.VMCPSendEnabled,
@@ -43,7 +47,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
         public RProperty<bool> EnableVMCPReceiveLerp { get; }
-
+        public RProperty<bool> EnableUpperBodyAdditionalMove { get; }
 
         private readonly VMCPReceiveStatus _receiveStatus = new();
         public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
@@ -162,6 +166,7 @@ namespace Baku.VMagicMirrorConfig
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
             SerializedVMCPSourceSetting.Value = defaultSetting.SerializedVMCPSourceSetting;
             EnableVMCPReceiveLerp.Value = defaultSetting.EnableVMCPReceiveLerp;
+            EnableUpperBodyAdditionalMove.Value = defaultSetting.EnableUpperBodyAdditionalMove;
 
             VMCPSendEnabled.Value = defaultSetting.VMCPSendEnabled;
             SerializedVMCPSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;

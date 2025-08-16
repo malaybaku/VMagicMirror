@@ -58,9 +58,21 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.RightHand,
         };
 
-        // 腕以外でSpine ~ Head
+        private static readonly HumanBodyBones[] AdditionalMoveAllowedBones = new[]
+        {
+            HumanBodyBones.Spine,
+            HumanBodyBones.Chest,
+            HumanBodyBones.UpperChest,
+            HumanBodyBones.Neck,
+            HumanBodyBones.Head,
+        };
+        
+        // 上半身のボーンのうち手と指以外
         private readonly Dictionary<string, Transform> _upperBodyBones = new();
 
+        // Spine ~ Headの体幹のボーン。加算処理をやる場合に使う
+        private readonly Dictionary<HumanBodyBones, Transform> _additionalMoveAllowedBones = new();
+        
         // Hips ~ Toesまでの両脚ぶん。ただしHipsは特別扱いなので分けて持っておく
         private readonly Dictionary<string, Transform> _lowerBodyBones = new();
         private Transform _hipsBone;
@@ -74,9 +86,13 @@ namespace Baku.VMagicMirror.VMCP
         private readonly Dictionary<string, Quaternion> _localRotationLerpCache = new();
         private Pose? _hipsPoseLerpCache = null;
 
+        // Spine~Headに対して加算ベースでVMCPの回転を適用するとき、LateUpdate直前の回転を一時的に入れるキャッシュ
+        private readonly Dictionary<HumanBodyBones, Quaternion> _additionalMoveBaseRotCache = new();
+        
         private bool _hasModel;
         private IMessageReceiver _receiver;
         private IVRMLoadable _vrmLoadable;
+        private FaceControlConfiguration _faceControlConfiguration;
         private VMCPHandPose _vmcpHand;
         private VMCPHeadPose _vmcpHead;
         private VMCPLowerBodyPose _vmcpLowerBodyPose;
@@ -89,12 +105,14 @@ namespace Baku.VMagicMirror.VMCP
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
+            FaceControlConfiguration faceControlConfiguration,
             VMCPHandPose vmcpHand,
             VMCPHeadPose vmcpHead,
             VMCPLowerBodyPose vmcpLowerBodyPose)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
+            _faceControlConfiguration = faceControlConfiguration;
             _vmcpHand = vmcpHand;
             _vmcpHead = vmcpHead;
             _vmcpLowerBodyPose = vmcpLowerBodyPose;
@@ -110,6 +128,15 @@ namespace Baku.VMagicMirror.VMCP
                     if (t != null)
                     {
                         _upperBodyBones[bone.ToString()] = t;
+                    }
+                }
+                
+                foreach (var bone in AdditionalMoveAllowedBones)
+                {
+                    var t = a.GetBoneTransform(bone);
+                    if (t != null)
+                    {
+                        _additionalMoveAllowedBones[bone] = t;
                     }
                 }
 
@@ -139,6 +166,7 @@ namespace Baku.VMagicMirror.VMCP
             {
                 _hasModel = false;
                 _upperBodyBones.Clear();
+                _additionalMoveAllowedBones.Clear();
                 _lowerBodyBones.Clear();
                 _hipsBone = null;
                 _handBones.Clear();
@@ -167,7 +195,15 @@ namespace Baku.VMagicMirror.VMCP
             //NOTE: HeadとHandが同一ソースの場合、結果的に単一ソースからボーン回転が読み出される
             if (_vmcpHead.IsConnected.CurrentValue)
             {
+                if (_faceControlConfiguration.UseAdditionalVmcpHeadMotion.CurrentValue)
+                {
+                    CacheCurrentSpineToHeadRotations();
+                }
                 SetBoneRotations(_vmcpHead.Humanoid, _upperBodyBones, lerpFactor);
+                if (_faceControlConfiguration.UseAdditionalVmcpHeadMotion.CurrentValue)
+                {
+                    ApplyCachedSpineToHeadRotations();
+                }
             }
 
             // TODO: 実行タイミング的に問題ないかは要チェック
@@ -306,6 +342,26 @@ namespace Baku.VMagicMirror.VMCP
         {
             _localRotationLerpCache.Clear();
             _hipsPoseLerpCache = null;
+        }
+
+        private void CacheCurrentSpineToHeadRotations()
+        {
+            foreach (var bone in _additionalMoveAllowedBones)
+            {
+                _additionalMoveBaseRotCache[bone.Key] = bone.Value.localRotation;
+            }
+        }
+        
+        private void ApplyCachedSpineToHeadRotations()
+        {
+            foreach (var bone in _additionalMoveAllowedBones)
+            {
+                // 左から掛けることに注意: つまり、VMCPの回転のほうをベースの回転と見なす
+                if (_additionalMoveBaseRotCache.TryGetValue(bone.Key, out var baseRot))
+                {
+                    bone.Value.localRotation = baseRot * bone.Value.localRotation;
+                }
+            }
         }
         
         private void FadeWeight(float target, float duration)

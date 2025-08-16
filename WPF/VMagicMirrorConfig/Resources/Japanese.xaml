@@ -210,9 +210,7 @@
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
     <sys:String x:Key="VMCP_EnableReceiveLerp">受信したポーズを滑らかに適用</sys:String>    
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
-VMC Protocolによる手の姿勢を適用するには「デフォルト」に変更して下さい。</sys:String>
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
+    <sys:String x:Key="VMCP_EnableUpperBodyAdditionalMove">背骨・頭ボーンに受信したポーズとトラッキング結果を両方とも適用</sys:String>    
 
     <sys:String x:Key="VMCP_Send_Enable">VMCPによる送信を有効化</sys:String>
     <sys:String x:Key="VMCP_Send_Header">データ送信の設定</sys:String>

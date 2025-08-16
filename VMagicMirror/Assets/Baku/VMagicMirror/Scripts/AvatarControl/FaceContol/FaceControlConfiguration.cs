@@ -19,7 +19,11 @@ namespace Baku.VMagicMirror
         public FaceControlModes HeadMotionControlModeValue => _headMotionControlMode.Value;
         
         private readonly ReactiveProperty<FaceControlModes> _headMotionControlMode = new(FaceControlModes.WebCamLowPower);
-        /// <summary> 頭部動作を制御している処理の種類を取得します。 </summary>
+        /// <summary>
+        /// 頭部動作を制御している処理の種類を取得します。
+        /// VMCProtocolについては、この値が<see cref="FaceControlModes.VMCProtocol"/>以外の場合であっても、
+        /// <see cref="UseAdditionalVmcpHeadMotion"/>が true の場合は加算的にモーションを適用することがあります。
+        /// </summary>
         public ReadOnlyReactiveProperty<FaceControlModes> HeadMotionControlMode => _headMotionControlMode;
 
         private readonly ReactiveProperty<FaceControlModes> _blendShapeControlMode = new(FaceControlModes.WebCamLowPower);
@@ -27,10 +31,18 @@ namespace Baku.VMagicMirror
         /// <summary> ブレンドシェイプを制御している処理の種類を取得します。 </summary>
         public ReadOnlyReactiveProperty<FaceControlModes> BlendShapeControlMode => _blendShapeControlMode;
         
-        public void SetFaceControlMode(FaceControlModes headMotionMode, FaceControlModes blendShapeMode)
+        private readonly ReactiveProperty<bool> _useAdditionalVmcpHeadMotion = new();
+        /// <summary> 頭部加算ベースでVMCProtocolの頭部動作を適用するかどうかを取得します </summary>
+        public ReadOnlyReactiveProperty<bool> UseAdditionalVmcpHeadMotion => _useAdditionalVmcpHeadMotion;
+        
+        public void SetFaceControlMode(
+            FaceControlModes headMotionMode,
+            FaceControlModes blendShapeMode,
+            bool useAdditionalVmcpHeadMotion)
         {
             _headMotionControlMode.Value = headMotionMode;
             _blendShapeControlMode.Value = blendShapeMode;
+            _useAdditionalVmcpHeadMotion.Value = useAdditionalVmcpHeadMotion;
         }
 
         /// <summary>
@@ -93,9 +105,9 @@ namespace Baku.VMagicMirror
         public bool ShouldSkipNonMouthBlendShape => FaceSwitchActive;
     }
 
-    // TODO: 「PoseはVMCP受信だけど表情は他のやつ」みたいな組み合わせを認められる建付けに拡張したい
     /// <summary>
-    /// 顔トラッキングの仕組みとしてどれが有効かの一覧。
+    /// メインの顔トラッキング挙動がどれになっているかを指す値。
+    /// 頭部の6DoFトラッキングと、表情のトラッキングで別の値を使うことがある。
     /// </summary>
     public enum FaceControlModes
     {

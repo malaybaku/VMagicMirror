@@ -420,6 +420,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableVMCP(bool enable) => BoolContent(VmmCommands.EnableVMCP, enable);
         public static Message SetVMCPSources(string json) => StringContent(VmmCommands.SetVMCPSources, json);
         public static Message EnableVMCPReceiveLerp(bool enable) => BoolContent(VmmCommands.EnableVMCPPoseLerp, enable);
+        public static Message EnableVMCPUpperBodyAdditionalMove(bool enable) => BoolContent(VmmCommands.EnableVMCPUpperBodyAdditionalMove, enable);
 
         public static Message EnableVMCPSend(bool enable) => BoolContent(VmmCommands.EnableVMCPSend, enable);
         public static Message SetVMCPSendSettings(string json) => StringContent(VmmCommands.SetVMCPSendSettings, json);

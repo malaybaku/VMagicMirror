@@ -55,8 +55,8 @@ namespace Baku.VMagicMirror.VMCP
             
             //受信設定を無視する(めんどくさいので…)
             SetPositionAndRotation(headTracker, hipsPose, _vmcpHumanoid.GetFKHeadPoseFromHips());
-            SetPositionAndRotation(leftHandTracker, hipsPose, _vmcpHumanoid.GetFKLeftHandPoseFromHips());
-            SetPositionAndRotation(rightHandTracker, hipsPose, _vmcpHumanoid.GetFKRightHandPoseFromHips());
+            // SetPositionAndRotation(leftHandTracker, hipsPose, _vmcpHumanoid.GetFKLeftHandPoseFromHips());
+            // SetPositionAndRotation(rightHandTracker, hipsPose, _vmcpHumanoid.GetFKRightHandPoseFromHips());
 
             foreach (var setter in modelSetters)
             {

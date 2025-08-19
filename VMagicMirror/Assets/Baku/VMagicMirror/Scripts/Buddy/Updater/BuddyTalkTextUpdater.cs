@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -23,11 +22,12 @@ namespace Baku.VMagicMirror.Buddy
         void ITickable.Tick()
         {
             var dt = Time.deltaTime;
-            foreach (var tt in _repository
-                .GetRepositories()
-                .SelectMany(r => r.TalkTexts))
+            foreach (var repository in _repository.GetRepositories())
             {
-                tt.UpdateTextState(dt);
+                foreach (var tt in repository.TalkTexts)
+                {
+                    tt.UpdateTextState(dt);
+                }
             }
         }
     }

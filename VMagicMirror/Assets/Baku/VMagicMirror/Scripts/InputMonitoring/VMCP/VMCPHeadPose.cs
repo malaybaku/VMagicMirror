@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly ReactiveProperty<bool> _isActive = new(false);
         public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
-        private readonly ReactiveProperty<bool> _isConnected = new(true);
+        private readonly ReactiveProperty<bool> _isConnected = new(false);
         public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
         /// <summary>

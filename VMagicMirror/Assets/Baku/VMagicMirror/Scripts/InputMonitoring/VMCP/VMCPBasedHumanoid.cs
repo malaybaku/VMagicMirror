@@ -92,9 +92,6 @@ namespace Baku.VMagicMirror.VMCP
         //この実装方式でいいのは、VMMで最終的に使う情報がIK相当の値であるのと、基本的にはFKのlocalRotationだけ気にすればよいため
         private readonly Dictionary<string, VMCPBone> _boneMap = new(55);
 
-        //NOTE: IKポーズは単体で保存する、こっちはヒエラルキーに何かを用意する必要はない
-        private readonly Dictionary<string, Pose> _trackerPoses = new(6);
-
         private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
         private readonly bool _hasBoneOffsetsSource;
 
@@ -200,11 +197,6 @@ namespace Baku.VMagicMirror.VMCP
         {
             RootPose = new Pose(position, rotation);
         }
-        
-        public void SetTrackerPose(string boneName, Vector3 position, Quaternion rotation)
-        {
-            _trackerPoses[boneName] = new Pose(position, rotation);
-        }
 
         //NOTE:
         // - Hipsに対してもコレを呼び出してよい
@@ -248,10 +240,6 @@ namespace Baku.VMagicMirror.VMCP
         public Pose GetFKLeftHandPoseFromHips() => GetFKPoseOnHips(_leftHand);
         public Pose GetFKRightHandPoseFromHips() => GetFKPoseOnHips(_rightHand);
 
-        public Pose GetIKHeadPoseOnHips() => GetIKPoseOnHips(HeadBoneName);
-        public Pose GetIKLeftHandPoseOnHips() => GetIKPoseOnHips(LeftHandBoneName);
-        public Pose GetIKRightHandPoseOnHips() => GetIKPoseOnHips(RightHandBoneName);
-
         public void Clear()
         {
             _hasBoneHierarchy = false;
@@ -268,7 +256,6 @@ namespace Baku.VMagicMirror.VMCP
             _leftHand = null;
             _rightHand = null;
             _boneMap.Clear();
-            _trackerPoses.Clear();
         }
 
         private Pose GetFKPoseOnHips(Transform bone)
@@ -282,17 +269,6 @@ namespace Baku.VMagicMirror.VMCP
                 _hips.InverseTransformPoint(bone.position),
                 Quaternion.Inverse(_hips.rotation) * bone.rotation
             );
-        }
-
-        private Pose GetIKPoseOnHips(string targetBoneName)
-        {
-            if (_trackerPoses.ContainsKey(targetBoneName) || _trackerPoses.ContainsKey(HipsBoneName))
-            {
-                return Pose.identity;
-            }
-            var hips = _trackerPoses[HipsBoneName];
-            var targetBone = _trackerPoses[targetBoneName];
-            return targetBone.GetTransformedBy(hips);
         }
     }
 

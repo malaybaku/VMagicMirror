@@ -345,12 +345,6 @@ namespace Baku.VMagicMirror.VMCP
                         ApplyRootPose(message, _receiverHumanoids[sourceIndex]);
                     }
                     break;
-                case VMCPMessageType.TrackerPose:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
-                    {
-                        ApplyTrackerPose(message, _receiverHumanoids[sourceIndex]);
-                    }
-                    break;
                 case VMCPMessageType.ForwardKinematics:
                     if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
@@ -380,32 +374,6 @@ namespace Baku.VMagicMirror.VMCP
         }
 
         //NOTE: NOTE: ここの下では基本的にデータフォーマットをvalidateしない (パフォーマンス優先)
-        private void ApplyTrackerPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
-        {
-            var poseType = message.GetTrackerPoseType(out _);
-            if (poseType == VMCPTrackerPoseType.Unknown)
-            {
-                return;
-            }
-
-            var (pos, rot) = message.GetPose();
-            switch (poseType)
-            {
-                case VMCPTrackerPoseType.Head:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HeadBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.LeftHand:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.LeftHandBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.RightHand:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.RightHandBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.Hips:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HipsBoneName, pos, rot);
-                    return;
-            }
-        }
-
         private void ApplyBoneLocalPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
         {
             var boneName = message.GetForwardKinematicBoneName();

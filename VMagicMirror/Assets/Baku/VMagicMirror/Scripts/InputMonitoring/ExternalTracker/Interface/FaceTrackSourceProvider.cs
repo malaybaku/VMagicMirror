@@ -14,8 +14,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <summary> 顔トラッキング情報が更新されるとUIスレッド上で発火します。 </summary>
         public event Action<IFaceTrackSource> FaceTrackUpdated;
 
-        protected void RaiseFaceTrackUpdated()
-            => FaceTrackUpdated?.Invoke(FaceTrackSource);
+        protected void RaiseFaceTrackUpdated() => FaceTrackUpdated?.Invoke(FaceTrackSource);
 
         //NOTE: デフォルトは「キャリブレーションをそもそもサポートしてません！」みたいな状態に相当
         public virtual void Calibrate() { }

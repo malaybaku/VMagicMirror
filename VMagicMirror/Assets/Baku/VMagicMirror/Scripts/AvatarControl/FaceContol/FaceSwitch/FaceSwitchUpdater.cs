@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public readonly struct FaceSwitchKeyApplyContent
+    public readonly struct FaceSwitchKeyApplyContent : IEquatable<FaceSwitchKeyApplyContent>
     {
         private FaceSwitchKeyApplyContent(bool hasValue, bool keepLipSync, ExpressionKey key, string accessoryName)
         {
@@ -18,8 +18,8 @@ namespace Baku.VMagicMirror
         }
 
         //NOTE: default指定してName == nullになってると怒られる事があるので便宜的にneutralで代用している
-        public static FaceSwitchKeyApplyContent Empty()
-            => new(false, false, ExpressionKey.Neutral, "");
+        public static FaceSwitchKeyApplyContent Empty { get; } 
+            = new(false, false, ExpressionKey.Neutral, "");
 
         public static FaceSwitchKeyApplyContent Create(ExpressionKey key, bool keepLipSync, string accessoryName) =>
             new(true, keepLipSync, key, accessoryName);
@@ -28,6 +28,17 @@ namespace Baku.VMagicMirror
         public bool KeepLipSync { get; }
         public ExpressionKey Key { get; }
         public string AccessoryName { get; }
+
+        public bool Equals(FaceSwitchKeyApplyContent other) => 
+            HasValue == other.HasValue &&
+            KeepLipSync == other.KeepLipSync &&
+            Key.Equals(other.Key) &&
+            AccessoryName == other.AccessoryName;
+
+        public override bool Equals(object obj) => 
+            obj is FaceSwitchKeyApplyContent other && Equals(other);
+
+        public override int GetHashCode() => HashCode.Combine(HasValue, KeepLipSync, Key, AccessoryName);
     }
 
     public class FaceSwitchUpdater : PresenterBase
@@ -65,8 +76,8 @@ namespace Baku.VMagicMirror
         private ActiveFaceSwitchItem _faceSwitchItem = ActiveFaceSwitchItem.Empty;
 
         // NOTE: 上記の値に対してExpressionKeyへの変換、およびトラッキングロスしたケースもケアした、公開可能なFaceSwitchの値
-        private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue
-            = new(FaceSwitchKeyApplyContent.Empty());
+        private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue 
+            = new(FaceSwitchKeyApplyContent.Empty);
         public ReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
         
         public bool HasClipToApply => _currentValue.Value.HasValue;
@@ -105,7 +116,7 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _faceSwitch.AvatarBlendShapeNames = Array.Empty<string>();
             _faceSwitchItem = ActiveFaceSwitchItem.Empty;
-            _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
+            _currentValue.Value = FaceSwitchKeyApplyContent.Empty;
         }
 
         private void SetFaceSwitchSetting(string json)
@@ -178,7 +189,7 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
+                _currentValue.Value = FaceSwitchKeyApplyContent.Empty;
             }
 
             _faceSwitch.ResetUpdateCalledFlag();

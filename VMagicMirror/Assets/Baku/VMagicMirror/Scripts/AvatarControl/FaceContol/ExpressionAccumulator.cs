@@ -11,8 +11,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExpressionAccumulator : IInitializable
     {
-        private readonly Dictionary<ExpressionKey, float> _values = new Dictionary<ExpressionKey, float>();
-        private readonly HashSet<ExpressionKey> _keys = new HashSet<ExpressionKey>();
+        private readonly Dictionary<ExpressionKey, float> _values = new();
+        private readonly HashSet<ExpressionKey> _keys = new();
         private readonly IVRMLoadable _vrmLoadable;
 
         private bool _hasModel;
@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror
         public void Apply()
         {
             PreApply?.Invoke(_values);
-            _expression?.SetWeights(_values);
+            _expression?.SetWeightsNonAlloc(_values);
         }
 
         public void ResetValues()

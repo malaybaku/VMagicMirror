@@ -42,6 +42,11 @@ lang: en
 
 </div>
 
+v4.2.0 and later version supports `Full Body Shadow Settings` option in `Shadow`. Full Body Shadow is the shadow which is shown on the ground level, instead of avatar's back. This option is designed to achieve good appearance when showing avatar's full body.
+
+By default, Full Body Shadow is enabled when avatar's lower body is controlled by [Game Input](../game_input) or [VMC Protocol](../vmc_protocol).
+
+
 #### 2. Hint
 {: .doc-sec2 }
 

@@ -23,7 +23,7 @@ VMagicMirror's author tests VMCP feature with following apps, though the apps al
 <div class="doc-ul" markdown="1">
 
 - [LuppetX 1.0.5](https://luppet.jp/)
-- [WebcamMotionCapture 1.9.0](https://webcammotioncapture.info/)
+- [VRM Posing Desktop v4.5.8](https://store.steampowered.com/app/1895630/VRM_Posing_Desktop/)
 
 </div>
 
@@ -58,26 +58,17 @@ Setup data source and click `Apply` to apply changes.
 
 - Port number
 - Data to apply
-  - Head: Head pose.
-  - Hand: Hand and finger pose.
-  - Facial: Face Blendshape values.
+  - Upper Body
+  - Hand
+  - Leg
+  - Facial (BlendShape)
 - App Name: this is just for memo area and does not have effect how app will behave.
-
-</div>
-
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-When VMC Protocol's hand pose receive is active, VMagicMirror's default motion features (e.g. keyboard typing motion) does not work.
-
-Exception is [Word to Motion](./expressions), which runs with higher priority than VMCP based motion.
 
 </div>
 
 `Status` area indicates check mark during receicing VMCP data.
 
-VMagicMirror recommends to load the same avatar both in VMCP source app and VMagicMirror.
+Note that VMagicMirror recommends to load the same avatar both in VMCP source application and VMagicMirror.
 
 <div class="note-area" markdown="1">
 
@@ -85,7 +76,7 @@ VMagicMirror recommends to load the same avatar both in VMCP source app and VMag
 
 VMagicMirror does a kind of re-target process when apply the motion.
 
-There are no problems to load different avatar in source app, as far as it leads appearance issue.
+You can use different avatars in source app, as far as it does not lead appearance issue.
 
 </div>
 
@@ -97,20 +88,8 @@ Advanced Settings support detailed option. In most cases you should use default 
 
 <div class="doc-ul" markdown="1">
 
-- `Apply received bone pose without any adjust`: Turn on to apply VMCP based bone pose as-is. Enable this option especially when avatar's arm has bad appearance.
-- `Disable Camera feature during VMCP is active`: Turn on to disable webcam using features in VMagicMirror during VMCP is active. This option is on by default. You should enable this option if VMCP source app uses your PC's webcam.
-
-</div>
-
-
-#### Known Issues
-{: .doc-sec2 }
-
-VMagicMirror v3.3.1 has following known issue.
-
-<div class="doc-ul" markdown="1">
-
-- When `Apply received bone pose without any adjust` is on, some of Word to Motion's motion does not work (e.g. nodding, clapping).
+- `Smooth Received Pose`: Enable to smooth received pose. Consider to enable this option when avatar's motion seems jerky.
+- `Apply Base Spine Bones Tracking Result`: Enable to apply tracking result by VMagicMirror onto VMC Protocol based pose. This option is useful when receiving fixed pose and you want to apply additional motion to the avatar.
 
 </div>
 

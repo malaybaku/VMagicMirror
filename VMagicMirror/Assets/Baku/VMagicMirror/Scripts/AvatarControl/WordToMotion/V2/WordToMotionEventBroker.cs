@@ -1,15 +1,15 @@
 using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
     public class WordToMotionEventBroker
     {
         private readonly Subject<(MotionRequest request, float duration)> _started = new();
-        public IObservable<(MotionRequest request, float duration)> Started => _started;
+        public Observable<(MotionRequest request, float duration)> Started => _started;
 
         private readonly Subject<Unit> _stopped = new();
-        public IObservable<Unit> Stopped => _stopped;
+        public Observable<Unit> Stopped => _stopped;
         
         /// <summary>
         /// PreviewではないWord to Motionが実行されたとき、その実行時間とセットで呼び出す。

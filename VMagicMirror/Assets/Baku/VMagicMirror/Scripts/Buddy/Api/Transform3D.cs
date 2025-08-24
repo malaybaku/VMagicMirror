@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     return HumanBodyBones.None;
                 }
 
-                var bone = _instance.ParentBone.Value;
+                var bone = _instance.ParentBone.CurrentValue;
                 return bone == UnityEngine.HumanBodyBones.LastBone
                     ? HumanBodyBones.None 
                     : bone.ToApiValue();

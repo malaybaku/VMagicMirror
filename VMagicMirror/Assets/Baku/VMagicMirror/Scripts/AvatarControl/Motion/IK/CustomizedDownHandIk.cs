@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using Baku.VMagicMirror.IK;
 using mattatz.TransformControl;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
+        public ReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKData LeftHand => _leftHand;
@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror
             {
                 yield return eof;
                 //NOTE: デフォルトの手下ろしとは更新タイミングが微妙に違う事に注意。何か起こるかもしれない…
-                if (EnableCustomHandDownPose.Value)
+                if (EnableCustomHandDownPose.CurrentValue)
                 {
                     UpdateIk();
                 }
@@ -213,7 +213,7 @@ namespace Baku.VMagicMirror
                     SetPose(pose);
                 }
 
-                if (EnableCustomHandDownPose.Value)
+                if (EnableCustomHandDownPose.CurrentValue)
                 {
                     var hipsPos = _hips.position;
                     _leftUpperArmPosOffset = (_leftUpperArm.position - hipsPos) - _defaultHipsToLeftUpperArm;

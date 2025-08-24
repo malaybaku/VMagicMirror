@@ -1,4 +1,4 @@
-﻿using UniRx;
+﻿using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
 
         private readonly ReactiveProperty<bool> _isTalking = new();
         /// <summary> 現在発話中かどうかを取得します。 </summary>
-        public IReadOnlyReactiveProperty<bool> IsTalking => _isTalking;
+        public ReadOnlyReactiveProperty<bool> IsTalking => _isTalking;
 
         private int _lipSyncOffCount = 0;
         private int _lipSyncOnCount = 0;

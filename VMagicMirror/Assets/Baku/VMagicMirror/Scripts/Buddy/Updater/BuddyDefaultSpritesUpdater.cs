@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -61,11 +61,11 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: そもそもAvatarFacialImplement.OnBlinkが遮断されたらここで判定しないでもよい
         private bool SyncBlink => 
             _instance.DefaultSpritesSetting.SyncBlinkBlendShapeToMainAvatar &&
-            _settingsRepository.InteractionApiEnabled.Value;
+            _settingsRepository.InteractionApiEnabled.CurrentValue;
         
         private bool SyncMouth =>
             _instance.DefaultSpritesSetting.SyncMouthBlendShapeToMainAvatar &&
-            _settingsRepository.InteractionApiEnabled.Value;
+            _settingsRepository.InteractionApiEnabled.CurrentValue;
 
         public void Initialize()
         {

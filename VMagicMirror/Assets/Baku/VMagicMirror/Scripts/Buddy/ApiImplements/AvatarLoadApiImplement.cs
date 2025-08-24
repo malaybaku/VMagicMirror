@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
@@ -35,8 +35,8 @@ namespace Baku.VMagicMirror.Buddy
 
         private readonly Subject<Unit> _loaded = new();
         private readonly Subject<Unit> _unloaded = new();
-        public IObservable<Unit> Loaded => _loaded;
-        public IObservable<Unit> Unloaded => _unloaded;
+        public Observable<Unit> Loaded => _loaded;
+        public Observable<Unit> Unloaded => _unloaded;
 
         public bool IsLoaded { get; private set; }
     }

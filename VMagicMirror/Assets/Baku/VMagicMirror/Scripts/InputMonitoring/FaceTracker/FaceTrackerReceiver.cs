@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -21,7 +21,6 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _enableHighPowerMode = new(false);
         private readonly ReactiveProperty<bool> _enableHandTracking = new(false);
         private readonly ReactiveProperty<bool> _enableExTracker = new(false);
-        private readonly ReactiveProperty<bool> _disableCameraDuringVmcpActive = new(true);
         
         public FaceTrackerReceiver(
             IMessageReceiver receiver, 
@@ -43,9 +42,6 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);
-            receiver.BindBoolProperty(
-                VmmCommands.SetDisableCameraDuringVMCPActive, _disableCameraDuringVmcpActive
-                );
 
             receiver.AssignQueryHandler(
                 VmmCommands.CameraDeviceNames,
@@ -58,7 +54,6 @@ namespace Baku.VMagicMirror
                 _enableHighPowerMode.Skip(1).AsUnitObservable(),
                 _enableHandTracking.Skip(1).AsUnitObservable(),
                 _enableExTracker.Skip(1).AsUnitObservable(),
-                _disableCameraDuringVmcpActive.Skip(1).AsUnitObservable(),
                 _vmcpActiveness.IsActive.Skip(1).AsUnitObservable()
                 )
                 .Subscribe(_ => UpdateFaceDetectorState())
@@ -72,16 +67,13 @@ namespace Baku.VMagicMirror
             // - 顔トラが有効
             // - 高負荷モードがオフ、かつExTrackerもオフ == 顔トラッキングのモードとして低負荷モードを指定されている
             // - ハンドトラッキングがオフ (※ハンドトラッキングがオンの場合、高負荷モードがオフでもMediaPipeのほうが起動する)
-            // - VMC Protocolがオフ or オンだけどカメラをそのまま動かしてよい
-            //   - ※ここの存在価値は怪しいので条件として外すかもだが…
 
             var useCameraForLowPowerFaceTracking = 
                 !string.IsNullOrEmpty(_cameraDeviceName.Value) &&
                 _enableFaceTracking.Value &&
                 !_enableHighPowerMode.Value &&
                 !_enableExTracker.Value &&
-                !_enableHandTracking.Value &&
-                (!_vmcpActiveness.IsActive.Value || !_disableCameraDuringVmcpActive.Value);
+                !_enableHandTracking.Value;
 
             if (useCameraForLowPowerFaceTracking)
             {

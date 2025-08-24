@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Baku.VMagicMirror.WordToMotion;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
         // NOTE: このRP<string>は「だいたい正しい値」を返す…くらいの精度で実装している。
         // - WordToMotionRunnerとの連動は緩いので、モーションの出始めや終了の補間時間とかは考慮されない
         // - 「モーションがループしてるときに表情変更だけのWtMを呼び出した」みたいなケースで、モーション側のWtM名は上書きされてわからなくなる
-        public IReadOnlyReactiveProperty<string> CurrentWordToMotionName => _currentWordToMotionName;
+        public ReadOnlyReactiveProperty<string> CurrentWordToMotionName => _currentWordToMotionName;
         
         //TODO: Start (Durationつき) + Stopped が分かるとCurrentWordToMotionNameみたいなプロパティが公開できるのでは？
         public override void Initialize()

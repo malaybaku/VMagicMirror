@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -17,14 +17,14 @@ namespace Baku.VMagicMirror.WordToMotion
     public interface IRequestSource
     {
         SourceType SourceType { get; }
-        IObservable<int> RunMotionRequested { get; }
+        Observable<int> RunMotionRequested { get; }
         void SetActive(bool active);
     }
 
     public class EmptyRequestSource : IRequestSource
     {
         public SourceType SourceType => SourceType.None;
-        public IObservable<int> RunMotionRequested { get; } = Observable.Empty<int>();
+        public Observable<int> RunMotionRequested { get; } = Observable.Empty<int>();
 
         public void SetActive(bool active)
         {

@@ -1,4 +1,4 @@
-﻿using UniRx;
+﻿using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -47,16 +47,16 @@ namespace Baku.VMagicMirror
         {
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。ただし手下げモードのときは表示するほうに寄せておく
             var settingBasedResult =
-                _deviceVisibilityRepository.HidVisible.Value &&
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
-                _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
+                _deviceVisibilityRepository.HidVisible.CurrentValue &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
+                _bodyMotionModeController.KeyboardAndMouseMotionMode.CurrentValue is KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
             if (!settingBasedResult)
             {
                 return false;
             }
             
-            if (!_deviceVisibilityRepository.HideUnusedDevices.Value)
+            if (!_deviceVisibilityRepository.HideUnusedDevices.CurrentValue)
             {
                 return true;
             }
@@ -64,9 +64,9 @@ namespace Baku.VMagicMirror
             //NOTE: キーボードに左右どっちかの手が乗ってる場合、キーマウ操作の一環と見なして表示してもOKにする。
             // 特に右手のキーボードを許容しないとキーマウの行き来でデバイスが出入りしてうるさいので、その対策をしている
             return
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default && 
-                _handIkIntegrator.LeftTargetType.Value is HandTargetType.Keyboard || 
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.Mouse or HandTargetType.Keyboard;
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default && 
+                _handIkIntegrator.LeftTargetType.CurrentValue is HandTargetType.Keyboard || 
+                _handIkIntegrator.RightTargetType.CurrentValue is HandTargetType.Mouse or HandTargetType.Keyboard;
         }
     }
 }

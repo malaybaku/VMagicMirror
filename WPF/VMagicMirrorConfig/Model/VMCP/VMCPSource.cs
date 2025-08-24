@@ -37,5 +37,6 @@ namespace Baku.VMagicMirrorConfig
         public bool ReceiveHeadPose { get; set; }
         public bool ReceiveFacial { get; set; }
         public bool ReceiveHandPose { get; set; }
+        public bool ReceiveLowerBodyPose { get; set; }
     }
 }

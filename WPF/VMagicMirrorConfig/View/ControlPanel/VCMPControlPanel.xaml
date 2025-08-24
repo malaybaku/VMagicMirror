@@ -72,10 +72,11 @@
                             <RowDefinition Height="40"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="30" />
@@ -87,7 +88,7 @@
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="1"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_HeadPose}"
+                                   Text="{DynamicResource VMCP_GridLabel_UpperBodyPose}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="2"
                                    HorizontalAlignment="Center"
@@ -95,30 +96,34 @@
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="3"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
+                                   Text="{DynamicResource VMCP_GridLabel_LowerBodyPose}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="4"
                                    HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
+                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
                                    />
                         <TextBlock Grid.Row="0" Grid.Column="5"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="6"
                                    HorizontalAlignment="Center"
                                    Text="{DynamicResource VMCP_GridLabel_Connected}"
                                    />
 
                         <Rectangle Grid.Row="1"
-                                   Grid.ColumnSpan="5"
+                                   Grid.ColumnSpan="6"
                                    Height="1"
                                    Fill="{StaticResource MahApps.Brushes.Gray2}"
                                    />
 
-                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source1}"
                                              />
-                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source2}"
                                              />
-                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="7"
+                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="8"
                                              DataContext="{Binding Source3}"
                                              />
                     </Grid>
@@ -162,40 +167,20 @@
 
                     </StackPanel>
 
-                    <md:Card Margin="15,5,5,0" 
-                         Visibility="{Binding BodyMotionStyleIncorrectForHandTracking.Value,
-                                              Converter={StaticResource BooleanToVisibilityConverter}}"
-                         HorizontalAlignment="Stretch"
-                         Padding="3">
-                        <StackPanel HorizontalAlignment="Left">
-                            <TextBlock Text="{DynamicResource VMCP_BodyMotionModeIncorrect}" 
-                                               TextWrapping="Wrap"
-                                               />
-                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Content="{DynamicResource VMCP_BodyMotionModeIncorrect_Fix}"
-                                Command="{Binding FixBodyMotionStyleCommand}"
-                                HorizontalAlignment="Left"
-                                Padding="2"
-                                Margin="5"
-                                />
-                        </StackPanel>
-                    </md:Card>
-                    
                     <TextBlock Style="{StaticResource HeaderText}"
                                 Text="{DynamicResource VMCP_AdvancedSetting_Header}"
                                 Margin="5,20,5,10"
                                 />
 
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_NaiveBoneTransfer}"
-                              Margin="15,5"
-                              IsChecked="{Binding EnableNaiveBoneTransfer.Value, Mode=TwoWay}"
+                    <CheckBox Margin="15,0,10,10" 
+                              Content="{DynamicResource VMCP_EnableReceiveLerp}" 
+                              IsChecked="{Binding EnableVMCPReceiveLerp.Value}"
                               />
 
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableCameraDuringActive}"
-                              Margin="15,5"
-                              IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
+                    <CheckBox Margin="15,0,10,10" 
+                              Content="{DynamicResource VMCP_EnableUpperBodyAdditionalMove}" 
+                              IsChecked="{Binding EnableUpperBodyAdditionalMove.Value}"
                               />
-
                 </StackPanel>
             </Border>
 

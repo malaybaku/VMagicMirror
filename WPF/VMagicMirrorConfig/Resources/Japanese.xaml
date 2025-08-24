@@ -184,13 +184,14 @@
 以下の機能が利用できます。
 
 受信:         
-    - 頭部モーション
-    - 表情 (BlendShape)
-    - 両手の位置情報
+  - 上半身モーション
+  - 手・指のモーション
+  - 足・腰のモーション
+  - 表情 (BlendShape)
 
 送信:
-    - 全身のポーズ
-    - 表情 (BlendShape)
+  - 全身のポーズ
+  - 表情 (BlendShape)
 </sys:String>
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
@@ -198,20 +199,18 @@
     <sys:String x:Key="VMCP_GridLabel_AppName">アプリ名</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Connected">接続</sys:String>
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_UpperBodyPose">上半身</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">手</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_LowerBodyPose">足・腰</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
     <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
     <sys:String x:Key="VMCP_PortInputError">*ポート番号には0 ~ 65535の範囲の値を指定して下さい。</sys:String>
     <sys:String x:Key="VMCP_ShouldApply">*未適用の変更があります</sys:String>
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
-VMC Protocolによる手の姿勢を適用するには「デフォルト」に変更して下さい。</sys:String>
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">補正なしで送信元ボーンの姿勢を適用</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>    
+    <sys:String x:Key="VMCP_EnableReceiveLerp">受信したポーズを滑らかに適用</sys:String>    
+    <sys:String x:Key="VMCP_EnableUpperBodyAdditionalMove">背骨・頭ボーンに受信したポーズとトラッキング結果を両方とも適用</sys:String>    
 
     <sys:String x:Key="VMCP_Send_Enable">VMCPによる送信を有効化</sys:String>
     <sys:String x:Key="VMCP_Send_Header">データ送信の設定</sys:String>
@@ -591,6 +590,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Shadow_Yaw">向き(横)[deg]</sys:String>
     <sys:String x:Key="Shadow_Pitch">向き(上下)[deg]</sys:String>
     <sys:String x:Key="Shadow_DepthOffset">奥行きの調整 [cm]</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_Header">全身表示用シャドウの設定 (クリックで展開)</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_UseAlways">つねに全身表示用シャドウを適用</sys:String>
+    <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">下半身モーションの適用時には適用</sys:String>
         
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>

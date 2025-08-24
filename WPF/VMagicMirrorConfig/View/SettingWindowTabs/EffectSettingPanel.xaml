@@ -8,7 +8,7 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="2050"
-             d:DesignWidth="350"
+             d:DesignWidth="450"
              >
     <UserControl.DataContext>
         <vm:EffectSettingViewModel />
@@ -280,7 +280,7 @@
                                 />
                     </StackPanel>
 
-                    <CheckBox Margin="10,5,10,15"
+                    <CheckBox Margin="10,5,10,10"
                               Content="{DynamicResource Shadow_Enable}"
                               IsChecked="{Binding EnableShadow.Value}"
                               />
@@ -346,7 +346,7 @@
                         <Slider Grid.Row="3" Grid.Column="1"
                                 x:Name="sliderShadowDepthOffset"
                                 Minimum="1"
-                                Maximum="150"
+                                Maximum="250"
                                 Value="{Binding ShadowDepthOffset.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Row="3" Grid.Column="2"
@@ -354,6 +354,69 @@
                                  />
 
                     </Grid>
+
+                    <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
+                             Margin="5,10" 
+                             Padding="0">
+                        <Expander Header="{DynamicResource Shadow_FixedShadow_Header}"
+                                  IsExpanded="False"
+                                  >
+                            <StackPanel IsEnabled="{Binding EnableShadow.Value}">
+
+                                <CheckBox Margin="10,5"
+                                          Content="{DynamicResource Shadow_FixedShadow_UseAlways}"
+                                          IsChecked="{Binding EnableFixedShadowAlways.Value}"
+                                          />
+                                <CheckBox Margin="20,5,10,5"
+                                          IsEnabled="{Binding EnableFixedShadowAlways.Value, Converter={StaticResource InvertBooleanConverter}}"
+                                          Content="{DynamicResource Shadow_FixedShadow_UseOnLocomotion}"
+                                          IsChecked="{Binding EnableFixedShadowWhenLocomotionActive.Value}"
+                                          />
+                                <Grid Margin="5">
+                                    <Grid.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="TextAlignment" Value="Center"/>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                               Text="{DynamicResource Shadow_Yaw}" />
+                                    <Slider Grid.Row="0" Grid.Column="1"
+                                            x:Name="sliderFixedShadowYaw"
+                                            Minimum="-180"
+                                            Maximum="180"
+                                            Value="{Binding FixedShadowYaw.Value, Mode=TwoWay}"
+                                            />
+                                    <TextBox Grid.Row="0" Grid.Column="2"
+                                             Text="{Binding Value, ElementName=sliderFixedShadowYaw}"
+                                             />
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0"
+                                               Text="{DynamicResource Shadow_Pitch}" />
+                                    <Slider Grid.Row="1" Grid.Column="1"
+                                            x:Name="sliderFixedShadowPitch"
+                                            Minimum="20"
+                                            Maximum="90"
+                                            Value="{Binding FixedShadowPitch.Value, Mode=TwoWay}"
+                                            />
+                                    <TextBox Grid.Row="1" Grid.Column="2"
+                                             Text="{Binding Value, ElementName=sliderFixedShadowPitch}"
+                                             />
+                                </Grid>
+                            </StackPanel>
+                        </Expander>
+
+
+                    </md:Card>
                 </StackPanel>
             </Border>
 

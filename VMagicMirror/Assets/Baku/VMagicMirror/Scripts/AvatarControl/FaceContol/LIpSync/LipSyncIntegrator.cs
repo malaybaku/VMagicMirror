@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
 
         private IMouthLipSyncSource GetCurrentLipSyncSource()
         {
-            if (_config.FaceControlMode.Value is FaceControlModes.ExternalTracker && PreferExternalTrackerLipSync)
+            if (_config.HeadMotionControlMode.CurrentValue is FaceControlModes.ExternalTracker && PreferExternalTrackerLipSync)
             {
                 return externalTrackerLipSync.LipSyncSource;
             }

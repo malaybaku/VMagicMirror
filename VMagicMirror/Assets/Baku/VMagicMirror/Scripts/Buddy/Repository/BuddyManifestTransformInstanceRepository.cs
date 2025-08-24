@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRx;
+using R3;
 using Zenject;
 using Object = UnityEngine.Object;
 
@@ -15,10 +15,10 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Dictionary<BuddyId, SingleBuddyTransforms> _transforms = new();
 
         private readonly Subject<BuddyManifestTransform2DInstance> _transform2DAdded = new();
-        public IObservable<BuddyManifestTransform2DInstance> Transform2DAdded => _transform2DAdded;
+        public Observable<BuddyManifestTransform2DInstance> Transform2DAdded => _transform2DAdded;
 
         private readonly Subject<BuddyManifestTransform3DInstance> _transform3DAdded = new();
-        public IObservable<BuddyManifestTransform3DInstance> Transform3DAdded => _transform3DAdded;
+        public Observable<BuddyManifestTransform3DInstance> Transform3DAdded => _transform3DAdded;
 
         public IEnumerable<BuddyManifestTransform2DInstance> GetTransform2DInstances()
             => _transforms.Values.SelectMany(ts => ts.GetTransform2DInstances());

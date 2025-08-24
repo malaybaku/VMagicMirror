@@ -2,7 +2,7 @@
 using Baku.VMagicMirror.Buddy;
 using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
 
-            _faceControlConfig.FaceControlMode
+            _faceControlConfig.HeadMotionControlMode
                 .CombineLatest(
                     _isExTrackerLipSyncActive,
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
@@ -115,8 +115,8 @@ namespace Baku.VMagicMirror
             _lipSyncContext.StopRecording();
 
             var shouldStartReceive =
-                _buddyAvatarFacialApi.RequireMicrophoneRecording.Value || (
-                    !_vmcpBlendShape.IsActive.Value &&
+                _buddyAvatarFacialApi.RequireMicrophoneRecording.CurrentValue || (
+                    !_vmcpBlendShape.IsActive.CurrentValue &&
                     _isMicrophoneLipSyncActive.Value &&
                     !_isImageBaseLipSyncActive.Value
                 );

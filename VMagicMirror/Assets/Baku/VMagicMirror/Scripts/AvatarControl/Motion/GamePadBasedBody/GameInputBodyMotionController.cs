@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Baku.VMagicMirror.GameInput;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 

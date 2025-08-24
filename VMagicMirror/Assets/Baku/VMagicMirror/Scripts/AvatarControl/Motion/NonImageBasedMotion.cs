@@ -1,5 +1,5 @@
 ﻿using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -239,7 +239,7 @@ namespace Baku.VMagicMirror
         
         private void CalculateAngles()
         {
-            _rawUseActiveJitter = _voiceOnOffParser.IsTalking.Value;
+            _rawUseActiveJitter = _voiceOnOffParser.IsTalking.CurrentValue;
 
             //チャタリングを防ぐようにして_activeに適用
             if (_activeSwitchCountDown > 0)

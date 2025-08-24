@@ -1,5 +1,5 @@
 using Baku.VMagicMirror.Buddy;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -43,14 +43,14 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _interactionApiEnabled = new(
             !FeatureLocker.IsFeatureLocked
             );
-        public IReadOnlyReactiveProperty<bool> InteractionApiEnabled => _interactionApiEnabled;
+        public ReadOnlyReactiveProperty<bool> InteractionApiEnabled => _interactionApiEnabled;
 
         private readonly ReactiveProperty<bool> _developerModeActive = new(false);
-        public IReadOnlyReactiveProperty<bool> DeveloperModeActive => _developerModeActive;
+        public ReadOnlyReactiveProperty<bool> DeveloperModeActive => _developerModeActive;
 
         private readonly ReactiveProperty<int> _developerModeLogLevel = new();
 
         private readonly ReactiveProperty<BuddyLogLevel> _logLevel = new();
-        public IReadOnlyReactiveProperty<BuddyLogLevel> LogLevel => _logLevel;
+        public ReadOnlyReactiveProperty<BuddyLogLevel> LogLevel => _logLevel;
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
         /// 「MainCameraの描画先が16:9のRenderTextureになっており、そのTextureをWindowに表示している」
         /// という状況になったとき、そうでない場合と同様の見た目になるようカメラのFoVを直してほしい…という事でtrueになる値
         /// </summary>
-        public IReadOnlyReactiveProperty<bool> NeedFovModify => _needFovModify;
+        public ReadOnlyReactiveProperty<bool> NeedFovModify => _needFovModify;
 
         public SpoutSenderController(
             Camera mainCamera,

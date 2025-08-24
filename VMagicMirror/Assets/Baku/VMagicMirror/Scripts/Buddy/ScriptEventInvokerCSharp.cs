@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Baku.VMagicMirror.Buddy.Api;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -228,7 +228,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
         
-        private void ConnectNoArgFunc(IObservable<Unit> source, Func<Action> funcGetter)
+        private void ConnectNoArgFunc(Observable<Unit> source, Func<Action> funcGetter)
         {
             source.Subscribe(v =>
                 {
@@ -243,12 +243,12 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         // TSource == TArg であり、値の変換も不要なケース。なるべくこれに帰着するのがシンプルで望ましい
-        private void ConnectOneArgFunc<TSource>(IObservable<TSource> source, Func<Action<TSource>> funcGetter)
+        private void ConnectOneArgFunc<TSource>(Observable<TSource> source, Func<Action<TSource>> funcGetter)
             => ConnectOneArgFunc(source, funcGetter, v => v);
 
         // TSourceがApi用の型ではないので変換が必要なケース
         private void ConnectOneArgFunc<TSource, TArg>(
-            IObservable<TSource> source, Func<Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
+            Observable<TSource> source, Func<Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
         {
             source.Subscribe(v =>
                 {
@@ -265,7 +265,7 @@ namespace Baku.VMagicMirror.Buddy
 
         // IO<T>のTの部分が(TCaller, TArg)のタプルになっているケース。動的生成したインスタンスのイベントハンドラを扱うのに使う
         private void ConnectOneArgFunc<TSource, TArg>(
-            IObservable<TSource> source, Func<TSource, Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
+            Observable<TSource> source, Func<TSource, Action<TArg>> funcGetter, Func<TSource, TArg> argConverter)
         {
             source.Subscribe(v =>
                 {
@@ -282,7 +282,7 @@ namespace Baku.VMagicMirror.Buddy
 
         
         private void ConnectTwoArgFunc<TSource, TArg0, TArg1>(
-            IObservable<TSource> source,
+            Observable<TSource> source,
             Func<Action<TArg0, TArg1>> funcGetter,
             Func<TSource, (TArg0, TArg1)> argConverter)
         {
@@ -301,7 +301,7 @@ namespace Baku.VMagicMirror.Buddy
 
         // TODO: Genericで書きづらいので一旦コメントアウトで… (せいぜい4引数くらいまでで切り上げたい)
         // private void ConnectMultipleArgFunc<T>(
-        //     IObservable<T> source, Func<LuaFunction> funcGetter, Func<T, object[]> argConverter)
+        //     Observable<T> source, Func<LuaFunction> funcGetter, Func<T, object[]> argConverter)
         // {
         //     source.Subscribe(v =>
         //         {

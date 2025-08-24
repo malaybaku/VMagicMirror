@@ -1,4 +1,4 @@
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.VMCP
 {
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.VMCP
         }
 
         private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
         public override void Initialize()
         {

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
-using UniRx;
+using R3;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -27,18 +27,18 @@ namespace Baku.VMagicMirror
         
         private WindowProcedureHook _windowProcedureHook = null;
 
-        public IObservable<string> RawKeyDown => _rawKeyDown;
+        public Observable<string> RawKeyDown => _rawKeyDown;
         private readonly Subject<string> _rawKeyDown = new();
         
-        public IObservable<string> RawKeyUp => _rawKeyUp;
+        public Observable<string> RawKeyUp => _rawKeyUp;
         private readonly Subject<string> _rawKeyUp = new();
         
-        public IObservable<string> KeyDown => _keyDown;
+        public Observable<string> KeyDown => _keyDown;
         private readonly Subject<string> _keyDown = new();
-        public IObservable<string> KeyUp => _keyUp;
+        public Observable<string> KeyUp => _keyUp;
         private readonly Subject<string> _keyUp = new();
 
-        public IObservable<string> MouseButton => _mouseButton;
+        public Observable<string> MouseButton => _mouseButton;
         private readonly Subject<string> _mouseButton = new();
 
         private readonly object _timeLock = new();

@@ -7,15 +7,12 @@ namespace Baku.VMagicMirror.VMCP
 {
     /// <summary>
     /// VMCPの受信データをHumanoid扱いで何かいい感じにするために生成される、Humanoidっぽいボーン構造を持つオブジェクト
-    /// 内部的にGameObjectを生成することに注意
+    /// 内部的にロードしたVRM + 受信したVMCPボーン情報を活用してGameObjectを生成することに注意
     /// </summary>
     public class VMCPBasedHumanoid
     {
-        public static readonly string HipsBoneName = nameof(HumanBodyBones.Hips);
-        public static readonly string SpineBoneName = nameof(HumanBodyBones.Spine);
-        public static readonly string HeadBoneName = nameof(HumanBodyBones.Head);
-        public static readonly string LeftHandBoneName = nameof(HumanBodyBones.LeftHand);
-        public static readonly string RightHandBoneName = nameof(HumanBodyBones.RightHand);
+        private const string HipsBoneName = nameof(HumanBodyBones.Hips);
+        private const string HeadBoneName = nameof(HumanBodyBones.Head);
 
         private static readonly (HumanBodyBones child, HumanBodyBones parent)[] BoneTree = new[]
         {
@@ -79,37 +76,37 @@ namespace Baku.VMagicMirror.VMCP
         private bool _hasBoneHierarchy;
 
         //hipsの上にもhierarchyを用意しておく(取り回しが良さそうなため)
-        private Transform _root = null;
-        private Transform _hips = null;
+        private Transform _root;
+        private Transform _hips;
 
         //下記はIK文脈で参照したいため、名指しでも取得出来るようにしとく
-        private Transform _head = null;
-        private Transform _leftHand = null;
-        private Transform _rightHand = null;
+        private Transform _head;
 
-        //NOTE:
-        //boneMapには常に任意ボーンも含めた全ボーンが用意される。
-        //この実装方式でいいのは、VMMで最終的に使う情報がIK相当の値であるのと、基本的にはFKのlocalRotationだけ気にすればよいため
-        private readonly Dictionary<string, VMCPBone> _boneMap = new Dictionary<string, VMCPBone>(55);
-
-        //NOTE: IKポーズは単体で保存する、こっちはヒエラルキーに何かを用意する必要はない
-        private readonly Dictionary<string, Pose> _trackerPoses = new Dictionary<string, Pose>(6);
+        //NOTE: boneMapには常に任意ボーンも含めた全ボーンが用意される。
+        // Hips/Headの位置と各ボーンのlocalRotationが主な関心になるので、任意ボーンの姿勢が初期状態相当のままになっててもあまり問題ない
+        private readonly Dictionary<string, Transform> _boneMap = new(55);
 
         private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
-        private readonly bool HasBoneOffsetsSource;
+        private readonly bool _hasBoneOffsetsSource;
 
         public VMCPBasedHumanoid()
         {
             _boneOffsets = null;
-            HasBoneOffsetsSource = false;
+            _hasBoneOffsetsSource = false;
         }
         
         public VMCPBasedHumanoid(AvatarBoneInitialLocalOffsets boneOffsets)
         {
             _boneOffsets = boneOffsets;
-            HasBoneOffsetsSource = _boneOffsets != null;
+            _hasBoneOffsetsSource = _boneOffsets != null;
         }
 
+        // NOTE: Root姿勢を一回も受け取ってない場合は identity が入る(= ワールド原点にアバターが立ってるアプリからのデータ送信と見なす)
+        public Pose RootPose { get; private set; } = Pose.identity;
+
+        // Hipsのローカル位置を一回以上受け取ると非null値が入る
+        public Vector3? HipsLocalPosition { get; private set; }
+        
         /// <summary>
         /// NOTE: この関数を呼ぶとHumanoidBoneの階層を持つGameObjectが生成される(ので、早すぎるタイミングでは呼んではいけない)
         /// </summary>
@@ -121,7 +118,7 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             // ヒエラルキー構築はしたいが、ヒエラルキーのリファレンスになるべきモデルのロードが終わってない→何もしない
-            if (HasBoneOffsetsSource && !_boneOffsets.HasModel.Value)
+            if (_hasBoneOffsetsSource && !_boneOffsets.HasModel.CurrentValue)
             {
                 return;
             }
@@ -138,19 +135,17 @@ namespace Baku.VMagicMirror.VMCP
                 }
 
                 var boneName = bone.ToString();
-                _boneMap[boneName] = new VMCPBone(new GameObject(boneName).transform, bone, boneName);
+                _boneMap[boneName] = new GameObject(boneName).transform;
             }
 
             BuildBoneHierarchy();
-            if (HasBoneOffsetsSource)
+            if (_hasBoneOffsetsSource)
             {
                 ApplyLocalModelOffsets();
             }
 
-            _hips = _boneMap[HipsBoneName].Transform;
-            _head = _boneMap[HeadBoneName].Transform;
-            _leftHand = _boneMap[LeftHandBoneName].Transform;
-            _rightHand = _boneMap[RightHandBoneName].Transform;
+            _hips = _boneMap[HipsBoneName];
+            _head = _boneMap[HeadBoneName];
             _hasBoneHierarchy = true;
         }
 
@@ -160,15 +155,15 @@ namespace Baku.VMagicMirror.VMCP
             {
                 var childBone = _boneMap[child.ToString()];
                 var parentBone = _boneMap[parent.ToString()];
-                childBone.Transform.SetParent(parentBone.Transform, false);
+                childBone.SetParent(parentBone, false);
             }
 
-            _boneMap[HipsBoneName].Transform.SetParent(_root, false);
+            _boneMap[HipsBoneName].SetParent(_root, false);
 
             foreach (var bone in _boneMap.Values)
             {
-                bone.Transform.localPosition = Vector3.zero;
-                bone.Transform.localRotation = Quaternion.identity;
+                bone.localPosition = Vector3.zero;
+                bone.localRotation = Quaternion.identity;
             }
         }
 
@@ -186,13 +181,13 @@ namespace Baku.VMagicMirror.VMCP
                 }
 
                 var boneName = bone.ToString();
-                _boneMap[boneName].Transform.localPosition = _boneOffsets.GetLocalOffset(bone);
+                _boneMap[boneName].localPosition = _boneOffsets.GetLocalOffset(bone);
             }
         }
-        
-        public void SetTrackerPose(string boneName, Vector3 position, Quaternion rotation)
+
+        public void SetRootPose(Vector3 position, Quaternion rotation)
         {
-            _trackerPoses[boneName] = new Pose(position, rotation);
+            RootPose = new Pose(position, rotation);
         }
 
         //NOTE:
@@ -215,26 +210,25 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
-            // VMM側のボーン情報を正とする場合、モデル側のは無視
-            if (boneName != HipsBoneName && !HasBoneOffsetsSource)
+            if (boneName == HipsBoneName)
             {
-                bone.Transform.localPosition = position;
+                // NOTE: Hipsは通常のFKでは動かす必要がないのでビルドしたHumanoidには適用しない
+                HipsLocalPosition = position;
             }
-            bone.Transform.localRotation = rotation;
+            else if (!_hasBoneOffsetsSource)
+            {
+                // NOTE: 受信したVMMのボーンを再構築するために値を入れている。もしVMM側のボーン情報を正とする場合、モデル側のは無視する手もある
+                bone.localPosition = position;
+            }
+            bone.localRotation = rotation;
         }
 
         public Quaternion GetLocalRotation(string boneName)
         {
-            return _boneMap.TryGetValue(boneName, out var bone) ? bone.Transform.localRotation : Quaternion.identity;
+            return _boneMap.TryGetValue(boneName, out var bone) ? bone.localRotation : Quaternion.identity;
         }
         
         public Pose GetFKHeadPoseFromHips() => GetFKPoseOnHips(_head);
-        public Pose GetFKLeftHandPoseFromHips() => GetFKPoseOnHips(_leftHand);
-        public Pose GetFKRightHandPoseFromHips() => GetFKPoseOnHips(_rightHand);
-
-        public Pose GetIKHeadPoseOnHips() => GetIKPoseOnHips(HeadBoneName);
-        public Pose GetIKLeftHandPoseOnHips() => GetIKPoseOnHips(LeftHandBoneName);
-        public Pose GetIKRightHandPoseOnHips() => GetIKPoseOnHips(RightHandBoneName);
 
         public void Clear()
         {
@@ -244,13 +238,12 @@ namespace Baku.VMagicMirror.VMCP
                 UnityEngine.Object.Destroy(_root.gameObject);
             }
 
+            RootPose = Pose.identity;
+            HipsLocalPosition = null;
             _root = null;
             _hips = null;
             _head = null;
-            _leftHand = null;
-            _rightHand = null;
             _boneMap.Clear();
-            _trackerPoses.Clear();
         }
 
         private Pose GetFKPoseOnHips(Transform bone)
@@ -264,31 +257,6 @@ namespace Baku.VMagicMirror.VMCP
                 _hips.InverseTransformPoint(bone.position),
                 Quaternion.Inverse(_hips.rotation) * bone.rotation
             );
-        }
-
-        private Pose GetIKPoseOnHips(string targetBoneName)
-        {
-            if (_trackerPoses.ContainsKey(targetBoneName) || _trackerPoses.ContainsKey(HipsBoneName))
-            {
-                return Pose.identity;
-            }
-            var hips = _trackerPoses[HipsBoneName];
-            var targetBone = _trackerPoses[targetBoneName];
-            return targetBone.GetTransformedBy(hips);
-        }
-    }
-
-    public readonly struct VMCPBone
-    {
-        public Transform Transform { get; }
-        public HumanBodyBones Bone { get; }
-        public string BoneName { get; }
-        
-        public VMCPBone(Transform transform, HumanBodyBones bone, string boneName)
-        {
-            Transform = transform;
-            Bone = bone;
-            BoneName = boneName;
         }
     }
 }

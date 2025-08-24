@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Baku.VMagicMirror.Buddy.Api;
-using UniRx;
+using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -111,11 +111,11 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<Unit> _pointerUp = new();
         private readonly Subject<Unit> _pointerClick = new();
 
-        public IObservable<Unit> PointerEnter => _pointerEnter;
-        public IObservable<Unit> PointerLeave => _pointerLeave;
-        public IObservable<Unit> PointerDown => _pointerDown;
-        public IObservable<Unit> PointerUp => _pointerUp;
-        public IObservable<Unit> PointerClick => _pointerClick;
+        public Observable<Unit> PointerEnter => _pointerEnter;
+        public Observable<Unit> PointerLeave => _pointerLeave;
+        public Observable<Unit> PointerDown => _pointerDown;
+        public Observable<Unit> PointerUp => _pointerUp;
+        public Observable<Unit> PointerClick => _pointerClick;
 
         public Vector2 Size
         {

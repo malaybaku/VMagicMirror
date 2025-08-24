@@ -1,4 +1,4 @@
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -8,11 +8,11 @@ namespace Baku.VMagicMirror.VMCP
     {
         private const float ResetLerpFactor = 6f;
 
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
+        private readonly ReactiveProperty<bool> _isActive = new(false);
+        public ReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
-        private readonly ReactiveProperty<bool> _isConnected = new ReactiveProperty<bool>(true);
-        public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
+        private readonly ReactiveProperty<bool> _isConnected = new(false);
+        public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
         /// <summary>
         /// NOTE: <see cref="IsActive"/>がtrueのときだけ非nullになれる
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror.VMCP
             Humanoid = null;
         }
 
-        void SetActiveInternal(bool active)
+        private void SetActiveInternal(bool active)
         {
             _isActive.Value = active;
             if (!active)

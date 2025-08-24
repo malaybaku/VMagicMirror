@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.WordToMotion
@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.WordToMotion
         public SourceType SourceType => SourceType.Midi;
 
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
-        public IObservable<int> RunMotionRequested => _runMotionRequested;
+        public Observable<int> RunMotionRequested => _runMotionRequested;
 
         private bool _isActive = false;
         public void SetActive(bool active) => _isActive = active;

@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v4.1.0
+v4.2.0
 
 * Author: Baxter
-* 2025/Jul/13
+* 2025/Aug/24
 
 The VRM avatar application without any special device.
 
@@ -135,7 +135,8 @@ Also there are some UPM based dependencies.
 * [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
-* [UniRx](https://github.com/neuecc/UniRx)
+* [R3](https://github.com/Cysharp/R3)
+* [UniTask](https://github.com/Cysharp/UniTask)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
@@ -144,6 +145,7 @@ Also there are some UPM based dependencies.
 
 Following packages are installed via NuGetForUnity.
 
+* [R3](https://github.com/Cysharp/R3)
 * [NAudio](https://github.com/naudio/NAudio)
 
 

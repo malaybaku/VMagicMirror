@@ -210,6 +210,10 @@
         ShadowYaw,
         ShadowPitch,
         ShadowDepthOffset,
+        FixedShadowAlwaysEnable,
+        FixedShadowWhenLocomotionActiveEnable,
+        FixedShadowYaw,
+        FixedShadowPitch,
 
         BloomIntensity,
         BloomThreshold,
@@ -274,8 +278,8 @@
         // VMCP (recv)
         EnableVMCP,
         SetVMCPSources,
-        SetVMCPNaiveBoneTransfer,
-        SetDisableCameraDuringVMCPActive,
+        EnableVMCPPoseLerp,
+        EnableVMCPUpperBodyAdditionalMove,
 
         // VMCP (send)
         EnableVMCPSend,

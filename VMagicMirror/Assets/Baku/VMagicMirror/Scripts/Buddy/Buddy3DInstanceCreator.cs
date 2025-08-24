@@ -1,6 +1,6 @@
 using System;
 using Baku.VMagicMirror.Buddy;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -19,19 +19,19 @@ namespace Baku.VMagicMirror
         /// のいずれかを呼び出してTransform3Dが生成されると発火します。
         /// オブジェクトの破棄に対しては何も発火しないことに注意して下さい。
         /// </summary>
-        public IObservable<BuddyTransform3DInstance> Transform3DCreated => _transform3dCreated;
+        public Observable<BuddyTransform3DInstance> Transform3DCreated => _transform3dCreated;
 
         private readonly Subject<BuddySprite3DInstance> _sprite3dCreated = new();
-        public IObservable<BuddySprite3DInstance> Sprite3DCreated => _sprite3dCreated;
+        public Observable<BuddySprite3DInstance> Sprite3DCreated => _sprite3dCreated;
 
         private readonly Subject<BuddyGlbInstance> _glbCreated = new();
-        public IObservable<BuddyGlbInstance> GlbCreated => _glbCreated;
+        public Observable<BuddyGlbInstance> GlbCreated => _glbCreated;
 
         private readonly Subject<BuddyVrmInstance> _vrmCreated = new();
-        public IObservable<BuddyVrmInstance> VrmCreated => _vrmCreated;
+        public Observable<BuddyVrmInstance> VrmCreated => _vrmCreated;
         
         private readonly Subject<BuddyVrmAnimationInstance> _vrmAnimationCreated = new();
-        public IObservable<BuddyVrmAnimationInstance> VrmAnimationCreated => _vrmAnimationCreated;
+        public Observable<BuddyVrmAnimationInstance> VrmAnimationCreated => _vrmAnimationCreated;
         
         [Inject]
         public Buddy3DInstanceCreator(

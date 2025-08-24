@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniVRM10;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {

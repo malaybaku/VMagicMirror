@@ -1,4 +1,4 @@
-﻿using System;
+﻿using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -17,10 +17,10 @@ namespace Baku.VMagicMirror
         private readonly RawInputChecker _rawInput;
         private readonly GlobalHookInputChecker _globalHookInput;
 
-        public IObservable<string> RawKeyDown => _rawInput.RawKeyDown;
-        public IObservable<string> RawKeyUp => _rawInput.RawKeyUp;
-        public IObservable<string> KeyDown => _rawInput.KeyDown;
-        public IObservable<string> KeyUp => _rawInput.KeyUp;
-        public IObservable<string> MouseButton => _globalHookInput.MouseButton;
+        public Observable<string> RawKeyDown => _rawInput.RawKeyDown;
+        public Observable<string> RawKeyUp => _rawInput.RawKeyUp;
+        public Observable<string> KeyDown => _rawInput.KeyDown;
+        public Observable<string> KeyUp => _rawInput.KeyUp;
+        public Observable<string> MouseButton => _globalHookInput.MouseButton;
     }
 }

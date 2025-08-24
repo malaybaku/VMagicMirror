@@ -1,7 +1,7 @@
 ﻿using Baku.VMagicMirror.GameInput;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
             _lateUpdateRun.OnNext(Unit.Default);
             if (_playRoutine?.HasUpdate == true)
             {
-                if (_bodyMotionModeController.MotionMode.Value == BodyMotionMode.GameInputLocomotion)
+                if (_bodyMotionModeController.MotionMode.CurrentValue == BodyMotionMode.GameInputLocomotion)
                 {
                     //ゲーム入力中はAnimatorで有効な姿勢が入ってるはずなのを信じて、HumanPoseHandlerが値を更新した分は巻き戻す
                     _hips.localPosition = posBefore;

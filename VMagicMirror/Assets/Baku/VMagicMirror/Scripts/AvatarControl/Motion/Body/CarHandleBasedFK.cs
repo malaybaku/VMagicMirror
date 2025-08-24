@@ -28,15 +28,15 @@ namespace Baku.VMagicMirror
 
         //NOTE: 他にも何かありそうな気がするが一旦忘れとく
         public bool IsActive => 
-            _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
-            _bodyMotionModeController.GamepadMotionMode.Value is GamepadMotionModes.CarController;
+            _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.Default &&
+            _bodyMotionModeController.GamepadMotionMode.CurrentValue is GamepadMotionModes.CarController;
 
         public Vector2 LeftEyeRotationRate => GetEyeRotationRate();
         public Vector2 RightEyeRotationRate => GetEyeRotationRate();
 
         public Quaternion GetBodyLeanSuggest()
         {
-            var handleRate = _angleGenerator.HandleRate.Value;
+            var handleRate = _angleGenerator.HandleRate.CurrentValue;
             var bodyRotationRate = Sigmoid(handleRate, 0.33f, 4);
             return Quaternion.Euler(0f, 0, bodyRotationRate * BodyRotationAngleLimit);
         }
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
         public Quaternion GetHeadYawRotation()
         {
             //NOTE: 左右反転の整合を取るために値をひっくり返す
-            var rate = -_angleGenerator.HandleRate.Value;
+            var rate = -_angleGenerator.HandleRate.CurrentValue;
 
             //NOTE: 0~90degあたりにほぼ不感になるエリアが欲しいのでカーブを使ってます
             var angleRate = Mathf.Sign(rate) * _carHandleProvider.GetHeadYawRateFromAngleRate(Mathf.Abs(rate));
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror
         private Vector2 GetEyeRotationRate()
         {
             //NOTE: 左右の整合性を取るために符号をひっくり返してます
-            var rate = -_angleGenerator.HandleRate.Value;
+            var rate = -_angleGenerator.HandleRate.CurrentValue;
             var rateX = Sigmoid(rate, .157f, 4);
             return new Vector2(rateX, 0f);
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using mattatz.TransformControl;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror
         /// フリーレイアウトが有効なあいだ、レイアウトの操作対象の情報を載せて毎フレーム送信される値。
         /// フリーレイアウトが無効になると送信されなくなることに注意
         /// </summary>
-        public IObservable<TransformControlRequest> ControlRequested => _controlRequested;
+        public Observable<TransformControlRequest> ControlRequested => _controlRequested;
 
         private KeyboardVisibilityView _keyboardVisibility;
         private TouchpadVisibilityView _touchPadVisibility;

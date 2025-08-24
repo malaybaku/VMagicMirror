@@ -7,23 +7,18 @@ namespace Baku.VMagicMirror
 {
     //TODO: BodyOffsetの提供クラスをinterface-nizeすることを検討すべき
     /// <summary>
-    /// VMCProtocolで頭部姿勢を受け取っているとき、そのオフセットを提供する
+    /// VMCProtocolで頭部姿勢を受け取っているとき、そのオフセットを提供するクラス。
+    /// ただし、<see cref="VMCPNaiveBoneTransfer"/> によって下半身ベースでの移動も考慮した場合は、
+    /// <see cref="VMCPNaiveBoneTransfer"/> でアバターのHipsを最終的に制御した値のほうが優先になる
     /// </summary>
     public class VMCPBodyOffset : MonoBehaviour
     {
-        private const float TweenDuration = 0.5f;
-        
         [Tooltip("受け取った値の適用スケール。割と小さい方がいいかも")]
         [SerializeField] private Vector3 applyScale = new Vector3(0.3f, 0.3f, 0.3f);
         //NOTE: 移動量もフレーバー程度ということで小さめに。
         [SerializeField] private Vector3 applyMin = new Vector3(-0.05f, -0.05f, -0.02f);
         [SerializeField] private Vector3 applyMax = new Vector3(0.05f, 0.05f, 0.02f);
 
-        //NOTE: この場合もxの比率は1.0にはせず、代わりに首回転にもとづく胴体の回転で並進が載るのに頼る
-        [SerializeField] private Vector3 applyScaleWhenNoHandTrack = new Vector3(0.8f, 1f, 0.6f);
-        [SerializeField] private Vector3 applyMinWhenNoHandTrack = new Vector3(-0.2f, -0.2f, -0.1f);
-        [SerializeField] private Vector3 applyMaxWhenNoHandTrack = new Vector3(0.2f, 0.2f, 0.1f);
-        
         [SerializeField] private float lerpFactor = 18f;
         [Tooltip("トラッキングロス時にゆっくり原点に戻すために使うLerpFactor")]
         [SerializeField] private float lerpFactorOnLost = 3f;
@@ -48,43 +43,6 @@ namespace Baku.VMagicMirror
         
         public Vector3 BodyOffset { get; private set; }
 
-        private bool _noHandTrackMode = false;
-        public bool NoHandTrackMode
-        {
-            get => _noHandTrackMode;
-            set
-            {
-                if (_noHandTrackMode == value)
-                {
-                    return;
-                }
-
-                _noHandTrackMode = value;
-                _sequence?.Kill();
-                _sequence = DOTween.Sequence()
-                    .Append(DOTween.To(
-                        () => _scale,
-                        v => _scale = v,
-                        value ? applyScaleWhenNoHandTrack : applyScale,
-                        TweenDuration
-                    ))
-                    .Join(DOTween.To(
-                        () => _min,
-                        v => _min = v,
-                        value ? applyMinWhenNoHandTrack : applyMin,
-                        TweenDuration
-                    ))
-                    .Join(DOTween.To(
-                        () => _max,
-                        v => _max = v,
-                        value ? applyMaxWhenNoHandTrack : applyMax,
-                        TweenDuration
-                    ));
-                _sequence.Play();
-            }
-            
-        }
-
         private void Start()
         {
             //初期状態は手下げモードじゃないため、それ用のパラメータを入れておく
@@ -98,7 +56,7 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            if (_config.ControlMode != FaceControlModes.VMCProtocol)
+            if (_config.HeadMotionControlModeValue != FaceControlModes.VMCProtocol)
             {
                 BodyOffset = Vector3.zero;
                 return;
@@ -106,7 +64,7 @@ namespace Baku.VMagicMirror
             
             var offset = _vmcpHeadPose.PositionOffset;
 
-            var goal = _vmcpHeadPose.IsConnected.Value
+            var goal = _vmcpHeadPose.IsConnected.CurrentValue
                 ? new Vector3(
                     Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
                     Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
@@ -114,7 +72,7 @@ namespace Baku.VMagicMirror
                 )
                 : Vector3.zero;
 
-            if (_vmcpHeadPose.IsConnected.Value)
+            if (_vmcpHeadPose.IsConnected.CurrentValue)
             {
                 var addedLerp = 
                     _currentLerpFactor +

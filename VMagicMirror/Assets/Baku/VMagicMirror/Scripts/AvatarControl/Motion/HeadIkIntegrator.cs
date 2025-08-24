@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
 
         private float _mouseActionCount = 0f;
 
-        private HandTargetType RightHandTargetType => handIKIntegrator.RightTargetType.Value;
+        private HandTargetType RightHandTargetType => handIKIntegrator.RightTargetType.CurrentValue;
         
         [Inject]
         public void Initialize(
@@ -158,7 +158,8 @@ namespace Baku.VMagicMirror
             // - 十分高精度な顔トラッキングを行っている場合、マウスへの視線追従をしたくないのでLookAtを切る
             // - 3人称視点でゲーム入力ベースの移動をする場合、正面付近に対してLookAtするとかえって不自然なので、この場合も何もしない
             if (_hasModel && 
-                (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower or FaceControlModes.ExternalTracker ||
+                (_faceControlConfig.HeadMotionControlModeValue is
+                    FaceControlModes.WebCamHighPower or FaceControlModes.ExternalTracker or FaceControlModes.VMCProtocol ||
                 IsGameInputAndThirdPersonViewMode()))
             {
                 //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。
@@ -225,8 +226,8 @@ namespace Baku.VMagicMirror
         private bool IsGameInputAndThirdPersonViewMode()
         {
             return 
-                _motionModeController.MotionMode.Value == BodyMotionMode.GameInputLocomotion &&
-                _motionModeController.CurrentGameInputLocomotionStyle.Value != GameInputLocomotionStyle.FirstPerson;
+                _motionModeController.MotionMode.CurrentValue == BodyMotionMode.GameInputLocomotion &&
+                _motionModeController.CurrentGameInputLocomotionStyle.CurrentValue != GameInputLocomotionStyle.FirstPerson;
         }
 
         private class CameraBasedLookAtIk : IIKData

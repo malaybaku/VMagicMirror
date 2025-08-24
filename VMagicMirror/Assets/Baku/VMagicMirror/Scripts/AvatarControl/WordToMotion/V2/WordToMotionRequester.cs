@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -15,14 +15,14 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionRequestRepository _repository;
         
         private readonly ReactiveProperty<bool> _previewIsActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> PreviewIsActive => _previewIsActive;
+        public ReadOnlyReactiveProperty<bool> PreviewIsActive => _previewIsActive;
 
         private readonly Subject<MotionRequest> _runRequested = new Subject<MotionRequest>();
-        public IObservable<MotionRequest> RunRequested => _runRequested;
+        public Observable<MotionRequest> RunRequested => _runRequested;
 
         private readonly Subject<MotionRequest> _previewRequested = new Subject<MotionRequest>();
         // プレビューモード中、表情は「いじらないでいい」 or 「全クリップ情報」のいずれかであることを、値を受け取るたびに通知したい
-        public IObservable<MotionRequest> PreviewRequested => _previewRequested;
+        public Observable<MotionRequest> PreviewRequested => _previewRequested;
 
         public WordToMotionRequester(WordToMotionRequestRepository repository)
         {

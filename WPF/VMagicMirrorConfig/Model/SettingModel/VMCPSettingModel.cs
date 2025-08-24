@@ -19,14 +19,12 @@ namespace Baku.VMagicMirrorConfig
                 setting.VMCPEnabled, v => SendMessage(MessageFactory.EnableVMCP(v)));
             SerializedVMCPSourceSetting = new(
                 setting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.SetVMCPSources(v)));
-
-            DisableCameraDuringVMCPActive = new(
-                setting.DisableCameraDuringVMCPActive,
-                v => SendMessage(MessageFactory.SetDisableCameraDuringVMCPActive(v))
+            EnableVMCPReceiveLerp = new(
+                setting.EnableVMCPReceiveLerp, v => SendMessage(MessageFactory.EnableVMCPReceiveLerp(v))
                 );
-            EnableNaiveBoneTransfer = new(
-                setting.EnableNaiveBoneTransfer,
-                v => SendMessage(MessageFactory.SetVMCPNaiveBoneTransfer(v))
+            EnableUpperBodyAdditionalMove = new(
+                setting.EnableUpperBodyAdditionalMove,
+                v => SendMessage(MessageFactory.EnableVMCPUpperBodyAdditionalMove(v))
                 );
 
             VMCPSendEnabled = new(
@@ -48,9 +46,8 @@ namespace Baku.VMagicMirrorConfig
         // 受信系のプロパティ
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
-
-        public RProperty<bool> EnableNaiveBoneTransfer { get; }
-        public RProperty<bool> DisableCameraDuringVMCPActive { get; }
+        public RProperty<bool> EnableVMCPReceiveLerp { get; }
+        public RProperty<bool> EnableUpperBodyAdditionalMove { get; }
 
         private readonly VMCPReceiveStatus _receiveStatus = new();
         public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
@@ -168,9 +165,10 @@ namespace Baku.VMagicMirrorConfig
             var defaultSetting = VMCPSetting.Default;
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
             SerializedVMCPSourceSetting.Value = defaultSetting.SerializedVMCPSourceSetting;
-            DisableCameraDuringVMCPActive.Value = defaultSetting.DisableCameraDuringVMCPActive;
+            EnableVMCPReceiveLerp.Value = defaultSetting.EnableVMCPReceiveLerp;
+            EnableUpperBodyAdditionalMove.Value = defaultSetting.EnableUpperBodyAdditionalMove;
 
-            VMCPEnabled.Value = defaultSetting.VMCPEnabled;
+            VMCPSendEnabled.Value = defaultSetting.VMCPSendEnabled;
             SerializedVMCPSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;
             ShowEffectDuringVMCPSendEnabled.Value = defaultSetting.ShowEffectDuringVMCPSendEnabled;
         }

@@ -38,6 +38,17 @@ namespace Baku.VMagicMirrorConfig
             ShadowPitch = new RProperty<int>(s.ShadowPitch, i => SendMessage(MessageFactory.ShadowPitch(i)));
             ShadowDepthOffset = new RProperty<int>(s.ShadowDepthOffset, i => SendMessage(MessageFactory.ShadowDepthOffset(i)));
 
+            EnableFixedShadowAlways = new RProperty<bool>(
+                s.EnableFixedShadowAlways,
+                v => SendMessage(MessageFactory.FixedShadowAlwaysEnable(v))
+                );
+            EnableFixedShadowWhenLocomotionActive = new RProperty<bool>(
+                s.EnableFixedShadowWhenLocomotionActive,
+                v => SendMessage(MessageFactory.FixedShadowWhenLocomotionActiveEnable(v))
+                );
+            FixedShadowYaw = new RProperty<int>(s.FixedShadowYaw, i => SendMessage(MessageFactory.FixedShadowYaw(i)));
+            FixedShadowPitch = new RProperty<int>(s.FixedShadowPitch, i => SendMessage(MessageFactory.FixedShadowPitch(i)));
+
             BloomIntensity = new RProperty<int>(s.BloomIntensity, i => SendMessage(MessageFactory.BloomIntensity(i)));
             BloomThreshold = new RProperty<int>(s.BloomThreshold, i => SendMessage(MessageFactory.BloomThreshold(i)));
             Action sendBloomColor = () =>
@@ -101,6 +112,11 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> ShadowYaw { get; }
         public RProperty<int> ShadowPitch { get; }
         public RProperty<int> ShadowDepthOffset { get; }
+
+        public RProperty<bool> EnableFixedShadowAlways { get; }
+        public RProperty<bool> EnableFixedShadowWhenLocomotionActive { get; }
+        public RProperty<int> FixedShadowYaw { get; }
+        public RProperty<int> FixedShadowPitch { get; }
 
         #endregion
 
@@ -177,6 +193,11 @@ namespace Baku.VMagicMirrorConfig
             ShadowYaw.Value = setting.ShadowYaw;
             ShadowPitch.Value = setting.ShadowPitch;
             ShadowDepthOffset.Value = setting.ShadowDepthOffset;
+
+            EnableFixedShadowAlways.Value = setting.EnableFixedShadowAlways;
+            EnableFixedShadowWhenLocomotionActive.Value = setting.EnableFixedShadowWhenLocomotionActive;
+            FixedShadowYaw.Value = setting.FixedShadowYaw;
+            FixedShadowPitch.Value = setting.FixedShadowPitch;
         }
 
         public void ResetAmbientOcclusionSetting()

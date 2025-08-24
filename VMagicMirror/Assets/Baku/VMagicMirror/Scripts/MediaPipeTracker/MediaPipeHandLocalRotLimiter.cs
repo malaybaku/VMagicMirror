@@ -1,5 +1,5 @@
 using UnityEngine;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -58,12 +58,12 @@ namespace Baku.VMagicMirror
         {
             if (!_hasModel) return;
 
-            if (_handIKIntegrator.LeftTargetType.Value is HandTargetType.ImageBaseHand)
+            if (_handIKIntegrator.LeftTargetType.CurrentValue is HandTargetType.ImageBaseHand)
             {
                 LimitLeftHandBoneLocalRotation();
             }
         
-            if (_handIKIntegrator.RightTargetType.Value is HandTargetType.ImageBaseHand)
+            if (_handIKIntegrator.RightTargetType.CurrentValue is HandTargetType.ImageBaseHand)
             {
                 LimitRightHandBoneLocalRotation();
             }

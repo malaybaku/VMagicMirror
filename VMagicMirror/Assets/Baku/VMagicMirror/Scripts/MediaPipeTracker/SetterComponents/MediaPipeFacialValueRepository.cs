@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -89,10 +89,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public override void Initialize()
         {
-            // 書いてる通りだが、MediaPipeを使わない状態に切り替わる場合は直ちにブレンドシェイプをリセットしておく。
+            // 書いてる通りだが、MediaPipeの表情を使わない状態に切り替わる場合は直ちにブレンドシェイプをリセットしておく。
             // これにより、webカメラを使ってないときのTickの処理がちょっと減る
-            _faceControlConfig.FaceControlMode
-                .Where(mode => mode is FaceControlModes.WebCamHighPower)
+            _faceControlConfig.BlendShapeControlMode
+                .Select(mode => mode is FaceControlModes.WebCamHighPower)
+                .DistinctUntilChanged()
+                .Where(v => !v)
                 .Subscribe(_ =>
                 {
                     ResetFacialValues(0f);
@@ -112,7 +114,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
 
                 // トラッキングロス時はゆっくり値をゼロに戻す
-                if (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower &&
+                if (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower &&
                     !_isTracked.Value &&
                     _trackLostTime > _settings.TrackingLostPoseAndFacialResetWait)
                 {

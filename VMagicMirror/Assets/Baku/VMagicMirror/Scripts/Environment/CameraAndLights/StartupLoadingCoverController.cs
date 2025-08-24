@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -83,7 +83,7 @@ namespace Baku.VMagicMirror
                 _cover.SetModelLoadIndication();
                 _localVrmLoadEndedAtLeastOnce
                     .Where(v => v)
-                    .First()
+                    .Take(1)
                     .Delay(TimeSpan.FromSeconds(1f))
                     .Subscribe(_ => _cover.FadeOutAndDestroySelf())
                     .AddTo(this);

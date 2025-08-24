@@ -1,5 +1,5 @@
 ﻿using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState RightHandState => _rightHandState;
 
         private readonly Subject<GamepadKey> _buttonDownMotionStarted = new();
-        public IObservable<GamepadKey> ButtonDownMotionStarted => _buttonDownMotionStarted;
+        public Observable<GamepadKey> ButtonDownMotionStarted => _buttonDownMotionStarted;
 
         public ArcadeStickHandIKGenerator(
             HandIkGeneratorDependency dependency, 
@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror.IK
             dependency.Events.MoveLeftGamepadStick += v =>
             {
                 LeftStick(v);
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                if (dependency.Config.GamepadMotionMode.CurrentValue == GamepadMotionModes.ArcadeStick)
                 {
                     _leftHandState.RaiseRequest();
                 }
@@ -75,8 +75,8 @@ namespace Baku.VMagicMirror.IK
             
             dependency.Events.GamepadButtonStick += pos =>
             {
-                if (dependency.Config.WordToMotionDevice.Value != WordToMotionDeviceAssign.Gamepad && 
-                    dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                if (dependency.Config.WordToMotionDevice.CurrentValue != WordToMotionDeviceAssign.Gamepad && 
+                    dependency.Config.GamepadMotionMode.CurrentValue == GamepadMotionModes.ArcadeStick)
                 {
                     ButtonStick(pos);
                     _leftHandState.RaiseRequest();
@@ -87,16 +87,16 @@ namespace Baku.VMagicMirror.IK
             {
                 ButtonDown(key);
                 
-                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad || 
-                    dependency.Config.IsAlwaysHandDown.Value || 
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.ArcadeStick
+                if (dependency.Config.WordToMotionDevice.CurrentValue == WordToMotionDeviceAssign.Gamepad || 
+                    dependency.Config.IsAlwaysHandDown.CurrentValue || 
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.ArcadeStick
                     )
                 {
                     return;
                 }
                 
                 _rightHandState.RaiseRequest();
-                if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
+                if (dependency.Config.RightTarget.CurrentValue == HandTargetType.ArcadeStick)
                 {
                     dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
                     if (CheckKeySupportReactionEffect(key))
@@ -115,14 +115,14 @@ namespace Baku.VMagicMirror.IK
             {
                 ButtonUp(key); 
 
-                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad || 
-                    dependency.Config.IsAlwaysHandDown.Value ||
-                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.ArcadeStick)
+                if (dependency.Config.WordToMotionDevice.CurrentValue == WordToMotionDeviceAssign.Gamepad || 
+                    dependency.Config.IsAlwaysHandDown.CurrentValue ||
+                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.ArcadeStick)
                 {
                     return;
                 }
 
-                if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
+                if (dependency.Config.RightTarget.CurrentValue == HandTargetType.ArcadeStick)
                 {
                     dependency.Reactions.ArcadeStickFinger.ButtonUp(key);
                 }

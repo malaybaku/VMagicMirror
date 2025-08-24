@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UniRx;
-using UniRx.Triggers;
+using R3;
+using R3.Triggers;
 using UnityEngine;
 using Zenject;
 
@@ -68,7 +68,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             foreach (var instance in _instances)
             {
-                if (instance.ParentBone.Value == HumanBodyBones.LastBone)
+                if (instance.ParentBone.CurrentValue == HumanBodyBones.LastBone)
                 {
                     continue;
                 }
@@ -76,7 +76,7 @@ namespace Baku.VMagicMirror.Buddy
                 if (_hasModel)
                 {
                     instance.SetParentAvatarBone(
-                        _animator.GetBoneTransformAscending(instance.ParentBone.Value)
+                        _animator.GetBoneTransformAscending(instance.ParentBone.CurrentValue)
                         );
                 }
                 else
@@ -93,14 +93,14 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            if (instance.ParentBone.Value == HumanBodyBones.LastBone)
+            if (instance.ParentBone.CurrentValue == HumanBodyBones.LastBone)
             {
                 instance.RemoveParentAvatarBone();
             }
             else
             {
                 instance.SetParentAvatarBone(
-                    _animator.GetBoneTransformAscending(instance.ParentBone.Value)
+                    _animator.GetBoneTransformAscending(instance.ParentBone.CurrentValue)
                 );
             }
         }

@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         /// </summary>
         internal BuddyFolder BuddyFolder { get; }
 
-        bool IRootApi.InteractionApiEnabled => _settingsRepository.InteractionApiEnabled.Value;
+        bool IRootApi.InteractionApiEnabled => _settingsRepository.InteractionApiEnabled.CurrentValue;
 
         // NOTE: Api.Log($"{Api}") のような(ミスで)書いたログに対して長過ぎる出力にならないようにしておく…というのが狙い
         public override string ToString() => nameof(IRootApi);

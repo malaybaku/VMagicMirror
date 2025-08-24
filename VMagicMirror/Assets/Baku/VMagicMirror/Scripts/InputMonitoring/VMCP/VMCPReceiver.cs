@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using UniRx;
+using R3;
 using UnityEngine;
 using uOSC;
 using Zenject;
@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly VMCPBlendShape _blendShape;
         private readonly VMCPHeadPose _headPose;
         private readonly VMCPHandPose _handPose;
+        private readonly VMCPLowerBodyPose _lowerBodyPose;
 
         //NOTE: oscServerはOnDisableで止まるので、アプリ終了時の停止はこっちから呼ばないでよい
         private readonly uOscServer[] _servers = new uOscServer[OscServerCount];
@@ -31,10 +32,13 @@ namespace Baku.VMagicMirror.VMCP
 
         private readonly bool[] _connected = new bool[OscServerCount];
         //NOTE: ビットフラグで_connectedの状態を表す値(0~7)を入れる。変化検知のために使い、値そのものは読まない
-        private readonly ReactiveProperty<int> _connectedValue = new ReactiveProperty<int>(0);
+        private readonly ReactiveProperty<int> _connectedValue = new(0);
 
         private readonly float[] _disconnectCountDown = new float[OscServerCount];
-        
+
+        private readonly ReactiveProperty<bool> _isLocomotionReceiveSettingActive = new(false);
+        //NOTE: 通信でデータが受信できていなくとも、下半身モーションを受信しようとする設定ならtrueになる
+        public ReadOnlyReactiveProperty<bool> IsLocomotionReceiveSettingActive => _isLocomotionReceiveSettingActive;
         
         [Inject]
         public VMCPReceiver(
@@ -44,7 +48,8 @@ namespace Baku.VMagicMirror.VMCP
             AvatarBoneInitialLocalOffsets boneOffsets,
             VMCPBlendShape blendShape,
             VMCPHeadPose headPose,
-            VMCPHandPose handPose
+            VMCPHandPose handPose,
+            VMCPLowerBodyPose lowerBodyPose
             )
         {
             _messageReceiver = messageReceiver;
@@ -54,6 +59,7 @@ namespace Baku.VMagicMirror.VMCP
             _blendShape = blendShape;
             _headPose = headPose;
             _handPose = handPose;
+            _lowerBodyPose = lowerBodyPose;
         }
 
         public override void Initialize()
@@ -80,7 +86,7 @@ namespace Baku.VMagicMirror.VMCP
             //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく
             // 最初の1回はアプリケーション起動後のやつなので無視
             _connectedValue
-                .Throttle(TimeSpan.FromSeconds(0.5f))
+                .Debounce(TimeSpan.FromSeconds(0.5f))
                 .Skip(1)
                 .Subscribe(_ => NotifyConnectStatus())
                 .AddTo(this);
@@ -104,21 +110,6 @@ namespace Baku.VMagicMirror.VMCP
                     //NOTE: Headに並進項を入れようとするのもアリ
                     var headPose = _receiverHumanoids[i].GetFKHeadPoseFromHips();
                     _headPose.SetPoseOnHips(headPose);
-                }
-
-                if (_dataPassSettings[i].ReceiveHandPose)
-                {
-                    //NOTE: IKがあったらIK優先したいんだけどな～
-                    var leftHandPose = _receiverHumanoids[i].GetFKLeftHandPoseFromHips();
-                    var rightHandPose = _receiverHumanoids[i].GetFKRightHandPoseFromHips();
-                    _handPose.SetLeftHandPoseOnHips(
-                        leftHandPose.position,
-                        leftHandPose.rotation
-                    );
-                    _handPose.SetRightHandPoseOnHips(
-                        rightHandPose.position,
-                        rightHandPose.rotation
-                    );
                 }
 
                 //一定時間データを受信しなかった受信元は切断扱いになる
@@ -163,8 +154,9 @@ namespace Baku.VMagicMirror.VMCP
         {
             //誰かが使ったデータはもう使えない…という定義の仕方をする
             var receiveHeadPose = false;
-            var receiveFacial = false;
             var receiveHandPose = false;
+            var receiveLowerBodyPose = false;
+            var receiveFacial = false;
             
             for (var i = 0; i < _dataPassSettings.Length; i++)
             {
@@ -183,13 +175,15 @@ namespace Baku.VMagicMirror.VMCP
 
                 _dataPassSettings[i] = new VMCPDataPassSettings(
                     !receiveHeadPose && src.ReceiveHeadPose,
-                    !receiveFacial && src.ReceiveFacial,
-                    !receiveHandPose && src.ReceiveHandPose
+                    !receiveHandPose && src.ReceiveHandPose,
+                    !receiveLowerBodyPose && src.ReceiveLowerBodyPose,
+                    !receiveFacial && src.ReceiveFacial
                 );
 
                 receiveHeadPose = receiveHeadPose || _dataPassSettings[i].ReceiveHeadPose;
-                receiveFacial = receiveFacial || _dataPassSettings[i].ReceiveFacial;
                 receiveHandPose = receiveHandPose || _dataPassSettings[i].ReceiveHandPose;
+                receiveLowerBodyPose = receiveLowerBodyPose || _dataPassSettings[i].ReceiveLowerBodyPose;
+                receiveFacial = receiveFacial || _dataPassSettings[i].ReceiveFacial;
             }
         }
 
@@ -212,8 +206,13 @@ namespace Baku.VMagicMirror.VMCP
                 }
                 _blendShape.SetActive(false);
                 _headPose.SetInactive();
+                
                 _handPose.SetActive(false);
                 _handPose.SetHumanoid(null);
+
+                _lowerBodyPose.SetInactive();
+
+                _isLocomotionReceiveSettingActive.Value = false;
                 return;
             }
 
@@ -233,6 +232,16 @@ namespace Baku.VMagicMirror.VMCP
                 _headPose.SetInactive();
             }
 
+            var lowerBodyPoseRefIndex = Array.FindIndex(_dataPassSettings, s => s.ReceiveLowerBodyPose);
+            if (lowerBodyPoseRefIndex >= 0)
+            {
+                _lowerBodyPose.SetActive(_receiverHumanoids[lowerBodyPoseRefIndex]);
+            }
+            else
+            {
+                _lowerBodyPose.SetInactive();
+            }
+            
             _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
 
@@ -264,6 +273,9 @@ namespace Baku.VMagicMirror.VMCP
                 server.port = source.Port;
                 server.StartServer();
             }
+
+            // NOTE: `_optionEnabled &&` も条件になっているが、この行まで来てるということは受信が(多分)有効なのでフラグは立ててしまう
+            _isLocomotionReceiveSettingActive.Value = lowerBodyPoseRefIndex >= 0;
         }
 
         private void UpdateConnectedStatus(int index, bool connected)
@@ -277,9 +289,9 @@ namespace Baku.VMagicMirror.VMCP
         {
             //NOTE:
             // - BlendShapeの受信状態は単に受信が停止したら検知可能なので、こういうケアをしないでよい
-            // - 非ActiveなときはHeadPose/HandPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
+            // - 非Activeなときは_headPose/_handPose/_lowerBodyPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
 
-            if (_headPose.IsActive.Value)
+            if (_headPose.IsActive.CurrentValue)
             {
                 for (var i = 0; i < _dataPassSettings.Length; i++)
                 {
@@ -292,7 +304,7 @@ namespace Baku.VMagicMirror.VMCP
                 }
             }
 
-            if (_handPose.IsActive.Value)
+            if (_handPose.IsActive.CurrentValue)
             {
                 for (var i = 0; i < _dataPassSettings.Length; i++)
                 {
@@ -300,6 +312,19 @@ namespace Baku.VMagicMirror.VMCP
                     if (setting.ReceiveHandPose)
                     {
                         _handPose.SetConnected(_connected[i]);
+                        break;
+                    }
+                }
+            }
+            
+            if (_lowerBodyPose.IsActive.CurrentValue)
+            {
+                for (var i = 0; i < _dataPassSettings.Length; i++)
+                {
+                    var setting = _dataPassSettings[i];
+                    if (setting.ReceiveLowerBodyPose)
+                    {
+                        _lowerBodyPose.SetConnected(_connected[i]);
                         break;
                     }
                 }
@@ -314,14 +339,14 @@ namespace Baku.VMagicMirror.VMCP
             var messageType = message.GetMessageType();
             switch (messageType)
             {
-                case VMCPMessageType.TrackerPose:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                case VMCPMessageType.DefineRoot:
+                    if (settings.ReceiveLowerBodyPose)
                     {
-                        ApplyTrackerPose(message, _receiverHumanoids[sourceIndex]);
+                        ApplyRootPose(message, _receiverHumanoids[sourceIndex]);
                     }
                     break;
                 case VMCPMessageType.ForwardKinematics:
-                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose || settings.ReceiveLowerBodyPose)
                     {
                         ApplyBoneLocalPose(message, _receiverHumanoids[sourceIndex]);
                     }
@@ -348,39 +373,18 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        private void ApplyTrackerPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
-        {
-            var poseType = message.GetTrackerPoseType(out _);
-            if (poseType == VMCPTrackerPoseType.Unknown)
-            {
-                return;
-            }
-
-            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
-            var (pos, rot) = message.GetPose();
-            switch (poseType)
-            {
-                case VMCPTrackerPoseType.Head:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HeadBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.LeftHand:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.LeftHandBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.RightHand:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.RightHandBoneName, pos, rot);
-                    return;
-                case VMCPTrackerPoseType.Hips:
-                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HipsBoneName, pos, rot);
-                    return;
-            }
-        }
-
+        //NOTE: NOTE: ここの下では基本的にデータフォーマットをvalidateしない (パフォーマンス優先)
         private void ApplyBoneLocalPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
         {
-            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
             var boneName = message.GetForwardKinematicBoneName();
             var (pos, rot) = message.GetPose();
             humanoid.SetLocalPose(boneName, pos, rot);
+        }
+        
+        private void ApplyRootPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
+        {
+            var (pos, rot) = message.GetPose();
+            humanoid.SetRootPose(pos, rot);
         }
 
         private void SetBlendShapeValue(uOSC.Message message)

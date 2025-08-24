@@ -8,9 +8,7 @@ namespace Baku.VMagicMirror.VMCP
     {
         public SerializedVMCPSource[] Sources;
         
-        public VMCPSources ToSources() => new VMCPSources(
-            Sources.Select(s => s.ToSource())
-        );
+        public VMCPSources ToSources() => new(Sources.Select(s => s.ToSource()));
     }
 
     [Serializable]
@@ -19,12 +17,17 @@ namespace Baku.VMagicMirror.VMCP
         public string Name;
         public int Port;
         public bool ReceiveHeadPose;
-        public bool ReceiveFacial;
         public bool ReceiveHandPose;
+        public bool ReceiveLowerBodyPose;
+        public bool ReceiveFacial;
 
-        public VMCPSource ToSource() => new VMCPSource(
-            Name, Port,
-            ReceiveHeadPose, ReceiveFacial, ReceiveHandPose
+        public VMCPSource ToSource() => new(
+            Name,
+            Port,
+            ReceiveHeadPose,
+            ReceiveHandPose,
+            ReceiveLowerBodyPose,
+            ReceiveFacial
         );
     }
 }

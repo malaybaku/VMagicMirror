@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror.IK
             dependency.Events.MoveMouse += pos =>
             {
                 MoveMouse(pos);
-                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                if (dependency.Config.KeyboardAndMouseMotionMode.CurrentValue ==
                     KeyboardAndMouseMotionModes.Presentation)
                 {
                     RequestToUse?.Invoke(this);

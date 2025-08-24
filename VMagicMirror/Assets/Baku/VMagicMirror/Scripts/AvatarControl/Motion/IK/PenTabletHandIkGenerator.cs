@@ -1,5 +1,5 @@
 ﻿using System;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState RightHandState => this;
 
         private readonly Subject<string> _mouseClickMotionStarted = new();
-        public IObservable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
+        public Observable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
 
         private Vector3 _targetPosition = Vector3.zero;
 
@@ -94,12 +94,12 @@ namespace Baku.VMagicMirror.IK
             //読み方はそのままで、ペンタブを使いたいときマウス移動イベントが届いたらペンタブのIKを適用したがる
             dependency.Events.MoveMouse += _ =>
             {
-                if (dependency.Config.KeyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.PenTablet)
+                if (dependency.Config.KeyboardAndMouseMotionMode.CurrentValue == KeyboardAndMouseMotionModes.PenTablet)
                 {
                     RequestToUse?.Invoke(this);
                 }
 
-                if (dependency.Config.RightTarget.Value == HandTargetType.PenTablet)
+                if (dependency.Config.RightTarget.CurrentValue == HandTargetType.PenTablet)
                 {
                     dependency.Reactions.ParticleStore.RequestPenTabletMoveParticle(
                         _penTablet.GetPenTipPosition(),
@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.OnMouseButton += eventName =>
             {
-                if (dependency.Config.KeyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.PenTablet)
+                if (dependency.Config.KeyboardAndMouseMotionMode.CurrentValue == KeyboardAndMouseMotionModes.PenTablet)
                 {
                     RequestToUse?.Invoke(this);
                 }
@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror.IK
                 }
 
                 //ButtonUpでもエフェクトを出す。波紋系のエフェクトだとしっくり来るはず
-                if (dependency.Config.RightTarget.Value == HandTargetType.PenTablet)
+                if (dependency.Config.RightTarget.CurrentValue == HandTargetType.PenTablet)
                 {
                     dependency.Reactions.ParticleStore.RequestPenTabletClickParticle();
                     _mouseClickMotionStarted.OnNext(eventName);

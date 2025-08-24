@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
 
         /// <summary>
         /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。
@@ -75,10 +75,10 @@ namespace Baku.VMagicMirror.Buddy
             => _mousePositionProvider.RawNormalizedPositionNotClamped;
 
         private readonly Subject<string> _onKeyboardKeyDown = new();
-        public IObservable<string> OnKeyboardKeyDown => _onKeyboardKeyDown;
+        public Observable<string> OnKeyboardKeyDown => _onKeyboardKeyDown;
         
         private readonly Subject<string> _onKeyboardKeyUp = new();
-        public IObservable<string> OnKeyboardKeyUp => _onKeyboardKeyUp;
+        public Observable<string> OnKeyboardKeyUp => _onKeyboardKeyUp;
 
         // NOTE: 呼び出し元でGamepadKeyとintないしstringの変換をするのが期待値
         // スクリプト上で `GamepadButton.A` みたく書かせて実態がintになってるのが無難そうではある
@@ -115,12 +115,12 @@ namespace Baku.VMagicMirror.Buddy
             return _rightStickPosition;
         }
 
-        public IObservable<GamepadKey> GamepadButtonDown => _gamepad
+        public Observable<GamepadKey> GamepadButtonDown => _gamepad
             .ButtonUpDown
             .Where(_ => InteractionApiEnabled)
             .Where(data => data.IsPressed)
             .Select(data => data.Key);
-        public IObservable<GamepadKey> GamepadButtonUp => _gamepad
+        public Observable<GamepadKey> GamepadButtonUp => _gamepad
             .ButtonUpDown
             .Where(_ => InteractionApiEnabled)
             .Where(data => !data.IsPressed)

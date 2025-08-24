@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using uOSC;
@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror.VMCP
         private bool CanSendPose()
         {
             return !(
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.GameInputLocomotion &&
+                _bodyMotionModeController.MotionMode.CurrentValue is BodyMotionMode.GameInputLocomotion &&
                 BlockMotionSendDuringGameInputLocomotion
                 );
         }

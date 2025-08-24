@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Baku.VMagicMirror.ExternalTracker;
-using UniRx;
+using R3;
 using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy
@@ -41,18 +41,18 @@ namespace Baku.VMagicMirror.Buddy
             _voiceOnOffParser = voiceOnOffParser;
         }
 
-        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.CurrentValue;
         
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
-        public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
+        public ReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
 
         public bool UsePerfectSync => _faceControlConfig.PerfectSyncActive;
 
-        public IReadOnlyReactiveProperty<bool> IsTalking => _voiceOnOffParser.IsTalking;
+        public ReadOnlyReactiveProperty<bool> IsTalking => _voiceOnOffParser.IsTalking;
         
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
-        public IObservable<Unit> Blinked => _blinkDetector
+        public Observable<Unit> Blinked => _blinkDetector
             .Blinked()
             .Where(_ => InteractionApiEnabled);
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UniRx;
+using R3;
 using Unity.Mathematics;
 using UnityEngine;
 using UniVRM10;

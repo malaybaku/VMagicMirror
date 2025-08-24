@@ -1,5 +1,5 @@
 using Baku.VMagicMirror.IK;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -33,17 +33,17 @@ namespace Baku.VMagicMirror
             private readonly IIKData _x;
             private readonly IIKData _y;
             //NOTE: Funcを持たすほどでもないので手抜きしてます
-            private readonly IReadOnlyReactiveProperty<bool> _useX;
+            private readonly ReadOnlyReactiveProperty<bool> _useX;
 
-            public SwitchIKData(IIKData x, IIKData y, IReadOnlyReactiveProperty<bool> useX)
+            public SwitchIKData(IIKData x, IIKData y, ReadOnlyReactiveProperty<bool> useX)
             {
                 _x = x;
                 _y = y;
                 _useX = useX;
             }
 
-            public Vector3 Position => _useX.Value ? _x.Position : _y.Position;
-            public Quaternion Rotation => _useX.Value ? _x.Rotation : _y.Rotation;
+            public Vector3 Position => _useX.CurrentValue ? _x.Position : _y.Position;
+            public Quaternion Rotation => _useX.CurrentValue ? _x.Rotation : _y.Rotation;
         }
     }
 }

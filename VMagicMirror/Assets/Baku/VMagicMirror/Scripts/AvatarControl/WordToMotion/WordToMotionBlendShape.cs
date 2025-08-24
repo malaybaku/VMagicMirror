@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRx;
+using R3;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror
         private readonly List<(ExpressionKey, float)> _currentValueSource = new(8);
         private readonly ReactiveProperty<WordToMotionBlendShapeApplyContent> _currentValue 
             = new(WordToMotionBlendShapeApplyContent.Empty);
-        public IReadOnlyReactiveProperty<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
+        public ReadOnlyReactiveProperty<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
         [Inject]
         public void Initialize(EyeBoneAngleSetter eyeBoneResetter)

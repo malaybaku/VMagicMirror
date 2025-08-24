@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRx;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -13,11 +13,10 @@ namespace Baku.VMagicMirror.VMCP
 
         private readonly IVRMLoadable _vrmLoadable;
 
-        private readonly ReactiveProperty<bool> _hasModel = new ReactiveProperty<bool>();
-        public IReadOnlyReactiveProperty<bool> HasModel => _hasModel;
+        private readonly ReactiveProperty<bool> _hasModel = new();
+        public ReadOnlyReactiveProperty<bool> HasModel => _hasModel;
 
-        private readonly Dictionary<HumanBodyBones, Vector3> _initialLocalOffsets
-            = new Dictionary<HumanBodyBones, Vector3>();
+        private readonly Dictionary<HumanBodyBones, Vector3> _initialLocalOffsets = new();
 
         static AvatarBoneInitialLocalOffsets()
         {

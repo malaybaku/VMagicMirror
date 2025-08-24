@@ -55,8 +55,8 @@ namespace Baku.VMagicMirror.VMCP
             
             //受信設定を無視する(めんどくさいので…)
             SetPositionAndRotation(headTracker, hipsPose, _vmcpHumanoid.GetFKHeadPoseFromHips());
-            SetPositionAndRotation(leftHandTracker, hipsPose, _vmcpHumanoid.GetFKLeftHandPoseFromHips());
-            SetPositionAndRotation(rightHandTracker, hipsPose, _vmcpHumanoid.GetFKRightHandPoseFromHips());
+            // SetPositionAndRotation(leftHandTracker, hipsPose, _vmcpHumanoid.GetFKLeftHandPoseFromHips());
+            // SetPositionAndRotation(rightHandTracker, hipsPose, _vmcpHumanoid.GetFKRightHandPoseFromHips());
 
             foreach (var setter in modelSetters)
             {
@@ -86,9 +86,6 @@ namespace Baku.VMagicMirror.VMCP
             {
                 case VMCPMessageType.ForwardKinematics:
                     SetFKToHumanoid(message);
-                    break;
-                case VMCPMessageType.TrackerPose:
-                    SetIKToHumanoid(message);
                     break;
             }
 
@@ -133,33 +130,6 @@ namespace Baku.VMagicMirror.VMCP
             }
             var pose = message.GetPose();
             _vmcpHumanoid.SetLocalPose(boneName, pose.pos, pose.rot);
-        }
-
-        private void SetIKToHumanoid(uOSC.Message message)
-        {
-            var poseType = message.GetTrackerPoseType(out var poseTypeName);
-            if (poseType == VMCPTrackerPoseType.Unknown)
-            {
-                return;
-            }
-            var pose = message.GetPose();
-            _vmcpHumanoid.SetTrackerPose(poseTypeName, pose.pos, pose.rot);
-
-        }
-        
-        private void ApplyPose(DataReceiveSetting setting, uOSC.Message message)
-        {
-            var (pos, rot) = message.GetPose();
-            if (setting.TrackerApplyTarget != null)
-            {
-                setting.TrackerApplyTarget.localPosition = pos;
-                setting.TrackerApplyTarget.localRotation = rot;
-            }
-            
-            if (setting.WriteLog)
-            {
-                Debug.Log($"VMCPReceiveDebugger: Pose {setting.TrackerPoseType}, {pos.x:0.000}, {pos.y:0.000}, {pos.z:0.000}");
-            }
         }
 
         private void OnReceiveBlendShapeValue(DataReceiveSetting setting, uOSC.Message message)

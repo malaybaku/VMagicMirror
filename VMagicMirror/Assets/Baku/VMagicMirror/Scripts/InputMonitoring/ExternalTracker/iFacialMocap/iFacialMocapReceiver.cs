@@ -26,6 +26,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         //テキストのGCAllocを避けるやつ
         private readonly StringBuilder _sb = new(2048);
+        // NOTE: 頭部の姿勢の情報がそこそこデータとして大きい可能性があるので、いちおう長めに取っている
+        private readonly char[] _sectionBuffer = new char[512];
+        private readonly List<float> _headPoseValues = new(6);
         
         private readonly RecordFaceTrackSource _faceTrackSource = new();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
@@ -73,8 +76,8 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         /// 実データが飛んで来ないような受信待ちの状態でもtrueになることに注意してください。
         /// </summary>
         public bool IsRunning { get; private set; } = false;
-        
-        private readonly Dictionary<string, float> _blendShapes = new Dictionary<string, float>()
+
+        private readonly Dictionary<string, float> _blendShapes = new()
         {
             //目
             [iFacialMocapBlendShapeNames.eyeBlinkLeft] = 0.0f,
@@ -147,7 +150,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         };
 
         //NOTE: 生データでは目のオイラー角表現が入ってるけど無視(ブレンドシェイプ側の情報を使う為)
-        private readonly Dictionary<string, Vector3> _rotationData = new Dictionary<string, Vector3>()
+        private readonly Dictionary<string, Vector3> _rotationData = new()
         {
             [iFacialMocapRotationNames.head] = Vector3.zero,
         };
@@ -178,7 +181,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 return;
             }
             
-            DeserializeMessageWithLessGcAlloc(message);
+            DeserializeMessage(message);
             //Lerpファクタが1ぴったりならLerp要らん(しかもその状況は発生頻度が高い)、みたいな話です。
             ApplyDeserializeResult(UpdateApplyRate < 0.999f);
             RaiseFaceTrackUpdated();
@@ -418,58 +421,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         #region デシリアライズまわり
         
-        //NOTE: この処理が何気にGCAlloc多いので書き直した関数を使ってます(直した後の処理もちょっと重いけど)
-        private void DeserializeFaceMessage(string msg)
-        {
-            var phrases = msg.Split('=');
-            if (phrases.Length != 2)
-            {
-                return;
-            }
-
-            //0 ~ 100のブレンドシェイプが載っている部分
-            var blendShapes = phrases[0].Split('|');
-            for (int i = 0; i < blendShapes.Length; i++)
-            {
-                var item = blendShapes[i].Split('-');
-                if (item.Length == 2 && 
-                    _blendShapes.ContainsKey(item[0].TrimEnd()) &&
-                    int.TryParse(item[1].TrimStart(), out int value)
-                    )
-                {
-                    _blendShapes[item[0].TrimEnd()] = Mathf.Clamp01(value * 0.01f);
-                }
-            }
-            
-            //回転値が書いてある部分(note: そのうち位置も増えるかもね)
-            var rotations = phrases[1].Split('|');
-            for (int i = 0; i < rotations.Length; i++)
-            {
-                var item = rotations[i].Split('#');
-                if (item.Length != 2 || !_rotationData.ContainsKey(item[0].TrimEnd()))
-                {
-                    continue;
-                }
-
-                var rotEuler = item[1].TrimStart().Split(',');
-                if (rotEuler.Length == 3 && 
-                    ParseUtil.FloatParse(rotEuler[0], out float x) && 
-                    ParseUtil.FloatParse(rotEuler[1], out float y) && 
-                    ParseUtil.FloatParse(rotEuler[2], out float z)
-                    )
-                {
-                    _rotationData[item[0].TrimEnd()] = new Vector3(x, y, z);
-                }
-            }
-
-        }
-
-        //string.Split禁止バージョン
-        private void DeserializeMessageWithLessGcAlloc(string msg)
+        private void DeserializeMessage(string msg)
         {
             _sb.Clear();
             //サニタイズとしてスペース文字を全部消しながら詰める
-            for (int i = 0; i < msg.Length; i++)
+            for (var i = 0; i < msg.Length; i++)
             {
                 if (msg[i] != ' ')
                 {
@@ -478,7 +434,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
 
             //"="の位置を調べつつvalidate
-            int equalIndex = FindEqualCharIndex(_sb);
+            int equalIndex = iFacialMocapDataParseUtil.FindEqualCharIndex(_sb);
             if (equalIndex == -1 || equalIndex == _sb.Length - 1)
             {
                 return;
@@ -487,34 +443,12 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             //validateされたらブレンドシェイプと頭部回転をチェック
             ParseBlendShapes(_sb, 0, equalIndex);
             ParseHeadData(_sb, equalIndex + 1, _sb.Length);
-         
-            //NOTE: これだけpureな処理
-            int FindEqualCharIndex(StringBuilder src)
-            {
-                int findCount = 0;
-                int result = -1;
-                for (int i = 0; i < src.Length; i++)
-                {
-                    if (src[i] == '=')
-                    {
-                        if (findCount == 0)
-                        {
-                            findCount = 1;
-                            result = i;
-                        }
-                        else
-                        {
-                            return -1;
-                        }
-                    }
-                }
-                return result;
-            }
+            return;
             
-            void ParseBlendShapes(StringBuilder src,int startIndex, int endIndex)
+            void ParseBlendShapes(StringBuilder src, int startIndex, int endIndex)
             {
-                int sectionStartIndex = startIndex;
-                for (int i = startIndex; i < endIndex; i++)
+                var sectionStartIndex = startIndex;
+                for (var i = startIndex; i < endIndex; i++)
                 {
                     if (src[i] != '|')
                     {
@@ -524,29 +458,33 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     //0 ~ 100のブレンドシェイプが載っている部分を引っ張り出す。
                     //Substringの時点でこんな感じのハズ(スペースは入ってたり入ってなかったり):
                     //"L_eyeSquint-42"
-                    string section = src.ToString(sectionStartIndex, i - sectionStartIndex);
-                    sectionStartIndex = i + 1;
+                    src.CopyTo(sectionStartIndex, _sectionBuffer, 0, i - sectionStartIndex);
+                    var section = _sectionBuffer.AsSpan(0, i - sectionStartIndex);
 
-                    for (int j = 0; j < section.Length; j++)
+                    sectionStartIndex = i + 1;
+                    for (var j = 0; j < section.Length; j++)
                     {
                         if (section[j] != '-')
                         {
                             continue;
                         }
 
-                        string key = section.Substring(0, j);
-                        if (int.TryParse(section.Substring(j + 1), out int blendShapeValue))
+                        var keySpan = section[..j];
+                        var valueSpan = section[(j + 1)..];
+                        if (int.TryParse(valueSpan, out var blendShapeValue) &&
+                            iFacialMocapDataParseUtil.TryGetBlendShapeName(keySpan, out var key))
                         {
                             _blendShapes[key] = blendShapeValue * 0.01f;
                         }
+                        break;
                     }
                 }
             }
 
             void ParseHeadData(StringBuilder src, int startIndex, int endIndex)
             {  
-                int sectionStartIndex = startIndex;
-                for (int i = startIndex; i < endIndex; i++)
+                var sectionStartIndex = startIndex;
+                for (var i = startIndex; i < endIndex; i++)
                 {
                     //NOTE: 末尾要素の後にもちゃんと"|"が入ってます
                     if (src[i] != '|')
@@ -554,39 +492,30 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                         continue;
                     }
 
-                    //個別のデータはこんな感じ
-                    //"head#1.00,-2.345,6.789"
-                    string section = src.ToString(sectionStartIndex, i - sectionStartIndex);
+                    //データはこんな感じで、6DoF情報が入っている
+                    //"head#1.00,-2.345,6.789,0.123,0.456,-0.789"
+                    src.CopyTo(sectionStartIndex, _sectionBuffer, 0, i - sectionStartIndex);
+                    var section = _sectionBuffer.AsSpan(0, i - sectionStartIndex);
+                    
                     sectionStartIndex = i + 1;
-                    //IMPORTANT: iFacialMocap 1.0.6からrot + positionが飛んでくるようになった。
-                    //この差分を真剣に捌くのはすげー辛いので、適当にやります。
                     if (!section.StartsWith("head#"))
                     {
                         continue;
                     }
 
-                    var items = section.Substring(5).Split(',');
-                    if (items.Length > 5 && 
-                        ParseUtil.FloatParse(items[0], out var rx) &&
-                        ParseUtil.FloatParse(items[1], out var ry) &&
-                        ParseUtil.FloatParse(items[2], out var rz) &&
-                        ParseUtil.FloatParse(items[3], out var px) &&
-                        ParseUtil.FloatParse(items[4], out var py) &&
-                        ParseUtil.FloatParse(items[5], out var pz))
+                    iFacialMocapDataParseUtil.ParseCommaSeparatedFloats(section[5..], _headPoseValues, 6);
+                    if (_headPoseValues.Count >= 6)
                     {
+                        var rx = _headPoseValues[0];
+                        var ry = _headPoseValues[1];
+                        var rz = _headPoseValues[2];
+                        var px = _headPoseValues[3];
+                        var py = _headPoseValues[4];
+                        var pz = _headPoseValues[5];
+                        
                         _rotationData[iFacialMocapRotationNames.head] = new Vector3(rx, ry, rz);
                         _hasReceiveRawPosition = true;
                         _rawPosition = new Vector3(px, py, pz);
-                    }
-                    else if (
-                        items.Length > 2 &&
-                        ParseUtil.FloatParse(items[0], out var x) &&
-                        ParseUtil.FloatParse(items[1], out var y) &&
-                        ParseUtil.FloatParse(items[2], out var z))
-                    {
-                        _rotationData[iFacialMocapRotationNames.head] = new Vector3(x, y, z);
-                        _hasReceiveRawPosition = false;
-                        _rawPosition = Vector3.zero;
                     }
                     else
                     {

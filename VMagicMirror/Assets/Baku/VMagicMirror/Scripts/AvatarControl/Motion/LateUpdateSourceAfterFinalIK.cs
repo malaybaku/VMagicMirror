@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -13,10 +13,10 @@ namespace Baku.VMagicMirror
         /// <summary>
         /// <see cref="OnLateUpdate"/> の直前に発火する。ちょっとだけタイミング早めに実行したいものはここでSubscribeする
         /// </summary>
-        public IObservable<Unit> OnPreLateUpdate => _onPreLateUpdate;
+        public Observable<Unit> OnPreLateUpdate => _onPreLateUpdate;
 
         private readonly Subject<Unit> _onLateUpdate = new();
-        public IObservable<Unit> OnLateUpdate => _onLateUpdate;
+        public Observable<Unit> OnLateUpdate => _onLateUpdate;
         
         private void LateUpdate()
         {

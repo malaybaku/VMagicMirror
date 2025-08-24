@@ -1,5 +1,5 @@
 using System;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         byte[] GetData();
 
         /// <summary> MainViewerシーンの起動よりも後でVRMの再読み込みが要求されると発火します。 </summary>
-        IObservable<Unit> ReloadRequested { get; }
+        Observable<Unit> ReloadRequested { get; }
     }
 
     /// <summary>
@@ -30,6 +30,6 @@ namespace Baku.VMagicMirror
     {
         public bool HasData => false;
         public byte[] GetData() => Array.Empty<byte>();
-        public IObservable<Unit> ReloadRequested => Observable.Empty<Unit>();
+        public Observable<Unit> ReloadRequested => Observable.Empty<Unit>();
     }
 }

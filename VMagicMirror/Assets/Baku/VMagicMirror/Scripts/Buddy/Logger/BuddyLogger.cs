@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: FatalじゃなくてErrorくらいの扱いにするオプションが欲しいかも
         public void LogRuntimeException(BuddyFolder folder, Exception ex)
         {
-            if (!_settingsRepository.DeveloperModeActive.Value)
+            if (!_settingsRepository.DeveloperModeActive.CurrentValue)
             {
                 LogRuntimeExceptionSimple(folder, ex);
                 return;
@@ -113,7 +113,7 @@ namespace Baku.VMagicMirror.Buddy
         
         private void LogInternal(BuddyFolder folder, string message, BuddyLogLevel level)
         {
-            var currentLogLevel = _settingsRepository.LogLevel.Value;
+            var currentLogLevel = _settingsRepository.LogLevel.CurrentValue;
             if (level > currentLogLevel)
             {
                 // 例えば warningまでのログ出力が要望されているとき、Infoが来てもむしるう
@@ -123,7 +123,7 @@ namespace Baku.VMagicMirror.Buddy
             var time = _realtimeSinceStartup.Value;
             string content;
             // NOTE: Verboseログはアプリ内部の情報を提示するもの…という扱いにするので、スクリプト側の行数は紐づけない
-            if (_settingsRepository.DeveloperModeActive.Value &&
+            if (_settingsRepository.DeveloperModeActive.CurrentValue &&
                 (int)level < (int)BuddyLogLevel.Verbose && 
                 TryGetScriptExecLocation(folder, out var locationInfo))
             {    

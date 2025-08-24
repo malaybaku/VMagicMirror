@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UniRx;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -17,37 +16,22 @@ namespace Baku.VMagicMirror
 
         private readonly XInputCapture _xInputCapture = new();
         
-        public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
+        public Observable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
         //TODO: 動作が壊れないことを評価したうえで普通にReactivePropertyに置き換えたい…
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
-        public IObservable<Vector2Int> RightStickPosition => _rightStick;
+        public Observable<Vector2Int> RightStickPosition => _rightStick;
 
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
-        public IObservable<Vector2Int> LeftStickPosition => _leftStick;
+        public Observable<Vector2Int> LeftStickPosition => _leftStick;
 
-        /// <summary>
-        /// 矢印キーの押下状態からスティック位置に相当する情報を作成し、取得する。
-        /// </summary>
-        public Vector2Int ArrowButtonsStickPosition
-        {          
-            get
-            {
-                if (!_hasValidArrowButtons)
-                {
-                    return Vector2Int.zero;
-                }
-
-                return new Vector2Int(
-                    (_arrowRight.IsPressed ? 32767 : 0) - (_arrowLeft.IsPressed ? 32768 : 0),
-                    (_arrowUp.IsPressed ? 32767 : 0) - (_arrowDown.IsPressed ? 32768 : 0)
-                    );
-            }
-        }
+        private readonly ReactiveProperty<Vector2Int> _arrowButtonsStickPosition = new(Vector2Int.zero);
+        /// <summary> 矢印キーの押下状態から作成した、スティック位置に相当する値 </summary>
+        public ReadOnlyReactiveProperty<Vector2Int> ArrowButtonsStickPosition => _arrowButtonsStickPosition;
 
         //DirectInputによって入力キャプチャをこっそり代行してくれるやつ
         private readonly DirectInputGamePad _directInputAlternative = new();
@@ -170,6 +154,8 @@ namespace Baku.VMagicMirror
                 UpdateLeftStick();
                 UpdateTriggerAsButtons();
             }
+            
+            _arrowButtonsStickPosition.Value = GetArrowButtonsStickPosition();
         }
 
         private void OnDestroy() => _directInputAlternative.Stop();
@@ -263,6 +249,19 @@ namespace Baku.VMagicMirror
                 _isLeftTriggerDown = isLeftDown;
                 _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.LTrigger, isLeftDown));
             }
+        }
+        
+        private Vector2Int GetArrowButtonsStickPosition()
+        {
+            if (!_hasValidArrowButtons)
+            {
+                return Vector2Int.zero;
+            }
+
+            return new Vector2Int(
+                (_arrowRight.IsPressed ? 32767 : 0) - (_arrowLeft.IsPressed ? 32768 : 0),
+                (_arrowUp.IsPressed ? 32767 : 0) - (_arrowDown.IsPressed ? 32768 : 0)
+            );
         }
         
         class ObservableButton

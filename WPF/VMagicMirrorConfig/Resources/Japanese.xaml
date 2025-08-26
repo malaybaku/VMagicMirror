@@ -919,8 +919,9 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/docs/vmc_protocol</sys:String>
-    <sys:String x:Key="URL_docs_face_tracking">https://malaybaku.github.io/VMagicMirror/docs/face_tracking</sys:String>
-    
+    <sys:String x:Key="URL_docs_face_tracker">https://malaybaku.github.io/VMagicMirror/docs/face_tracker</sys:String>
+    <sys:String x:Key="URL_docs_face_tracker_blink_settings">https://malaybaku.github.io/VMagicMirror/docs/face_tracker#blink_tracking_settings</sys:String>
+
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

@@ -708,6 +708,11 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Motion Style > Standing Only</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Motion Style > Game Locomotion</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Motion Style > (Unknown)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Default">Key/Mouse Motion > Default</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PresentationMode">Key/Mouse Motion > Presentation</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PenTablet">Key/Mouse Motion > Pen Table</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_None">Key/Mouse Motion > None</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Unknown">Key/Mouse Motion > (Unknown)</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleVMCPReceiveActive">VMC Protocol: Receive on/off</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleKeyboardVisibility">Visibility on/off: Keyboard</sys:String>
     <sys:String x:Key="Hotkey_Action_TogglePenVisibility">Visibility on/off: Pen</sys:String>

@@ -105,6 +105,16 @@ namespace Baku.VMagicMirrorConfig
                 case HotKeyActions.ToggleHandTracking:
                     _motionSetting.EnableImageBasedHandTracking.Value = !_motionSetting.EnableImageBasedHandTracking.Value;
                     break;
+                case HotKeyActions.SetKeyMouseMotion:
+                    _motionSetting.KeyboardAndMouseMotionMode.Value = (HotKeyActionKeyMouseMotionStyle)content.ArgNumber switch
+                    {
+                        HotKeyActionKeyMouseMotionStyle.Default => MotionSetting.KeyboardMouseMotionDefault,
+                        HotKeyActionKeyMouseMotionStyle.PresentationMode => MotionSetting.KeyboardMouseMotionPresentation,
+                        HotKeyActionKeyMouseMotionStyle.Tablet => MotionSetting.KeyboardMouseMotionPenTablet,
+                        HotKeyActionKeyMouseMotionStyle.None => MotionSetting.KeyboardMouseMotionNone,
+                        _ => MotionSetting.KeyboardMouseMotionDefault,
+                    };
+                    break;
                 case HotKeyActions.None:
                 default:
                     //何もしない

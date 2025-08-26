@@ -77,6 +77,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private ActionCommand? _openDocUrlCommand;
         public ICommand OpenDocUrlCommand => _openDocUrlCommand ??= new ActionCommand(OpenDocUrl);
-        private void OpenDocUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_face_tracking"));
+        private void OpenDocUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_face_tracker_blink_settings"));
     }
 }

@@ -911,6 +911,8 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/en/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
+    <sys:String x:Key="URL_docs_face_tracker">https://malaybaku.github.io/VMagicMirror/en/docs/face_tracker</sys:String>
+    <sys:String x:Key="URL_docs_face_tracker_blink_settings">https://malaybaku.github.io/VMagicMirror/en/docs/face_tracker#blink_tracking_settings</sys:String>
 
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>

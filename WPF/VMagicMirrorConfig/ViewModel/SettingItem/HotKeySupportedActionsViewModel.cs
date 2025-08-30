@@ -20,7 +20,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         static HotKeySupportedActionsViewModel()
         {
-            const int WtmActionOffset = 17;
+            const int WtmActionOffset = 21;
             ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[WtmActionOffset + 40];
             ConstAvailableHotKeyActions[0] = new(new(HotKeyActions.None, 0, ""));
             ConstAvailableHotKeyActions[1] = new(new(HotKeyActions.SetCamera, 1, ""));
@@ -41,6 +41,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ConstAvailableHotKeyActions[14] = new(new(HotKeyActions.EnableHandTracking, 0, ""));
             ConstAvailableHotKeyActions[15] = new(new(HotKeyActions.DisableHandTracking, 0, ""));
             ConstAvailableHotKeyActions[16] = new(new(HotKeyActions.ToggleHandTracking, 0, ""));
+
+            ConstAvailableHotKeyActions[17] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.Default, ""));
+            ConstAvailableHotKeyActions[18] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.PresentationMode, ""));
+            ConstAvailableHotKeyActions[19] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.PenTablet, ""));
+            ConstAvailableHotKeyActions[20] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.None, ""));
 
             for (var i = 0; i < 40; i++)
             {
@@ -130,6 +135,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private const string CallWtmFormat = DisplayNameKeyPrefix + "CallWtm_Format";
         private const string ToggleAccessoryFormat = DisplayNameKeyPrefix + "ToggleAccessory_Format";
         private const string SetBodyMotionStylePrefix = DisplayNameKeyPrefix + "SetBodyMotionStyle_";
+        private const string SetKeyMouseMotionStylePrefix = DisplayNameKeyPrefix + "SetKeyMouseMotionStyle_";
 
         //NOTE: カメラの指定 / Wtmの呼び出し用のインスタンスでは第二引数をnullにしてもよい
         internal HotKeySupportedActionViewModel(HotKeyActionContent content, AccessorySettingModel? accessorySetting = null)
@@ -241,6 +247,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     break;
                 case HotKeyActions.ToggleHandTracking:
                     DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleHandTracking));
+                    break;
+                case HotKeyActions.SetKeyMouseMotion:
+                    var kmSuffix = Content.ArgNumber switch
+                    {
+                        (int)HotKeyActionKeyMouseMotionStyle.Default => "Default",
+                        (int)HotKeyActionKeyMouseMotionStyle.PresentationMode => "PresentationMode",
+                        (int)HotKeyActionKeyMouseMotionStyle.PenTablet => "PenTablet",
+                        (int)HotKeyActionKeyMouseMotionStyle.None => "None",
+                        _ => "Unknown",
+                    };
+                    DisplayName = LocalizedString.GetString(SetKeyMouseMotionStylePrefix + kmSuffix);
                     break;
                 case HotKeyActions.None:
                 default:

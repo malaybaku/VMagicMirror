@@ -711,6 +711,11 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">モーション方式: つねに手下げ</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">モーション方式: ゲーム入力</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">モーション方式: (不明な値)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Default">キー/マウスでの動き: デフォルト</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PresentationMode">キー/マウスによる動き: プレゼンテーション</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PenTablet">キー/マウスによる動き: ペンタブレット</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_None">キー/マウスによる動き: 何もしない</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Unknown">キー/マウスによる動き: (不明な値)</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleVMCPReceiveActive">VMC Protocol: 受信on/off</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleKeyboardVisibility">表示on/off: キーボード</sys:String>
     <sys:String x:Key="Hotkey_Action_TogglePenVisibility">表示on/off: ペン(ペンタブレットモード時)</sys:String>

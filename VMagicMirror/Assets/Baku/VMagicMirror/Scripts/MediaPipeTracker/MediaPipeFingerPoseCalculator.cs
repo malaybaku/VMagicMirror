@@ -137,22 +137,36 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 var j2 = landmarks[4 * i + 2].ToLocalPosition();
                 var j1 = landmarks[4 * i + 3].ToLocalPosition();
                 var tips = landmarks[4 * i + 4].ToLocalPosition();
+                var angleIndex = isLeft ? i : i + 5;
 
                 var (proximal, intermediate, distal) = GetFingerBendAngle(
                     wristPose, j3, j2, j1, tips
                 );
 
-                // 親指だけ曲げ角度を特別に再計算する
                 if (i == 0)
                 {
-                    proximal = GetThumbProximalBendAngle(wristPose, j3, j2);
-                }
+                    // 親指はほかの指と比べてMediaPipeの挙動が違い、アバターの指の曲げ方も変えたいので処理が別になる。
+                    // - 観察: distal以外の曲げ検出があまり成功しない + distalの曲げも過小評価されやすい
+                    // - 要件: グーのときにきれいに動いてほしい
+                    // - 曲げ方: distalの曲げ具合を親指の全関節の曲げに波及させる
+                    //   - ただし、1自由度で動いて見えると絵的につまらないので、intermediateの計算値も効かせておく
+                    // 各パラメータはVRoidモデルをリファレンスにして調整していて、モデルによっては指の曲がりすぎ/曲げ不足も起きうる
+                    var thumbDistal = GetThumbDistalBendAngle(j2, j1, tips);
 
-                var angleIndex = isLeft ? i : i + 5;
+                    var thumbOpenAngle = Mathf.Clamp(thumbDistal * 0.3f, 0f, 30f);
+                    _openAngles[angleIndex] = thumbOpenAngle * (isLeft ? -1 : 1);
+                    // 親指の第3関節のbendは値が大きいときの見た目を保証しづらいので、ほぼノータッチ
+                    _bendAngles[3 * angleIndex] = thumbDistal * 0.05f;
+                    _bendAngles[3 * angleIndex + 1] = Mathf.Clamp(thumbDistal * 0.4f + intermediate * 0.6f, 0f, 70f);
+                    _bendAngles[3 * angleIndex + 2] = thumbDistal;
+
+                    continue;
+                }
+                
                 _bendAngles[3 * angleIndex] = proximal;
                 _bendAngles[3 * angleIndex + 1] = intermediate;
                 _bendAngles[3 * angleIndex + 2] = distal;
-                
+
                 // 指がある程度ピンとしてる場合のみ、パー/チョップの検出のために追加で計算する。符号の正負には注意
                 // 例: 左手の場合、パーの姿勢を取ると人差し指はプラス、小指はマイナスのopenAngleになるのが想定挙動
                 var openAngle = 0f;
@@ -171,23 +185,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 // - 親指は何ならもっと動くかも
                 // - 指ごとに丁寧にプラマイを絞っていくのも有効
                 openAngle = Mathf.Clamp(openAngle, -30f, 30f);
-
-                // TODO: ThumbのopenAngleの扱いがムズい
-                if (i == 0)
-                {
-                    _openAngles[angleIndex] = 0f;
-                }
-                else
-                {
-                    _openAngles[angleIndex] = openAngle;
-                }
+                _openAngles[angleIndex] = openAngle;
             }
         }
 
-        
-        // TEMP: 親指は回転の計算がムズいので、ぜんぶ曲げ角度として取る
-        private static float GetThumbProximalBendAngle(WristPose wristPose, Vector3 j3, Vector3 j2) 
-            => GetBendAngle(wristPose.Position, j3, j2);
+        private static float GetThumbDistalBendAngle(Vector3 j2, Vector3 j1, Vector3 tips)
+        {
+            // NOTE: 曲げが過小評価されやすいので、60度になった時点で曲げきった扱いにする
+            var rawAngle = Mathf.Clamp(GetBendAngle(j2, j1, tips), 0f, 60f);
+            return CubicInOutEase(rawAngle / 60f) * 90f;
+        }
 
         // 指の付け根側から「手首、第(3|2|1)関節、指先」の位置を渡すことで、第(3|2|1)関節の折り曲げ角度を返す。
         // この関数はチョップとかパーの方向の回転は返さない

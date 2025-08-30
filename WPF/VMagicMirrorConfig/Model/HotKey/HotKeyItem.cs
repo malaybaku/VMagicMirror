@@ -34,7 +34,7 @@ namespace Baku.VMagicMirrorConfig
         None,
         Default,
         PresentationMode,
-        Tablet,
+        PenTablet,
     }
 
     /// <summary>

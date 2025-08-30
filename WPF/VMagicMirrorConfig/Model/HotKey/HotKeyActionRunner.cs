@@ -110,7 +110,7 @@ namespace Baku.VMagicMirrorConfig
                     {
                         HotKeyActionKeyMouseMotionStyle.Default => MotionSetting.KeyboardMouseMotionDefault,
                         HotKeyActionKeyMouseMotionStyle.PresentationMode => MotionSetting.KeyboardMouseMotionPresentation,
-                        HotKeyActionKeyMouseMotionStyle.Tablet => MotionSetting.KeyboardMouseMotionPenTablet,
+                        HotKeyActionKeyMouseMotionStyle.PenTablet => MotionSetting.KeyboardMouseMotionPenTablet,
                         HotKeyActionKeyMouseMotionStyle.None => MotionSetting.KeyboardMouseMotionNone,
                         _ => MotionSetting.KeyboardMouseMotionDefault,
                     };

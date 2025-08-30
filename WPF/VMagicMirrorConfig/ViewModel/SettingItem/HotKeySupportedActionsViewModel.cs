@@ -44,7 +44,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             ConstAvailableHotKeyActions[17] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.Default, ""));
             ConstAvailableHotKeyActions[18] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.PresentationMode, ""));
-            ConstAvailableHotKeyActions[19] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.Tablet, ""));
+            ConstAvailableHotKeyActions[19] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.PenTablet, ""));
             ConstAvailableHotKeyActions[20] = new(new(HotKeyActions.SetKeyMouseMotion, (int)HotKeyActionKeyMouseMotionStyle.None, ""));
 
             for (var i = 0; i < 40; i++)
@@ -253,7 +253,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     {
                         (int)HotKeyActionKeyMouseMotionStyle.Default => "Default",
                         (int)HotKeyActionKeyMouseMotionStyle.PresentationMode => "PresentationMode",
-                        (int)HotKeyActionKeyMouseMotionStyle.Tablet => "Tablet",
+                        (int)HotKeyActionKeyMouseMotionStyle.PenTablet => "PenTablet",
                         (int)HotKeyActionKeyMouseMotionStyle.None => "None",
                         _ => "Unknown",
                     };

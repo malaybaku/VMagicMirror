@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using R3;
 using Unity.Mathematics;
 using UnityEngine;
-using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -36,7 +35,7 @@ namespace Baku.VMagicMirror
 
         //NOTE: 曲げ角度の符号に注意。親指の第1、第2関節だけ符号が違うのはそもそも回転軸が異なるため
         //またPointingとPenGripでは親指の第3関節の曲げ方向が異なるので、これも符号が異なる
-        private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
+        private static readonly Dictionary<int, float[]> FingerIdToPointingAngle = new()
         {
             [FingerConsts.RightThumb] = new float[] { 20, 20, 20 },
             [FingerConsts.RightIndex] = new float[] { -10, -10, -10 },
@@ -45,7 +44,7 @@ namespace Baku.VMagicMirror
             [FingerConsts.RightLittle] = new float[] { -80, -80, -80 },
         };
 
-        private static Dictionary<int, float[]> _fingerIdToPenGripAngle = new Dictionary<int, float[]>()
+        private static readonly Dictionary<int, float[]> FingerIdToPenGripAngle = new()
         {
             [FingerConsts.RightThumb] = new float[] { 30, 40, -20 },
             [FingerConsts.RightIndex] = new float[] { -30, -30, -40 },
@@ -468,12 +467,12 @@ namespace Baku.VMagicMirror
         }
 
         //指差し姿勢の手をつくる
-        private void FixPointingHand(int index) => FixToDictionaryBasedHand(index, _fingerIdToPointingAngle, false);
+        private void FixPointingHand(int index) => FixToDictionaryBasedHand(index, FingerIdToPointingAngle, false);
 
         //ペンを握った状態の手をつくる
-        private void FixToPenGripHand(int index) => FixToDictionaryBasedHand(index, _fingerIdToPenGripAngle, true);
+        private void FixToPenGripHand(int index) => FixToDictionaryBasedHand(index, FingerIdToPenGripAngle, true);
 
-        //Dictoinaryで決め打ちした手の曲げ角度を適用する
+        //Dictionaryで決め打ちした手の曲げ角度を適用する
         private void FixToDictionaryBasedHand(int index, Dictionary<int, float[]> anglesDic, bool zRotForThumbProximal)
         {
             float[] angles = anglesDic[index];

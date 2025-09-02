@@ -545,7 +545,7 @@ namespace Baku.VMagicMirror
             //書いてる通りだが、
             // - 同じ状態には遷移できない
             // - 拍手は実行優先度がすごく高いので、他の状態に遷移できない
-            // - 手下げモード有効時は手下げ or 拍手にしか遷移できない
+            // - 手下げモード有効時は手下げ, ハンドトラッキング, 拍手のどれかにしか遷移できない
 
             if (current == target)
             {
@@ -557,8 +557,8 @@ namespace Baku.VMagicMirror
                 return false;
             }
             
-            if (AlwaysHandDown.Value && target != HandTargetType.AlwaysDown &&
-                target != HandTargetType.ClapMotion)
+            if (AlwaysHandDown.Value && 
+                target is not (HandTargetType.AlwaysDown or HandTargetType.ImageBaseHand or HandTargetType.ClapMotion))
             {
                 return false;
             }

@@ -56,6 +56,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void SetLeftHandPose(Landmarks worldLandmarks) => SetHandPose(worldLandmarks, true);
         public void SetRightHandPose(Landmarks worldLandmarks) => SetHandPose(worldLandmarks, false);
 
+        public void ResetLeftHandPose() => ResetHandPose(true);
+        public void ResetRightHandPose() => ResetHandPose(false);
+        
         public (float proximal, float intermediate, float distal, float open) GetFingerAngles(
             int fingerIndex, bool mirror)
         {
@@ -126,6 +129,30 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 RightHandRotation = handRotation;
                 RightHandPoseHasValidValue = true;
+            }
+        }
+
+        private void ResetHandPose(bool isLeft)
+        {
+            if (isLeft)
+            {
+                LeftHandPoseHasValidValue = false;
+                LeftHandRotation = Quaternion.identity;
+            }
+            else
+            {
+                RightHandPoseHasValidValue = false;
+                RightHandRotation = Quaternion.identity;
+            }
+            
+            for (var i = 0; i < 15; i++)
+            {
+                _bendAngles[(isLeft ? i : i + 15)] = 0f;
+            }
+
+            for (var i = 0; i < 5; i++)
+            {
+                _openAngles[(isLeft ? i : i + 5)] = 0f;
             }
         }
 

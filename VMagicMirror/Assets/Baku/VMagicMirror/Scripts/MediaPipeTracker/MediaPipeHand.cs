@@ -4,6 +4,7 @@ using UnityEngine;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
 using Zenject;
+using R3;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -100,6 +101,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             };
 
             CheckHandLocalRotationAsync(_cts.Token).Forget();
+
+            _trackingLostHandCalculator.LeftHandTrackingLostMotionCompleted
+                .Subscribe(_ => ResetLeftHandFingerOnTrackingLost())
+                .AddTo(this);
+
+            _trackingLostHandCalculator.RightHandTrackingLostMotionCompleted
+                .Subscribe(_ => ResetRightHandFingerOnTrackingLost())
+                .AddTo(this);
         }
 
         public override void Dispose()
@@ -261,6 +270,25 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
         
+        private void ResetLeftHandFingerOnTrackingLost()
+        {
+            // NOTE: トラッキングロスト→別の手IKに移行→トラッキングロスト動作完了、みたいなケースがあるのでTargetのチェックが必要
+            if (_dependency.Config.LeftTarget.CurrentValue is HandTargetType.ImageBaseHand)
+            {
+                _finger.ReleaseLeftHand();
+                _finger.ResetCalculatedLeftFingerPoses();
+            }
+        }
+        
+        private void ResetRightHandFingerOnTrackingLost()
+        {
+            if (_dependency.Config.RightTarget.CurrentValue is HandTargetType.ImageBaseHand)
+            {
+                _finger.ReleaseRightHand();
+                _finger.ResetCalculatedRightFingerPoses();
+            }
+        }
+        
         private class MediaPipeHandFinger
         {
             private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
@@ -278,15 +306,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _fingerController = fingerController;
             }
 
-            public void ApplyLeftHandFinger()
-                => ApplyFingerAngles(FingerConsts.LeftThumb, FingerConsts.LeftLittle);
+            public void ApplyLeftHandFinger() => ApplyFingerAngles(true);
+            public void ApplyRightHandFinger() => ApplyFingerAngles(false);
 
-            public void ApplyRightHandFinger() 
-                => ApplyFingerAngles(FingerConsts.RightThumb, FingerConsts.RightLittle);
-
-            private void ApplyFingerAngles(int thumbIndex, int littleIndex)
+            private void ApplyFingerAngles(bool isLeft)
             {
                 var mirrored = _settingsRepository.IsHandMirrored.Value;
+                if (!CanHoldFinger(isLeft, mirrored))
+                {
+                    return;
+                }
+                
+                var thumbIndex = isLeft ? FingerConsts.LeftThumb : FingerConsts.RightThumb;
+                var littleIndex = isLeft ? FingerConsts.LeftLittle : FingerConsts.RightLittle;
                 for (var i = thumbIndex; i <= littleIndex; i++)
                 {
                     var angles = _fingerPoseCalculator.GetFingerAngles(i, mirrored);
@@ -298,11 +330,28 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _fingerController.HoldOpen(i, angles.open);
                 }
             }
+
+            private bool CanHoldFinger(bool isLeft, bool mirrored)
+            {
+                // トラッキング値の受信前やトラッキングロスト後はHoldを呼ばない…という判定のための措置
+                if (mirrored)
+                {
+                    isLeft = !isLeft;
+                }
+
+                if ((isLeft && !_fingerPoseCalculator.LeftHandPoseHasValidValue) ||
+                    (!isLeft && !_fingerPoseCalculator.RightHandPoseHasValidValue))
+                {
+                    return false;
+                }
+
+                return true;
+            }
             
             // NOTE: ちょっともったいないが、曲げ角度を平均して適用する
             private static float GetFingerBendAngle(float proximal, float intermediate, float distal)
                 => (proximal + intermediate + distal) / 3.0f;
-            
+
             public void ReleaseLeftHand()
             {
                 for (var i = FingerConsts.LeftThumb; i < FingerConsts.LeftLittle + 1; i++)
@@ -318,6 +367,32 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _fingerController.Release(i);
                     _fingerController.ReleaseOpen(i);
+                }
+            }
+
+            public void ResetCalculatedLeftFingerPoses()
+            {
+                var mirrored = _settingsRepository.IsHandMirrored.Value;
+                if (mirrored)
+                {
+                    _fingerPoseCalculator.ResetRightHandPose();
+                }
+                else
+                {
+                    _fingerPoseCalculator.ResetLeftHandPose();
+                }
+            }
+            
+            public void ResetCalculatedRightFingerPoses()
+            {
+                var mirrored = _settingsRepository.IsHandMirrored.Value;
+                if (mirrored)
+                {
+                    _fingerPoseCalculator.ResetLeftHandPose();
+                }
+                else
+                {
+                    _fingerPoseCalculator.ResetRightHandPose();
                 }
             }
         }

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -30,6 +31,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float TrackingLostPoseDuration => 
             _poseSetterSettings.TrackingLostMotionDuration + _poseSetterSettings.TrackingLostRotationDelay;
 
+        private readonly Subject<Unit> _leftHandTrackingLostMotionCompleted = new();
+        public Observable<Unit> LeftHandTrackingLostMotionCompleted => _leftHandTrackingLostMotionCompleted;
+        
+        private readonly Subject<Unit> _rightHandTrackingLostMotionCompleted = new();
+        public Observable<Unit> RightHandTrackingLostMotionCompleted => _rightHandTrackingLostMotionCompleted;
+        
         // NOTE: Cancelを呼ばない限り、トラッキングロストの終端姿勢が適用され終わったあともずっとtrueになる
         public bool LeftHandTrackingLostRunning => _leftHandCts != null;
         public bool RightHandTrackingLostRunning => _rightHandCts != null;
@@ -140,6 +147,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
 
             LeftHandTrackingLostMotionInProgress = false;
+            _leftHandTrackingLostMotionCompleted.OnNext(Unit.Default);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -180,6 +188,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
             
             RightHandTrackingLostMotionInProgress = false;
+            _rightHandTrackingLostMotionCompleted.OnNext(Unit.Default);
 
             while (!cancellationToken.IsCancellationRequested)
             {

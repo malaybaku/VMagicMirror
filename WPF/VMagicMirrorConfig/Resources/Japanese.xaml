@@ -902,7 +902,6 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
-    <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">動きかたのオプションを「デフォルト」に変更しました</sys:String>    
     <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">指定したサブキャラのログファイルは存在しません: {0}</sys:String>
 
     <!-- Other: Not on Dialog, but used from code -->

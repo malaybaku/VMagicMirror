@@ -243,12 +243,6 @@
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
     
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">現在のオプションではハンドトラッキングの結果が適用されません！</sys:String>
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction" xml:space="preserve">動きかたのオプションを「つねに手下げ」から「デフォルト」に変更することで、
-ハンドトラッキングの結果が適用されます。</sys:String>
-
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
-    
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:

@@ -244,10 +244,6 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>
 
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">Hand tracking result will not be applied with current option.</sys:String>
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction">Switch Body Motion Style option to "Default" to apply hand tracking result.</sys:String>
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
-    
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
@@ -900,7 +896,6 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
-    <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">Body Motion Style is set to: "Default"</sys:String>
     <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">The log file of the buddy does not exist: {0}</sys:String>
 
     <!-- Other: Not on Dialog, but used from code -->

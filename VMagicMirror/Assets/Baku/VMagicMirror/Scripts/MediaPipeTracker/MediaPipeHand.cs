@@ -331,9 +331,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
             }
 
+            // NOTE: トラッキング値の受信前やトラッキングロスト後にHoldを呼ばないためのガード関数
             private bool CanHoldFinger(bool isLeft, bool mirrored)
             {
-                // トラッキング値の受信前やトラッキングロスト後はHoldを呼ばない…という判定のための措置
                 if (mirrored)
                 {
                     isLeft = !isLeft;

@@ -475,7 +475,14 @@
                                    Text="{DynamicResource Motion_Face_OffsetClip_Help}"
                                    TextWrapping="Wrap"
                                      />
-                        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
+
+                        <view:OffsetClipSelector
+                            Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
+                            Style="{StaticResource MaterialDesignComboBox}"
+                            Margin="5"
+                            />
+
+                        <!--<ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
@@ -493,7 +500,7 @@
                                     </TextBlock>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
-                        </ComboBox>
+                        </ComboBox>-->
 
                     </Grid>
 

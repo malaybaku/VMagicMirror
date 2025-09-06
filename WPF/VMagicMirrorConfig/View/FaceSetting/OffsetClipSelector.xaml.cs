@@ -2,7 +2,7 @@
 
 namespace Baku.VMagicMirrorConfig.View
 {
-    public partial class OffsetClipSelector : ComboBox
+    public partial class OffsetClipSelector : UserControl
     {
         public OffsetClipSelector()
         {

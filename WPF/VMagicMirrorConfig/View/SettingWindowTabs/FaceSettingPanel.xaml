@@ -478,7 +478,6 @@
 
                         <view:OffsetClipSelector
                             Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
-                            Style="{StaticResource MaterialDesignComboBox}"
                             Margin="5"
                             />
 

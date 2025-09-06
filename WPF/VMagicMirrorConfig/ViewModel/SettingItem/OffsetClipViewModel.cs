@@ -13,7 +13,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly FaceMotionBlendShapeNameStore _blendShapeNameStore;
         private bool _isSilentMode;
 
-        public OffsetClipViewModel() : this(null!, null!) { }
+        public OffsetClipViewModel() : this(
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<FaceMotionBlendShapeNameStore>()
+            ) 
+        {
+        }
 
         internal OffsetClipViewModel(
             MotionSettingModel model,
@@ -38,7 +43,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        private readonly ObservableCollection<OffsetClipItemViewModel> _items = new();
+        private readonly ObservableCollection<OffsetClipItemViewModel> _items = [];
         public ReadOnlyObservableCollection<OffsetClipItemViewModel> Items { get; }
 
         // NOTE: タブ文字区切りになってる事に関してはView側でよしなにしてもらう

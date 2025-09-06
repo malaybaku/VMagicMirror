@@ -1,4 +1,4 @@
-﻿<ComboBox 
+﻿<UserControl
     x:Class="Baku.VMagicMirrorConfig.View.OffsetClipSelector"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,24 +7,31 @@
     xmlns:v="clr-namespace:Baku.VMagicMirrorConfig.View"
     xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d"
-    IsEditable="True"
-    IsReadOnly="True"
-    StaysOpenOnEdit="True"
-    Text="{Binding SelectedItemText.Value}"
     d:DesignHeight="40" d:DesignWidth="160"
     d:DataContext="{d:DesignInstance vm:OffsetClipViewModel}"
     >
-    <ComboBox.DataContext>
+    <UserControl.Resources>
+        <v:TabCharToCommaConverter x:Key="TabCharToCommaConverter" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
         <vm:OffsetClipViewModel />
-    </ComboBox.DataContext>
-    <ComboBox.ItemTemplate>
-        <DataTemplate>
-            <CheckBox 
+    </UserControl.DataContext>
+    <ComboBox
+        Style="{StaticResource MaterialDesignComboBox}"
+        IsEditable="True"
+        IsReadOnly="True"
+        StaysOpenOnEdit="True"
+        Text="{Binding OffsetClipName.Value, Converter={StaticResource TabCharToCommaConverter}}"
+        >
+        <ComboBox.ItemTemplate>
+            <DataTemplate>
+                <CheckBox 
                 Content="{Binding DisplayName}" 
                 IsChecked="{Binding IsSelected, Mode=TwoWay}" 
                 VerticalAlignment="Center"
                 Padding="4,0,0,0"
                 />
-        </DataTemplate>
-    </ComboBox.ItemTemplate>
-</ComboBox>
+            </DataTemplate>
+        </ComboBox.ItemTemplate>
+    </ComboBox>
+</UserControl>

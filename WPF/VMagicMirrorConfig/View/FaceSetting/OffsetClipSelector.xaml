@@ -11,27 +11,44 @@
     d:DataContext="{d:DesignInstance vm:OffsetClipViewModel}"
     >
     <UserControl.Resources>
-        <v:TabCharToCommaConverter x:Key="TabCharToCommaConverter" />
+        <v:OffsetClipNameConverter x:Key="OffsetClipNameConverter" />
     </UserControl.Resources>
     <UserControl.DataContext>
         <vm:OffsetClipViewModel />
     </UserControl.DataContext>
-    <ComboBox
-        Style="{StaticResource MaterialDesignComboBox}"
-        IsEditable="True"
-        IsReadOnly="True"
-        StaysOpenOnEdit="True"
-        Text="{Binding OffsetClipName.Value, Converter={StaticResource TabCharToCommaConverter}}"
-        >
-        <ComboBox.ItemTemplate>
-            <DataTemplate>
-                <CheckBox 
-                Content="{Binding DisplayName}" 
-                IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                VerticalAlignment="Center"
-                Padding="4,0,0,0"
-                />
-            </DataTemplate>
-        </ComboBox.ItemTemplate>
-    </ComboBox>
+    <Grid>
+        <ComboBox
+            Style="{StaticResource MaterialDesignComboBox}"
+            IsReadOnly="True"
+            StaysOpenOnEdit="True"
+            ItemsSource="{Binding Items}"
+            >
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem" 
+                       BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </ComboBox.ItemContainerStyle>
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="vm:OffsetClipItemViewModel">
+                    <CheckBox 
+                        Margin="0"
+                        Content="{Binding DisplayName}" 
+                        IsChecked="{Binding Selected.Value, Mode=TwoWay}" 
+                        VerticalAlignment="Center"
+                        Padding="4,0,0,0"
+                    />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        
+        <!-- ComboBoxを隠す感じの配置になる -->
+        <TextBlock
+            IsHitTestVisible="False"
+            Margin="12,0,20,0"
+            Text="{Binding OffsetClipName.Value, Converter={StaticResource OffsetClipNameConverter}}"
+            TextWrapping="NoWrap"
+            TextTrimming="CharacterEllipsis"
+            />
+    </Grid>
 </UserControl>

@@ -74,13 +74,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         noneItem.Selected.Value = false;
                     }
                 }
-            });
 
-            // NOTE: 「なし」だけが選択されてる場合には空文字列になるのがポイント
-            _model.FaceOffsetClip.Value = string.Join(
-                "\t",
-                _items.Where(i => i.Selected.Value).Select(i => i.BlendShapeName).OrderBy(v => v, StringComparer.InvariantCulture)
-                );
+                // NOTE: 「なし」だけが選択されてる場合には空文字列になるのがポイント
+                _model.FaceOffsetClip.Value = string.Join(
+                    "\t",
+                    _items.Where(i => i.Selected.Value).Select(i => i.BlendShapeName).OrderBy(v => v, StringComparer.InvariantCulture)
+                    );
+            });
         }
 
 

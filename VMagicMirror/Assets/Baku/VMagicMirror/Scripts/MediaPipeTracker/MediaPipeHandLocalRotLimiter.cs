@@ -4,13 +4,25 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    // TODO: もうちょっと堅牢に動くようになったら復活してもよい。現在は回転値のジャンプが目につくのでBindしてない
+    // NOTE: 今やってる実装よりもキレイに制御する場合、手のIKの後処理ではなく下記のアプローチを取るのが良さそう。
+    // ここまでやると手が誤ってクロスする問題も減るはず
+    // - MediaPipeのタスクとしてHandではなくHolisticを使う
+    // - とくに、ひじのBendGoalの参考情報としてHolisticの結果も使う
+
     public class MediaPipeHandLocalRotLimiter : PresenterBase
     {
-        // bye byeとかで手をふる方向の制限
-        private const float ClampYaw = 30f;
-        // come onみたいな動きのときにひねる方向
-        private const float ClampRoll = 60f;
+        // Twistじゃない方向の回転全体に対して角度制限をするときの上限角度
+        private const float ClampSwing = 30f;
+        
+        // 屈伸方向の制限角度
+        private const float ClampSwingBendStretch = 70f;
+        // 「さよなら」とかで手を振る方向の制限角度
+        // 現実の人体ではこの方向の曲げ角は20-30degが上限だが、VMMのIKではヒジを締めて手IKで動かす(=手首側に回転成分を押し付けがち)ので、
+        // 少し緩めの制限にしている
+        private const float ClampSwingLeftRight = 40f;
+
+        private const float BendAngleMax = Mathf.Deg2Rad * ClampSwingBendStretch;
+        private const float LeftRightAngleMax = Mathf.Deg2Rad * ClampSwingLeftRight;
         
         private readonly IVRMLoadable _vrmLoadable;
         private readonly LateUpdateSourceAfterFinalIK _lateUpdateSource;
@@ -60,34 +72,72 @@ namespace Baku.VMagicMirror
 
             if (_handIKIntegrator.LeftTargetType.CurrentValue is HandTargetType.ImageBaseHand)
             {
-                LimitLeftHandBoneLocalRotation();
+                _leftHandBone.localRotation = GetClampedRotation(_leftHandBone.localRotation);
             }
         
             if (_handIKIntegrator.RightTargetType.CurrentValue is HandTargetType.ImageBaseHand)
             {
-                LimitRightHandBoneLocalRotation();
+                _rightHandBone.localRotation = GetClampedRotation(_rightHandBone.localRotation);
             }
         }
 
-        private void LimitLeftHandBoneLocalRotation()
+        // 簡単だがキレイじゃない版: swing-twist分解して、swingの方に定数で制限をかける
+        private static Quaternion GetClampedRotationNaive(Quaternion localRotation)
         {
-            // やりたいこと
-            // - 手首がロコツに骨折するのを防ぐ
-            // - その際、ロール(x軸)だけは骨折判定をかなり緩くしたい(=いわゆる手のひらクルクルするのは骨折ではないことにしたい)
-            
-            // 厳格かというとかなり怪しいが、オイラー角表現の分解に基づいて制限するくらいにしとく (ないよりはだいぶよい)
-            var euler = _leftHandBone.localRotation.eulerAngles;
-            var y = Mathf.Clamp(MathUtil.ClampAngle(euler.y), -ClampYaw, ClampYaw);
-            var z = Mathf.Clamp(MathUtil.ClampAngle(euler.z), -ClampRoll, ClampRoll);
-            _leftHandBone.localRotation = Quaternion.Euler(euler.x, y, z);
-        }
+            DecomposeSwingTwist(localRotation, out var swing, out var twist);
 
-        private void LimitRightHandBoneLocalRotation()
+            swing.ToAngleAxis(out var swingAngle, out var swingAxis);
+            swingAngle = Mathf.DeltaAngle(0f, swingAngle);
+
+            if (Mathf.Abs(swingAngle) > ClampSwing)
+            {
+                swing = Quaternion.AngleAxis(Mathf.Sign(swingAngle) * ClampSwing, swingAxis);
+                return swing * twist;
+            }
+            else
+            {
+                return localRotation;
+            }
+        }
+        
+        // 複雑だけど見た目が良い版: swing-twist分解したあと、swingをさらに屈伸とそうでない(左右に振る)方向に分けて制限
+        private static Quaternion GetClampedRotation(Quaternion localRotation)
         {
-            var euler = _rightHandBone.localRotation.eulerAngles;
-            var y = Mathf.Clamp(MathUtil.ClampAngle(euler.y), -ClampYaw, ClampYaw);
-            var z = Mathf.Clamp(MathUtil.ClampAngle(euler.z), -ClampRoll, ClampRoll);
-            _rightHandBone.localRotation = Quaternion.Euler(euler.x, y, z);
-        } 
+            DecomposeSwingTwist(localRotation, out var swing, out var twist);
+
+            // スイングの回転軸を前腕軸まわり角φに落とす
+            swing.ToAngleAxis(out var swingAngle, out var swingAxis);
+            swingAngle = Mathf.Abs(Mathf.DeltaAngle(0f, swingAngle)); // [0,180]
+
+            // phi: 左右振り / 屈伸どっちに対して主に回転するような回転になってるかを表すような角度
+            var phi = Mathf.Atan2(swingAxis.y, swingAxis.x);
+            var c = Mathf.Cos(phi); 
+            var s = Mathf.Sin(phi);
+
+            // ここはrad
+            var thetaMax = 1.0f / Mathf.Sqrt(
+                (c * c) / (BendAngleMax * BendAngleMax) +
+                (s * s) / (LeftRightAngleMax * LeftRightAngleMax)
+                );
+            var thetaMaxDeg = thetaMax * Mathf.Rad2Deg;
+
+            if (swingAngle > thetaMaxDeg)
+            {
+                swing = Quaternion.AngleAxis(thetaMaxDeg, swingAxis);
+            }
+
+            return swing * twist;
+        }
+        
+        private static void DecomposeSwingTwist(Quaternion q, out Quaternion swing, out Quaternion twist)
+        {
+            // やってること: ねじり回転だけ抽出することで、捻り + それ以外に分ける
+            var twistAxis = Vector3.right;
+            var proj = Vector3.Project(new Vector3(q.x, q.y, q.z), twistAxis);
+            var qTwist = new Quaternion(proj.x, proj.y, proj.z, q.w);
+            qTwist = Quaternion.Normalize(qTwist);
+            twist = qTwist;
+            swing = q * Quaternion.Inverse(twist);
+        }
     }
 }

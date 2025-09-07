@@ -7,6 +7,10 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
+    // NOTE: 体型調整ブレンドシェイプは単体で制御がちょっと複雑なのでクラスをわけている
+    // - BlendShape一覧が動的に変化する
+    // - 複数選択が可能
+    // - 「なし」を選択すると他が全部オフになる、とかの制御がある
     public class OffsetClipViewModel : ViewModelBase
     {
         private readonly MotionSettingModel _model;
@@ -57,21 +61,38 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             DoSilently(() =>
             {
-                if (string.IsNullOrEmpty(item.BlendShapeName) && item.Selected.Value)
+                if (string.IsNullOrEmpty(item.BlendShapeName) )
                 {
-                    // 「なし」をオンにすると、他のぜんぶの選択が解除される
-                    foreach (var item in _items.Where(i => !string.IsNullOrEmpty(i.BlendShapeName)))
+                    if (item.Selected.Value)
                     {
-                        item.Selected.Value = false;
+                        // 「なし」をオン -> 他のぜんぶの選択が解除される
+                        foreach (var item in _items.Where(i => !string.IsNullOrEmpty(i.BlendShapeName)))
+                        {
+                            item.Selected.Value = false;
+                        }
                     }
                 }
-                else if (!string.IsNullOrEmpty(item.BlendShapeName) && item.Selected.Value)
+                else
                 {
-                    //「なし」以外をオンにすると、「なし」の選択が解除される
                     var noneItem = _items.FirstOrDefault(i => string.IsNullOrEmpty(i.BlendShapeName));
-                    if (noneItem != null)
+                    if (item.Selected.Value)
                     {
-                        noneItem.Selected.Value = false;
+                        //「なし」以外をオン -> 「なし」の選択は必ず解除
+                        if (noneItem != null)
+                        {
+                            noneItem.Selected.Value = false;
+                        }
+                    }
+                    else
+                    {
+                        //「なし」以外をオフ -> オフにしたことで有効なブレンドシェイプが指定されなくなったのであれば「なし」がオン
+                        if (!_items.Any(i => !string.IsNullOrEmpty(i.BlendShapeName) && i.Selected.Value))
+                        {
+                            if (noneItem != null)
+                            {
+                                noneItem.Selected.Value = true;
+                            }
+                        }
                     }
                 }
 
@@ -104,13 +125,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // Model側の状態が変化したときに呼ぶことで、各要素のOn/Offの状態をModelに合わせる
         private void RefreshSelectedItems() => DoSilently(() =>
         {
+            var isEmpty = string.IsNullOrEmpty(_model.FaceOffsetClip.Value);
+            // NOTE: "".Split('\t') が [""] になることだけ注意
             var selectedNames = _model.FaceOffsetClip.Value.Split('\t');
             foreach (var item in _items)
             {
                 if (string.IsNullOrEmpty(item.BlendShapeName))
                 {
-                    // 「なし」の適用条件だけContainsでは評価できないことに注意
-                    item.Selected.Value = selectedNames.Length == 0;
+                    item.Selected.Value = isEmpty;
                 }
                 else
                 {

@@ -83,7 +83,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        // 簡単だがキレイじゃない版: swing-twist分解して、swingの方に定数で制限をかける
+        // 簡単だが角度制限として建付けが悪いので使ってない実装: swing-twist分解して、swingの方に定数で制限をかける
         private static Quaternion GetClampedRotationNaive(Quaternion localRotation)
         {
             DecomposeSwingTwist(localRotation, out var swing, out var twist);

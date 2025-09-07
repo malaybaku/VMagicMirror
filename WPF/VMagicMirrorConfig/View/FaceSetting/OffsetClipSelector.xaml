@@ -22,6 +22,7 @@
             IsReadOnly="True"
             StaysOpenOnEdit="True"
             ItemsSource="{Binding Items}"
+            v:ComboBoxSelectProhibitBehavior.SuppressSelection="True"
             >
             <ComboBox.ItemContainerStyle>
                 <Style TargetType="ComboBoxItem" 
@@ -32,7 +33,7 @@
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="vm:OffsetClipItemViewModel">
                     <CheckBox 
-                        Margin="0"
+                        Margin="8,0,0,0"
                         Content="{Binding DisplayName}" 
                         IsChecked="{Binding Selected.Value, Mode=TwoWay}" 
                         VerticalAlignment="Center"

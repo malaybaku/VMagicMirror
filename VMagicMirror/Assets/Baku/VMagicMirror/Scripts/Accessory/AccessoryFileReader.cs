@@ -3,6 +3,7 @@ using System.IO;
 using UniGLTF;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UniVRM10;
 
 namespace Baku.VMagicMirror
 { 
@@ -76,7 +77,11 @@ namespace Baku.VMagicMirror
 
         private static AccessoryFileContext<GameObject> LoadGlbOrGltf(GltfData data)
         {
-            var context = new ImporterContext(data);
+            // NOTE: MaterialGeneratorをVRM10用にすることで、GLBにMToonが入ってたら読めるようにしておく
+            var context = new ImporterContext(
+                data,
+                materialGenerator: new BuiltInVrm10MaterialDescriptorGenerator()
+                );
             var instance = context.Load();
             instance.ShowMeshes();
             instance.EnableUpdateWhenOffscreen();

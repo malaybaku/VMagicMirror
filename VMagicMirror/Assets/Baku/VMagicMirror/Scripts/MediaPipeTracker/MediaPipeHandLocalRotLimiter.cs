@@ -11,14 +11,16 @@ namespace Baku.VMagicMirror
 
     public class MediaPipeHandLocalRotLimiter : PresenterBase
     {
-        // Twistじゃない方向の回転全体に対して角度制限をするときの上限角度
+        // Twistを除いた回転全体に対して回転量制限をする場合の上限角度 [deg]
         private const float ClampSwing = 30f;
         
-        // 屈伸方向の制限角度
+        // 屈伸方向の制限角度 [deg]
         private const float ClampSwingBendStretch = 70f;
-        // 「さよなら」とかで手を振る方向の制限角度
-        // 現実の人体ではこの方向の曲げ角は20-30degが上限だが、VMMのIKではヒジを締めて手IKで動かす(=手首側に回転成分を押し付けがち)ので、
-        // 少し緩めの制限にしている
+
+        // 「さよなら」とかで手を振る方向の制限角度 [deg]
+        // NOTE: 現実の人体ではこの方向の曲げ角は20-30degが上限。
+        // ただしVMMのIKではヒジを締めて手IKで動かす(=手首側に回転成分を押し付けやすい)ので、制限しすぎると全然曲がらなく見える
+        // …という特性を踏まえて、少し緩めの角度制限にしている
         private const float ClampSwingLeftRight = 40f;
 
         private const float BendAngleMax = Mathf.Deg2Rad * ClampSwingBendStretch;

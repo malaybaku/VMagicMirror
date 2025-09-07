@@ -65,6 +65,7 @@
         public int FaceDefaultFun { get; set; } = 0;
 
         public string FaceNeutralClip { get; set; } = "";
+        // NOTE: 複数ある場合、tab文字で区切ったものをAlphabetical orderで保存する
         public string FaceOffsetClip { get; set; } = "";
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;

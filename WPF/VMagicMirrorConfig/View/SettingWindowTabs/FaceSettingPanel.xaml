@@ -475,28 +475,12 @@
                                    Text="{DynamicResource Motion_Face_OffsetClip_Help}"
                                    TextWrapping="Wrap"
                                      />
-                        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
-                                  HorizontalAlignment="Stretch"
-                                  Margin="5"
-                                  ItemsSource="{Binding BlendShapeNames}"
-                                  SelectedItem="{Binding FaceOffsetClip.Value}"
-                                  >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock>
-                                        <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrNoneConverter}">
-                                                <Binding Path=""/>
-                                                <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
 
+                        <view:OffsetClipSelector
+                            Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
+                            Margin="5"
+                            />
                     </Grid>
-
                 </StackPanel>
             </Border>
         </StackPanel>

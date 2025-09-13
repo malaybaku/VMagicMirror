@@ -14,22 +14,16 @@ namespace Baku.VMagicMirror
         private Vector3 _defaultCameraPosition = Vector3.zero;
         private Vector3 _defaultCameraRotationEuler = Vector3.zero;
 
-        // NOTE: 下記4つの値は基本WPFから渡された値をリスペクトして使うが、
-        // Unity側では以下2ケースにおいて、現在のアバターのHeadボーン位置を _headPositionFor~ に有効値としてsetする。
-        // つまり、頭の基準位置が不明なカメラ姿勢を受け取った場合、現在のアバターの頭位置を基準位置にする。
-        // これにより、初回のロード後に
-        //
-        // - ケース1:
-        //   - _customCameraPosition, _customCameraRotationEuler いずれかが非ゼロ、かつ _hasHeadPositionFor~ がfalse
-        //   - その状態でアバターをロードした
-        // - ケース2:
-        //   - アバターがロード済みである
-        //   - その状態で、 _hasHeadPosition が false であるようなカメラ姿勢をWPFから受け取った
+        // NOTE: 下記4つの値はWPFから渡ってきた物を使う
         private Vector3 _customCameraPosition = Vector3.zero;
         private Vector3 _customCameraRotationEuler = Vector3.zero;
         private bool _hasReferenceHeadPosition;
         private Vector3 _referenceHeadPosition;
 
+        // _prevを使うのはアバター切り替えの前後でカメラ位置をケアするため
+        private bool _hasPrevModelHeadPosition;
+        private Vector3 _prevModelHeadPosition;
+        
         private bool _hasModel;
         private Vector3 _headPosition;
         
@@ -40,8 +34,11 @@ namespace Baku.VMagicMirror
             {
                 _headPosition = info.animator.GetBoneTransform(HumanBodyBones.Head).position;
                 _hasModel = true;
-                UpdateCameraPose();
+                AdjustCameraPoseOnVrmLoaded();
                 ApplyReferenceHeadPositionIfAvailable();
+
+                _prevModelHeadPosition = _headPosition;
+                _hasPrevModelHeadPosition = true;
             };
 
             vrmLoadable.VrmDisposing += () =>
@@ -176,6 +173,8 @@ namespace Baku.VMagicMirror
                     _customCameraPosition + headDiff,
                     Quaternion.Euler(_customCameraRotationEuler)
                 );
+
+                Debug.Log($"補正付きでカメラ位置を更新: head - ref={_headPosition.y:0.000} - {_referenceHeadPosition.y:0.000} = {headDiff.y:0.000}");
             }
             else
             {
@@ -183,21 +182,48 @@ namespace Baku.VMagicMirror
                     _customCameraPosition,
                     Quaternion.Euler(_customCameraRotationEuler)
                 );
+
+                Debug.Log($"補正なしでカメラ位置を更新");
             }
         }
 
+        private void AdjustCameraPoseOnVrmLoaded()
+        {
+            if (_hasPrevModelHeadPosition)
+            {
+                // アプリ起動後、2体目以降のアバターロードで通過
+                var diff = _headPosition - _prevModelHeadPosition;
+                cam.transform.position += diff;
+                Debug.Log($"アバター切り替えぶんカメラ位置を更新: head - prev={_headPosition.y:0.000} - {_prevModelHeadPosition.y:0.000} = {diff.y:0.000}");
+                return;
+            }
+
+            if (HasValidCustomCameraPose() && _hasReferenceHeadPosition)
+            {
+                // アプリ起動後の1体目のロードより前に ReferenceHeadPosition がついたカメラ姿勢が設定済みだと通過
+                var diff = _headPosition - _referenceHeadPosition;
+                Debug.Log($"初回ロードしたアバターとカメラ設定を照合して位置を調整: head - ref={_headPosition.y:0.000} - {_referenceHeadPosition.y:0.000} = {diff.y:0.000}");
+                cam.transform.position += diff;
+                return;
+            }
+
+            // 下記いずれかでここに到達する。これらのケースでは調整のしようがないので、何もしないでOK
+            // - そもそもWPF側からカメラ姿勢が送られてない状態で、1体目のアバターをロード
+            // - 保存済みのカメラ姿勢にリファレンスとなるアバターのHead位置がない状態で、1体目のアバターをロード
+        }
+        
         private void ApplyReferenceHeadPositionIfAvailable()
         {
-            if (_hasModel &&
-                (_customCameraPosition.magnitude > Mathf.Epsilon ||
-                _customCameraRotationEuler.magnitude > Mathf.Epsilon) &&
-                !_hasReferenceHeadPosition
-                )
+            if (_hasModel && HasValidCustomCameraPose() && !_hasReferenceHeadPosition)
             {
+                Debug.Log($"リファレンスの頭部位置がないため、現在のアバターの頭部姿勢を適用");
                 _hasReferenceHeadPosition = true;
                 _referenceHeadPosition = _headPosition;
             }
         }
+
+        private bool HasValidCustomCameraPose()
+            => _customCameraPosition.magnitude > Mathf.Epsilon || _customCameraRotationEuler.magnitude > Mathf.Epsilon;
     }
 
     [Serializable]

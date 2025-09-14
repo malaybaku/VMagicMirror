@@ -14,7 +14,7 @@
         CurrentMicrophoneDeviceName,
         MicrophoneDeviceNames,
 
-        // Camera
+        // Layout, Camera
         CurrentCameraPosition,
         
         // Web Camera

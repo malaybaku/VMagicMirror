@@ -167,14 +167,12 @@ namespace Baku.VMagicMirror
             {
                 // セーブデータと現在のアバター双方のHeadボーンの位置が分かっている場合、
                 // セーブデータの頭位置に対して身長差を加味した値を実際の値とする。
-                // どちらか片方だけでも不明な場合、
+                // どちらか片方だけでも不明な場合、補正はしない
                 var headDiff = _headPosition - _referenceHeadPosition;
                 cam.transform.SetPositionAndRotation(
                     _customCameraPosition + headDiff,
                     Quaternion.Euler(_customCameraRotationEuler)
                 );
-
-                Debug.Log($"補正付きでカメラ位置を更新: head - ref={_headPosition.y:0.000} - {_referenceHeadPosition.y:0.000} = {headDiff.y:0.000}");
             }
             else
             {
@@ -182,8 +180,6 @@ namespace Baku.VMagicMirror
                     _customCameraPosition,
                     Quaternion.Euler(_customCameraRotationEuler)
                 );
-
-                Debug.Log($"補正なしでカメラ位置を更新");
             }
         }
 
@@ -194,7 +190,6 @@ namespace Baku.VMagicMirror
                 // アプリ起動後、2体目以降のアバターロードで通過
                 var diff = _headPosition - _prevModelHeadPosition;
                 cam.transform.position += diff;
-                Debug.Log($"アバター切り替えぶんカメラ位置を更新: head - prev={_headPosition.y:0.000} - {_prevModelHeadPosition.y:0.000} = {diff.y:0.000}");
                 return;
             }
 
@@ -202,7 +197,6 @@ namespace Baku.VMagicMirror
             {
                 // アプリ起動後の1体目のロードより前に ReferenceHeadPosition がついたカメラ姿勢が設定済みだと通過
                 var diff = _headPosition - _referenceHeadPosition;
-                Debug.Log($"初回ロードしたアバターとカメラ設定を照合して位置を調整: head - ref={_headPosition.y:0.000} - {_referenceHeadPosition.y:0.000} = {diff.y:0.000}");
                 cam.transform.position += diff;
                 return;
             }
@@ -216,7 +210,6 @@ namespace Baku.VMagicMirror
         {
             if (_hasModel && HasValidCustomCameraPose() && !_hasReferenceHeadPosition)
             {
-                Debug.Log($"リファレンスの頭部位置がないため、現在のアバターの頭部姿勢を適用");
                 _hasReferenceHeadPosition = true;
                 _referenceHeadPosition = _headPosition;
             }

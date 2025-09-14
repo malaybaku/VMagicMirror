@@ -180,7 +180,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     // 各パラメータはVRoidモデルをリファレンスにして調整していて、モデルによっては指の曲がりすぎ/曲げ不足も起きうる
                     var thumbDistal = GetThumbDistalBendAngle(j2, j1, tips);
 
-                    var thumbOpenAngle = Mathf.Clamp(thumbDistal * 0.3f, 0f, 30f);
+                    // Openも適当に動かすと破綻しやすい(とくにモデルのT-Pose依存性も結構ある)ので控えめにしとく
+                    // NOTE: FingerControllerが内部的にMuscleで動いたらもうちょっと可動域を増やしても破綻しないかも
+                    var thumbOpenAngle = Mathf.Clamp(thumbDistal * 0.3f, 0f, 15f);
                     _openAngles[angleIndex] = thumbOpenAngle * (isLeft ? -1 : 1);
                     // 親指の第3関節のbendは値が大きいときの見た目を保証しづらいので、ほぼノータッチ
                     _bendAngles[3 * angleIndex] = thumbDistal * 0.05f;

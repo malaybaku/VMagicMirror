@@ -53,7 +53,6 @@ namespace Baku.VMagicMirror
             [FingerConsts.RightLittle] = new float[] { -85, -85, -75 },
         };
 
-
         #endregion
 
         private KeyboardProvider _keyboard;
@@ -72,6 +71,10 @@ namespace Baku.VMagicMirror
         private bool[][] _hasFinger;
 
         private Vector3[] _fingerBendAxis;
+        private Quaternion[] _defaultFingerBendRotations;
+        // NOTE: defaultFingerBendRotationが親指の付け根にだけは適用されない
+        private static readonly Quaternion ThumbProximalDefaultFingerBendRotation = 
+            Quaternion.AngleAxis(DefaultBendingAngle, Vector3.right);
         
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
         private readonly float[] _holdAngles = new float[10];
@@ -184,9 +187,12 @@ namespace Baku.VMagicMirror
             };
 
             _fingerBendAxis = new Vector3[10];
+            _defaultFingerBendRotations = new Quaternion[10];
             for (var i = 0; i < _fingerBendAxis.Length; i++)
             {
-                _fingerBendAxis[i] = FingerRotationAxisGetter.GetFingerBendAngle(i, _fingers);
+                var bendAxis = FingerRotationAxisGetter.GetFingerBendRotationAxis(i, _fingers);
+                _fingerBendAxis[i] = bendAxis;
+                _defaultFingerBendRotations[i] = Quaternion.AngleAxis(DefaultBendingAngle, bendAxis);
             }
 
             _hasFinger = new bool[10][];
@@ -433,13 +439,7 @@ namespace Baku.VMagicMirror
                         );
                 }
                 
-                //左右の手で回転方向が逆
-                if (i > 4)
-                {
-                    angle = -angle;
-                }
-                
-                for (int j = 0; j < _fingers[i].Length; j++)
+                for (var j = 0; j < _fingers[i].Length; j++)
                 {
                     if (!_hasFinger[i][j] || !(ApplyRate > 0))
                     {
@@ -449,7 +449,7 @@ namespace Baku.VMagicMirror
                     var t = _fingers[i][j];
                     angle = LimitThumbBendAngle(angle, i, j);
                     
-                    //NOTE: 割と珍しいが重要: 第3関節でOpen方向の回転を考慮するケース
+                    // 第3関節でOpen方向に曲げる場合はここを通る
                     if (j == 2 && _holdOpenMode[i])
                     {
                         var rot2Dof =
@@ -519,14 +519,8 @@ namespace Baku.VMagicMirror
             t.localRotation = localRotation;
         }
         
-        private static readonly Quaternion MajorFingerBendRotation =
-            Quaternion.AngleAxis(DefaultBendingAngle, Vector3.forward);
-        private static readonly Quaternion ThumbSpecialBendRotation =
-            Quaternion.AngleAxis(DefaultBendingAngle, Vector3.down);
-
-        //この関数で何をやるかというと、大多数の呼び出しでは同じ回転で用が足りるのを活用して
-        //AngleAxisの呼び出し回数を削ります
-        private static Quaternion GetFingerBendRotation(float angleDeg, int fingerNumber, int jointIndex)
+        // デフォルトの手の姿勢でを適用するときにキャッシュを適用することでAngleAxisの呼び出し回数を削る
+        private Quaternion GetFingerBendRotation(float angleDeg, int fingerNumber, int jointIndex)
         {
             var diff = (angleDeg - DefaultBendingAngle) * (angleDeg - DefaultBendingAngle);
             if (diff > 0.01)
@@ -536,30 +530,26 @@ namespace Baku.VMagicMirror
             }
             
             //キャッシュ値が使える: あらかじめ用意してた値で返す
-            if (fingerNumber is FingerConsts.LeftThumb or FingerConsts.RightThumb && 
-                jointIndex < 2
-                )
+            if ((fingerNumber == FingerConsts.LeftThumb && jointIndex == 2) ||
+                (fingerNumber == FingerConsts.RightThumb && jointIndex == 2))
             {
-                return ThumbSpecialBendRotation;
+                return ThumbProximalDefaultFingerBendRotation;
             }
             else
             {
-                return MajorFingerBendRotation;
+                return _defaultFingerBendRotations[fingerNumber];
             }
         }
 
-        private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
+        private Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
         {
-            if (fingerNumber is FingerConsts.LeftThumb or FingerConsts.RightThumb && 
-                jointIndex < 2
-                )
+            if ((fingerNumber == FingerConsts.LeftThumb && jointIndex == 2) ||
+                (fingerNumber == FingerConsts.RightThumb && jointIndex == 2))
             {
-                return Vector3.down;
+                return Vector3.right;
             }
-            else
-            {
-                return Vector3.forward;
-            }
+            
+            return _fingerBendAxis[fingerNumber];
         }
 
         private static float LimitThumbBendAngle(float angle, int fingerNumber, int jointIndex)

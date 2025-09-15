@@ -4,14 +4,14 @@ namespace Baku.VMagicMirror
 {
     public static class FingerRotationAxisGetter
     {
-        public static Vector3 GetFingerBendAngle(int fingerNumber, Transform[][] fingers)
+        public static Vector3 GetFingerBendRotationAxis(int fingerNumber, Transform[][] fingers)
         {
             return fingerNumber < 5
-                ? GetLeftHandFingerBendAngle(fingerNumber, fingers)
-                : GetRightHandFingerBendAngle(fingerNumber, fingers);
+                ? GetLeftHandFingerBendRotationAxis(fingerNumber, fingers)
+                : GetRightHandFingerBendRotationAxis(fingerNumber, fingers);
         }
         
-        private static Vector3 GetLeftHandFingerBendAngle(int fingerNumber, Transform[][] fingers)
+        private static Vector3 GetLeftHandFingerBendRotationAxis(int fingerNumber, Transform[][] fingers)
         {
             if (fingerNumber == FingerConsts.LeftThumb)
             {
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror
             return Vector3.Cross(-diff.normalized, Vector3.up);
         }
         
-        private static Vector3 GetRightHandFingerBendAngle(int fingerNumber, Transform[][] fingers)
+        private static Vector3 GetRightHandFingerBendRotationAxis(int fingerNumber, Transform[][] fingers)
         {
             if (fingerNumber == FingerConsts.RightThumb)
             {
@@ -71,10 +71,11 @@ namespace Baku.VMagicMirror
                 return Vector3.down;
             }
             
-            var thumbProximal = fingers[0][2].position;
-            var fingerProximal = fingers[1][2].position;
+            // NOTE: thumbは distal ~ proximalのどれをリファレンスにするかがちょっと悩ましい (一長一短ある)
+            var thumbPos = fingers[0][1].position;
+            var indexProximal = fingers[1][2].position;
 
-            var diff = fingerProximal - thumbProximal;
+            var diff = indexProximal - thumbPos;
             if (IsSmall(diff))
             {
                 return Vector3.down;
@@ -91,10 +92,10 @@ namespace Baku.VMagicMirror
                 return Vector3.up;
             }
             
-            var thumbProximal = fingers[5][2].position;
-            var fingerProximal = fingers[6][2].position;
+            var thumbPos = fingers[5][1].position;
+            var indexProximal = fingers[6][2].position;
             
-            var diff = fingerProximal - thumbProximal;
+            var diff = indexProximal - thumbPos;
             if (IsSmall(diff))
             {
                 return Vector3.up;

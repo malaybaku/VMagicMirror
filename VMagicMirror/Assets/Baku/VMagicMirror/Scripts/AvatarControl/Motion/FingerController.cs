@@ -56,10 +56,10 @@ namespace Baku.VMagicMirror
 
         #endregion
 
-        private KeyboardProvider _keyboard = null;
+        private KeyboardProvider _keyboard;
 
-        private bool _hasModel = false;
-        private Animator _animator = null;
+        private bool _hasModel;
+        private Animator _animator;
 
         //左手親指 = 0,
         //左手人差し指 = 1,
@@ -67,9 +67,11 @@ namespace Baku.VMagicMirror
         //右手親指 = 5,
         //...
         //右手小指 = 9
-        private Transform[][] _fingers = null;
+        private Transform[][] _fingers;
         //NOTE: _fingersに対して毎フレームnullチェックしないためにフラグを分ける
-        private bool[][] _hasFinger = null;
+        private bool[][] _hasFinger;
+
+        private Vector3[] _fingerBendAxis;
         
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
         private readonly float[] _holdAngles = new float[10];
@@ -180,11 +182,18 @@ namespace Baku.VMagicMirror
                     _animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
                 },
             };
+
+            _fingerBendAxis = new Vector3[10];
+            for (var i = 0; i < _fingerBendAxis.Length; i++)
+            {
+                _fingerBendAxis[i] = FingerRotationAxisGetter.GetFingerBendAngle(i, _fingers);
+            }
+
             _hasFinger = new bool[10][];
-            for (int i = 0; i < _hasFinger.Length; i++)
+            for (var i = 0; i < _hasFinger.Length; i++)
             {
                 _hasFinger[i] = new bool[3];
-                for (int j = 0; j < 3; j++)
+                for (var j = 0; j < 3; j++)
                 {
                     _hasFinger[i][j] = _fingers[i][j] != null;
                 }
@@ -199,6 +208,7 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _animator = null;
             _fingers = null;
+            _fingerBendAxis = null;
             _hasFinger = null;
         }
 
@@ -215,8 +225,8 @@ namespace Baku.VMagicMirror
             _isTypingReleasing[fingerNumber] = false;
 
             //今から曲げようとしてる指以外が打鍵状態だったら離す
-            int startIndex = (fingerNumber < 5) ? 0 : 5;
-            for (int i = startIndex; i < startIndex + 5; i++)
+            var startIndex = (fingerNumber < 5) ? 0 : 5;
+            for (var i = startIndex; i < startIndex + 5; i++)
             {
                 if (i != fingerNumber && _isTypingBending[i])
                 {
@@ -242,10 +252,10 @@ namespace Baku.VMagicMirror
         {
             if (info == RDown || info == MDown || info == LDown)
             {
-                int downFinger = (info == RDown) ? FingerConsts.RightMiddle : FingerConsts.RightIndex;
+                var downFinger = (info == RDown) ? FingerConsts.RightMiddle : FingerConsts.RightIndex;
                 _isTypingBending[downFinger] = true;
                 _isTypingReleasing[downFinger] = false;
-                for (int i = 5; i < 10; i++)
+                for (var i = 5; i < 10; i++)
                 {
                     //NOTE: 親指とかの関係ない指にまでこの処理をかけるのはキーボードとの行き来のときに破綻を防ぐため
                     if (i != downFinger && _isTypingBending[i])
@@ -267,12 +277,12 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void ResetAllAngles()
+        private void ResetAllAngles()
         {
-            for (int i = 0; i < _fingers.Length; i++)
+            for (var i = 0; i < _fingers.Length; i++)
             {
-                float angle = (i < 5) ? DefaultBendingAngle : -DefaultBendingAngle;
-                for (int j = 0; j < _fingers[i].Length; j++)
+                var angle = (i < 5) ? DefaultBendingAngle : -DefaultBendingAngle;
+                for (var j = 0; j < _fingers[i].Length; j++)
                 {
                     if (_fingers[i][j] != null)
                     {
@@ -312,7 +322,7 @@ namespace Baku.VMagicMirror
         /// <summary> 左手のすべての指に対し、タイピング動作のフラグを解除します。　</summary>
         public void ReleaseLeftHandTyping()
         {
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 _isTypingBending[i] = false;
                 _isTypingReleasing[i] = false;
@@ -322,7 +332,7 @@ namespace Baku.VMagicMirror
         /// <summary> 右手のすべての指に対し、タイピング動作のフラグを解除します。 </summary>
         public void ReleaseRightHandTyping()
         {
-            for (int i = 5; i < 10; i++)
+            for (var i = 5; i < 10; i++)
             {
                 _isTypingBending[i] = false;
                 _isTypingReleasing[i] = false;
@@ -368,7 +378,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 //プレゼンモード中、右手の形はギュッと握った状態
                 if (i > 4 && RightHandPresentationMode)
@@ -382,7 +392,7 @@ namespace Baku.VMagicMirror
                     continue;
                 }
                 
-                float angle = DefaultBendingAngle;
+                var angle = DefaultBendingAngle;
                 var currentAngle = _holdOperationBendingAngle[i];
 
                 _holdOperationBendingAngle[i] = math.lerp(
@@ -475,10 +485,10 @@ namespace Baku.VMagicMirror
         //Dictionaryで決め打ちした手の曲げ角度を適用する
         private void FixToDictionaryBasedHand(int index, Dictionary<int, float[]> anglesDic, bool zRotForThumbProximal)
         {
-            float[] angles = anglesDic[index];
-            Transform[] targets = _fingers[index];
+            var angles = anglesDic[index];
+            var targets = _fingers[index];
 
-            for (int i = 0; i < angles.Length; i++)
+            for (var i = 0; i < angles.Length; i++)
             {
                 if (!_hasFinger[index][i])
                 {
@@ -486,7 +496,7 @@ namespace Baku.VMagicMirror
                 }
 
                 //親指の先端側の関節はy軸中心で回す。根本はz軸のままにする
-                Vector3 axis = (index == FingerConsts.RightThumb) ?
+                var axis = (index == FingerConsts.RightThumb) ?
                     Vector3.up :
                     Vector3.forward;
 
@@ -526,7 +536,7 @@ namespace Baku.VMagicMirror
             }
             
             //キャッシュ値が使える: あらかじめ用意してた値で返す
-            if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
+            if (fingerNumber is FingerConsts.LeftThumb or FingerConsts.RightThumb && 
                 jointIndex < 2
                 )
             {
@@ -540,7 +550,7 @@ namespace Baku.VMagicMirror
 
         private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
         {
-            if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
+            if (fingerNumber is FingerConsts.LeftThumb or FingerConsts.RightThumb && 
                 jointIndex < 2
                 )
             {
@@ -585,11 +595,11 @@ namespace Baku.VMagicMirror
                 yield break;
             }
             
-            float startRate = ApplyRate;
-            float start = Time.time;
+            var startRate = ApplyRate;
+            var start = Time.time;
             while (Time.time - start < duration)
             {
-                float timeRate = (Time.time - start) / duration;
+                var timeRate = (Time.time - start) / duration;
                 ApplyRate = math.lerp(startRate, goal, timeRate);
                 yield return null;
             }

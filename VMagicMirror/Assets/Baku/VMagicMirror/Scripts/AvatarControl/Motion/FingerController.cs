@@ -215,6 +215,7 @@ namespace Baku.VMagicMirror
             _animator = null;
             _fingers = null;
             _fingerBendAxis = null;
+            _defaultFingerBendRotations = null;
             _hasFinger = null;
         }
 

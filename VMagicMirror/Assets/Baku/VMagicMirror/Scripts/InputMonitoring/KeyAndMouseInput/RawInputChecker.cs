@@ -485,6 +485,21 @@ namespace Baku.VMagicMirror
                     _rawKeyUp.OnNext(enterKey);
                 }
             }
+
+            {
+                var spaceKey = nameof(Keys.Space);
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    _keyDown.OnNext(spaceKey);
+                    _rawKeyDown.OnNext(spaceKey);
+                }
+
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    _keyUp.OnNext(spaceKey);
+                    _rawKeyUp.OnNext(spaceKey);
+                }
+            }
         }
         
         #endif

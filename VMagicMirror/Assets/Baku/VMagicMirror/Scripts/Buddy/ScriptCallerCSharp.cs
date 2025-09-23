@@ -27,6 +27,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly ScriptEventInvokerCSharp _eventInvoker;
         private readonly BuddySettingsRepository _settings;
+        private readonly BuddyAdvancedSettingsRepository _advancedSettings;
         private readonly BuddyLogger _logger;
         private readonly CancellationTokenSource _runScriptCts = new();
 
@@ -37,11 +38,13 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptCallerCSharp(
             string entryScriptPath,
             BuddySettingsRepository settings,
+            BuddyAdvancedSettingsRepository advancedSettings,
             ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvokerCSharp> scriptEventInvokerFactory
         ) : base(entryScriptPath, apiImplementBundle)
         {
             _settings = settings;
+            _advancedSettings = advancedSettings;
             _logger = apiImplementBundle.Logger;
             _eventInvoker = scriptEventInvokerFactory.Create(Api);
         }
@@ -79,22 +82,29 @@ namespace Baku.VMagicMirror.Buddy
                     .WithEmitDebugInformation(_settings.DeveloperModeActive.CurrentValue)
                     // Buddysより上のフォルダのスクリプトのロードを塞ぐ
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
-                    // #r を全面的に制限
-                    .WithMetadataResolver(BuddyScriptMetadataReferenceResolver.Instance)
                     .WithReferences(
                         typeof(object).Assembly,
                         typeof(BuddyApi.IRootApi).Assembly
                     );
+
+                // 明示的に許可されてない限り、 #r を全面的に制限
+                if (!_advancedSettings.EnableRDirective.CurrentValue)
+                {
+                    scriptOptions = scriptOptions.WithMetadataResolver(BuddyScriptMetadataReferenceResolver.Instance);
+                }
                 
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
-                
-                // 使っちゃダメな想定の namespace に触っている場合、RunAsync前に停止
-                var analyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResult(_script.GetCompilation());
-                if (analyzeResult.HasError)
+
+                // 使っちゃダメな想定の namespace を扱っている場合、RunAsync前に停止
+                if (!_advancedSettings.SkipNamespaceLimitation.CurrentValue)
                 {
-                    _logger.LogScriptAnalyzeError(BuddyFolder, analyzeResult.Message);
-                    return;
+                    var analyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResult(_script.GetCompilation());
+                    if (analyzeResult.HasError)
+                    {
+                        _logger.LogScriptAnalyzeError(BuddyFolder, analyzeResult.Message);
+                        return;
+                    }
                 }
                 
                 _scriptState = await _script.RunAsync(

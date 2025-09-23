@@ -5,23 +5,26 @@ using Microsoft.CodeAnalysis.Scripting;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class BuddyScriptMetadataReferenceResolver : MetadataReferenceResolver
+    /// <summary>
+    /// #r の実行を一律で禁止するようなResolver実装
+    /// </summary>
+    public class BuddyRDirectiveDisabledMetadataReferenceResolver : MetadataReferenceResolver
     {
         private static MetadataReferenceResolver Resolver => ScriptOptions.Default.MetadataResolver;
             
-        public static BuddyScriptMetadataReferenceResolver Instance { get; }= new();
+        public static BuddyRDirectiveDisabledMetadataReferenceResolver Instance { get; }= new();
         
         // 同じ型でさえあれば等価扱いしとく
         public override bool Equals(object other)
-            => other is BuddyScriptMetadataReferenceResolver;
+            => other is BuddyRDirectiveDisabledMetadataReferenceResolver;
         public override int GetHashCode()
-            => typeof(BuddyScriptMetadataReferenceResolver).GetHashCode();
+            => typeof(BuddyRDirectiveDisabledMetadataReferenceResolver).GetHashCode();
         
-        // #r が無視したいので明示的に塞ぐ
         public override ImmutableArray<PortableExecutableReference> ResolveReference(
             string reference, string baseFilePath, MetadataReferenceProperties properties
             )
         {
+            // ここが例外スローであることで一律禁止になる
             throw new InvalidOperationException("#r directive is not allowed in Buddy scripts.");
         }
         

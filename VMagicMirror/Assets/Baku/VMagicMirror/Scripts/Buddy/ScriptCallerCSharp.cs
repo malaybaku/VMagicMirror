@@ -80,6 +80,11 @@ namespace Baku.VMagicMirror.Buddy
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
                     .WithEmitDebugInformation(_settings.DeveloperModeActive.CurrentValue)
+                    // #r が使える場合はフォルダ制限を検証する用のResolver / そうでなければ単に一律禁止するResolver が入る
+                    .WithMetadataResolver(_advancedSettings.EnableRDirective.CurrentValue    
+                        ? BuddyAdvancedScriptMetadataReferenceResolver.Instance
+                        : BuddyRDirectiveDisabledMetadataReferenceResolver.Instance
+                        )
                     // Buddysより上のフォルダのスクリプトのロードを塞ぐ
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
                     .WithReferences(
@@ -87,12 +92,6 @@ namespace Baku.VMagicMirror.Buddy
                         typeof(BuddyApi.IRootApi).Assembly
                     );
 
-                // 明示的に許可されてない限り、 #r を全面的に制限
-                if (!_advancedSettings.EnableRDirective.CurrentValue)
-                {
-                    scriptOptions = scriptOptions.WithMetadataResolver(BuddyScriptMetadataReferenceResolver.Instance);
-                }
-                
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
 

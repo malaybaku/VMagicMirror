@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror.Buddy
                 if (BuddySourceFolderRestrictionUtil.IsNgPath(r.FilePath))
                 {
                     throw new InvalidOperationException(
-                        $"Found .dll file which is out of Buddy Folder: {r.FilePath}. The file mus be placed under the Buddy folder."
+                        $"Found .dll file which is out of Buddy Folder: {r.FilePath}. The file must be placed under the Buddy folder."
                         );
                 }
             }

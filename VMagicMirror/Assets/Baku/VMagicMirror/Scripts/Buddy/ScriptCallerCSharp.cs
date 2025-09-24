@@ -63,7 +63,6 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            // TODO: まだ雑ですよ！
             try
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
@@ -73,14 +72,14 @@ namespace Baku.VMagicMirror.Buddy
                 // - Importsを足すと破壊的変更になりうるので注意
                 // - 自動Importsに関するオプションをmanifest.jsonに足すとかで将来にわたって何かのメンテは可能そう
                 
-                // NOTE: EmitDebugInformationについて
-                // - 開発者モードの場合だけRuntimeError時の行数とかが言えてほしいため、
                 var scriptOptions = ScriptOptions.Default
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
+                    // 開発者モードの場合だけRuntimeError時の行数とかが言えてほしい
                     .WithEmitDebugInformation(_settings.DeveloperModeActive.CurrentValue)
-                    // #r が使える場合はフォルダ制限を検証する用のResolver / そうでなければ単に一律禁止するResolver が入る
+                    // - #r が使える場合はフォルダ制限を検証する用のResolverが入る
+                    // - #r を使っちゃダメな場合、単に一律禁止するResolver が入る
                     .WithMetadataResolver(_advancedSettings.EnableRDirective.CurrentValue    
                         ? BuddyAdvancedScriptMetadataReferenceResolver.Instance
                         : BuddyRDirectiveDisabledMetadataReferenceResolver.Instance

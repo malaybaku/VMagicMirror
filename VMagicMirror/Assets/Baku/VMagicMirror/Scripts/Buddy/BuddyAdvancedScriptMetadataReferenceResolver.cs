@@ -48,17 +48,6 @@ namespace Baku.VMagicMirror.Buddy
         public override PortableExecutableReference ResolveMissingAssembly(
             MetadataReference definition, AssemblyIdentity referenceIdentity
         )
-        {
-            var result = Resolver.ResolveMissingAssembly(definition, referenceIdentity);
-
-            if (result != null && BuddySourceFolderRestrictionUtil.IsNgPath(result.FilePath))
-            {
-                throw new InvalidOperationException(
-                    $"Found .dll file which is out of Buddy Folder: {result.FilePath}. The file mus be placed under the Buddy folder."
-                    );
-            }
-            
-            return result;
-        }
+            => Resolver.ResolveMissingAssembly(definition, referenceIdentity);
     }
 }

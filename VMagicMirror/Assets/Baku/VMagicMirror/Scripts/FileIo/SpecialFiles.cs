@@ -48,6 +48,12 @@ namespace Baku.VMagicMirror
         public static string DefaultBuddyRootDirectory { get; }
         public static string BuddyRootDirectory { get; }
 
+        // NOTE: 実行時でもStreamingAssetsを見に行く珍しいファイル。
+        // これは「全ユーザー向けにインストールしてる際、 Program Files 以下をいじらないと有効にならないような設定にしたい」というモチベで
+        // 特別に意図してこうしてる
+        public static string BuddyAdvancedSettingsFilePath
+            => Path.Combine(Application.streamingAssetsPath, "buddy_advanced_settings.json");
+
         //モーションやテクスチャ差し替えは以下の優先度になることに注意
         //- エディタの場合: StreamingAssets
         //- dev実行: VMM_Dev_Files

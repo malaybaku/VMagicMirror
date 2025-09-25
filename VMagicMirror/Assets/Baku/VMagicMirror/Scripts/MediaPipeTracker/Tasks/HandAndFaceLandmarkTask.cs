@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class HandAndFaceLandmarkTask : HandTask
+    public class HandAndFaceLandmarkTask : HandTask, IHandAndFaceLandmarkTask
     {
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 

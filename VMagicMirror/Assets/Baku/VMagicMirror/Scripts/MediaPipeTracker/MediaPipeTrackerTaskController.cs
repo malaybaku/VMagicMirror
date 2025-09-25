@@ -14,9 +14,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class MediaPipeTrackerTaskController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
-        private readonly HandTask _hand;
+        private readonly IHandLandmarkTask _hand;
         private readonly FaceLandmarkTask _face;
-        private readonly HandAndFaceLandmarkTask _handAndFace;
+        private readonly IHandAndFaceLandmarkTask _handAndFace;
 
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly HorizontalFlipController _horizontalFlipController;
@@ -28,9 +28,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             HorizontalFlipController horizontalFlipController,
             WebCamTextureSource webCamTextureSource,
-            HandTask hand,
             FaceLandmarkTask face,
-            HandAndFaceLandmarkTask handAndFace
+            IHandLandmarkTask hand,
+            IHandAndFaceLandmarkTask handAndFace
             )
         {
             _receiver = receiver;
@@ -38,8 +38,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _webCamTextureSource = webCamTextureSource;
             _horizontalFlipController = horizontalFlipController;
 
-            _hand = hand;
             _face = face;
+            _hand = hand;
             _handAndFace = handAndFace;
         }
 

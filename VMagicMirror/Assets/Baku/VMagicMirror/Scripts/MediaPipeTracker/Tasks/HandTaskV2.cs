@@ -72,8 +72,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
         {
-            if (result.leftHandLandmarks.landmarks == null &&
-                result.rightHandLandmarks.landmarks == null)
+            var hasLeftHand = result.HasLeftHandResult();
+            var hasRightHand = result.HasRightHandResult();
+
+            // TODO: ガード条件としてPoseも要求するのもアリ + Poseがある場合にヒジの位置をKinematicSetterに送る実装を入れたい
+            if (!hasLeftHand && !hasRightHand)
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
                 MediaPipeKinematicSetter.ClearRightHandPose();
@@ -83,29 +86,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            // TODO: Poseも要求するかどうか。Poseがない場合をOKにすると肘の位置がわからないケースが出てくるのがネック
-            // TODO: そもそもヒジの位置をKinematicSetterに渡す仕組みがまだない
-
-            var hasLeftHand = false;
-            var hasRightHand = false;
-            if (result.leftHandLandmarks.landmarks != null && result.leftHandWorldLandmarks.landmarks != null)
+            if (hasLeftHand)
             {
-                hasLeftHand = true;
                 SetLeftHandPose(result.leftHandLandmarks, result.leftHandWorldLandmarks);
             }
-            
-            if (result.rightHandLandmarks.landmarks != null && result.rightHandWorldLandmarks.landmarks != null)
-            {
-                hasRightHand = true;
-                SetRightHandPose(result.rightHandLandmarks, result.rightHandWorldLandmarks);
-            }
-
-            if (!hasLeftHand)
+            else
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
             }
-
-            if (!hasRightHand)
+            
+            if (hasRightHand)
+            {
+                SetRightHandPose(result.rightHandLandmarks, result.rightHandWorldLandmarks);
+            }
+            else
             {
                 MediaPipeKinematicSetter.ClearRightHandPose();
             }
@@ -147,5 +141,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
             MediaPipeKinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
         }
+    }
+    
+    static class HolisticLandmarkerResultExtensions
+    {
+        public static bool HasLeftHandResult(this in HolisticLandmarkerResult result) =>
+            result.leftHandLandmarks.landmarks is { Count: > 0 } &&
+            result.leftHandWorldLandmarks.landmarks is { Count : > 0 };
+
+        public static bool HasRightHandResult(this in HolisticLandmarkerResult result) =>
+            result.rightHandLandmarks.landmarks is { Count: > 0 } &&
+            result.rightHandWorldLandmarks.landmarks is { Count : > 0 };
     }
 }

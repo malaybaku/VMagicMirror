@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Mediapipe.Tasks.Vision.HandLandmarker;
+using Mediapipe.Tasks.Vision.HolisticLandmarker;
 using UnityEngine;
 using Zenject;
 
@@ -163,6 +164,46 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                         serialized.HasRightHand = true;
                         break;
                 }
+            }
+
+            if (serialized.HasLeftHand || serialized.HasRightHand)
+            {
+                _handResultToSend.Value = serialized;
+            }
+        }
+        
+        public void SetHandTrackingResult(HolisticLandmarkerResult result)
+        {
+            if (!_sendHandTrackingResult.Value ||
+                (result.leftHandLandmarks.landmarks == null && result.rightHandLandmarks.landmarks == null)
+                )
+            {
+                return;
+            }
+
+            var serialized = new SerializedHandTrackingResult();
+            if (result.leftHandLandmarks.landmarks != null)
+            {
+                serialized.LeftHandPoints = result.leftHandLandmarks.landmarks
+                    .Select(m => new SerializedHandTrackingResultPoint()
+                    {
+                        X = m.x,
+                        Y = m.y,
+                    })
+                    .ToArray();
+                serialized.HasLeftHand = true;
+            }
+
+            if (result.rightHandLandmarks.landmarks != null)
+            {
+                serialized.RightHandPoints = result.rightHandLandmarks.landmarks
+                    .Select(m => new SerializedHandTrackingResultPoint()
+                    {
+                        X = m.x,
+                        Y = m.y,
+                    })
+                    .ToArray();
+                serialized.HasRightHand = true;
             }
 
             if (serialized.HasLeftHand || serialized.HasRightHand)

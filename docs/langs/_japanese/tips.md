@@ -32,3 +32,5 @@ title: Tips
 [VRM AnimationをVMagicMirrorで使う](./use_vrma)
 
 [アクセサリ機能で使えるGLBファイルの入手方法](./get_glb_data)
+
+[アクセサリ機能でGLBファイルにMToonのマテリアルを適用して使う](./use_mtoon_defined_glb)

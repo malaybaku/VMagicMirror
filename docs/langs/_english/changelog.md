@@ -15,7 +15,7 @@ lang: en
 
 * Add: Hot Key support to change "Key/Mouse Motion" setting.
 * Add: Support for multiple blendshape selection in `Setting Window > Face > BlendShape > Offset BlendShape`.
-* Add: Support MToon shader in .glb when the file includes MToon material settings. Please see detail at [Use MToon in 3D Accessory](../tips/mtoon_glb).
+* Add: Support MToon shader in .glb when the file includes MToon material settings. Please see detail at [Use MToon Material in GLB Accessory](../tips/use_mtoon_defined_glb).
 * Change: Apply web camera based hand tracking result also when `Body Motion Style` option is `Standing Only`.
 * Change: Adjusted wrist and finger motion when using hand tracking feature.
 * Change: When changing avatar, camera position will change according to avatars' heights difference.

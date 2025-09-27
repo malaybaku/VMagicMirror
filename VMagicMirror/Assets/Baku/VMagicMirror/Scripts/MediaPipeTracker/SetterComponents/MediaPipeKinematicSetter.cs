@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -43,11 +42,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
+        // TODO: RateじゃなくてKinematicSetter上では角度っぽい値を持つようにしたい (「肩が真下からどのくらい開いてるかの角度」とかで良さそう)
+        public float LeftElbowOpenRate { get; private set; }
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 15);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
         private float _rightHandResultLostTime = 0f;
+        public float RightElbowOpenRate { get; private set; }
         
         [Inject]
         public MediaPipeKinematicSetter(
@@ -244,6 +246,30 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandResultLostTime = 0f;
         }
 
+        public void SetLeftElbowOpenRate(float rate)
+        {
+            if (IsHandMirrored)
+            {
+                RightElbowOpenRate = rate;
+            }
+            else
+            {
+                LeftElbowOpenRate = rate;
+            }
+        }
+
+        public void SetRightElbowOpenRate(float rate)
+        {
+            if (IsHandMirrored)
+            {
+                LeftElbowOpenRate = rate;
+            }
+            else
+            {
+                RightElbowOpenRate = rate;
+            }
+        }
+        
         #endregion
 
         void ITickable.Tick()
@@ -261,6 +287,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasLeftHandPose.Value &&
                     _leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
+                    LeftElbowOpenRate = 0f;
                     _hasLeftHandPose.Reset(false);
                     _leftHandResultLostTime = 0f;
                 }
@@ -269,6 +296,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasRightHandPose.Value &&
                     _rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
+                    RightElbowOpenRate = 0f;
                     _hasRightHandPose.Reset(false);
                     _rightHandResultLostTime = 0f;
                 }

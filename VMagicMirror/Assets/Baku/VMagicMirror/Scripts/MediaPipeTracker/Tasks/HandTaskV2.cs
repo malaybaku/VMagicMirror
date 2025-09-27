@@ -4,6 +4,7 @@ using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.HolisticLandmarker;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
@@ -75,16 +76,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var hasLeftHand = result.HasLeftHandResult();
             var hasRightHand = result.HasRightHandResult();
 
-            // TODO: ガード条件としてPoseも要求するのもアリ + Poseがある場合にヒジの位置をKinematicSetterに送る実装を入れたい
+            // NOTE: Poseの信頼性がないケースは甘めに見て通す: バストアップしか映ってないときにconfidenceが下がる可能性があるので
             if (!hasLeftHand && !hasRightHand)
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
                 MediaPipeKinematicSetter.ClearRightHandPose();
+                SetElbowOpenRate(result.poseLandmarks, false, false, false);    
 
                 //LandmarksVisualizer.ClearPositions();
                 //LandmarksVisualizer.Visualizer2D.Clear();
                 return;
-            }
+            } 
+            
+            var hasPose = result.poseLandmarks.landmarks is { Count: > 0 };
 
             if (hasLeftHand)
             {
@@ -108,6 +112,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 PreviewSender.SetHandTrackingResult(result);
             }
+
+            SetElbowOpenRate(result.poseLandmarks, hasLeftHand, hasRightHand, hasPose);
         }
 
         private void VisualizeLeftHand(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
@@ -140,6 +146,58 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
             MediaPipeKinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
+        }
+
+        //TODO: 開き具合ではなく幾何的な角度を計算するように直す。
+        //(11~16 のindexを使う、という情報を保全したいので一旦commitしてるけど実装はほぼ全修正になる予定)
+        private void SetElbowOpenRate(NormalizedLandmarks poseLandmarks, bool hasLeftHand, bool hasRightHand, bool hasPose)
+        {
+            if (!hasPose)
+            {
+                MediaPipeKinematicSetter.SetLeftElbowOpenRate(0f);
+                MediaPipeKinematicSetter.SetRightElbowOpenRate(0f);
+                return;
+            }
+            
+            //NOTE: 手自体が検出出来てない場合、肘のRateは0扱いする
+            if (hasLeftHand)
+            {
+                var shoulder = poseLandmarks.landmarks[11].ToVector2();
+                var elbow = poseLandmarks.landmarks[13].ToVector2();
+                var wrist = poseLandmarks.landmarks[15].ToVector2();
+                var shoulderToElbow = (elbow - shoulder).x;
+                // 画像上で左肘が肩より右にある = 肘が開いてる
+                var leftElbowOpenRate = Mathf.Clamp01(Mathf.InverseLerp(
+                    0.15f, 0.3f, shoulderToElbow
+                ));
+                MediaPipeKinematicSetter.SetLeftElbowOpenRate(leftElbowOpenRate);
+            }
+            else
+            {
+                MediaPipeKinematicSetter.SetLeftElbowOpenRate(0f);
+            }
+            
+            if (hasRightHand)
+            {
+                var shoulder = poseLandmarks.landmarks[12].ToVector2();
+                var elbow = poseLandmarks.landmarks[14].ToVector2();
+                var wrist = poseLandmarks.landmarks[16].ToVector2();
+                var diff = elbow - wrist;
+                // TODO: 肘の開き判定の基準が諸説ある？
+                // - そもそもElbowMotionModifierの仕様的に肘の開き度合いが直接指定できない
+                // - ので、ある種のファジーさを最初から考えたほうが良さそう
+                
+                // 左手より左肘が左にある = 肘が開いてる
+                // 肩との相対位置より筋が良い…はず
+                var rightElbowOpenRate = Mathf.Clamp01(Mathf.InverseLerp(
+                    0.15f, 0.3f, -diff.x
+                ));
+                MediaPipeKinematicSetter.SetRightElbowOpenRate(rightElbowOpenRate);
+            }
+            else
+            {
+                MediaPipeKinematicSetter.SetRightElbowOpenRate(0f);
+            }
         }
     }
     

@@ -8,6 +8,21 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.2.1
+{: .doc-sec2 }
+
+2025/09/28
+
+* Add: Hot Key support to change "Key/Mouse Motion" setting.
+* Add: Support for multiple blendshape selection in `Setting Window > Face > BlendShape > Offset BlendShape`.
+* Add: Support MToon shader in .glb when the file includes MToon material settings. Please see detail at [Use MToon in 3D Accessory](../tips/mtoon_glb).
+* Change: Apply web camera based hand tracking result also when `Body Motion Style` option is `Standing Only`.
+* Change: Adjusted wrist and finger motion when using hand tracking feature.
+* Change: When changing avatar, camera position will change according to avatars' heights difference.
+* Change: Buddy feature supports advanced functionality like external library load. This change is experimental.
+* Fixed: Fixed the issue that help URL navigation about blink tracking settings did not work.
+
+
 #### v4.2.0
 {: .doc-sec2 }
 
@@ -15,7 +30,7 @@ lang: en
 
 * Add: Support lower body motion receive in VMC Protocol feature.
 * Add: "Smooth Received Pose" and "Apply Base Spine Bones Tracking Result" options in VMC Protocol receive feature.
-* Fix: Bug that web camera / iFacialMocap based face control stops even when receiving VMC Protocol motion without blendshape.
+* Fixed: Bug that web camera / iFacialMocap based face control stops even when receiving VMC Protocol motion without blendshape.
 * Change: Apply finger bend and stretch more clearly in web camera based hand tracking.
 * Change: Shadow placement to be on y=0 ground when the avatar's lower body is controlled by VMC Protocol or Game Input feature. You can custom shadow placement behavior in `Setting Window > Effect > Shadow`.
 * Change: Improve performance in iFacialMocap receive process etc.

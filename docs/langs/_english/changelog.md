@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.2.2
+{: .doc-sec2 }
+
+2025/09/28
+
+* Fixed: In v4.2.1, VRM load does not success when model's finger bone is not defined.
+
+
 #### v4.2.1
 {: .doc-sec2 }
 

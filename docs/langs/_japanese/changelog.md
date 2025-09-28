@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v4.2.2
+{: .doc-sec2 }
+
+2025/09/28
+
+* 修正: v4.2.1で、指ボーンが未定義であるようなVRMのロードに失敗していたのを修正していました。
+
+
 #### v4.2.1
 {: .doc-sec2 }
 

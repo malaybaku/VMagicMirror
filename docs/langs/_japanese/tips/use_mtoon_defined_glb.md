@@ -23,7 +23,19 @@ title: アクセサリ機能でGLBファイルにMToonのマテリアルを適�
 #### 1. GLB出力用のUnityプロジェクトを準備する
 {: .doc-sec2 }
 
-Unity 6以降のバージョンのUnityプロジェクトを新規作成します。
+Unity 2022.3またはUnity 6以降のバージョンのUnityプロジェクトを新規作成します。
+
+プロジェクトの新規作成時にはBuilt-in Render Pipelineを選択します。
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+VMagicMirrorはv4.2.1時点でBuilt-in Render Pipelineを使用しています。
+
+Unity Editor上での見え方とVMagicMirrorに読み込んだときの見た目の一致度を上げるために、特に理由がない限りはBuilt-in Render Pipelineのプロジェクトを使用して下さい。
+
+</div>
 
 その後、プロジェクトに下記を導入します。
 
@@ -50,6 +62,8 @@ Unity 6以降のバージョンのUnityプロジェクトを新規作成しま�
 上記のプロジェクト上で、3Dデータのprefabを準備して、MToonシェーダーを用いたマテリアルを適用し、パラメータを調整します。このprefabのベースとなるモデルは `.fbx` をインポートしたものなど、 `.glb` 以外の形式でも問題ありません。
 
 prefabをセットアップ後、メニューバーの `MToonGltf -> Export MToon glTF...` からエクスポート用ウィンドウを開きます。エクスポートしたいprefabを選択して `.glb` ファイルをエクスポートします。
+
+エクスポート用ウィンドウでマテリアルに関する警告が表示されることがありますが、警告は無視して構いません。
 
 なお、出力結果の `.glb` を同じプロジェクトでインポートすると、GLBファイルにMToonの情報が正しく格納されたかどうかチェックできます。
 このチェックを行うにはメニューバーの `MToonGltf -> Use MToon glTF Importer` をオンにしてから、プロジェクト上に `.glb` ファイルを Drag & Dropします。

@@ -4,6 +4,7 @@ using System.Linq;
 using UniGLTF;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -97,7 +98,10 @@ namespace Baku.VMagicMirror.Buddy
 
             try
             {
-                _importerContext = new ImporterContext(data);
+                _importerContext = new ImporterContext(
+                    data,
+                    materialGenerator: new BuiltInVrm10MaterialDescriptorGenerator()
+                    );
                 _gltfInstance = _importerContext.Load();
                 _gltfInstance.ShowMeshes();
                 _gltfInstance.EnableUpdateWhenOffscreen();

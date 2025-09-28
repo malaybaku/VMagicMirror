@@ -19,6 +19,7 @@ namespace Baku.VMagicMirrorConfig
         EnableHandTracking,
         DisableHandTracking,
         ToggleHandTracking,
+        SetKeyMouseMotion,
     }
 
     public enum HotKeyActionBodyMotionStyle : int
@@ -26,6 +27,14 @@ namespace Baku.VMagicMirrorConfig
         Default = 0,
         AlwaysHandDown = 1,
         GameInputLocomotion = 2,        
+    }
+
+    public enum HotKeyActionKeyMouseMotionStyle : int
+    {
+        None,
+        Default,
+        PresentationMode,
+        PenTablet,
     }
 
     /// <summary>

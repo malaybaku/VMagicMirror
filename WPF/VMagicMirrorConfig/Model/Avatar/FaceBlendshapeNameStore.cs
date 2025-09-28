@@ -28,11 +28,11 @@ namespace Baku.VMagicMirrorConfig
 
         //Unityで読み込まれたアバターのブレンドシェイプ名の一覧です。
         //NOTE: この値は標準ブレンドシェイプ名を含んでいてもいなくてもOK。ただし現行動作では標準ブレンドシェイプ名は含まない。
-        private string[] _avatarClipNames = Array.Empty<string>();
+        private string[] _avatarClipNames = [];
 
         //設定ファイルから読み込んだ設定で使われていたブレンドシェイプ名の一覧。
         //NOTE: この値に標準ブレンドシェイプ名とそうでないのが混在することがあるが、それはOK
-        private string[] _settingUsedNames = Array.Empty<string>();
+        private string[] _settingUsedNames = [];
 
         /// <summary>
         /// ロードされたVRMの標準以外のブレンドシェイプ名を指定して、名前一覧を更新します。
@@ -48,12 +48,20 @@ namespace Baku.VMagicMirrorConfig
         /// <summary>
         /// ファイルからロードされたはずの設定を参照し、その中で使われているブレンドシェイプ名を参考にして名前一覧を更新します。
         /// </summary>
-        /// <param name="neutralClipName"></param>
-        /// <param name="offsetClipName"></param>
+        /// <param name="neutralClipName">Neutralクリップ。1つ指定するか、null/空文字列等を指定する</param>
+        /// <param name="offsetClipName">体型調整ブレンドシェイプ。複数ある場合、tab文字で区切ったものを渡す</param>
         public void Refresh(string? neutralClipName, string? offsetClipName)
         {
-            //NOTE: Refreshの挙動上、ここで""だけを2つ入れたりしても大丈夫。
-            _settingUsedNames = new string[] { neutralClipName ?? "", offsetClipName ?? "" };
+            if (string.IsNullOrEmpty(offsetClipName))
+            {
+                //NOTE: Refreshの挙動上、ここで""だけを2つ入れたりしても大丈夫。
+                _settingUsedNames = [neutralClipName ?? "", ""];
+            }
+            else
+            {
+                _settingUsedNames = [neutralClipName ?? "", .. offsetClipName.Split('\t')];
+            }
+
             RefreshInternal();
         }
 

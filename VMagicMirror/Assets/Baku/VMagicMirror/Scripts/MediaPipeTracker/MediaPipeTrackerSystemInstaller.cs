@@ -31,8 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             Container.BindInterfacesAndSelfTo<MediaPipeTrackerStatusPreviewSender>().AsSingle();
 
             // NOTE: 基本のトラッキングシステムというよりはモーション適用時の後処理みたいなやつ
-            // 骨折対策として入れていたが、安定してないので無効化している
-            // Container.BindInterfacesTo<MediaPipeHandLocalRotLimiter>().AsSingle();
+            Container.BindInterfacesTo<MediaPipeHandLocalRotLimiter>().AsSingle();
         }
     }
 }

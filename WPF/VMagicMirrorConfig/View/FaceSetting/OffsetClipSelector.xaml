@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="Baku.VMagicMirrorConfig.View.OffsetClipSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:v="clr-namespace:Baku.VMagicMirrorConfig.View"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+    mc:Ignorable="d"
+    d:DesignHeight="40" d:DesignWidth="160"
+    d:DataContext="{d:DesignInstance vm:OffsetClipViewModel}"
+    >
+    <UserControl.Resources>
+        <v:OffsetClipNameConverter x:Key="OffsetClipNameConverter" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:OffsetClipViewModel />
+    </UserControl.DataContext>
+    <Grid>
+        <ComboBox
+            Style="{StaticResource MaterialDesignComboBox}"
+            IsReadOnly="True"
+            StaysOpenOnEdit="True"
+            ItemsSource="{Binding Items}"
+            v:ComboBoxSelectProhibitBehavior.SuppressSelection="True"
+            >
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem" 
+                       BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </ComboBox.ItemContainerStyle>
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="vm:OffsetClipItemViewModel">
+                    <CheckBox 
+                        Margin="8,0,0,0"
+                        Content="{Binding DisplayName}" 
+                        IsChecked="{Binding Selected.Value, Mode=TwoWay}" 
+                        VerticalAlignment="Center"
+                        Padding="4,0,0,0"
+                    />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        
+        <!-- ComboBoxを隠す感じの配置になる -->
+        <TextBlock
+            IsHitTestVisible="False"
+            Margin="12,0,20,0"
+            Text="{Binding OffsetClipName.Value, Converter={StaticResource OffsetClipNameConverter}}"
+            TextWrapping="NoWrap"
+            TextTrimming="CharacterEllipsis"
+            />
+    </Grid>
+</UserControl>

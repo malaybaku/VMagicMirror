@@ -104,7 +104,12 @@ Following options are available.
 
 *`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To use this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
 
-Also, this tracking mode support `Blink Tracking Settings`.
+<a id="blink_tracking_settings"></a>
+
+##### Eye Tracking
+{: .doc-sec2 }
+
+In Web Camera (High Power) mode, `Blink Tracking Settings` window is available to custom blink tracking behavior.
 
 <div class="row">
 {% include docimg.html file="/images/docs/face_tracker_eye_calibration_window.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}

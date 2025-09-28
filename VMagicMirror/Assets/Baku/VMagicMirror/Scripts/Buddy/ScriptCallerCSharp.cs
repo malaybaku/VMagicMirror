@@ -27,6 +27,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly ScriptEventInvokerCSharp _eventInvoker;
         private readonly BuddySettingsRepository _settings;
+        private readonly BuddyAdvancedSettingsRepository _advancedSettings;
         private readonly BuddyLogger _logger;
         private readonly CancellationTokenSource _runScriptCts = new();
 
@@ -37,11 +38,13 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptCallerCSharp(
             string entryScriptPath,
             BuddySettingsRepository settings,
+            BuddyAdvancedSettingsRepository advancedSettings,
             ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvokerCSharp> scriptEventInvokerFactory
         ) : base(entryScriptPath, apiImplementBundle)
         {
             _settings = settings;
+            _advancedSettings = advancedSettings;
             _logger = apiImplementBundle.Logger;
             _eventInvoker = scriptEventInvokerFactory.Create(Api);
         }
@@ -60,7 +63,6 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            // TODO: まだ雑ですよ！
             try
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
@@ -70,31 +72,37 @@ namespace Baku.VMagicMirror.Buddy
                 // - Importsを足すと破壊的変更になりうるので注意
                 // - 自動Importsに関するオプションをmanifest.jsonに足すとかで将来にわたって何かのメンテは可能そう
                 
-                // NOTE: EmitDebugInformationについて
-                // - 開発者モードの場合だけRuntimeError時の行数とかが言えてほしいため、
                 var scriptOptions = ScriptOptions.Default
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
+                    // 開発者モードの場合だけRuntimeError時の行数とかが言えてほしい
                     .WithEmitDebugInformation(_settings.DeveloperModeActive.CurrentValue)
+                    // - #r が使える場合はフォルダ制限を検証する用のResolverが入る
+                    // - #r を使っちゃダメな場合、単に一律禁止するResolver が入る
+                    .WithMetadataResolver(_advancedSettings.EnableRDirective.CurrentValue    
+                        ? BuddyAdvancedScriptMetadataReferenceResolver.Instance
+                        : BuddyRDirectiveDisabledMetadataReferenceResolver.Instance
+                        )
                     // Buddysより上のフォルダのスクリプトのロードを塞ぐ
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
-                    // #r を全面的に制限
-                    .WithMetadataResolver(BuddyScriptMetadataReferenceResolver.Instance)
                     .WithReferences(
                         typeof(object).Assembly,
                         typeof(BuddyApi.IRootApi).Assembly
                     );
-                
+
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
-                
-                // 使っちゃダメな想定の namespace に触っている場合、RunAsync前に停止
-                var analyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResult(_script.GetCompilation());
-                if (analyzeResult.HasError)
+
+                // 使っちゃダメな想定の namespace を扱っている場合、RunAsync前に停止
+                if (!_advancedSettings.SkipNamespaceLimitation.CurrentValue)
                 {
-                    _logger.LogScriptAnalyzeError(BuddyFolder, analyzeResult.Message);
-                    return;
+                    var analyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResult(_script.GetCompilation());
+                    if (analyzeResult.HasError)
+                    {
+                        _logger.LogScriptAnalyzeError(BuddyFolder, analyzeResult.Message);
+                        return;
+                    }
                 }
                 
                 _scriptState = await _script.RunAsync(

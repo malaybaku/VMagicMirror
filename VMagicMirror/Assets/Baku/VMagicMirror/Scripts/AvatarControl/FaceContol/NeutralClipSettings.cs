@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 using UniVRM10;
 using Zenject;
 
@@ -10,6 +12,12 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class NeutralClipSettings : MonoBehaviour
     {
+        private bool _hasValidNeutralClipKey;
+        private ExpressionKey _neutralClipKey;
+
+        private bool _hasValidOffsetClipKey;
+        private ExpressionKey[] _offsetClipKeys = Array.Empty<ExpressionKey>();
+
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
@@ -17,10 +25,10 @@ namespace Baku.VMagicMirror
                 VmmCommands.FaceNeutralClip,
                 c =>
                 {
-                    HasValidNeutralClipKey = !string.IsNullOrWhiteSpace(c.GetStringValue());
-                    if (HasValidNeutralClipKey)
+                    _hasValidNeutralClipKey = !string.IsNullOrWhiteSpace(c.GetStringValue());
+                    if (_hasValidNeutralClipKey)
                     {
-                        NeutralClipKey = ExpressionKeyUtils.CreateKeyByName(
+                        _neutralClipKey = ExpressionKeyUtils.CreateKeyByName(
                             BlendShapeCompatUtil.GetVrm10ClipName(c.GetStringValue())
                             );
                     }
@@ -30,37 +38,35 @@ namespace Baku.VMagicMirror
                 VmmCommands.FaceOffsetClip,
                 c =>
                 {
-                    HasValidOffsetClipKey = !string.IsNullOrWhiteSpace(c.GetStringValue());
-                    if (HasValidOffsetClipKey)
+                    var stringValue = c.GetStringValue();
+                    _hasValidOffsetClipKey = !string.IsNullOrWhiteSpace(stringValue);
+                    if (_hasValidOffsetClipKey)
                     {
-                        OffsetClipKey = ExpressionKeyUtils.CreateKeyByName(
-                            BlendShapeCompatUtil.GetVrm10ClipName(c.GetStringValue())
-                            );
+                        _offsetClipKeys = stringValue.Split('\t')
+                            .Select(v => 
+                                ExpressionKeyUtils.CreateKeyByName(BlendShapeCompatUtil.GetVrm10ClipName(v)))
+                            .ToArray();
                     }
                 });
         }
         
         public void AccumulateNeutralClip(ExpressionAccumulator accumulator, float weight = 1f) 
         {
-            if (HasValidNeutralClipKey)
+            if (_hasValidNeutralClipKey)
             {
-                accumulator.Accumulate(NeutralClipKey, weight);
+                accumulator.Accumulate(_neutralClipKey, weight);
             }
         }
 
         public void AccumulateOffsetClip(ExpressionAccumulator accumulator)
         {
-            if (HasValidOffsetClipKey)
+            if (_hasValidOffsetClipKey)
             {
-                accumulator.Accumulate(OffsetClipKey, 1f);
+                foreach (var key in _offsetClipKeys)
+                {
+                    accumulator.Accumulate(key, 1f);
+                }
             }
         }
-
-        private bool HasValidNeutralClipKey = false;
-        private ExpressionKey NeutralClipKey;
-
-        private bool HasValidOffsetClipKey = false;
-        private ExpressionKey OffsetClipKey;
-        
     }
 }

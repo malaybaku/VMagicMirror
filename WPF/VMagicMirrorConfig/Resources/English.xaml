@@ -244,10 +244,6 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>
 
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">Hand tracking result will not be applied with current option.</sys:String>
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction">Switch Body Motion Style option to "Default" to apply hand tracking result.</sys:String>
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
-    
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
@@ -708,6 +704,11 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Motion Style > Standing Only</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Motion Style > Game Locomotion</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Motion Style > (Unknown)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Default">Key/Mouse Motion > Default</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PresentationMode">Key/Mouse Motion > Presentation</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_PenTablet">Key/Mouse Motion > Pen Tablet</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_None">Key/Mouse Motion > None</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetKeyMouseMotionStyle_Unknown">Key/Mouse Motion > (Unknown)</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleVMCPReceiveActive">VMC Protocol: Receive on/off</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleKeyboardVisibility">Visibility on/off: Keyboard</sys:String>
     <sys:String x:Key="Hotkey_Action_TogglePenVisibility">Visibility on/off: Pen</sys:String>
@@ -895,7 +896,6 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
-    <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">Body Motion Style is set to: "Default"</sys:String>
     <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">The log file of the buddy does not exist: {0}</sys:String>
 
     <!-- Other: Not on Dialog, but used from code -->
@@ -911,6 +911,8 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/en/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
+    <sys:String x:Key="URL_docs_face_tracker">https://malaybaku.github.io/VMagicMirror/en/docs/face_tracker</sys:String>
+    <sys:String x:Key="URL_docs_face_tracker_blink_settings">https://malaybaku.github.io/VMagicMirror/en/docs/face_tracker#blink_tracking_settings</sys:String>
 
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>

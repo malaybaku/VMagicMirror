@@ -33,3 +33,5 @@ Basic usage is in [Get Started](../get_started), and setting window detail is in
 [Use VRM Animation](./use_vrma)
 
 [How to get GLB Data for Accessory Feature](./get_glb_data)
+
+[Use MToon material in GLB Accessory](./use_mtoon_defined_glb)

@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
                 MediaPipeKinematicSetter.ClearRightHandPose();
-                SetElbowOpenRate(result.poseLandmarks, false, false, false);    
+                SetElbowPose(result.poseLandmarks, false, false, false);    
 
                 //LandmarksVisualizer.ClearPositions();
                 //LandmarksVisualizer.Visualizer2D.Clear();
@@ -113,7 +113,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 PreviewSender.SetHandTrackingResult(result);
             }
 
-            SetElbowOpenRate(result.poseLandmarks, hasLeftHand, hasRightHand, hasPose);
+            SetElbowPose(result.poseLandmarks, hasLeftHand, hasRightHand, hasPose);
         }
 
         private void VisualizeLeftHand(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
@@ -150,12 +150,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         //TODO: 開き具合ではなく幾何的な角度を計算するように直す。
         //(11~16 のindexを使う、という情報を保全したいので一旦commitしてるけど実装はほぼ全修正になる予定)
-        private void SetElbowOpenRate(NormalizedLandmarks poseLandmarks, bool hasLeftHand, bool hasRightHand, bool hasPose)
+        private void SetElbowPose(NormalizedLandmarks poseLandmarks, bool hasLeftHand, bool hasRightHand, bool hasPose)
         {
             if (!hasPose)
             {
-                MediaPipeKinematicSetter.SetLeftElbowOpenRate(0f);
-                MediaPipeKinematicSetter.SetRightElbowOpenRate(0f);
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(Vector2.zero);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(Vector2.zero);
                 return;
             }
             
@@ -164,39 +164,24 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 var shoulder = poseLandmarks.landmarks[11].ToVector2();
                 var elbow = poseLandmarks.landmarks[13].ToVector2();
-                var wrist = poseLandmarks.landmarks[15].ToVector2();
-                var shoulderToElbow = (elbow - shoulder).x;
-                // 画像上で左肘が肩より右にある = 肘が開いてる
-                var leftElbowOpenRate = Mathf.Clamp01(Mathf.InverseLerp(
-                    0.15f, 0.3f, shoulderToElbow
-                ));
-                MediaPipeKinematicSetter.SetLeftElbowOpenRate(leftElbowOpenRate);
+                //var wrist = poseLandmarks.landmarks[15].ToVector2();
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(elbow - shoulder);
             }
             else
             {
-                MediaPipeKinematicSetter.SetLeftElbowOpenRate(0f);
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(Vector2.zero);
             }
             
             if (hasRightHand)
             {
                 var shoulder = poseLandmarks.landmarks[12].ToVector2();
                 var elbow = poseLandmarks.landmarks[14].ToVector2();
-                var wrist = poseLandmarks.landmarks[16].ToVector2();
-                var diff = elbow - wrist;
-                // TODO: 肘の開き判定の基準が諸説ある？
-                // - そもそもElbowMotionModifierの仕様的に肘の開き度合いが直接指定できない
-                // - ので、ある種のファジーさを最初から考えたほうが良さそう
-                
-                // 左手より左肘が左にある = 肘が開いてる
-                // 肩との相対位置より筋が良い…はず
-                var rightElbowOpenRate = Mathf.Clamp01(Mathf.InverseLerp(
-                    0.15f, 0.3f, -diff.x
-                ));
-                MediaPipeKinematicSetter.SetRightElbowOpenRate(rightElbowOpenRate);
+                //var wrist = poseLandmarks.landmarks[16].ToVector2();
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(elbow - shoulder);
             }
             else
             {
-                MediaPipeKinematicSetter.SetRightElbowOpenRate(0f);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(Vector2.zero);
             }
         }
     }

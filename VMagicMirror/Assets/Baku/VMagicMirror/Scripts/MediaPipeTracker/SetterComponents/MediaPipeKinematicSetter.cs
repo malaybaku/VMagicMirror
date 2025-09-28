@@ -42,14 +42,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
-        // TODO: RateじゃなくてKinematicSetter上では角度っぽい値を持つようにしたい (「肩が真下からどのくらい開いてるかの角度」とかで良さそう)
-        public float LeftElbowOpenRate { get; private set; }
+        // NOTE: magnitudeにも意味を持たせて「肩と肘の画像座標が近い/遠い」をうまく表現したいが、今のところあまり詳細にはコントロールできてない
+        public Vector2 LeftShoulderToElbow { get; private set; }
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 15);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
         private float _rightHandResultLostTime = 0f;
-        public float RightElbowOpenRate { get; private set; }
+        public Vector2 RightShoulderToElbow { get; private set; }
         
         [Inject]
         public MediaPipeKinematicSetter(
@@ -246,27 +246,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandResultLostTime = 0f;
         }
 
-        public void SetLeftElbowOpenRate(float rate)
+        public void SetLeftShoulderToElbow(Vector2 value)
         {
             if (IsHandMirrored)
             {
-                RightElbowOpenRate = rate;
+                RightShoulderToElbow = MathUtil.Mirror(value);
             }
             else
             {
-                LeftElbowOpenRate = rate;
+                LeftShoulderToElbow = value;
             }
         }
 
-        public void SetRightElbowOpenRate(float rate)
+        public void SetRightShoulderToElbow(Vector2 value)
         {
             if (IsHandMirrored)
             {
-                LeftElbowOpenRate = rate;
+                LeftShoulderToElbow = MathUtil.Mirror(value);
             }
             else
             {
-                RightElbowOpenRate = rate;
+                RightShoulderToElbow = value;
             }
         }
         
@@ -287,7 +287,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasLeftHandPose.Value &&
                     _leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    LeftElbowOpenRate = 0f;
+                    LeftShoulderToElbow = Vector2.zero;
                     _hasLeftHandPose.Reset(false);
                     _leftHandResultLostTime = 0f;
                 }
@@ -296,7 +296,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasRightHandPose.Value &&
                     _rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    RightElbowOpenRate = 0f;
+                    RightShoulderToElbow = Vector2.zero;
                     _hasRightHandPose.Reset(false);
                     _rightHandResultLostTime = 0f;
                 }

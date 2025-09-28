@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
 
             // 親指以外では「Tポーズのときに指がすでにちょっと開いてるかどうか」だけ踏まえて微調整する。
             // 回転軸はほぼ +z/-z 軸に沿っているが、モデルの状態によってはx軸成分も入る
-            if (fingers[fingerNumber] == null || fingers[fingerNumber].Length < 3)
+            if (!HasValidFingerBone(fingers[fingerNumber], 3))
             {
                 return Vector3.forward;
             }
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
                 return GetRightThumbRotationAxis(fingers);
             }
 
-            if (fingers[fingerNumber] == null || fingers[fingerNumber].Length < 3)
+            if (!HasValidFingerBone(fingers[fingerNumber], 3))
             {
                 return Vector3.back;
             }
@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror
             // - 「人指 - 親指」の正規化したベクトルを回転軸にする
             // - 必要なボーンが足りない場合、諦めてVector3.upとかVector3.downを返す
             
-            if (fingers[0] == null || fingers[0].Length < 3 || fingers[1] == null || fingers[1].Length < 2)
+            if (!HasValidFingerBone(fingers[0], 3) || !HasValidFingerBone(fingers[1], 2))
             {
                 return Vector3.down;
             }
@@ -87,7 +87,7 @@ namespace Baku.VMagicMirror
         
         private static Vector3 GetRightThumbRotationAxis(Transform[][] fingers)
         {
-            if (fingers[5] == null || fingers[5].Length < 3 || fingers[6] == null || fingers[6].Length < 2)
+            if (!HasValidFingerBone(fingers[5], 3) || !HasValidFingerBone(fingers[6], 2))
             {
                 return Vector3.up;
             }
@@ -105,5 +105,23 @@ namespace Baku.VMagicMirror
 
         // ベクトルが小さすぎて計算が怪しいのを判定するやつ
         private static bool IsSmall(Vector3 v) => v.sqrMagnitude < (0.001f * 0.001f);
+
+        private static bool HasValidFingerBone(Transform[] fingerTransforms, int requiredLength)
+        {
+            if (fingerTransforms == null || fingerTransforms.Length < requiredLength)
+            {
+                return false;
+            }
+            
+            for (var i = 0; i < requiredLength; i++)
+            {
+                if (fingerTransforms[i] == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

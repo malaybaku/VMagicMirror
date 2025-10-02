@@ -154,8 +154,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             if (!hasPose)
             {
-                MediaPipeKinematicSetter.SetLeftShoulderToElbow(Vector2.zero);
-                MediaPipeKinematicSetter.SetRightShoulderToElbow(Vector2.zero);
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
                 return;
             }
             

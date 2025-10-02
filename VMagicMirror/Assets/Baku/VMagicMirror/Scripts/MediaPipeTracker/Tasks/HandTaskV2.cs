@@ -162,26 +162,26 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             //NOTE: 手自体が検出出来てない場合、肘のRateは0扱いする
             if (hasLeftHand)
             {
-                var shoulder = poseLandmarks.landmarks[11].ToVector2();
-                var elbow = poseLandmarks.landmarks[13].ToVector2();
-                //var wrist = poseLandmarks.landmarks[15].ToVector2();
+                var shoulder = poseLandmarks.landmarks[11].ToTrackingVector2(WebCamTextureAspect);
+                var elbow = poseLandmarks.landmarks[13].ToTrackingVector2(WebCamTextureAspect);
+                //var wrist = poseLandmarks.landmarks[15].ToTrackingVector2(WebCamTextureAspect);
                 MediaPipeKinematicSetter.SetLeftShoulderToElbow(elbow - shoulder);
             }
             else
             {
-                MediaPipeKinematicSetter.SetLeftShoulderToElbow(Vector2.zero);
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
             }
             
             if (hasRightHand)
             {
-                var shoulder = poseLandmarks.landmarks[12].ToVector2();
-                var elbow = poseLandmarks.landmarks[14].ToVector2();
-                //var wrist = poseLandmarks.landmarks[16].ToVector2();
+                var shoulder = poseLandmarks.landmarks[12].ToTrackingVector2(WebCamTextureAspect);
+                var elbow = poseLandmarks.landmarks[14].ToTrackingVector2(WebCamTextureAspect);
+                //var wrist = poseLandmarks.landmarks[16].ToTrackingVector2(WebCamTextureAspect);
                 MediaPipeKinematicSetter.SetRightShoulderToElbow(elbow - shoulder);
             }
             else
             {
-                MediaPipeKinematicSetter.SetRightShoulderToElbow(Vector2.zero);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
             }
         }
     }

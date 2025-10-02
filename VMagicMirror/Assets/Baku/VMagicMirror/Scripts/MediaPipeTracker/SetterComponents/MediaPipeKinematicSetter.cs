@@ -43,13 +43,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
         // NOTE: magnitudeにも意味を持たせて「肩と肘の画像座標が近い/遠い」をうまく表現したいが、今のところあまり詳細にはコントロールできてない
-        public Vector2 LeftShoulderToElbow { get; private set; }
+        public Vector2? LeftShoulderToElbow { get; private set; }
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 15);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
         private float _rightHandResultLostTime = 0f;
-        public Vector2 RightShoulderToElbow { get; private set; }
+        public Vector2? RightShoulderToElbow { get; private set; }
         
         [Inject]
         public MediaPipeKinematicSetter(
@@ -246,11 +246,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandResultLostTime = 0f;
         }
 
-        public void SetLeftShoulderToElbow(Vector2 value)
+        public void SetLeftShoulderToElbow(Vector2? value)
         {
             if (IsHandMirrored)
             {
-                RightShoulderToElbow = MathUtil.Mirror(value);
+                RightShoulderToElbow = value.HasValue ? MathUtil.Mirror(value.Value) : null;
             }
             else
             {
@@ -258,11 +258,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        public void SetRightShoulderToElbow(Vector2 value)
+        public void SetRightShoulderToElbow(Vector2? value)
         {
             if (IsHandMirrored)
             {
-                LeftShoulderToElbow = MathUtil.Mirror(value);
+                LeftShoulderToElbow = value.HasValue ? MathUtil.Mirror(value.Value) : null;
             }
             else
             {

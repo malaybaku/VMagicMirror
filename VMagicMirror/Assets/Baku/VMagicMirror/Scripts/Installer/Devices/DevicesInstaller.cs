@@ -6,17 +6,18 @@ namespace Baku.VMagicMirror.Installer
     /// <summary> デバイスの座標周りの処理をインジェクトしてくれるすごいやつだよ </summary>
     public class DevicesInstaller : InstallerBase, IDevicesRoot
     {
-        [SerializeField] private DeviceTransformController controller = null;
-        [SerializeField] private GamepadProvider gamepadProvider = null;
-        [SerializeField] private ArcadeStickProvider arcadeStickProvider = null;
+        [SerializeField] private DeviceTransformController controller;
+        [SerializeField] private HidTransformController hidTransformController;
+        [SerializeField] private GamepadProvider gamepadProvider;
+        [SerializeField] private ArcadeStickProvider arcadeStickProvider;
         [SerializeField] private CarHandleProvider carHandleProvider;
-        [SerializeField] private KeyboardProvider keyboardProvider = null;
-        [SerializeField] private TouchPadProvider touchPadProvider = null;
-        [SerializeField] private PenTabletProvider penTabletProvider = null;
-        [SerializeField] private PenController penController = null;
-        [SerializeField] private MidiControllerProvider midiControllerProvider = null;
-        [SerializeField] private ParticleStore particleStore = null;
-        [SerializeField] private MangaParticleView mangaParticleView = null;
+        [SerializeField] private KeyboardProvider keyboardProvider;
+        [SerializeField] private TouchPadProvider touchPadProvider;
+        [SerializeField] private PenTabletProvider penTabletProvider;
+        [SerializeField] private PenController penController;
+        [SerializeField] private MidiControllerProvider midiControllerProvider;
+        [SerializeField] private ParticleStore particleStore;
+        [SerializeField] private MangaParticleView mangaParticleView;
 
         public Transform Transform => transform;
         
@@ -35,6 +36,8 @@ namespace Baku.VMagicMirror.Installer
             // NOTE: マンガ風パーティクルは構造上はほかのパーティクルと違ってデバイス類との関連が薄いが、似てはいるのでここで管理してる
             container.BindInstance(mangaParticleView);
             container.BindInterfacesTo<MangaParticleController>().AsSingle();
+
+            container.BindInstance(hidTransformController);
 
             //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
             container.Bind<PenController>()

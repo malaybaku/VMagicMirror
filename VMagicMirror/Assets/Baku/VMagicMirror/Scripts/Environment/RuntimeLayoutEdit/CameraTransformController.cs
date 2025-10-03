@@ -27,14 +27,13 @@ namespace Baku.VMagicMirror
         
         //Input.GetKeyDownの値に似ているが、Update()の冒頭でtrueになり、Update()が終わる時点でfalseになる。trueの期間が短い
         private bool _altDown;
-        private bool _shiftDown;
         private bool _altDownHandled;
         private bool _shiftDownHandled;
 
         [Inject]
-        public void Inject(CameraUtilWrapper camera, IKeyMouseEventSource keySource)
+        public void Inject(CameraUtilWrapper cameraUtilWrapper, IKeyMouseEventSource keySource)
         {
-            _camera = camera;
+            _camera = cameraUtilWrapper;
             //NOTE: ここでSubscribeした内容が使われるのはビルドのみ
             keySource.RawKeyDown
                 .Subscribe(key =>
@@ -73,7 +72,6 @@ namespace Baku.VMagicMirror
         {
             if (_shift && !_shiftDownHandled)
             {
-                _shiftDown = true;
                 _shiftDownHandled = true;
             }
             if (_alt && !_altDownHandled)
@@ -112,7 +110,7 @@ namespace Baku.VMagicMirror
         }
 
         private void MouseWheel(float delta) 
-            => transform.position += transform.forward * delta * wheelSpeed;
+            => transform.position += transform.forward * (delta * wheelSpeed);
 
         private void MouseDrag(Vector3 mousePos)
         {
@@ -124,7 +122,7 @@ namespace Baku.VMagicMirror
 
             if (IsTranslating())
             {
-                transform.Translate(-diff * Time.deltaTime * moveSpeed);
+                transform.Translate(-diff * (Time.deltaTime * moveSpeed));
             }
             else if (IsRotating())
             {

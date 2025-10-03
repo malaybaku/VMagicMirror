@@ -1,5 +1,4 @@
 ﻿using Baku.VMagicMirror.VMCP;
-using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
@@ -31,7 +30,6 @@ namespace Baku.VMagicMirror
         private Vector3 _scale = Vector3.zero;
         private Vector3 _min = Vector3.zero;
         private Vector3 _max = Vector3.zero;
-        private Sequence _sequence = null;
         private float _currentLerpFactor;
         
         [Inject]

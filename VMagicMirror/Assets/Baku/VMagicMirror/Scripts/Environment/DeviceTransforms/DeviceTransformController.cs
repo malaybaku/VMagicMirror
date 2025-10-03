@@ -30,33 +30,33 @@ namespace Baku.VMagicMirror
         private const float GamePadModelMinScale = 0.1f;
         private const float GamePadModelMaxScale = 3.0f;
         
-        [SerializeField] private DeviceTransformControlCanvas canvasPrefab = null;
+        [SerializeField] private DeviceTransformControlCanvas canvasPrefab;
 
         public Slider GamepadModelScaleSlider { get; set; }
         public Canvas RawCanvas { get; set; }
         
         private IMessageSender _sender;
         
-        private bool _hasCanvas = false;
+        private bool _hasCanvas;
         private float _gamepadModelScale = 1.0f;
         
-        private SettingAutoAdjuster _settingAutoAdjuster = null;
+        private SettingAutoAdjuster _settingAutoAdjuster;
         private HidTransformController _hidTransformController;
         private GamepadProvider _gamepad;
         private ArcadeStickProvider _arcadeStick;
         private CarHandleProvider _carHandle;
         private PenTabletProvider _penTable;
 
-        private TransformControl _keyboardControl = null;
-        private TransformControl _touchPadControl = null;
-        private TransformControl _midiControl = null;
-        private TransformControl _gamepadControl= null;
-        private TransformControl _arcadeStickControl= null;
-        private TransformControl _carHandleControl = null;
-        private TransformControl _penTabletControl = null;
-        private Transform _gamepadModelScaleTarget = null;
+        private TransformControl _keyboardControl;
+        private TransformControl _touchPadControl;
+        private TransformControl _midiControl;
+        private TransformControl _gamepadControl;
+        private TransformControl _arcadeStickControl;
+        private TransformControl _carHandleControl;
+        private TransformControl _penTabletControl;
+        private Transform _gamepadModelScaleTarget;
         
-        private bool _preferWorldCoordinate = false;
+        private bool _preferWorldCoordinate;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
         private TransformControl[] _transformControls => new[]
@@ -179,9 +179,9 @@ namespace Baku.VMagicMirror
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
-            for (int i = 0; i < _transformControls.Length; i++)
+            foreach (var transformControl in _transformControls)
             {
-                _transformControls[i].Control();
+                transformControl.Control();
             }
             
             AdjustCarHandleScale();
@@ -260,10 +260,10 @@ namespace Baku.VMagicMirror
                 RawCanvas.gameObject.SetActive(IsDeviceFreeLayoutEnabled);
             }
 
-            for (int i = 0; i < _transformControls.Length; i++)
+            foreach (var transformControl in _transformControls)
             {
-                _transformControls[i].enabled = enable;
-                _transformControls[i].mode = enable ? _mode : TransformControl.TransformMode.None;
+                transformControl.enabled = enable;
+                transformControl.mode = enable ? _mode : TransformControl.TransformMode.None;
             }
         }
 

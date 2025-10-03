@@ -162,7 +162,8 @@ namespace Baku.VMagicMirror
 
                 var leftWorldPosition = rootPos + rootRotation * (
                     _leftUpperArm +
-                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, bendGoalZOffset) * _leftUpperArmLength
+                    new Vector3(0, 0, bendGoalZOffset) +
+                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, 0f) * _leftUpperArmLength
                     );
                 var leftLocalPosition = _hips.InverseTransformPoint(leftWorldPosition);
 
@@ -187,7 +188,7 @@ namespace Baku.VMagicMirror
                     _leftImageBasedPosition.Update(_latestLeftImageBasedRawPosition.Value);
                 }
                 _leftImageBasePositionWeight =
-                    Mathf.Clamp(_leftImageBasePositionWeight - imageBaseWeightDownSpeed * deltaTime, -0.0001f, imageBaseWeightMax);
+                    Mathf.Clamp(_leftImageBasePositionWeight - imageBaseWeightDownSpeed * deltaTime, 0f, imageBaseWeightMax);
             }
 
             var rightHandTargetType = handIkIntegrator.RightTargetType.CurrentValue;
@@ -196,7 +197,8 @@ namespace Baku.VMagicMirror
                 var shoulderToElbow = _mediaPipeKinematic.RightShoulderToElbow.Value.normalized;
                 var rightWorldPosition = rootPos + rootRotation * (
                     _rightUpperArm +
-                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, bendGoalZOffset) * _rightUpperArmLength
+                    new Vector3(0, 0, bendGoalZOffset) +
+                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, 0f) * _rightUpperArmLength
                     );
                 var rightLocalPosition = _hips.InverseTransformPoint(rightWorldPosition);
                 

@@ -59,7 +59,8 @@ namespace Baku.VMagicMirror
         private bool _preferWorldCoordinate;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
-        private TransformControl[] _transformControls => new[]
+        private TransformControl[] _transformControls;
+        private TransformControl[] TransformControls => _transformControls ??= new[]
         {
             _keyboardControl,
             _touchPadControl,
@@ -179,7 +180,7 @@ namespace Baku.VMagicMirror
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
-            foreach (var transformControl in _transformControls)
+            foreach (var transformControl in TransformControls)
             {
                 transformControl.Control();
             }
@@ -260,7 +261,7 @@ namespace Baku.VMagicMirror
                 RawCanvas.gameObject.SetActive(IsDeviceFreeLayoutEnabled);
             }
 
-            foreach (var transformControl in _transformControls)
+            foreach (var transformControl in TransformControls)
             {
                 transformControl.enabled = enable;
                 transformControl.mode = enable ? _mode : TransformControl.TransformMode.None;
@@ -419,7 +420,7 @@ namespace Baku.VMagicMirror
             }
 
             act();
-            foreach (var transformControl in _transformControls)
+            foreach (var transformControl in TransformControls)
             {
                 transformControl.global = _preferWorldCoordinate;
                 transformControl.mode = _mode;

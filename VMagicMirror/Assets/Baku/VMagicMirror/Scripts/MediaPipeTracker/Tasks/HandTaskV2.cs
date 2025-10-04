@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// HolisticLandmarkerを使って1人分のハンドトラッキングを行うクラス
     /// </summary>
-    public class HandTaskV2 : MediaPipeTrackerTaskBase, IHandLandmarkTask
+    public class HandTaskV2 : MediaPipeTrackerTaskBase
     {
         private const string ModelFileName = "holistic_landmarker.bytes";
         

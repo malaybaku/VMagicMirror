@@ -287,7 +287,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasLeftHandPose.Value &&
                     _leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    LeftShoulderToElbow = Vector2.zero;
+                    LeftShoulderToElbow = null;
                     _hasLeftHandPose.Reset(false);
                     _leftHandResultLostTime = 0f;
                 }
@@ -296,7 +296,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasRightHandPose.Value &&
                     _rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    RightShoulderToElbow = Vector2.zero;
+                    RightShoulderToElbow = null;
                     _hasRightHandPose.Reset(false);
                     _rightHandResultLostTime = 0f;
                 }

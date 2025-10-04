@@ -10,7 +10,7 @@ using Zenject;
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
     // NOTE: 「外部トラッキング(≒iFacialMocap) + ハンドトラッキング」の場合にだけ有効になる
-    public class HandTask : MediaPipeTrackerTaskBase, IHandLandmarkTask
+    public class HandTask : MediaPipeTrackerTaskBase
     {
         // NOTE: MediaPipeの標準的なモデルデータでは hand_landmark_(full|lite) という名称のものもあるが、これはlegacyのデータなのか動作しない 
         private const string ModelFileName = "hand_landmarker.bytes";
@@ -85,6 +85,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
+            // NOTE: 手トラッキングしながら肘トラをon->offに切り替えたとき用に、明示的に切り続けておく
+            MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
+            MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
+            
             var hasLeftHand = false;
             var hasRightHand = false;
             for (var i = 0; i < result.handedness.Count; i++)

@@ -16,16 +16,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             Container.BindInterfacesAndSelfTo<MediaPipeFacialValueRepository>().AsSingle();
             
             Container.Bind<FaceLandmarkTask>().AsSingle();
-            if (true)
-            {
-                Container.Bind<IHandLandmarkTask>().To<HandTaskV2>().AsSingle();
-                Container.Bind<IHandAndFaceLandmarkTask>().To<HandAndFaceLandmarkTaskV2>().AsSingle();
-            }
-            else
-            {
-                Container.Bind<IHandLandmarkTask>().To<HandTask>().AsSingle();
-                Container.Bind<IHandAndFaceLandmarkTask>().To<HandAndFaceLandmarkTask>().AsSingle();
-            }
+            Container.Bind<HandTask>().AsSingle();
+            Container.Bind<HandAndFaceLandmarkTask>().AsSingle();
+            Container.Bind<HandTaskV2>().AsSingle();
+            Container.Bind<HandAndFaceLandmarkTaskV2>().AsSingle();
             Container.BindInterfacesAndSelfTo<MediaPipeTrackerTaskController>().AsSingle();
 
             Container.Bind<MediaPipeFingerPoseCalculator>().AsSingle();

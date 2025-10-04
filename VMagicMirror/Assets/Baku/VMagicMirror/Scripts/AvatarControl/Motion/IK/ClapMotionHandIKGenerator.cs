@@ -28,7 +28,6 @@ namespace Baku.VMagicMirror.IK
         private readonly ColliderBasedAvatarParamLoader _avatarParamLoader;
         
         private bool _hasModel;
-        private Coroutine _resetElbowOffsetCoroutine;
         private Coroutine _clapCoroutine;
 
         public bool ClapMotionRunning { get; private set; }
@@ -108,11 +107,6 @@ namespace Baku.VMagicMirror.IK
             _leftState.RaiseRequest();
             _rightState.RaiseRequest();
 
-            if (_resetElbowOffsetCoroutine != null)
-            {
-                StopCoroutine(_resetElbowOffsetCoroutine);
-            }
-            
             if (_clapCoroutine != null)
             {
                 StopCoroutine(_clapCoroutine);
@@ -195,33 +189,9 @@ namespace Baku.VMagicMirror.IK
                     ClapMotionRunning = false;
                     _leftState.RaisePrevStateRequest();
                     _rightState.RaisePrevStateRequest();
-
-                    //NOTE: ヒジをいじるような実装が復活するならここでリセット処理もする
-                    // if (_resetElbowOffsetCoroutine != null)
-                    // {
-                    //     StopCoroutine(_resetElbowOffsetCoroutine);
-                    // }
-                    // _resetElbowOffsetCoroutine = StartCoroutine(ResetElbowOffsets(...));
                 }
 
                 _clapTime += Time.deltaTime;
-                yield return null;
-            }
-        }
-        
-        // 拍手が終わったあとにヒジの広げ方を元に戻すやつ
-        private IEnumerator ResetElbowOffsets(float leftElbowOffset, float rightElbowOffset, float duration)
-        {
-            //NOTE: ヒジをいじる実装が復活したら復活させます
-            yield break;
-            
-            var time = 0f;
-            while (time < duration)
-            {
-                var rate = Mathf.SmoothStep(1, 0, time / duration);
-                _elbowMotionModifier.LeftElbowPositionOffset = Vector3.left * (rate * leftElbowOffset);
-                _elbowMotionModifier.RightElbowPositionOffset = Vector3.right * (rate * rightElbowOffset);
-                time += Time.deltaTime;
                 yield return null;
             }
         }

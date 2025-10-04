@@ -32,8 +32,6 @@ namespace Baku.VMagicMirror
         //実行順序の関係で、LateTickの処理内容だけ特定した値をキャッシュして用いる
         private LateTickContent _content;
 
-        private bool _isLocked = false;
-
         private readonly IVRMLoadable _vrmLoadable;
         private readonly LateUpdateSourceAfterFinalIK _lateUpdateSource;
         
@@ -161,7 +159,6 @@ namespace Baku.VMagicMirror
         public void ReleaseLock()
         {
             Locker = null;
-            _isLocked = false;
         }
         
         /// <summary>

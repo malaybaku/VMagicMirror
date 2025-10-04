@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror
     public class ElbowMotionModifier : MonoBehaviour
     {
         private const float WidthFactorLerp = 6.0f;
+        private const float ElbowBendGoelPosCutOffFrequency = 2f;
         
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
@@ -27,7 +28,6 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)] 
         [SerializeField] private float ikWeightMinOnImageHandTracking = 0.8f;
         
-        [SerializeField] private float cutOffFrequency = .5f;
         [SerializeField] private float imageBaseWeightUpSpeed = 5f;
         [SerializeField] private float imageBaseWeightDownSpeed = 5f;
         [SerializeField] private float imageBaseWeightMax = 2f;
@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror
         private bool _hasModel = false;
         private Transform _leftArmBendGoal = null;
         private Transform _rightArmBendGoal = null;
-        private Transform _hips;
+        private Transform _spine;
         private Transform _vrmRoot;
         private FullBodyBipedIK _ik;
 
@@ -98,8 +98,8 @@ namespace Baku.VMagicMirror
             _handIKIntegrator = handIKIntegrator;
             _mediaPipeKinematic = mediaPipeKinematic;
 
-            _leftImageBasedPosition.SetUpAsLowPassFilter(60f, cutOffFrequency * Vector3.one);
-            _rightImageBasedPosition.SetUpAsLowPassFilter(60f, cutOffFrequency * Vector3.one);
+            _leftImageBasedPosition.SetUpAsLowPassFilter(60f, ElbowBendGoelPosCutOffFrequency * Vector3.one);
+            _rightImageBasedPosition.SetUpAsLowPassFilter(60f, ElbowBendGoelPosCutOffFrequency * Vector3.one);
         }
 
         private void Update()
@@ -164,9 +164,9 @@ namespace Baku.VMagicMirror
                 var leftWorldPosition = rootPos + rootRotation * (
                     _leftUpperArm +
                     new Vector3(0, 0, bendGoalZOffset) +
-                    shoulderToElbow * _leftUpperArmLength
+                    shoulderToElbow * (_leftUpperArmLength * 2f) // NOTE: BendGoalが肘より内側を指してると計算が安定しなさそうに見えてるので、遠目の位置を指定する
                     );
-                var leftLocalPosition = _hips.InverseTransformPoint(leftWorldPosition);
+                var leftLocalPosition = _spine.InverseTransformPoint(leftWorldPosition);
 
                 if (_latestLeftImageBasedRawPosition.HasValue)
                 {
@@ -201,9 +201,9 @@ namespace Baku.VMagicMirror
                 var rightWorldPosition = rootPos + rootRotation * (
                     _rightUpperArm +
                     new Vector3(0, 0, bendGoalZOffset) +
-                    shoulderToElbow * _rightUpperArmLength
+                    shoulderToElbow * (_rightUpperArmLength * 2f)
                     );
-                var rightLocalPosition = _hips.InverseTransformPoint(rightWorldPosition);
+                var rightLocalPosition = _spine.InverseTransformPoint(rightWorldPosition);
                 
                 if (_latestRightImageBasedRawPosition.HasValue)
                 {
@@ -252,6 +252,7 @@ namespace Baku.VMagicMirror
                 new Vector3(WaistWidthHalf * _rightWidthFactor, 0, bendGoalZOffset) + RightElbowPositionOffset;
             if (_rightImageBasePositionWeight > 0)
             {
+                Debug.Log($"Apply image based right elbow position, weight={_rightImageBasePositionWeight:0.000}");
                 _rightArmBendGoal.localPosition = Vector3.Lerp(
                     defaultRightBendGoal,
                     _rightImageBasedPosition.Output,
@@ -282,15 +283,15 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.fbbIk;
-            var spineBone = info.controlRig.GetBoneTransform(HumanBodyBones.Spine);
+            _spine = info.controlRig.GetBoneTransform(HumanBodyBones.Spine);
 
             _rightArmBendGoal = new GameObject().transform;
-            _rightArmBendGoal.SetParent(spineBone);
+            _rightArmBendGoal.SetParent(_spine);
             _rightArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.rightArmChain.bendConstraint.bendGoal = _rightArmBendGoal;
 
             _leftArmBendGoal = new GameObject().transform;
-            _leftArmBendGoal.SetParent(spineBone);
+            _leftArmBendGoal.SetParent(_spine);
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;
 
@@ -303,7 +304,6 @@ namespace Baku.VMagicMirror
             _rightUpperArmLength = Vector3.Distance(_rightUpperArm, rightLowerArm);
             
             _vrmRoot = info.vrmRoot;
-            _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
             _hasModel = true;
         }
 
@@ -312,10 +312,10 @@ namespace Baku.VMagicMirror
             _hasModel = false;
 
             _ik = null;
+            _spine = null;
             _rightArmBendGoal = null;
             _leftArmBendGoal = null;
             _vrmRoot = null;
-            _hips = null;
         }
     }
 }

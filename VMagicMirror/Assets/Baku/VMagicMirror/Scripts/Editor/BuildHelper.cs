@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
@@ -85,7 +86,7 @@ namespace Baku.VMagicMirror
         {
             //NOTE: スクリプトシンボルに過不足があれば直す。追加だけでなく削除も含むことに注意
             var symbols = PlayerSettings
-                .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
+                .GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
                 .Split(';')
                 .ToList();
             var isDirty = false;
@@ -114,11 +115,10 @@ namespace Baku.VMagicMirror
                 isDirty = true;
             }
 
-
             if (isDirty)
             {
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                    EditorUserBuildSettings.selectedBuildTargetGroup,
+                PlayerSettings.SetScriptingDefineSymbols(
+                    NamedBuildTarget.Standalone, 
                     symbols.ToArray()
                 );
             }

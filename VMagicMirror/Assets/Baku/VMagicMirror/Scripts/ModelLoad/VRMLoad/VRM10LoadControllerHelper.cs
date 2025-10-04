@@ -40,8 +40,8 @@ namespace Baku.VMagicMirror
 
             //NOTE: 要するに勝手にLookAt結果を代入しなければいい、という話.
             //VRM0ではCurveMapを勝手にいじってたが、これはモデルを尊重してない行為だと思うので廃止
-            instance.LookAtTargetType = VRM10ObjectLookAt.LookAtTargetTypes.CalcYawPitchToGaze;
-            instance.Gaze = ikTargets.LookAt;
+            instance.LookAtTargetType = VRM10ObjectLookAt.LookAtTargetTypes.SpecifiedTransform;
+            instance.LookAtTarget = ikTargets.LookAt;
             
             AddLookAtIK(controlRigRoot.gameObject, ikTargets.LookAt, controlRig, bipedReferences.root);
             AddFingerRigToRightIndex(controlRig, ikTargets);

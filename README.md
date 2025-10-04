@@ -54,8 +54,8 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 6.0.33f1 Personal
-* Visual Studio Community 2022 (17.13.0)
+* Unity 6.0.58f2 Personal
+* Visual Studio Community 2022 (17.14.11)
     * 「.NET Desktop」コンポーネントがインストール済みであること
     * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。

@@ -238,6 +238,7 @@
 フルエディションではエフェクトを無効化できます。</sys:String>
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
+    <sys:String x:Key="HandTracking_EnableElbowTracking">肘もトラッキングする (Experimental) </sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>

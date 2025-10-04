@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)] 
         [SerializeField] private float ikWeightMinOnImageHandTracking = 0.8f;
         
-        [SerializeField] private float cutOffFrequency = 3f;
+        [SerializeField] private float cutOffFrequency = .5f;
         [SerializeField] private float imageBaseWeightUpSpeed = 5f;
         [SerializeField] private float imageBaseWeightDownSpeed = 5f;
         [SerializeField] private float imageBaseWeightMax = 2f;
@@ -158,12 +158,13 @@ namespace Baku.VMagicMirror
             var leftHandTargetType = handIkIntegrator.LeftTargetType.CurrentValue;
             if (leftHandTargetType is HandTargetType.ImageBaseHand && _mediaPipeKinematic.LeftShoulderToElbow.HasValue)
             {
-                var shoulderToElbow = _mediaPipeKinematic.LeftShoulderToElbow.Value.normalized;
+                var shoulderToElbowInImage = _mediaPipeKinematic.LeftShoulderToElbow.Value;
+                var shoulderToElbow = ElbowOrientationCalculator.CalculateLeftElbowDirection(shoulderToElbowInImage);
 
                 var leftWorldPosition = rootPos + rootRotation * (
                     _leftUpperArm +
                     new Vector3(0, 0, bendGoalZOffset) +
-                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, 0f) * _leftUpperArmLength
+                    shoulderToElbow * _leftUpperArmLength
                     );
                 var leftLocalPosition = _hips.InverseTransformPoint(leftWorldPosition);
 
@@ -194,11 +195,13 @@ namespace Baku.VMagicMirror
             var rightHandTargetType = handIkIntegrator.RightTargetType.CurrentValue;
             if (rightHandTargetType is HandTargetType.ImageBaseHand && _mediaPipeKinematic.RightShoulderToElbow.HasValue)
             {
-                var shoulderToElbow = _mediaPipeKinematic.RightShoulderToElbow.Value.normalized;
+                var shoulderToElbowInImage = _mediaPipeKinematic.RightShoulderToElbow.Value;
+                var shoulderToElbow = ElbowOrientationCalculator.CalculateRightElbowDirection(shoulderToElbowInImage);
+                
                 var rightWorldPosition = rootPos + rootRotation * (
                     _rightUpperArm +
                     new Vector3(0, 0, bendGoalZOffset) +
-                    new Vector3(shoulderToElbow.x, shoulderToElbow.y, 0f) * _rightUpperArmLength
+                    shoulderToElbow * _rightUpperArmLength
                     );
                 var rightLocalPosition = _hips.InverseTransformPoint(rightWorldPosition);
                 
@@ -240,7 +243,6 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                Debug.Log("Apply default left bend goal");
                 _leftArmBendGoal.localPosition = defaultLeftBendGoal;
                 // しばらく肘トラッキングの情報が来なければ捨てる
                 _latestLeftImageBasedRawPosition = null;

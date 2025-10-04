@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
+        private readonly CurrentFramerateChecker _framerateChecker;
         private readonly CancellationTokenSource _cts = new();
         private readonly MediaPipeHandFinger _finger;
 
@@ -48,12 +49,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             TrackingLostHandCalculator trackingLostHandCalculator,
             MediaPipeFingerPoseCalculator fingerPoseCalculator,
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
-            MediapipePoseSetterSettings poseSetterSettings)
+            MediapipePoseSetterSettings poseSetterSettings,
+            CurrentFramerateChecker framerateChecker)
         {
             _vrmLoadable = vrmLoadable;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
             _trackingLostHandCalculator = trackingLostHandCalculator;
             _poseSetterSettings = poseSetterSettings;
+            _framerateChecker = framerateChecker;
 
             // NOTE: 指の操作はFingerControllerに委譲されている
             _finger = new MediaPipeHandFinger(settingsRepository, fingerPoseCalculator, fingerController);
@@ -109,6 +112,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _trackingLostHandCalculator.RightHandTrackingLostMotionCompleted
                 .Subscribe(_ => ResetRightHandFingerOnTrackingLost())
                 .AddTo(this);
+
+            _framerateChecker.CurrentFramerate
+                .Subscribe(SetupFilters)
+                .AddTo(this);
         }
 
         public override void Dispose()
@@ -161,6 +168,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
+        private void SetupFilters(float framerate)
+        {
+            // TODO: 左右の手の位置/回転用のフィルタもここでセットアップする
+            _finger.SetupFilters(framerate);
+        }
+        
         private void UpdateLeftHand()
         {
             if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost))
@@ -291,9 +304,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private class MediaPipeHandFinger
         {
+            private const float FingerAngleMoveCutoffFrequency = 3f;
+
             private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
             private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
             private readonly FingerController _fingerController;
+
+            private readonly BiQuadFilter[] _bendAngleFilters = new BiQuadFilter[10];
+            private readonly BiQuadFilter[] _openAngleFilters = new BiQuadFilter[10];
 
             public MediaPipeHandFinger(
                 MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
@@ -304,8 +322,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _settingsRepository = settingsRepository;
                 _fingerPoseCalculator = fingerPoseCalculator;
                 _fingerController = fingerController;
+                for (var i = 0; i < 10; i++)
+                {
+                    _bendAngleFilters[i] = new BiQuadFilter();
+                    _openAngleFilters[i] = new BiQuadFilter();
+                }
+                SetupFilters(60f);
             }
 
+            public void SetupFilters(float framerate)
+            {
+                for (var i = 0; i < 10; i++)
+                {
+                    _bendAngleFilters[i].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
+                    _openAngleFilters[i].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
+                }
+            }
+            
             public void ApplyLeftHandFinger() => ApplyFingerAngles(true);
             public void ApplyRightHandFinger() => ApplyFingerAngles(false);
 
@@ -322,12 +355,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 for (var i = thumbIndex; i <= littleIndex; i++)
                 {
                     var angles = _fingerPoseCalculator.GetFingerAngles(i, mirrored);
+                    var rawBendAngle = GetFingerBendAngle(angles.proximal, angles.intermediate, angles.distal);
+                    var bendAngle = _bendAngleFilters[i].Update(rawBendAngle);
+                    var openAngle = _openAngleFilters[i].Update(angles.open);
                     
-                    _fingerController.Hold(i, GetFingerBendAngle(
-                        angles.proximal, angles.intermediate, angles.distal
-                    ));
+                    _fingerController.Hold(i, bendAngle);
                     // NOTE: 親指のopenの制御がキモくなりそうな場合、親指だけここをスキップすべき
-                    _fingerController.HoldOpen(i, angles.open);
+                    _fingerController.HoldOpen(i, openAngle);
                 }
             }
 
@@ -358,6 +392,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _fingerController.Release(i);
                     _fingerController.ReleaseOpen(i);
+                    _bendAngleFilters[i].ResetValue(0f);
+                    _openAngleFilters[i].ResetValue(0f);
                 }
             }
         
@@ -367,6 +403,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _fingerController.Release(i);
                     _fingerController.ReleaseOpen(i);
+                    _bendAngleFilters[i].ResetValue(0f);
+                    _openAngleFilters[i].ResetValue(0f);
                 }
             }
 

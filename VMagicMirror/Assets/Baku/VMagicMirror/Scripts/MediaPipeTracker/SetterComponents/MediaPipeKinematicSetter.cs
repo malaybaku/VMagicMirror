@@ -42,7 +42,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
-        // NOTE: magnitudeにも意味を持たせて「肩と肘の画像座標が近い/遠い」をうまく表現したいが、今のところあまり詳細にはコントロールできてない
+        // NOTE: このベクトルは (+x,+y) がワールドの (+x,+y) と一致しててx/yのスケールは合ってるが画像座標系のスケール
         public Vector2? LeftShoulderToElbow { get; private set; }
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 15);

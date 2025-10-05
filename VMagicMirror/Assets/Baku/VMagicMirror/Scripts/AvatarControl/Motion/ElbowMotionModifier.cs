@@ -252,7 +252,6 @@ namespace Baku.VMagicMirror
                 new Vector3(WaistWidthHalf * _rightWidthFactor, 0, bendGoalZOffset) + RightElbowPositionOffset;
             if (_rightImageBasePositionWeight > 0)
             {
-                Debug.Log($"Apply image based right elbow position, weight={_rightImageBasePositionWeight:0.000}");
                 _rightArmBendGoal.localPosition = Vector3.Lerp(
                     defaultRightBendGoal,
                     _rightImageBasedPosition.Output,

@@ -332,10 +332,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             public void SetupFilters(float framerate)
             {
-                for (var i = 0; i < 10; i++)
+                _bendAngleFilters[0].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
+
+                var referenceFilter = _bendAngleFilters[0];
+                _openAngleFilters[0].CopyParametersFrom(referenceFilter);
+                for (var i = 1; i < _bendAngleFilters.Length; i++)
                 {
-                    _bendAngleFilters[i].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
-                    _openAngleFilters[i].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
+                    _bendAngleFilters[i].CopyParametersFrom(referenceFilter);
+                    _openAngleFilters[i].CopyParametersFrom(referenceFilter);
                 }
             }
             

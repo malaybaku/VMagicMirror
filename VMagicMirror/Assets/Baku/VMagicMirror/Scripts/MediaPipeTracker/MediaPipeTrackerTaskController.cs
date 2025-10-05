@@ -14,9 +14,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class MediaPipeTrackerTaskController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
-        private readonly HandTask _hand;
         private readonly FaceLandmarkTask _face;
+
+        private readonly HandTask _hand;
         private readonly HandAndFaceLandmarkTask _handAndFace;
+        private readonly HandTaskV2 _handWithElbow;
+        private readonly HandAndFaceLandmarkTaskV2 _handAndFaceWithElbow;
 
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly HorizontalFlipController _horizontalFlipController;
@@ -28,9 +31,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             HorizontalFlipController horizontalFlipController,
             WebCamTextureSource webCamTextureSource,
-            HandTask hand,
             FaceLandmarkTask face,
-            HandAndFaceLandmarkTask handAndFace
+            HandTask hand,
+            HandAndFaceLandmarkTask handAndFace,
+            HandTaskV2 handWithElbow,
+            HandAndFaceLandmarkTaskV2 handAndFaceWithElbow
             )
         {
             _receiver = receiver;
@@ -38,9 +43,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _webCamTextureSource = webCamTextureSource;
             _horizontalFlipController = horizontalFlipController;
 
-            _hand = hand;
             _face = face;
+            _hand = hand;
             _handAndFace = handAndFace;
+            _handWithElbow = handWithElbow;
+            _handAndFaceWithElbow = handAndFaceWithElbow;
         }
 
         // IPCで直接受け取る値
@@ -48,9 +55,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly ReactiveProperty<string> _cameraDeviceName = new("");
         private readonly ReactiveProperty<bool> _useWebCamHighPowerMode = new();
         private readonly ReactiveProperty<bool> _useHandTracking = new();
+        private readonly ReactiveProperty<bool> _useElbowTracking = new();
         private readonly ReactiveProperty<bool> _useExternalTracking = new();
         
-        // それぞれのMediaPipeタスクの稼働状況
+        // MediaPipeタスクの稼働状況で、「顔だけ」「手だけ」「顔と手」のどれを行うか決めるフラグ。
+        // 下記3つのフラグは2つ以上は同時にtrueにならないように制御する。
+        // これらのフラグと _useElbowTracking の値によって、5種類のTaskクラスのうち最大で1つが動作する
         private readonly ReactiveProperty<bool> _isFaceTaskRunning = new();
         private readonly ReactiveProperty<bool> _isHandTaskRunning = new();
         private readonly ReactiveProperty<bool> _isHandAndFaceTaskRunning = new();
@@ -68,6 +78,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _receiver.BindStringProperty(VmmCommands.SetCameraDeviceName, _cameraDeviceName);
             _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _useWebCamHighPowerMode);
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
+            _receiver.BindBoolProperty(VmmCommands.EnableImageBasedElbowTracking, _useElbowTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _useExternalTracking);
             
             // NOTE: WPF側ではパーフェクトシンクのon/offフラグは一種類だけである…というスタンスを取っているので、その値を拾う。
@@ -193,16 +204,39 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void SetupTaskAndWebCamTextureActiveStatus()
         {
+            // 下記5個のSubscribeにより、_face ~ _handAndFaceWithElbow が排他的に動く。もちろん何も動かないこともある
             _isFaceTaskRunning
                 .Subscribe(run => _face.SetTaskActive(run))
                 .AddTo(this);
 
             _isHandTaskRunning
+                .CombineLatest(
+                    _useElbowTracking,
+                    (handTaskRunning, useElbow) => handTaskRunning && !useElbow)
+                .DistinctUntilChanged()
                 .Subscribe(run => _hand.SetTaskActive(run))
+                .AddTo(this);
+
+            _isHandTaskRunning
+                .CombineLatest(
+                    _useElbowTracking,
+                    (handTaskRunning, useElbow) => handTaskRunning && useElbow)
+                .DistinctUntilChanged()
+                .Subscribe(run => _handWithElbow.SetTaskActive(run))
                 .AddTo(this);
             
             _isHandAndFaceTaskRunning
+                .CombineLatest(
+                    _useElbowTracking,
+                    (handAndFaceTaskRunning, useElbow) => handAndFaceTaskRunning && !useElbow)
                 .Subscribe(run => _handAndFace.SetTaskActive(run))
+                .AddTo(this);
+
+            _isHandAndFaceTaskRunning
+                .CombineLatest(
+                    _useElbowTracking,
+                    (handAndFaceTaskRunning, useElbow) => handAndFaceTaskRunning && useElbow)
+                .Subscribe(run => _handAndFaceWithElbow.SetTaskActive(run))
                 .AddTo(this);
             
             // NOTE: FaceTrackerとの競合回避するうえで、オフにする処理の一部はThrottleFrameできないかも…

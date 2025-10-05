@@ -87,6 +87,12 @@
                                 />
                     <CheckBox Margin="35,0,10,0" 
                                 VerticalContentAlignment="Center"
+                                Content="{DynamicResource HandTracking_EnableElbowTracking}" 
+                                IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
+                                IsChecked="{Binding EnableImageBasedElbowTracking.Value}"
+                                />
+                    <CheckBox Margin="35,0,10,0" 
+                                VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_DisableHorizontalFlip}" 
                                 IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                 IsChecked="{Binding DisableHandTrackingHorizontalFlip.Value}"

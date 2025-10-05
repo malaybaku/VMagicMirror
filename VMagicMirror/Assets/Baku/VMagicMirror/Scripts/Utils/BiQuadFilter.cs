@@ -24,6 +24,25 @@ namespace Baku.VMagicMirror
         public void SetUpAsLowPassFilter(float samplingRate, Vector3 cutOffFrequency)
             => SetUpAsLowPassFilter(samplingRate, cutOffFrequency, Vector3.one / Mathf.Sqrt(2));
 
+        /// <summary>
+        /// 3つのフィルタに全て同じパラメータをセットする
+        /// </summary>
+        /// <param name="samplingRate"></param>
+        /// <param name="cutOffFrequency"></param>
+        public void SetUpAsLowPassFilter(float samplingRate, float cutOffFrequency)
+        {
+            _x.SetUpAsLowPassFilter(samplingRate, cutOffFrequency, 1 / Mathf.Sqrt(2));
+            _y.CopyParametersFrom(_x);
+            _z.CopyParametersFrom(_x);
+        }
+        
+        public void CopyParametersFrom(BiQuadFilterVector3 src)
+        {
+            _x.CopyParametersFrom(src._x);
+            _y.CopyParametersFrom(src._y);
+            _z.CopyParametersFrom(src._z);
+        }
+        
         public void ResetValue(Vector3 value)
         {
             _x.ResetValue(value.x);
@@ -97,6 +116,21 @@ namespace Baku.VMagicMirror
             B0 *= a0inv;
             B1 *= a0inv;
             B2 *= a0inv;
+        }
+
+        /// <summary>
+        /// 他のFilterのパラメータをコピーする。
+        /// 同一の補間パラメータを複数のFilterで共有する場合、Filterの一つで SetUp~ 関数を呼んでから本関数を使うほうが
+        /// 三角関数の計算がちょっとだけケチれる
+        /// </summary>
+        /// <param name="src"></param>
+        public void CopyParametersFrom(BiQuadFilter src)
+        {
+            A1 = src.A1;
+            A2 = src.A2;
+            B0 = src.B0;
+            B1 = src.B1;
+            B2 = src.B2;
         }
 
         /// <summary>

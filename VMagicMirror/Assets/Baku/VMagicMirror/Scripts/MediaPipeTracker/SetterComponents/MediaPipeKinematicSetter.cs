@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -43,11 +42,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
+        // NOTE: このベクトルは (+x,+y) がワールドの (+x,+y) と一致しててx/yのスケールは合ってるが画像座標系のスケール
+        public Vector2? LeftShoulderToElbow { get; private set; }
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 15);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
         private float _rightHandResultLostTime = 0f;
+        public Vector2? RightShoulderToElbow { get; private set; }
         
         [Inject]
         public MediaPipeKinematicSetter(
@@ -244,6 +246,30 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandResultLostTime = 0f;
         }
 
+        public void SetLeftShoulderToElbow(Vector2? value)
+        {
+            if (IsHandMirrored)
+            {
+                RightShoulderToElbow = value.HasValue ? MathUtil.Mirror(value.Value) : null;
+            }
+            else
+            {
+                LeftShoulderToElbow = value;
+            }
+        }
+
+        public void SetRightShoulderToElbow(Vector2? value)
+        {
+            if (IsHandMirrored)
+            {
+                LeftShoulderToElbow = value.HasValue ? MathUtil.Mirror(value.Value) : null;
+            }
+            else
+            {
+                RightShoulderToElbow = value;
+            }
+        }
+        
         #endregion
 
         void ITickable.Tick()
@@ -261,6 +287,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasLeftHandPose.Value &&
                     _leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
+                    LeftShoulderToElbow = null;
                     _hasLeftHandPose.Reset(false);
                     _leftHandResultLostTime = 0f;
                 }
@@ -269,6 +296,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (_hasRightHandPose.Value &&
                     _rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
+                    RightShoulderToElbow = null;
                     _hasRightHandPose.Reset(false);
                     _rightHandResultLostTime = 0f;
                 }

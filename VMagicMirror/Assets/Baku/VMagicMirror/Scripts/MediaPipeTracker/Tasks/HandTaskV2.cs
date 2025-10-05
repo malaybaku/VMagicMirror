@@ -1,29 +1,30 @@
 using System;
 using System.Linq;
-using UnityEngine;
 using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
-using Mediapipe.Tasks.Vision.HandLandmarker;
+using Mediapipe.Tasks.Vision.HolisticLandmarker;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    // NOTE: 「外部トラッキング(≒iFacialMocap) + ハンドトラッキング」の場合にだけ有効になる
-    public class HandTask : MediaPipeTrackerTaskBase
+    // NOTE: この単発クラスは「外部トラッキング(≒iFacialMocap) + ハンドトラッキング」の場合にだけ有効になり、
+    // 「顔 + 手」の場合は代わりに HandAndFaceLandmarkTask のほうが動作する
+    /// <summary>
+    /// HolisticLandmarkerを使って1人分のハンドトラッキングを行うクラス
+    /// </summary>
+    public class HandTaskV2 : MediaPipeTrackerTaskBase
     {
-        // NOTE: MediaPipeの標準的なモデルデータでは hand_landmark_(full|lite) という名称のものもあるが、これはlegacyのデータなのか動作しない 
-        private const string ModelFileName = "hand_landmarker.bytes";
-        private const string LeftHandHandednessName = "Left";
-        private const string RightHandHandednessName = "Right";
-
+        private const string ModelFileName = "holistic_landmarker.bytes";
+        
         protected MediaPipeTrackerStatusPreviewSender PreviewSender { get; }
 
         private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
-        private HandLandmarker _landmarker;
+        private HolisticLandmarker _landmarker;
 
         [Inject]
-        public HandTask(
+        public HandTaskV2(
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
@@ -40,18 +41,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         protected override void OnStartTask()
         {
-            var options = new HandLandmarkerOptions(
+            var options = new HolisticLandmarkerOptions(
                 baseOptions: new BaseOptions(
                     modelAssetPath: FilePathUtil.GetModelFilePath(ModelFileName)
                 ),
                 Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM,
-                minHandDetectionConfidence: 0.7f,
-                minHandPresenceConfidence: 0.7f,
-                minTrackingConfidence: 0.7f,
-                numHands: 2,
+                minHandLandmarksConfidence: 0.7f,
+                minFaceDetectionConfidence: 0.7f,
+                minPoseDetectionConfidence: 0.6f,
                 resultCallback: OnResult
             );
-            _landmarker = HandLandmarker.CreateFromOptions(options);
+            _landmarker = HolisticLandmarker.CreateFromOptions(options);
         }
 
         protected override void OnStopTask()
@@ -71,53 +71,39 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _landmarker?.DetectAsync(image, source.TimestampMilliseconds);
         }
 
-        private void OnResult(HandLandmarkerResult result, Image image, long timestamp)
+        private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
         {
-            if (result.handedness == null || 
-                result.handLandmarks == null ||
-                result.handWorldLandmarks == null)
+            var hasLeftHand = result.HasLeftHandResult();
+            var hasRightHand = result.HasRightHandResult();
+
+            // NOTE: Poseの信頼性がないケースは甘めに見て通す: バストアップしか映ってないときにconfidenceが下がる可能性があるので
+            if (!hasLeftHand && !hasRightHand)
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
                 MediaPipeKinematicSetter.ClearRightHandPose();
+                SetElbowPose(result.poseLandmarks, false, false, false);    
 
                 //LandmarksVisualizer.ClearPositions();
                 //LandmarksVisualizer.Visualizer2D.Clear();
                 return;
-            }
-
-            // NOTE: 手トラッキングしながら肘トラをon->offに切り替えたとき用に、明示的に切り続けておく
-            MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
-            MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
+            } 
             
-            var hasLeftHand = false;
-            var hasRightHand = false;
-            for (var i = 0; i < result.handedness.Count; i++)
-            {
-                // categoryが無い可能性は考慮しない
-                var categoryName = result.handedness[i].categories[0].categoryName;
-                switch (categoryName)
-                {
-                    case LeftHandHandednessName:
-                        SetLeftHandPose(result.handLandmarks[i], result.handWorldLandmarks[i]);
-                        hasLeftHand = true;
-                        break;
-                    case RightHandHandednessName:
-                        SetRightHandPose(result.handLandmarks[i], result.handWorldLandmarks[i]);
-                        hasRightHand = true;
-                        break;
-                    default:
-                        // 来ないはず
-                        Debug.LogWarning("Detect Unknown Handedness type by HandLandmarker");
-                        break;
-                }
-            }
+            var hasPose = result.poseLandmarks.landmarks is { Count: > 0 };
 
-            if (!hasLeftHand)
+            if (hasLeftHand)
+            {
+                SetLeftHandPose(result.leftHandLandmarks, result.leftHandWorldLandmarks);
+            }
+            else
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
             }
-
-            if (!hasRightHand)
+            
+            if (hasRightHand)
+            {
+                SetRightHandPose(result.rightHandLandmarks, result.rightHandWorldLandmarks);
+            }
+            else
             {
                 MediaPipeKinematicSetter.ClearRightHandPose();
             }
@@ -126,6 +112,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 PreviewSender.SetHandTrackingResult(result);
             }
+
+            SetElbowPose(result.poseLandmarks, hasLeftHand, hasRightHand, hasPose);
         }
 
         private void VisualizeLeftHand(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
@@ -159,5 +147,53 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
             MediaPipeKinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
         }
+
+        //TODO: 開き具合ではなく幾何的な角度を計算するように直す。
+        //(11~16 のindexを使う、という情報を保全したいので一旦commitしてるけど実装はほぼ全修正になる予定)
+        private void SetElbowPose(NormalizedLandmarks poseLandmarks, bool hasLeftHand, bool hasRightHand, bool hasPose)
+        {
+            if (!hasPose)
+            {
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
+                return;
+            }
+            
+            //NOTE: 手自体が検出出来てない場合、肘のRateは0扱いする
+            if (hasLeftHand)
+            {
+                var shoulder = poseLandmarks.landmarks[11].ToTrackingVector2(WebCamTextureAspect);
+                var elbow = poseLandmarks.landmarks[13].ToTrackingVector2(WebCamTextureAspect);
+                //var wrist = poseLandmarks.landmarks[15].ToTrackingVector2(WebCamTextureAspect);
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(elbow - shoulder);
+            }
+            else
+            {
+                MediaPipeKinematicSetter.SetLeftShoulderToElbow(null);
+            }
+            
+            if (hasRightHand)
+            {
+                var shoulder = poseLandmarks.landmarks[12].ToTrackingVector2(WebCamTextureAspect);
+                var elbow = poseLandmarks.landmarks[14].ToTrackingVector2(WebCamTextureAspect);
+                //var wrist = poseLandmarks.landmarks[16].ToTrackingVector2(WebCamTextureAspect);
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(elbow - shoulder);
+            }
+            else
+            {
+                MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
+            }
+        }
+    }
+    
+    static class HolisticLandmarkerResultExtensions
+    {
+        public static bool HasLeftHandResult(this in HolisticLandmarkerResult result) =>
+            result.leftHandLandmarks.landmarks is { Count: > 0 } &&
+            result.leftHandWorldLandmarks.landmarks is { Count : > 0 };
+
+        public static bool HasRightHandResult(this in HolisticLandmarkerResult result) =>
+            result.rightHandLandmarks.landmarks is { Count: > 0 } &&
+            result.rightHandWorldLandmarks.landmarks is { Count : > 0 };
     }
 }

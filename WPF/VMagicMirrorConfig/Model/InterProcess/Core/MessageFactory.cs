@@ -123,6 +123,8 @@ namespace Baku.VMagicMirrorConfig
         public static Message DisableFaceTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableFaceTrackingHorizontalFlip, disable);
 
         public static Message EnableImageBasedHandTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedHandTracking, enable);
+        public static Message EnableImageBasedElbowTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedElbowTracking, enable);
+
         public static Message ShowEffectDuringHandTracking(bool enable) => BoolContent(VmmCommands.ShowEffectDuringHandTracking, enable);
         //Faceと同じく、disableという言い回しに注意
         public static Message DisableHandTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableHandTrackingHorizontalFlip, disable);

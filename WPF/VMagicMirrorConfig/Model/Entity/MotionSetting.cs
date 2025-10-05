@@ -16,6 +16,8 @@
 
         #region Full Body 
 
+        // NOTE: 名前に反して、このモードでも画像によるハンドトラッキングだけは有効になる(v4.2.1~)。
+        // 停止するトラッキングはキー/マウスやゲームパッド操作に関する部分までになる
         public bool EnableNoHandTrackMode { get; set; } = false;
         public bool EnableGameInputLocomotionMode { get; set; } = false;
 
@@ -44,6 +46,7 @@
 
         public bool EnableWebCamHighPowerMode { get; set; } = false;
         public bool EnableImageBasedHandTracking { get; set; } = false;
+        public bool EnableImageBasedElbowTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
         public int HandTrackingMotionScale { get; set; } = 100;
@@ -153,6 +156,7 @@
             EnableVoiceBasedMotion = true;
             DisableFaceTrackingHorizontalFlip = false;
             EnableImageBasedHandTracking = false;
+            EnableImageBasedElbowTracking = false;
 
             EnableLipSync = true;
             LipSyncMicrophoneDeviceName = "";

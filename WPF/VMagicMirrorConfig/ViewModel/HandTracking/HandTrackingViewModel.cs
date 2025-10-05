@@ -64,6 +64,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
 
         public RProperty<bool> EnableImageBasedHandTracking => _model.EnableImageBasedHandTracking;
+        public RProperty<bool> EnableImageBasedElbowTracking => _model.EnableImageBasedElbowTracking;
         private readonly RProperty<bool> _alwaysOn = new RProperty<bool>(true);
         public RProperty<bool> ShowEffectDuringHandTracking => FeatureLocker.FeatureLocked
             ? _alwaysOn

@@ -25,6 +25,31 @@ MonoBehaviour:
   scanline:
     overrideState: 1
     value: 0.117
+--- !u!114 &-8197112989273778022
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973ea24b13466964cac3346a5b444b0e, type: 3}
+  m_Name: VmmVhs
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  bleeding:
+    overrideState: 0
+    value: 0.8
+  fringing:
+    overrideState: 0
+    value: 1
+  scanline:
+    overrideState: 0
+    value: 0.125
 --- !u!114 &-4968429724501136736
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -121,6 +146,9 @@ MonoBehaviour:
   thicknessModifier:
     overrideState: 0
     value: 1
+  zBias:
+    overrideState: 0
+    value: 0.0001
   directLightingStrength:
     overrideState: 0
     value: 0
@@ -190,10 +218,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - {fileID: 114612591270388130}
-  - {fileID: -679367385162691271}
-  - {fileID: 1713800730463470002}
-  - {fileID: -4968429724501136736}
   - {fileID: -1130583540306501547}
+  - {fileID: 7244360627349825182}
+  - {fileID: 3912578787023532154}
+  - {fileID: -8197112989273778022}
 --- !u!114 &114612591270388130
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -266,3 +294,80 @@ MonoBehaviour:
   scanline:
     overrideState: 1
     value: 0.117
+--- !u!114 &3912578787023532154
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7e0b21f9fde1c429ce58be087a0258, type: 3}
+  m_Name: VmmAlphaEdge
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  thickness:
+    overrideState: 0
+    value: 20
+  threshold:
+    overrideState: 0
+    value: 1
+  edgeColor:
+    overrideState: 0
+    value: {r: 1, g: 1, b: 1, a: 1}
+  outlineOverwriteAlpha:
+    overrideState: 0
+    value: 0.02
+  highQualityMode:
+    overrideState: 0
+    value: 0
+--- !u!114 &7244360627349825182
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ee321134e4c554c81ec51a88a26d2b, type: 3}
+  m_Name: VmmMonochrome
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  useBlock:
+    overrideState: 0
+    value: 0
+  blockSize:
+    overrideState: 0
+    value: 4
+  useMonochrome:
+    overrideState: 0
+    value: 1
+  black:
+    overrideState: 0
+    value: {r: 0, g: 0, b: 0, a: 1}
+  white:
+    overrideState: 0
+    value: {r: 1, g: 1, b: 1, a: 1}
+  useLevel:
+    overrideState: 0
+    value: 0
+  levelDivision:
+    overrideState: 0
+    value: 8
+  whitenThreshold:
+    overrideState: 0
+    value: 4
+  useColorReduction:
+    overrideState: 0
+    value: 0
+  colorDivision:
+    overrideState: 0
+    value: 16

@@ -15,6 +15,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class MediaPipeHand : PresenterBase, ITickable
     {
+        private const float HandPositionCutoffFrequency = 5f;
+
         private readonly IVRMLoadable _vrmLoadable;
         private readonly MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
@@ -170,7 +172,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void SetupFilters(float framerate)
         {
-            _leftHandState.PositionFilter.SetUpAsLowPassFilter(framerate, 2f);
+            _leftHandState.PositionFilter.SetUpAsLowPassFilter(framerate, HandPositionCutoffFrequency);
             _rightHandState.PositionFilter.CopyParametersFrom(_leftHandState.PositionFilter);
             _finger.SetupFilters(framerate);
         }
@@ -298,7 +300,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private class MediaPipeHandFinger
         {
-            private const float FingerAngleMoveCutoffFrequency = 3f;
+            private const float FingerAngleMoveCutoffFrequency = 4f;
 
             private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
             private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;

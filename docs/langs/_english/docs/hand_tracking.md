@@ -84,6 +84,7 @@ There are several options available.
 
 <div class="doc-ul" markdown="1">
 
+- `Enable Elbow Tracking (Experimental)`: Available in v4.3.0 and later. Turn on to enable elbow tracking. Note that the option leads higher CPU usage.
 - `Disable Horizontal Flip`: Turn on to disable flip, so that avatar will raise right hand when you raise the right hand.
 - `Motion Scale(%)`: Specify scale to apply your motion to the avatar by percentage. Default value is 100.
 - `Hand Horizontal Offset (cm)`: A positive value will make the hands spread out to the left and right.

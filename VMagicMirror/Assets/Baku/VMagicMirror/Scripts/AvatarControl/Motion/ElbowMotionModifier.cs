@@ -2,6 +2,7 @@
 using UnityEngine;
 using RootMotion.FinalIK;
 using Zenject;
+using R3;
 
 namespace Baku.VMagicMirror
 {
@@ -11,7 +12,7 @@ namespace Baku.VMagicMirror
     public class ElbowMotionModifier : MonoBehaviour
     {
         private const float WidthFactorLerp = 6.0f;
-        private const float ElbowBendGoelPosCutOffFrequency = 2f;
+        private const float ElbowBendGoalPosCutOffFrequency = 2f;
         
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
@@ -80,7 +81,8 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             IMessageReceiver receiver,
             HandIKIntegrator handIKIntegrator,
-            MediaPipeKinematicSetter mediaPipeKinematic)
+            MediaPipeKinematicSetter mediaPipeKinematic,
+            CurrentFramerateChecker framerateChecker)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
@@ -98,8 +100,13 @@ namespace Baku.VMagicMirror
             _handIKIntegrator = handIKIntegrator;
             _mediaPipeKinematic = mediaPipeKinematic;
 
-            _leftImageBasedPosition.SetUpAsLowPassFilter(60f, ElbowBendGoelPosCutOffFrequency * Vector3.one);
-            _rightImageBasedPosition.SetUpAsLowPassFilter(60f, ElbowBendGoelPosCutOffFrequency * Vector3.one);
+            framerateChecker.CurrentFramerate
+                .Subscribe(frameRate =>
+                {
+                    _leftImageBasedPosition.SetUpAsLowPassFilter(frameRate, ElbowBendGoalPosCutOffFrequency);
+                    _rightImageBasedPosition.CopyParametersFrom(_leftImageBasedPosition);
+                })
+                .AddTo(this);
         }
 
         private void Update()

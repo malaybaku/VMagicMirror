@@ -36,6 +36,13 @@ namespace Baku.VMagicMirror
             _z.CopyParametersFrom(_x);
         }
         
+        public void CopyParametersFrom(BiQuadFilterVector3 src)
+        {
+            _x.CopyParametersFrom(src._x);
+            _y.CopyParametersFrom(src._y);
+            _z.CopyParametersFrom(src._z);
+        }
+        
         public void ResetValue(Vector3 value)
         {
             _x.ResetValue(value.x);

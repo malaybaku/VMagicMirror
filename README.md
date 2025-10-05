@@ -89,6 +89,7 @@ MediaPipeUnityPluginについては、モデルデータ(`.bytes`　ファイル
 
 - `face_landmarker_v2_with_blendshapes.bytes`
 - `hand_landmarker.bytes`
+- `holistic_landmarker.bytes`
 
 SharpDXは次の手順で導入します。
 

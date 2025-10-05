@@ -246,9 +246,6 @@ MonoBehaviour:
   applyScale: {x: -0.15, y: 0.15, z: 0.1}
   applyMin: {x: -0.02, y: -0.02, z: -0.01}
   applyMax: {x: 0.02, y: 0.02, z: 0.01}
-  applyScaleWhenNoHandTrack: {x: -0.8, y: 0.7, z: 0.6}
-  applyMinWhenNoHandTrack: {x: -0.2, y: -0.2, z: -0.1}
-  applyMaxWhenNoHandTrack: {x: 0.2, y: 0.2, z: 0.1}
   lerpFactor: 18
   lerpFactorOnLost: 3
   lerpFactorBlendDuration: 1
@@ -273,6 +270,8 @@ MonoBehaviour:
   lerpFactor: 18
   lerpFactorOnLost: 3
   lerpFactorBlendDuration: 1
+  useBiQuadFilter: 1
+  positionFilterCutOffFrequency: 2.5
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,6 +410,8 @@ MonoBehaviour:
   pitchLimitDeg: 25
   lerpFactor: 18
   lerpFactorOnLost: 3
+  useBiQuadFilter: 1
+  headRotationCutOffFrequency: 3
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,6 +462,9 @@ MonoBehaviour:
   bodyRollRateToElbowWidthMinusFactor: 1
   bendGoalZOffset: -0.2
   ikWeightMinOnImageHandTracking: 0.8
+  imageBaseWeightUpSpeed: 5
+  imageBaseWeightDownSpeed: 5
+  imageBaseWeightMax: 2
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0

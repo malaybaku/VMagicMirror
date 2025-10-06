@@ -90,7 +90,7 @@ About MediaPipeUnityPlugin, move following model files (`.bytes`) in the package
 
 - `face_landmarker_v2_with_blendshapes.bytes`
 - `hand_landmarker.bytes`
-
+- `holistic_landmarker.bytes`
 
 Install SharpDX by following steps.
 

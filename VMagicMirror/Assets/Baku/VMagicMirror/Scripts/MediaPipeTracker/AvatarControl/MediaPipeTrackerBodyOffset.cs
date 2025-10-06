@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 using Zenject;
+using R3;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -14,7 +15,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     {
         private const float TrackingLostWaitTime = 0.5f;
         private const float TweenDuration = 0.5f;
-        
         [Tooltip("受け取った値の適用スケール。割と小さい方がいいかも")]
         [SerializeField] private Vector3 applyScale = new(0.3f, 0.3f, 0.3f);
         //NOTE: 移動量もフレーバー程度ということで小さめに。
@@ -31,10 +31,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [SerializeField] private float lerpFactorOnLost = 3f;
         [Tooltip("接続が持続しているあいだ、徐々にLerpFactorを引き上げるのに使う値")]
         [SerializeField] private float lerpFactorBlendDuration = 1f;
+
+        [SerializeField] private bool useBiQuadFilter = true;
+        [SerializeField] private float positionFilterCutOffFrequency = 2.5f;
         
         private FaceControlConfiguration _config;
         //private ExternalTrackerDataSource _externalTracker;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
+        private CurrentFramerateChecker _framerateChecker;
+        private readonly BiQuadFilterVector3 _positionFilter = new();
         
         private Vector3 _scale = Vector3.zero;
         private Vector3 _min = Vector3.zero;
@@ -43,10 +48,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float _currentLerpFactor;
         
         [Inject]
-        public void Initialize(FaceControlConfiguration config, MediaPipeKinematicSetter mediaPipeKinematicSetter)
+        public void Initialize(
+            FaceControlConfiguration config,
+            MediaPipeKinematicSetter mediaPipeKinematicSetter,
+            CurrentFramerateChecker framerateChecker)
         {
             _config = config;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
+            _framerateChecker = framerateChecker;
+            
+            _framerateChecker.CurrentFramerate
+                .Subscribe(frameRate => 
+                    _positionFilter.SetUpAsLowPassFilter(frameRate, positionFilterCutOffFrequency))
+                .AddTo(this);
         }
         
         public Vector3 BodyOffset { get; private set; }
@@ -105,6 +119,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (_config.HeadMotionControlModeValue != FaceControlModes.WebCamHighPower)
             {
                 BodyOffset = Vector3.zero;
+                _positionFilter.ResetValue(Vector3.zero);
                 return;
             }
 
@@ -122,20 +137,36 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 )
                 : Vector3.zero;
 
-            if (isHeadTracked)
+            if (useBiQuadFilter)
             {
-                var addedLerp = 
-                    _currentLerpFactor +
-                    (lerpFactor - lerpFactorOnLost) * Time.deltaTime / lerpFactorBlendDuration;
-                _currentLerpFactor = Mathf.Min(addedLerp, lerpFactor);
+                if (isHeadTracked)
+                {
+                    BodyOffset = _positionFilter.Update(goal);
+                }
+                else
+                {
+                    // ロス時に戻す動作はゆっくりにする
+                    BodyOffset = Vector3.Lerp(BodyOffset, goal, lerpFactorOnLost * Time.deltaTime);
+                    _positionFilter.ResetValue(goal);
+                }
             }
             else
             {
-                //ロスったら一番遅いとこまでリセットし、やり直してもらう
-                _currentLerpFactor = lerpFactorOnLost;
+                if (isHeadTracked)
+                {
+                    var addedLerp = 
+                        _currentLerpFactor +
+                        (lerpFactor - lerpFactorOnLost) * Time.deltaTime / lerpFactorBlendDuration;
+                    _currentLerpFactor = Mathf.Min(addedLerp, lerpFactor);
+                }
+                else
+                {
+                    //ロスったら一番遅いとこまでリセットし、やり直してもらう
+                    _currentLerpFactor = lerpFactorOnLost;
+                }
+                
+                BodyOffset = Vector3.Lerp(BodyOffset, goal, _currentLerpFactor * Time.deltaTime);
             }
-            
-            BodyOffset = Vector3.Lerp(BodyOffset, goal, _currentLerpFactor * Time.deltaTime);
         }
     }
 }

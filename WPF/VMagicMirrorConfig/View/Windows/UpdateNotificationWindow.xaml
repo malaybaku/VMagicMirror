@@ -40,12 +40,34 @@
             <Run Text="{Binding ReleaseDate, Mode=OneWay, FallbackValue=(xxxx/xx/xx)}" />
         </TextBlock>
 
-        <TextBlock Grid.Row="1"
-                   Style="{StaticResource MaterialDesignBody2TextBlock}"
-                   FontWeight="Bold"
-                   Text="{DynamicResource UpdateDialog_ReleaseNoteHeader}"
-                   Margin="15,5,15,0"
-                   />
+        <Grid Grid.Row="1">
+            <TextBlock 
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                FontWeight="Bold"
+                Text="{DynamicResource UpdateDialog_ReleaseNoteHeader}"
+                Margin="15,5"
+                />
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Margin="10,5"
+                        >
+                <TextBlock Text="{DynamicResource UpdateDialog_OtherChanges}"
+                           VerticalAlignment="Center"
+                           Margin="0"
+                           />
+                <TextBlock Margin="5,0">
+                    <Hyperlink Command="{Binding OpenChangeLogPageCommand}"
+                               ToolTip="{DynamicResource URL_changelog}"
+                               Foreground="{StaticResource PrimaryHueMidBrush}"
+                               >
+                        <Run Text="changelog" />
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+
+        </Grid>
 
         <ScrollViewer Grid.Row="2"
                       Margin="0,5"

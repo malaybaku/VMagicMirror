@@ -63,7 +63,12 @@ namespace Baku.VMagicMirror
             }
             else if (msg == WM_SETCURSOR)
             {
-                // Unity側にカーソルの種類を制御させるとポインタ表示がうまく行かない (ウィンドウの縁付近で表示が切り替わらない)ので、UnityのWindowProcをバイパスする
+                // カーソル表示についてはUnity側の処理に引き渡すと常にデフォルトの見た目になってしまい、
+                // ウィンドウの縁でリサイズ用のカーソル表示にならないのを確認している。
+                // - 6.0000.33f1 ~ 6.0000.58f2 の間で内部挙動が変わったらしいが、
+                // - 空プロジェクトだと再現しないので、VMMが叩いてるP/Invokeの何かが原因の可能性が高い
+                // 
+                // この問題の対策として、カーソル表示に関してはUnityのWindowProcを使わず標準処理に帰着させる
                 return DefWindowProc(hWnd, msg, wParam, lParam);
             }
             return CallWindowProc(_oldWndProcPtr, hWnd, msg, wParam, lParam);

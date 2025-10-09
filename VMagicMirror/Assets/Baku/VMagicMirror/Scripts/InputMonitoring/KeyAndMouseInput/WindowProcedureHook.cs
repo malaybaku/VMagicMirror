@@ -61,9 +61,15 @@ namespace Baku.VMagicMirror
             {
                 ReceiveRawInput?.Invoke(lParam);
             }
+            else if (msg == WM_SETCURSOR)
+            {
+                // Unity側にカーソルの種類を制御させるとポインタ表示がうまく行かない (ウィンドウの縁付近で表示が切り替わらない)ので、UnityのWindowProcをバイパスする
+                return DefWindowProc(hWnd, msg, wParam, lParam);
+            }
             return CallWindowProc(_oldWndProcPtr, hWnd, msg, wParam, lParam);
         }
-        
+
+        private const uint WM_SETCURSOR = 0x0020;
         private const uint WM_INPUT = 0x00FF;
         private const int GWLP_WNDPROC = -4;
         
@@ -72,5 +78,8 @@ namespace Baku.VMagicMirror
 
         [DllImport("user32.dll")]
         private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-   }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+    }
 }

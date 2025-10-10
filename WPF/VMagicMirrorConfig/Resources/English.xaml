@@ -803,6 +803,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <!-- Update Window -->
     <sys:String x:Key="UpdateDialog_Title">VMagicMirror - Update is Available</sys:String>
     <sys:String x:Key="UpdateDialog_ReleaseNoteHeader">Release Note</sys:String>
+    <sys:String x:Key="UpdateDialog_OtherChanges">Other Changes: </sys:String>
     <sys:String x:Key="UpdateDialog_GetLatest">Get Latest Version</sys:String>
     <sys:String x:Key="UpdateDialog_AskMeLater">Ask me Later</sys:String>
     <sys:String x:Key="UpdateDialog_SkipThisVersion">Skip this Version</sys:String>    
@@ -905,6 +906,7 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     
     <!-- Localize dependent URLs -->
     <sys:String x:Key="URL_help_top">https://malaybaku.github.io/VMagicMirror/en</sys:String>
+    <sys:String x:Key="URL_changelog">https://malaybaku.github.io/VMagicMirror/en/changelog/</sys:String>
     <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>

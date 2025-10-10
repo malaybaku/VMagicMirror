@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v4.2.2
+v4.3.0
 
 * Author: Baxter
-* 2025/Sep/28
+* 2025/Oct/11
 
 The VRM avatar application without any special device.
 
@@ -58,7 +58,7 @@ Open Unity project with Unity 6.0.x, and open WPF project with Visual Studio 202
 Maintainer's environment is as following.
 
 * Unity 6.0.58f2 Personal
-* Visual Studio Community 2022 (17.14.11)
+* Visual Studio Community 2022 (17.14.16)
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 

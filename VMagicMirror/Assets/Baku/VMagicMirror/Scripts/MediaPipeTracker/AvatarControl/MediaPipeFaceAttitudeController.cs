@@ -133,11 +133,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 if (isTracked)
                 {
+                    // BiQuadFilterでトラッキング中の平滑化をするときは _prevRotationを使わず、フィルタの内部状態だけで補間する
                     rot = _rotationFilter.Update(rot);
                 }
                 else
                 {
-                    // ロス時はゆっくり戻す。戻すときはBiQuadFilterは使わない
+                    // ロス時はBiQuadFilterを使わず、ゆっくり正面に戻す
                     rot = Quaternion.Slerp(_prevRotation, Quaternion.identity, lerpFactorOnLost * Time.deltaTime);
                     _rotationFilter.ResetValue(rot);
                 }
@@ -146,9 +147,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 var t = (isTracked ? lerpFactor : lerpFactorOnLost) * Time.deltaTime;
                 rot = Quaternion.Slerp(_prevRotation, rot, t);
-                _prevRotation = rot;
             }
 
+            _prevRotation = rot;
             ApplyRotation(rot);
         }
 

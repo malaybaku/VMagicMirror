@@ -806,6 +806,7 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <!-- Update Window -->
     <sys:String x:Key="UpdateDialog_Title">VMagicMirror - 更新が利用可能です</sys:String>
     <sys:String x:Key="UpdateDialog_ReleaseNoteHeader">リリースノート</sys:String>
+    <sys:String x:Key="UpdateDialog_OtherChanges">その他の変更履歴: </sys:String>
     <sys:String x:Key="UpdateDialog_GetLatest">最新版を入手</sys:String>
     <sys:String x:Key="UpdateDialog_AskMeLater">後で通知</sys:String>
     <sys:String x:Key="UpdateDialog_SkipThisVersion">このバージョンはスキップ</sys:String>
@@ -911,6 +912,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
 
     <!-- Localize dependent URLs -->
     <sys:String x:Key="URL_help_top">https://malaybaku.github.io/VMagicMirror</sys:String>
+    <sys:String x:Key="URL_changelog">https://malaybaku.github.io/VMagicMirror/changelog/</sys:String>
     <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/docs/external_tracker</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>

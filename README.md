@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v4.2.2
+v4.3.0
 
 * 作成: 獏星(ばくすたー)
-* 2025/09/28
+* 2025/10/11
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -55,7 +55,7 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 メンテナの開発環境は以下の通りです。
 
 * Unity 6.0.58f2 Personal
-* Visual Studio Community 2022 (17.14.11)
+* Visual Studio Community 2022 (17.14.16)
     * 「.NET Desktop」コンポーネントがインストール済みであること
     * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。

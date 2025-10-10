@@ -20,7 +20,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         /// <param name="m"></param>
         /// <returns></returns>
         public static Vector2 ToVector2(this NormalizedLandmark m) => new(m.x, m.y);
-
+        
+        /// <summary>
+        /// ランドマークの座標を空間的にそれっぽい位置に変換する
+        /// </summary>
+        /// <param name="landmark"></param>
+        /// <param name="webcamTextureAspect"></param>
+        /// <returns></returns>
+        public static Vector2 ToTrackingVector2(this NormalizedLandmark landmark, float webcamTextureAspect)
+            => MediapipeMathUtil.GetTrackingNormalizePosition(landmark, webcamTextureAspect);
     }
 
     public static class FaceLandmarkerResultExtension

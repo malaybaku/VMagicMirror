@@ -14,7 +14,9 @@
             GetLatestVersionCommand = new ActionCommand(() => SetResult(UpdateDialogResult.GetLatestVersion));
             AskMeLaterCommand = new ActionCommand(() => SetResult(UpdateDialogResult.AskMeLater));
             SkipThisVersionCommand = new ActionCommand(() => SetResult(UpdateDialogResult.SkipThisVersion));
+            OpenChangeLogPageCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_changelog")));
         }
+
         private readonly UpdateCheckResult _modelData;
 
         //NOTE: この値はModel層があとで見に来る
@@ -31,6 +33,7 @@
         public ActionCommand GetLatestVersionCommand { get; }
         public ActionCommand AskMeLaterCommand { get; }
         public ActionCommand SkipThisVersionCommand { get; }
+        public ActionCommand OpenChangeLogPageCommand { get; }
 
         private bool? _dialogResult = null;
         public bool? DialogResult

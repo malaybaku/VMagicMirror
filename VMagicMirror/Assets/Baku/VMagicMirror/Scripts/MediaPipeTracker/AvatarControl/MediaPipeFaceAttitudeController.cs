@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
+using R3;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -28,6 +29,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Tooltip("トラッキングロスト時に姿勢を戻す速度のファクター。通常時よりかなり遅めに設定する")]
         [SerializeField] private float lerpFactorOnLost = 3f;
 
+        [SerializeField] private bool useBiQuadFilter = true;
+        [SerializeField] private float headRotationCutOffFrequency = 3f;
+        
         public bool IsActive { get; set; } = true;
 
         private bool _hasModel = false;
@@ -35,24 +39,26 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Transform _neck = null;
         private Transform _head = null;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
-        //private ExternalTrackerDataSource _externalTracker;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
+        private CurrentFramerateChecker _framerateChecker;
         private Quaternion _prevRotation = Quaternion.identity;
+
+        private readonly BiQuadFilterQuaternion _rotationFilter = new();
         
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
-            MediaPipeKinematicSetter mediaPipeKinematicSetter
-            //ExternalTrackerDataSource externalTracker
+            MediaPipeKinematicSetter mediaPipeKinematicSetter,
+            CurrentFramerateChecker framerateChecker
             )
         {
-            _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
-            //_externalTracker = externalTracker;
-            _carHandleBasedFk = carHandleBasedFk;
             _gameInputBodyMotionController = gameInputBodyMotionController;
+            _carHandleBasedFk = carHandleBasedFk;
+            _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
+            _framerateChecker = framerateChecker;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -69,6 +75,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _neck = null;
                 _head = null;
             };
+            
+            _framerateChecker.CurrentFramerate
+                .Subscribe(framerate => 
+                    _rotationFilter.SetUpAsLowPassFilter(framerate, headRotationCutOffFrequency))
+                .AddTo(this);
         }
 
         private void LateUpdate()
@@ -92,8 +103,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 headPose.rotation.ToAngleAxis(out rawAngle, out rawAxis);
             }
 
-            rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
-            
+            rawAngle = VMagicMirror.MathUtil.ClampAngle(rawAngle);
+
             // NOTE: ExTrackerの実装だとここでgameInputやcarHandleの回転を左右反転するが、MediaPipe版では幾何的に正しく計算してるので不要
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
             var gameInputRot = _gameInputBodyMotionController.LookAroundRotation;
@@ -104,50 +115,67 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 carHandleRot * 
                 Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
             
-            //ピッチだけ追加で絞る
-            var pitchCheck = rot * Vector3.forward;
-            var pitchAngle = Mathf.Asin(-pitchCheck.y) * Mathf.Rad2Deg;
+            // まずピッチを絞る
+            var pitchDir = rot * Vector3.forward;
+            var pitchAngle = Mathf.Asin(-pitchDir.y) * Mathf.Rad2Deg;
 
-            var reducedPitch = Mathf.Clamp(pitchAngle * pitchFactor, -pitchLimitDeg, pitchLimitDeg);
-            var pitchResetRot = Quaternion.AngleAxis(
-                reducedPitch - pitchAngle,
-                Vector3.right
-                );
+            var clampedPitch = Mathf.Clamp(pitchAngle * pitchFactor, -pitchLimitDeg, pitchLimitDeg);
+            var pitchResetRot = Quaternion.AngleAxis(clampedPitch - pitchAngle, Vector3.right);
             rot *= pitchResetRot;
 
-            //もう一度角度をチェックし、合計がデカすぎたら絞る
-            rot.ToAngleAxis(out float totalDeg, out var totalAxis);
+            // トータルの回転としての回転量を絞る
+            rot.ToAngleAxis(out var totalDeg, out var totalAxis);
             totalDeg = Mathf.Repeat(totalDeg + 180f, 360f) - 180f;
             totalDeg = Mathf.Clamp(totalDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
             rot = Quaternion.AngleAxis(totalDeg, totalAxis);
 
-            var t = (isTracked ? lerpFactor : lerpFactorOnLost) * Time.deltaTime;
-            rot = Quaternion.Slerp(_prevRotation, rot, t);
+            if (useBiQuadFilter)
+            {
+                if (isTracked)
+                {
+                    // BiQuadFilterでトラッキング中の平滑化をするときは _prevRotationを使わず、フィルタの内部状態だけで補間する
+                    rot = _rotationFilter.Update(rot);
+                }
+                else
+                {
+                    // ロス時はBiQuadFilterを使わず、ゆっくり正面に戻す
+                    rot = Quaternion.Slerp(_prevRotation, Quaternion.identity, lerpFactorOnLost * Time.deltaTime);
+                    _rotationFilter.ResetValue(rot);
+                }
+            }
+            else
+            {
+                var t = (isTracked ? lerpFactor : lerpFactorOnLost) * Time.deltaTime;
+                rot = Quaternion.Slerp(_prevRotation, rot, t);
+            }
+
             _prevRotation = rot;
-            
-            //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)
+            ApplyRotation(rot);
+        }
+
+        private void ApplyRotation(Quaternion rot)
+        {
+            // 首ボーンがあるかどうかで回転の分配をするかどうか変えてる
             var totalRot = _hasNeck
                 ? rot * _neck.localRotation * _head.localRotation
                 : rot * _head.localRotation;
             
-            totalRot.ToAngleAxis(
-                out float totalHeadRotDeg,
-                out Vector3 totalHeadRotAxis
-            );
-
-            totalHeadRotDeg = Mathf.Repeat(totalHeadRotDeg + 180f, 360f) - 180f;
-            //合計値ベースであらためて制限
-            totalHeadRotDeg = Mathf.Clamp(totalHeadRotDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
+            // NOTE: 呼び出し元と違って元の回転の情報があるので、それとの総和に対して制限をかけている
+            totalRot.ToAngleAxis(out var angle, out var axis);
+            angle = Mathf.Clamp(
+                VMagicMirror.MathUtil.ClampAngle(angle),
+                -HeadTotalRotationLimitDeg, 
+                HeadTotalRotationLimitDeg);
 
             if (_hasNeck)
             {
-                var halfRot = Quaternion.AngleAxis(totalHeadRotDeg * 0.5f, totalHeadRotAxis);
+                var halfRot = Quaternion.AngleAxis(angle * 0.5f, axis);
                 _neck.localRotation = halfRot;
                 _head.localRotation = halfRot;
             }
             else
             {
-                _head.localRotation = Quaternion.AngleAxis(totalHeadRotDeg, totalHeadRotAxis);
+                _head.localRotation = Quaternion.AngleAxis(angle, axis);
             }
         }
     }

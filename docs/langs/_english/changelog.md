@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.3.0
+{: .doc-sec2 }
+
+2025/10/11
+
+* Add: Elbow tracking option on hand tracking as an experimental feature.
+* Change: Add some smoothing processes to face / hand tracking with web camera.
+* Change: Updated Unity version to 6000.0.58f2 to apply security patch.
+
+
 #### v4.2.2
 {: .doc-sec2 }
 

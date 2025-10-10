@@ -30,30 +30,37 @@ namespace Baku.VMagicMirror
         private const float GamePadModelMinScale = 0.1f;
         private const float GamePadModelMaxScale = 3.0f;
         
-        [SerializeField] private DeviceTransformControlCanvas canvasPrefab = null;
+        [SerializeField] private DeviceTransformControlCanvas canvasPrefab;
 
         public Slider GamepadModelScaleSlider { get; set; }
         public Canvas RawCanvas { get; set; }
         
         private IMessageSender _sender;
         
-        private bool _hasCanvas = false;
+        private bool _hasCanvas;
         private float _gamepadModelScale = 1.0f;
         
-        private SettingAutoAdjuster _settingAutoAdjuster = null;
-        private TransformControl _keyboardControl = null;
-        private TransformControl _touchPadControl = null;
-        private TransformControl _midiControl = null;
-        private TransformControl _gamepadControl= null;
-        private TransformControl _arcadeStickControl= null;
-        private TransformControl _carHandleControl = null;
-        private TransformControl _penTabletControl = null;
-        private Transform _gamepadModelScaleTarget = null;
+        private SettingAutoAdjuster _settingAutoAdjuster;
+        private HidTransformController _hidTransformController;
+        private GamepadProvider _gamepad;
+        private ArcadeStickProvider _arcadeStick;
+        private CarHandleProvider _carHandle;
+        private PenTabletProvider _penTable;
+
+        private TransformControl _keyboardControl;
+        private TransformControl _touchPadControl;
+        private TransformControl _midiControl;
+        private TransformControl _gamepadControl;
+        private TransformControl _arcadeStickControl;
+        private TransformControl _carHandleControl;
+        private TransformControl _penTabletControl;
+        private Transform _gamepadModelScaleTarget;
         
-        private bool _preferWorldCoordinate = false;
+        private bool _preferWorldCoordinate;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
-        private TransformControl[] _transformControls => new[]
+        private TransformControl[] _transformControls;
+        private TransformControl[] TransformControls => _transformControls ??= new[]
         {
             _keyboardControl,
             _touchPadControl,
@@ -103,6 +110,7 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IMessageSender sender,
             SettingAutoAdjuster settingAutoAdjuster,
+            HidTransformController hidTransformController,
             KeyboardProvider keyboard,
             TouchPadProvider touchPad,
             MidiControllerProvider midiController,
@@ -114,6 +122,12 @@ namespace Baku.VMagicMirror
         {
             _sender = sender;
             _settingAutoAdjuster = settingAutoAdjuster;
+
+            _hidTransformController = hidTransformController;
+            _gamepad = gamepad;
+            _arcadeStick = arcadeStick;
+            _carHandle = carHandle;
+            _penTable = penTablet;
 
             _keyboardControl = keyboard.TransformControl;
             _touchPadControl = touchPad.TransformControl;
@@ -166,9 +180,9 @@ namespace Baku.VMagicMirror
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
-            for (int i = 0; i < _transformControls.Length; i++)
+            foreach (var transformControl in TransformControls)
             {
-                _transformControls[i].Control();
+                transformControl.Control();
             }
             
             AdjustCarHandleScale();
@@ -247,10 +261,10 @@ namespace Baku.VMagicMirror
                 RawCanvas.gameObject.SetActive(IsDeviceFreeLayoutEnabled);
             }
 
-            for (int i = 0; i < _transformControls.Length; i++)
+            foreach (var transformControl in TransformControls)
             {
-                _transformControls[i].enabled = enable;
-                _transformControls[i].mode = enable ? _mode : TransformControl.TransformMode.None;
+                transformControl.enabled = enable;
+                transformControl.mode = enable ? _mode : TransformControl.TransformMode.None;
             }
         }
 
@@ -350,12 +364,12 @@ namespace Baku.VMagicMirror
                     ArmLengthFactor = 1.0f,
                     HeightFactor = 1.0f,
                 };
-            
-            FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
-            FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
-            FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
-            FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
-            FindObjectOfType<CarHandleProvider>().SetLayoutParameter(parameters);
+
+            _hidTransformController.SetHidLayoutByParameter(parameters);
+            _gamepad.SetLayoutByParameter(parameters);
+            _arcadeStick.SetLayoutByParameter(parameters);
+            _penTable.SetLayoutParameter(parameters);
+            _carHandle.SetLayoutParameter(parameters);
             //デバイス移動が入るので必ず送信
             SendDeviceLayoutData();
         }
@@ -369,11 +383,12 @@ namespace Baku.VMagicMirror
                 ArmLengthFactor = 1.0f,
                 HeightFactor = 1.0f,
             };
-            FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
-            FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
-            FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
-            FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
-            FindObjectOfType<CarHandleProvider>().SetLayoutParameter(parameters);
+
+            _hidTransformController.SetHidLayoutByParameter(parameters);
+            _gamepad.SetLayoutByParameter(parameters);
+            _arcadeStick.SetLayoutByParameter(parameters);
+            _penTable.SetLayoutParameter(parameters);
+            _carHandle.SetLayoutParameter(parameters);
             SendDeviceLayoutData();
         }
 
@@ -405,10 +420,10 @@ namespace Baku.VMagicMirror
             }
 
             act();
-            for (int i = 0; i < _transformControls.Length; i++)
+            foreach (var transformControl in TransformControls)
             {
-                _transformControls[i].global = _preferWorldCoordinate;
-                _transformControls[i].mode = _mode;
+                transformControl.global = _preferWorldCoordinate;
+                transformControl.mode = _mode;
             }
         }
     }

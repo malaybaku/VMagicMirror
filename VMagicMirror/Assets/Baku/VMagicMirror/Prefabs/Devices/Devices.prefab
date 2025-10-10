@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 8028329551860939050}
+  hidTransformController: {fileID: 6260608085857414297}
   gamepadProvider: {fileID: 9160035658810551669, guid: 9eb02128556b62c4bbf03bbe74e57297,
     type: 3}
   arcadeStickProvider: {fileID: 6167114964147250039, guid: b72ecbe2757ebee4ba22fe5c8d70c8d3,
@@ -252,12 +253,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 63078896318268246, guid: acd3fd0b869ac9943a796b6ec1d24506,
         type: 3}
-      propertyPath: transformControls.Array.data[0]
+      propertyPath: 'transformControls.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 63078896318268246, guid: acd3fd0b869ac9943a796b6ec1d24506,
         type: 3}
-      propertyPath: transformControls.Array.data[1]
+      propertyPath: 'transformControls.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 621133302052280908, guid: acd3fd0b869ac9943a796b6ec1d24506,
@@ -566,6 +567,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acd3fd0b869ac9943a796b6ec1d24506, type: 3}
+--- !u!114 &6260608085857414297 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4136669779275994853, guid: acd3fd0b869ac9943a796b6ec1d24506,
+    type: 3}
+  m_PrefabInstance: {fileID: 8037310001979521660}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c43672cf46e1954cb280461a69ea74f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6432728701393205835 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3949628796980592695, guid: acd3fd0b869ac9943a796b6ec1d24506,

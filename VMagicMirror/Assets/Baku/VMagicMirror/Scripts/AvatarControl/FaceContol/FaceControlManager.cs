@@ -84,8 +84,7 @@ namespace Baku.VMagicMirror
             // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってると考えて、それをそのまま使い、微細運動とかも切っておく
             switch (_config.BlendShapeControlMode.CurrentValue)
             {
-                // NOTE: Trackedではない場合にも各々のEyeJitterに帰着するようにするのもアリ
-                // (「自動のとトラッキングのが頻繁に切り替わると見た目が悪い」みたいな問題が起こったら特に改変すべき)
+                // NOTE: Trackedではない場合にも単に各々のEyeJitterに帰着するようにするのもアリ
                 case FaceControlModes.ExternalTracker when externalTrackEyeJitter.IsTracked:
                     externalTrackEyeJitter.IsActive = true;
                     _mediaPipeEyeJitter.IsActive = false;
@@ -94,6 +93,12 @@ namespace Baku.VMagicMirror
                 case FaceControlModes.WebCamHighPower when _mediaPipeEyeJitter.IsEnabledAndTracked:
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = true;
+                    randomEyeJitter.IsActive = false;
+                    break;
+                case FaceControlModes.ExternalTracker or FaceControlModes.WebCamHighPower:
+                    // NOTE: 「トラッキングしてれば目の動きが取れるはずのモードでトラッキングロスしてる」のときは眼球運動は止めてしまう
+                    externalTrackEyeJitter.IsActive = false;
+                    _mediaPipeEyeJitter.IsActive = false;
                     randomEyeJitter.IsActive = false;
                     break;
                 default:

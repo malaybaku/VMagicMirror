@@ -15,10 +15,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class MediaPipeHand : PresenterBase, ITickable
     {
+        private const float HandPositionCutoffFrequency = 5f;
+
         private readonly IVRMLoadable _vrmLoadable;
         private readonly MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
+        private readonly CurrentFramerateChecker _framerateChecker;
         private readonly CancellationTokenSource _cts = new();
         private readonly MediaPipeHandFinger _finger;
 
@@ -48,12 +51,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             TrackingLostHandCalculator trackingLostHandCalculator,
             MediaPipeFingerPoseCalculator fingerPoseCalculator,
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
-            MediapipePoseSetterSettings poseSetterSettings)
+            MediapipePoseSetterSettings poseSetterSettings,
+            CurrentFramerateChecker framerateChecker)
         {
             _vrmLoadable = vrmLoadable;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
             _trackingLostHandCalculator = trackingLostHandCalculator;
             _poseSetterSettings = poseSetterSettings;
+            _framerateChecker = framerateChecker;
 
             // NOTE: 指の操作はFingerControllerに委譲されている
             _finger = new MediaPipeHandFinger(settingsRepository, fingerPoseCalculator, fingerController);
@@ -87,9 +92,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // モデルの読み込み直後に足元やTポーズの位置にIKが残るのを避けておく
             _vrmLoadable.PostVrmLoaded += _ =>
             {
-                _leftHandState.Position = _downHandIk.LeftHand.Position;
+                _leftHandState.ForceSetPosition(_downHandIk.LeftHand.Position);
                 _leftHandState.Rotation = _downHandIk.LeftHand.Rotation;
-                _rightHandState.Position = _downHandIk.RightHand.Position;
+                _rightHandState.ForceSetPosition(_downHandIk.RightHand.Position);
                 _rightHandState.Rotation = _downHandIk.RightHand.Rotation;
             };
 
@@ -108,6 +113,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             _trackingLostHandCalculator.RightHandTrackingLostMotionCompleted
                 .Subscribe(_ => ResetRightHandFingerOnTrackingLost())
+                .AddTo(this);
+
+            _framerateChecker.CurrentFramerate
+                .Subscribe(SetupFilters)
                 .AddTo(this);
         }
 
@@ -161,6 +170,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
+        private void SetupFilters(float framerate)
+        {
+            _leftHandState.PositionFilter.SetUpAsLowPassFilter(framerate, HandPositionCutoffFrequency);
+            _rightHandState.PositionFilter.CopyParametersFrom(_leftHandState.PositionFilter);
+            _finger.SetupFilters(framerate);
+        }
+        
         private void UpdateLeftHand()
         {
             if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost))
@@ -170,29 +186,26 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
                 if (maybeLost)
                 {
-                    // 局所的なのも含めてロストした場合: 回転は据え置きし、位置は惰性で動かす。短時間のはずなので加減速は無し
+                    // 局所的なのも含めてロストした場合: 回転は据え置きし、位置は惰性で動かす。この惰性で動くあいだはフィルタは使わない
                     _leftHandTrackedSpeed *= 1f - _poseSetterSettings.HandInertiaFactorWhenLost * dt;
                     var inertiaSpeed = 
                         Vector3.ClampMagnitude(_leftHandTrackedSpeed, _poseSetterSettings.HandMoveSpeedMax);
-                    _leftHandState.Position += inertiaSpeed * dt;
+                    _leftHandState.ForceSetPosition(_leftHandState.Position + inertiaSpeed * dt);
                 }
                 else
                 {
-                    // ロストしてなさそうな場合: pos/rotを平滑化しながら適用したうえで、ロスト時の慣性移動に使うための速度を更新
-                    var nextPosUnclamped = Vector3.Lerp(
-                        _leftHandState.Position, handPose.position, _poseSetterSettings.HandIkSmoothRate * dt
-                    );
-                    var nextPosClamped = Vector3.MoveTowards(
-                        _leftHandState.Position, nextPosUnclamped, _poseSetterSettings.HandMoveSpeedMax * dt
-                    );
-                    
+                    // ロストしてなさそうな場合: フィルタベースでpos/rotを動かしつつ、ロスト時に備えて速度を記録しておく
+                    var currentPosition = _leftHandState.Position;
+                    _leftHandState.SetFilteredPosition(
+                        handPose.position,
+                        _poseSetterSettings.HandMoveSpeedMax * dt
+                        );
                     _leftHandTrackedSpeed = Vector3.Lerp(
                         _leftHandTrackedSpeed, 
-                        (nextPosClamped - _leftHandState.Position) / dt,
+                        (_leftHandState.Position - currentPosition) / dt,
                         _poseSetterSettings.HandInertiaFactorToLogTrackedSpeed * dt
                     );
                     
-                    _leftHandState.Position = nextPosClamped;
                     _leftHandState.Rotation = Quaternion.Slerp(
                         _leftHandState.Rotation, handPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
                     );
@@ -209,7 +222,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     );
                 }
 
-                _leftHandState.Position = _trackingLostHandCalculator.LeftHandPose.position;
+                _leftHandState.ForceSetPosition(_trackingLostHandCalculator.LeftHandPose.position);
                 _leftHandState.Rotation = _trackingLostHandCalculator.LeftHandPose.rotation;
                 
                 // 完全にロストしてるケースで通過する
@@ -230,25 +243,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _rightHandTrackedSpeed *= 1f - _poseSetterSettings.HandInertiaFactorWhenLost * dt;
                     var inertiaSpeed = 
                         Vector3.ClampMagnitude(_rightHandTrackedSpeed, _poseSetterSettings.HandMoveSpeedMax);
-                    
-                    _rightHandState.Position += inertiaSpeed * dt;
+                    _rightHandState.ForceSetPosition(_rightHandState.Position + inertiaSpeed * dt);
                 }
                 else
                 {
-                    var nextPosUnclamped = Vector3.Lerp(
-                        _rightHandState.Position, handPose.position, _poseSetterSettings.HandIkSmoothRate * dt
+                    var currentPosition = _rightHandState.Position;
+                    _rightHandState.SetFilteredPosition(
+                        handPose.position,
+                        _poseSetterSettings.HandMoveSpeedMax * dt
                     );
-                    var nextPosClamped = Vector3.MoveTowards(
-                        _rightHandState.Position, nextPosUnclamped, _poseSetterSettings.HandMoveSpeedMax * dt
-                    );
-                    
                     _rightHandTrackedSpeed = Vector3.Lerp(
                         _rightHandTrackedSpeed, 
-                        (nextPosClamped - _rightHandState.Position) / dt,
+                        (_rightHandState.Position - currentPosition) / dt,
                         _poseSetterSettings.HandInertiaFactorToLogTrackedSpeed * dt
                     );
                     
-                    _rightHandState.Position = nextPosClamped;
                     _rightHandState.Rotation = Quaternion.Slerp(
                         _rightHandState.Rotation, handPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
                     );
@@ -265,7 +274,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     );
                 }
 
-                _rightHandState.Position = _trackingLostHandCalculator.RightHandPose.position;
+                _rightHandState.ForceSetPosition(_trackingLostHandCalculator.RightHandPose.position);
                 _rightHandState.Rotation = _trackingLostHandCalculator.RightHandPose.rotation;
             }
         }
@@ -291,9 +300,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private class MediaPipeHandFinger
         {
+            private const float FingerAngleMoveCutoffFrequency = 4f;
+
             private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
             private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
             private readonly FingerController _fingerController;
+
+            private readonly BiQuadFilter[] _bendAngleFilters = new BiQuadFilter[10];
+            private readonly BiQuadFilter[] _openAngleFilters = new BiQuadFilter[10];
 
             public MediaPipeHandFinger(
                 MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
@@ -304,8 +318,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _settingsRepository = settingsRepository;
                 _fingerPoseCalculator = fingerPoseCalculator;
                 _fingerController = fingerController;
+                for (var i = 0; i < 10; i++)
+                {
+                    _bendAngleFilters[i] = new BiQuadFilter();
+                    _openAngleFilters[i] = new BiQuadFilter();
+                }
+                SetupFilters(60f);
             }
 
+            public void SetupFilters(float framerate)
+            {
+                _bendAngleFilters[0].SetUpAsLowPassFilter(framerate, FingerAngleMoveCutoffFrequency);
+
+                var referenceFilter = _bendAngleFilters[0];
+                _openAngleFilters[0].CopyParametersFrom(referenceFilter);
+                for (var i = 1; i < _bendAngleFilters.Length; i++)
+                {
+                    _bendAngleFilters[i].CopyParametersFrom(referenceFilter);
+                    _openAngleFilters[i].CopyParametersFrom(referenceFilter);
+                }
+            }
+            
             public void ApplyLeftHandFinger() => ApplyFingerAngles(true);
             public void ApplyRightHandFinger() => ApplyFingerAngles(false);
 
@@ -322,12 +355,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 for (var i = thumbIndex; i <= littleIndex; i++)
                 {
                     var angles = _fingerPoseCalculator.GetFingerAngles(i, mirrored);
+                    var rawBendAngle = GetFingerBendAngle(angles.proximal, angles.intermediate, angles.distal);
+                    var bendAngle = _bendAngleFilters[i].Update(rawBendAngle);
+                    var openAngle = _openAngleFilters[i].Update(angles.open);
                     
-                    _fingerController.Hold(i, GetFingerBendAngle(
-                        angles.proximal, angles.intermediate, angles.distal
-                    ));
+                    _fingerController.Hold(i, bendAngle);
                     // NOTE: 親指のopenの制御がキモくなりそうな場合、親指だけここをスキップすべき
-                    _fingerController.HoldOpen(i, angles.open);
+                    _fingerController.HoldOpen(i, openAngle);
                 }
             }
 
@@ -358,6 +392,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _fingerController.Release(i);
                     _fingerController.ReleaseOpen(i);
+                    _bendAngleFilters[i].ResetValue(0f);
+                    _openAngleFilters[i].ResetValue(0f);
                 }
             }
         
@@ -367,6 +403,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _fingerController.Release(i);
                     _fingerController.ReleaseOpen(i);
+                    _bendAngleFilters[i].ResetValue(0f);
+                    _openAngleFilters[i].ResetValue(0f);
                 }
             }
 
@@ -410,11 +448,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             public IKDataRecord IKData { get; } = new();
 
-            public Vector3 Position
-            {
-                get => IKData.Position;
-                set => IKData.Position = value;
-            }
+            // NOTE: CopyParameter関数が使いたいのでpublicにしてしまう
+            public BiQuadFilterVector3 PositionFilter { get; } = new();
+
+            public Vector3 Position => IKData.Position;
 
             public Quaternion Rotation
             {
@@ -445,6 +482,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
 
                 OnQuit?.Invoke(Hand);
+            }
+
+            public void ForceSetPosition(Vector3 value)
+            {
+                PositionFilter.ResetValue(value);
+                IKData.Position = value;
+            }
+
+            public void SetFilteredPosition(Vector3 value, float maxDistance)
+            {
+                var rawNextPosition = PositionFilter.Update(value);
+                IKData.Position = Vector3.MoveTowards(
+                    IKData.Position, rawNextPosition, maxDistance
+                );
             }
         }
     }

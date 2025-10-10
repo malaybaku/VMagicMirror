@@ -5,7 +5,7 @@ REM example: `build_unity.cmd full dev`
 
 REM use following instead, if editor is NOT from Hub
 REM set UNITY_EXE="%ProgramFiles%\Unity\Editor\Unity.exe"
-set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\6000.0.33f1\Editor\Unity.exe"
+set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\6000.0.58f2\Editor\Unity.exe"
 
 cd %~dp0
 

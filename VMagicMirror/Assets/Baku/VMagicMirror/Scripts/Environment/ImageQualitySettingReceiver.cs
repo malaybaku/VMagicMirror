@@ -65,8 +65,8 @@ namespace Baku.VMagicMirror
         private static void SetTargetFramerate(int value)
         {
             Debug.Log($"{nameof(SetTargetFramerate)}: {value}");
-            // 「0以下の場合、vSyncを有効化してモニターのリフレッシュレートに合わせることを要求したと見なす」
-            // という考え方を取る。かつ、30未満のフレームレート要求は異常値扱いしてvSync Onに帰着させる
+            // - FPSが0以下の場合、vSyncを有効化してモニターのリフレッシュレートに合わせる要求だと解釈する
+            // - 30未満のFPSを指定された場合も異常値扱いし、vSyncが有効な状態に帰着させる
             if (value < 30)
             {
                 QualitySettings.vSyncCount = 1;

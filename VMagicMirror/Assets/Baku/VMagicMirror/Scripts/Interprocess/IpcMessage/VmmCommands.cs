@@ -194,7 +194,7 @@
         // Image Quality
         SetImageQuality,
         SetAntiAliasStyle,
-        SetHalfFpsMode,
+        SetTargetFramerate,
 
         // Lighting 
         //NOTE: フレームリダクションはモーションよりはエフェクトかな～という事でこっち。

@@ -209,7 +209,7 @@ Body</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
     <sys:String x:Key="VMCP_EnableReceiveLerp">Smooth Received Pose</sys:String>
-    <sys:String x:Key="VMCP_EnableUpperBodyAdditionalMove">Apply Base Spine Bones Tracking Result</sys:String>    
+    <sys:String x:Key="VMCP_EnableUpperBodyAdditionalMove">Combine Face Tracking based Head Pose with Received Pose</sys:String>
     
     <sys:String x:Key="VMCP_Send_Enable">Enable VMC Protocol Data Send</sys:String>
     <sys:String x:Key="VMCP_Send_DestAddress">Target Address</sys:String>

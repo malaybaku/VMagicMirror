@@ -564,7 +564,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="ImageQuality">画質</sys:String>
     <sys:String x:Key="ImageQuality_CurrentQuality">ベースの画質</sys:String>
-    <sys:String x:Key="ImageQuality_HalfFpsMode">FPSを半減 (Medium以上で有効)</sys:String>
+    <sys:String x:Key="ImageQuality_Framerate">フレームレート</sys:String>
+    <sys:String x:Key="ImageQuality_Framerate_UseVSync">モニターのリフレッシュレートに合わせる</sys:String>
     <sys:String x:Key="ImageQuality_AntiAlias">アンチエイリアス</sys:String>
     <sys:String x:Key="ImageQuality_AntiAlias_None">オフ</sys:String>
     <sys:String x:Key="ImageQuality_AntiAlias_Low">Low</sys:String>

@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         private const string DefaultQualityName = "High";
 
         private readonly IMessageReceiver _receiver;
-        private readonly ReactiveProperty<int> _targetFramerate = new(0);
+        private readonly ReactiveProperty<int> _targetFramerate = new(60);
 
         [Inject]
         public ImageQualitySettingReceiver(IMessageReceiver receiver)
@@ -64,8 +64,9 @@ namespace Baku.VMagicMirror
 
         private static void SetTargetFramerate(int value)
         {
+            Debug.Log($"{nameof(SetTargetFramerate)}: {value}");
             // 「0以下の場合、vSyncを有効化してモニターのリフレッシュレートに合わせることを要求したと見なす」
-            // という考え方を取る + 30未満のフレームレートは受け付けないことにしときたいので、それもvSync Onと見なす
+            // という考え方を取る。かつ、30未満のフレームレート要求は異常値扱いしてvSync Onに帰着させる
             if (value < 30)
             {
                 QualitySettings.vSyncCount = 1;
@@ -73,8 +74,8 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                Application.targetFrameRate = value;
                 QualitySettings.vSyncCount = 0;
+                Application.targetFrameRate = value;
             }
         }
     }

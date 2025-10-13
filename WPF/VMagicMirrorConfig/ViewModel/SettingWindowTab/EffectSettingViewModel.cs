@@ -22,12 +22,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model = model;
             _imageQuality = imageQuality;
 
-            AntiAliasStyle = new RProperty<AntiAliasStyles>(
-                GetAntiAliasStyle(_model.AntiAliasStyle.Value)
-                );
-            TargetFramerateStyle = new RProperty<TargetFramerateStyles>(
-                GetTargetFramerate(_model.TargetFramerateStyle.Value)
-                );
 
             ResetLightSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(async () =>
@@ -52,12 +46,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
 
-            if (!IsInDesignMode)
+            if (IsInDesignMode)
             {
-                AntiAliasStyle.AddWeakEventHandler(NotifyAntiAliasStyleChanged);
-                model.AntiAliasStyle.AddWeakEventHandler(ApplyAntiAliasStyle);
+                AntiAliasStyle = new RProperty<AntiAliasStyles>(AntiAliasStyles.None);
+                TargetFramerateStyle = new RProperty<TargetFramerateStyles>(TargetFramerateStyles.Fixed60);
+            }
+            else
+            {
+                AntiAliasStyle = new RProperty<AntiAliasStyles>(
+                    GetAntiAliasStyle(_model.AntiAliasStyle.Value),
+                    value => _model.AntiAliasStyle.Value = (int)value
+                    );
+                TargetFramerateStyle = new RProperty<TargetFramerateStyles>(
+                    (TargetFramerateStyles) _model.TargetFramerateStyle.Value,
+                    value => _model.TargetFramerateStyle.Value = (int) value
+                    );
 
-                TargetFramerateStyle.AddWeakEventHandler(NotifyTargetFramerateStyleChanged);
+                model.AntiAliasStyle.AddWeakEventHandler(ApplyAntiAliasStyle);
                 model.TargetFramerateStyle.AddWeakEventHandler(ApplyTargetFramerate);
 
                 model.LightR.AddWeakEventHandler(UpdateLightColor);
@@ -67,7 +72,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 model.BloomR.AddWeakEventHandler(UpdateBloomColor);
                 model.BloomG.AddWeakEventHandler(UpdateBloomColor);
                 model.BloomB.AddWeakEventHandler(UpdateBloomColor);
-               
+
                 model.OutlineEffectR.AddWeakEventHandler(UpdateOutlineEffectColor);
                 model.OutlineEffectG.AddWeakEventHandler(UpdateOutlineEffectColor);
                 model.OutlineEffectB.AddWeakEventHandler(UpdateOutlineEffectColor);
@@ -109,15 +114,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         void ApplyAntiAliasStyle(object? sender, PropertyChangedEventArgs e) 
             => AntiAliasStyle.Value = GetAntiAliasStyle(_model.AntiAliasStyle.Value);
-
-        void NotifyAntiAliasStyleChanged(object? sender, PropertyChangedEventArgs e)
-            => _model.AntiAliasStyle.Value = (int)AntiAliasStyle.Value;
-
         void ApplyTargetFramerate(object? sender, PropertyChangedEventArgs e)
             => TargetFramerateStyle.Value = GetTargetFramerate(_model.TargetFramerateStyle.Value);
-
-        void NotifyTargetFramerateStyleChanged(object? sender, PropertyChangedEventArgs e)
-            => _model.TargetFramerateStyle.Value = TargetFramerateStyle.Value.ToFramerate();
 
         static AntiAliasStyles GetAntiAliasStyle(int value)
         {

@@ -65,7 +65,7 @@
                         <TextBlock Grid.Row="0" Grid.Column="0"
                                    Text="{DynamicResource ImageQuality_CurrentQuality}"/>
                         <ComboBox Grid.Row="0" Grid.Column="1"
-                                  Margin="5,0"
+                                  Margin="5"
                                   ItemsSource="{Binding ImageQualityNames}"
                                   SelectedItem="{Binding ImageQuality.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                   md:HintAssist.Hint="Quality"
@@ -74,7 +74,7 @@
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource ImageQuality_AntiAlias}"/>
                         <ComboBox Grid.Row="1" Grid.Column="1"
-                                  Margin="5,0"
+                                  Margin="5"
                                   ItemsSource="{Binding AvailableAntiAliasStyle}"
                                   SelectedItem="{Binding AntiAliasStyle.Value}"
                                   md:HintAssist.Hint="Choose..."
@@ -86,9 +86,11 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <ComboBox Grid.Row="1" Grid.Column="1"
-                                  Margin="5,0"
-                                  ItemsSource="{Binding AvailableFramerateStyle}"
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="{DynamicResource ImageQuality_Framerate}"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1"
+                                  Margin="5"
+                                  ItemsSource="{Binding AvailableTargetFramerateStyle}"
                                   SelectedItem="{Binding TargetFramerateStyle.Value}"
                                   >
                             <ComboBox.ItemTemplate>

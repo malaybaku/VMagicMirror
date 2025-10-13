@@ -17,7 +17,11 @@ namespace Baku.VMagicMirrorConfig
 
             //エフェクト関係は設定項目がシンプルなため、例外はほぼ無い(色関係のメッセージ送信がちょっと特殊なくらい)
             AntiAliasStyle = new RProperty<int>(s.AntiAliasStyle, i => SendMessage(MessageFactory.SetAntiAliasStyle(i)));
-            TargetFramerateStyle = new RProperty<int>(s.TargetFramerateStyle, i => SendMessage(MessageFactory.SetTargetFramerateStyle(i)));
+            TargetFramerateStyle = new RProperty<int>(s.TargetFramerateStyle, i =>
+            {
+                var framerate = ((TargetFramerateStyles)i).ToFramerate();
+                SendMessage(MessageFactory.SetTargetFramerate(framerate));
+            });
             UseFrameReductionEffect = new RProperty<bool>(
                 s.UseFrameReductionEffect, v => SendMessage(MessageFactory.UseFrameReductionEffect(v)));
 

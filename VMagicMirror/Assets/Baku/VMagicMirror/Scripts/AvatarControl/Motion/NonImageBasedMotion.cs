@@ -212,14 +212,17 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
-            if (Application.targetFrameRate == 30)
+            //NOTE: ちょっとイビツな処理だが、秒数に関係するカウントなので大まかに揃えるために下記のようにしてる
+            if (Application.targetFrameRate == 30 && QualitySettings.vSyncCount == 0)
             {
                 _voiceOnOffParser.OnCountThreshold = 3;
                 _voiceOnOffParser.OffCountThreshold = 8;
             }
             else
             {
+                // NOTE:
+                // - vSync onの場合、モニターのリフレッシュレートのメジャーケースが60Hzと想定して60FPS相当に扱う
+                // - vSync on設定 && 高リフレッシュレートのモニターだとカウントの消費時間が早くなるのでちょっとワタワタするかも
                 _voiceOnOffParser.OnCountThreshold = 6;
                 _voiceOnOffParser.OffCountThreshold = 16;
             }

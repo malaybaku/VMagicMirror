@@ -278,7 +278,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message GetQualitySettingsInfo() => None(VmmCommands.GetQualitySettingsInfo);
         public static Message SetImageQuality(string name) => StringContent(VmmCommands.SetImageQuality, name);
         public static Message SetAntiAliasStyle(int style) => IntContent(VmmCommands.SetAntiAliasStyle, style);
-        public static Message SetHalfFpsMode(bool enable) => BoolContent(VmmCommands.SetHalfFpsMode, enable);
+        public static Message SetTargetFramerateStyle(int value) => IntContent(VmmCommands.SetTargetFramerate, value);
         public static Message UseFrameReductionEffect(bool enable) => BoolContent(VmmCommands.UseFrameReductionEffect, enable);
 
         /// <summary>

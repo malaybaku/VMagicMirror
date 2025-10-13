@@ -13,7 +13,7 @@
         #region Image Quality
 
         public int AntiAliasStyle { get; set; } = 0;
-        public bool HalfFpsMode { get; set; } = false;
+        public int TargetFramerateStyle { get; set; } = 0;
         public bool UseFrameReductionEffect { get; set; } = false;
         
         #endregion
@@ -88,6 +88,23 @@
 
         #endregion
 
+    }
+
+    public enum TargetFramerateStyles
+    {
+        Fixed60 = 0,
+        Fixed30 = 1,
+        UseVSync = 2,
+    }
+    public static class TargetFramerateStylesExtensions
+    {
+        public static int ToFramerate(this TargetFramerateStyles style) => style switch
+        {
+            TargetFramerateStyles.Fixed60 => 60,
+            TargetFramerateStyles.Fixed30 => 30,
+            TargetFramerateStyles.UseVSync => 0,
+            _ => 60,
+        };
     }
 
     public enum AntiAliasStyles

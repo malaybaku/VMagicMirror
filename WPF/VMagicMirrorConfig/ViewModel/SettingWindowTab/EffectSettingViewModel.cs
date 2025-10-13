@@ -25,6 +25,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             AntiAliasStyle = new RProperty<AntiAliasStyles>(
                 GetAntiAliasStyle(_model.AntiAliasStyle.Value)
                 );
+            TargetFramerateStyle = new RProperty<TargetFramerateStyles>(
+                GetTargetFramerate(_model.TargetFramerateStyle.Value)
+                );
 
             ResetLightSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(async () =>
@@ -54,6 +57,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 AntiAliasStyle.AddWeakEventHandler(NotifyAntiAliasStyleChanged);
                 model.AntiAliasStyle.AddWeakEventHandler(ApplyAntiAliasStyle);
 
+                TargetFramerateStyle.AddWeakEventHandler(NotifyTargetFramerateStyleChanged);
+                model.TargetFramerateStyle.AddWeakEventHandler(ApplyTargetFramerate);
+
                 model.LightR.AddWeakEventHandler(UpdateLightColor);
                 model.LightG.AddWeakEventHandler(UpdateLightColor);
                 model.LightB.AddWeakEventHandler(UpdateLightColor);
@@ -79,15 +85,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ReadOnlyObservableCollection<string> ImageQualityNames => _imageQuality.ImageQualityNames;
 
         public RProperty<AntiAliasStyles> AntiAliasStyle { get; }
-        public AntiAliasStyles[] AvailableAntiAliasStyle { get; } = new[]
-        {
+        public AntiAliasStyles[] AvailableAntiAliasStyle { get; } =
+        [
             AntiAliasStyles.None,
             AntiAliasStyles.Low,
             AntiAliasStyles.Mid,
             AntiAliasStyles.High,
-        };
+        ];
+        public RProperty<TargetFramerateStyles> TargetFramerateStyle { get; }
+        public TargetFramerateStyles[] AvailableTargetFramerateStyle { get; } =
+        [
+            TargetFramerateStyles.Fixed60,
+            TargetFramerateStyles.Fixed30,
+            TargetFramerateStyles.UseVSync,
+        ];
 
-        public RProperty<bool> HalfFpsMode => _model.HalfFpsMode;
         public RProperty<bool> UseFrameReductionEffect => _model.UseFrameReductionEffect;
 
         void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
@@ -101,6 +113,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         void NotifyAntiAliasStyleChanged(object? sender, PropertyChangedEventArgs e)
             => _model.AntiAliasStyle.Value = (int)AntiAliasStyle.Value;
 
+        void ApplyTargetFramerate(object? sender, PropertyChangedEventArgs e)
+            => TargetFramerateStyle.Value = GetTargetFramerate(_model.TargetFramerateStyle.Value);
+
+        void NotifyTargetFramerateStyleChanged(object? sender, PropertyChangedEventArgs e)
+            => _model.TargetFramerateStyle.Value = TargetFramerateStyle.Value.ToFramerate();
+
         static AntiAliasStyles GetAntiAliasStyle(int value)
         {
             if (value >= 0 && value <= (int)AntiAliasStyles.High)
@@ -110,6 +128,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             else
             {
                 return AntiAliasStyles.None;
+            }
+        }
+
+        static TargetFramerateStyles GetTargetFramerate(int value)
+        {
+            if (value >= 0 && value <= (int)TargetFramerateStyles.UseVSync)
+            {
+                return (TargetFramerateStyles)value;
+            }
+            else
+            {
+                return TargetFramerateStyles.Fixed60;
             }
         }
 

@@ -264,7 +264,7 @@ namespace Baku.VMagicMirror
             );
         }
         
-        class ObservableButton
+        private class ObservableButton
         {
             public ObservableButton(GamepadKey key, int flag, Subject<GamepadKeyData> subject)
             {
@@ -292,14 +292,9 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            public void Reset()
-                => _isPressed = false;
-
             public void UpdatePressedState(int buttonStateFlags) 
                 => IsPressed = ((buttonStateFlags & _flag) != 0);
-
         }
-
     }
 
     /// <summary>

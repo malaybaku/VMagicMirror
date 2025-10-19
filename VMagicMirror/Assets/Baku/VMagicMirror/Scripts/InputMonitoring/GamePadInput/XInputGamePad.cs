@@ -114,10 +114,10 @@ namespace Baku.VMagicMirror
             _buttonsList.Add(new ObservableButton(GamepadKey.RShoulder, XInputCapture.Buttons.RIGHT_SHOULDER, _buttonSubject));
             _buttonsList.Add(new ObservableButton(GamepadKey.LShoulder, XInputCapture.Buttons.LEFT_SHOULDER, _buttonSubject));
             
-            _arrowRight = new ObservableButton(GamepadKey.RIGHT, XInputCapture.Buttons.DPAD_RIGHT, _buttonSubject);
-            _arrowDown = new ObservableButton(GamepadKey.DOWN, XInputCapture.Buttons.DPAD_DOWN, _buttonSubject);
-            _arrowLeft = new ObservableButton(GamepadKey.LEFT, XInputCapture.Buttons.DPAD_LEFT, _buttonSubject);
-            _arrowUp = new ObservableButton(GamepadKey.UP, XInputCapture.Buttons.DPAD_UP, _buttonSubject);
+            _arrowRight = new ObservableButton(GamepadKey.RIGHT, XInputCapture.Buttons.DPAD_RIGHT, _buttonSubject, false);
+            _arrowDown = new ObservableButton(GamepadKey.DOWN, XInputCapture.Buttons.DPAD_DOWN, _buttonSubject, false);
+            _arrowLeft = new ObservableButton(GamepadKey.LEFT, XInputCapture.Buttons.DPAD_LEFT, _buttonSubject, false);
+            _arrowUp = new ObservableButton(GamepadKey.UP, XInputCapture.Buttons.DPAD_UP, _buttonSubject, false);
 
             _buttonsList.Add(_arrowRight);
             _buttonsList.Add(_arrowDown);
@@ -266,15 +266,22 @@ namespace Baku.VMagicMirror
         
         private class ObservableButton
         {
-            public ObservableButton(GamepadKey key, int flag, Subject<GamepadKeyData> subject)
+            public ObservableButton(
+                GamepadKey key,
+                int flag,
+                Subject<GamepadKeyData> subject,
+                bool raiseSubjectImmediate = true)
             {
                 Key = key;
                 _flag = flag;
                 _subject = subject;
+                _raiseSubjectImmediate = raiseSubjectImmediate;
             }
 
             private readonly int _flag;
             private readonly Subject<GamepadKeyData> _subject;
+            private readonly bool _raiseSubjectImmediate;
+            private bool _isDirty = false;
 
             public GamepadKey Key { get; }
 
@@ -284,16 +291,30 @@ namespace Baku.VMagicMirror
                 get => _isPressed;
                 set
                 {
-                    if (_isPressed != value)
+                    if (_isPressed == value) return;
+                    _isPressed = value;
+
+                    if (_raiseSubjectImmediate)
                     {
-                        _isPressed = value;
                         _subject.OnNext(new GamepadKeyData(Key, IsPressed));
+                    }
+                    else
+                    {
+                        _isDirty = true;
                     }
                 }
             }
 
-            public void UpdatePressedState(int buttonStateFlags) 
-                => IsPressed = ((buttonStateFlags & _flag) != 0);
+            public void UpdatePressedState(int buttonStateFlags) => IsPressed = ((buttonStateFlags & _flag) != 0);
+
+            public void RaiseSubject()
+            {
+                if (_isDirty)
+                {
+                    _subject.OnNext(new GamepadKeyData(Key, IsPressed));
+                    _isDirty = false;
+                }
+            }
         }
     }
 

@@ -135,6 +135,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            // NOTE: XInput/DirectInputいずれでも、入力状態の変化に対して以下の順で処理する。
+            // とくに、3より前に2が入ることで外から見た挙動が自然に見えるようにしている
+            // 1: ボタンの状態変更 + 矢印ボタン以外の Subject 発火 
+            // 2: 矢印ボタンに由来したスティック値について、値の変更 + ReactiveProperty 発火
+            // 3: 矢印ボタンの Subject 発火
+            // 4: L/Rスティックの値の変更 + Subject 発火
             if (_preferDirectInput)
             {
                 //DirectInputの読み取り機能で更新
@@ -150,12 +156,18 @@ namespace Baku.VMagicMirror
                 {
                     button.UpdatePressedState(buttonFlags);
                 }
+
+                _arrowButtonsStickPosition.Value = GetArrowButtonsStickPosition();
+                foreach(var button in _buttons)
+                {
+                    button.RaiseSubject();
+                }
+
                 UpdateRightStick();
                 UpdateLeftStick();
                 UpdateTriggerAsButtons();
             }
             
-            _arrowButtonsStickPosition.Value = GetArrowButtonsStickPosition();
         }
 
         private void OnDestroy() => _directInputAlternative.Stop();
@@ -179,6 +191,26 @@ namespace Baku.VMagicMirror
             _buttonsList[10].IsPressed = state.Left;
             _buttonsList[11].IsPressed = state.Up;
             
+            _arrowButtonsStickPosition.Value = GetArrowButtonsStickPosition();
+            foreach(var button in _buttons)
+            {
+                button.RaiseSubject();
+            }
+            
+            //トリガー情報はDirectInputの場合ボタンベースで取得する。
+            //DUAL SHOCK 4のトリガーは連続値+ボタン情報で渡ってくるのでボタン情報だけ拾って使っている、という感じ。
+            if (_isRightTriggerDown != state.R2)
+            {
+                _isRightTriggerDown = state.R2;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, _isRightTriggerDown));
+            }
+            
+            if (_isLeftTriggerDown != state.L2)
+            {
+                _isLeftTriggerDown = state.L2;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.LTrigger, _isLeftTriggerDown));
+            }
+
             var right = new Vector2Int(state.RightX, state.RightY);
             if (Mathf.Abs(right.x - _rightStickPosition.x) + 
                 Mathf.Abs(right.y - _rightStickPosition.y) > StickPositionDiffThreshold)
@@ -193,20 +225,6 @@ namespace Baku.VMagicMirror
             {
                 _leftStickPosition = left;
                 _leftStick.OnNext(left);
-            }
-
-            //トリガー情報はDirectInputの場合ボタンベースで取得する。
-            //DUAL SHOCK 4のトリガーは連続値+ボタン情報で渡ってくるのでボタン情報だけ拾って使っている、という感じ。
-            if (_isRightTriggerDown != state.R2)
-            {
-                _isRightTriggerDown = state.R2;
-                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, _isRightTriggerDown));
-            }
-            
-            if (_isLeftTriggerDown != state.L2)
-            {
-                _isLeftTriggerDown = state.L2;
-                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.LTrigger, _isLeftTriggerDown));
             }
         }
 

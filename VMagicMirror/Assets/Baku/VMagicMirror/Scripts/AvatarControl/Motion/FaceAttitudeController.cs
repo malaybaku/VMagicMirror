@@ -46,12 +46,12 @@ namespace Baku.VMagicMirror
 
         [Inject]
         public void Initialize(
-            FaceTracker faceTracker,
+            //FaceTracker faceTracker,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
             IVRMLoadable vrmLoadable)
         {
-            _faceTracker = faceTracker;
+            //_faceTracker = faceTracker;
             _gameInputBodyMotionController = gameInputBodyMotionController;
             _carHandleBasedFk = carHandleBasedFk;
 

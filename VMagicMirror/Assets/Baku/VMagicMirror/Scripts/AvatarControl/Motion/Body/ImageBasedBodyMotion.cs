@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         [Range(0.05f, 1.0f)]
         [SerializeField] private float timeScaleFactor = 0.3f;
 
-        [Inject]
+        //[Inject]
         private FaceTracker _faceTracker = null;
 
         private bool _hasModel = false;

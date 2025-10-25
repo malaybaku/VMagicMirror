@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.Installer
                 .FromInstance(new HybridInputChecker(robustRawInputChecker, globalHookInputChecker))
                 .AsCached();
             container.BindInstance(mousePositionProvider);
-            container.BindInstance(faceTracker);
+            //container.BindInstance(faceTracker);
             
             container.Bind<FaceSwitchExtractor>().AsSingle();
             container.BindInstance(externalTracker);

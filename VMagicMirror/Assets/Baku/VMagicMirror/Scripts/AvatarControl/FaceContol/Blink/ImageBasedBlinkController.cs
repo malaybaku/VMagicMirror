@@ -11,7 +11,8 @@ namespace Baku.VMagicMirror
         private readonly RecordBlinkSource _blinkSource = new RecordBlinkSource();
         public IBlinkSource BlinkSource => _blinkSource;
         
-        [Inject] private FaceTracker _faceTracker = null;
+        //[Inject] 
+        private FaceTracker _faceTracker = null;
 
         [SerializeField] private float eyeOpenKeepDiffPer16ms = 0.04f;
         [SerializeField] private float eyeOpenFromCloseDiffPer16ms = 0.1f;

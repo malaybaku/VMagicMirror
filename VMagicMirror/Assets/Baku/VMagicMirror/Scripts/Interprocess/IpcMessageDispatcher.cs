@@ -2,11 +2,15 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Baku.VMagicMirror.InterProcess
 {
     public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
+        // NOTE: デバッグ用ログのフラグで、デバッグ時にたまにtrueにする
+        private const bool ShowLog = true;
+        
         // NOTE: 配列 vs. Dictの2通りがあるが、どっちも配列だと歯抜けになるのが気になるため、Dictにしている
         private readonly Dictionary<ushort, Action<ReceivedCommand>> _commandHandlers = new();
         private readonly Dictionary<ushort, Action<ReceivedQuery>> _queryHandlers=  new();
@@ -61,18 +65,36 @@ namespace Baku.VMagicMirror.InterProcess
 
         private void ProcessCommand(ReceivedCommand command)
         {
+            if (ShowLog)
+            {
+                Debug.Log($"Receive command: {command.Command}");
+            }
+            
             if (_commandHandlers.TryGetValue((ushort)command.Command, out var handler))
             {
                 handler(command);
+            }
+            else if (ShowLog)
+            {
+                Debug.Log($"Receive command, but handler does not exist: {command.Command}");
             }
         }
 
         private void ProcessQuery(QueryQueueItem item)
         {
+            if (ShowLog)
+            {
+                Debug.Log($"Receive query: {item.Query.Command}");
+            }
+
             if (_queryHandlers.TryGetValue((ushort)item.Query.Command, out var handler))
             {
                 handler(item.Query);
                 item.ResultSource.SetResult(item.Query.Result);
+            }
+            else if (ShowLog)
+            {
+                Debug.Log($"Receive query, but handler does not exist: {item.Query.Command}");
             }
         }
 

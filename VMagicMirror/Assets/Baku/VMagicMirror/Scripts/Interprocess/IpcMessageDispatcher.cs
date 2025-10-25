@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.InterProcess
     public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
         // NOTE: デバッグ用ログのフラグで、デバッグ時にたまにtrueにする
-        private const bool ShowLog = true;
+        private const bool ShowLog = false;
         
         // NOTE: 配列 vs. Dictの2通りがあるが、どっちも配列だと歯抜けになるのが気になるため、Dictにしている
         private readonly Dictionary<ushort, Action<ReceivedCommand>> _commandHandlers = new();

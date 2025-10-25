@@ -3,17 +3,21 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public sealed class CameraDeviceListQueryHandler
+    public sealed class CameraDeviceListQueryHandler : PresenterBase
     {
+        private readonly IMessageReceiver _receiver;
+
         public CameraDeviceListQueryHandler(IMessageReceiver receiver)
         {
-            receiver.AssignQueryHandler(
+            _receiver = receiver;
+        }
+        
+        public override void Initialize()
+        {
+            _receiver.AssignQueryHandler(
                 VmmCommands.CameraDeviceNames,
-                query =>
-                {
-                    Debug.Log("Return camera device names...");
-                    query.Result = DeviceNames.CreateDeviceNamesJson(GetCameraDeviceNames());
-                });
+                query => query.Result = DeviceNames.CreateDeviceNamesJson(GetCameraDeviceNames())
+                );
         }
 
         private static string[] GetCameraDeviceNames() => WebCamTexture.devices

@@ -13,7 +13,6 @@ namespace Baku.VMagicMirror
     {
         //NOTE: まばたき自体は3種類どれかが排他で適用される。複数走っている場合、external > image > autoの優先度で適用する。
         [SerializeField] private ExternalTrackerBlink externalTrackerBlink = null;
-        [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
         
         [SerializeField] private EyeJitter randomEyeJitter = null;
@@ -67,8 +66,8 @@ namespace Baku.VMagicMirror
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
                 FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
-                FaceControlModes.WebCamLowPower when !AutoBlinkOnWebCamLowPower.Value
-                    => imageBasedBlinkController.BlinkSource,
+                // NOTE: MediaPipeの軽量モードは諸説ある (_autoBlinkを強制する or 設定次第にする)
+                FaceControlModes.WebCamLowPower => autoBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };
 

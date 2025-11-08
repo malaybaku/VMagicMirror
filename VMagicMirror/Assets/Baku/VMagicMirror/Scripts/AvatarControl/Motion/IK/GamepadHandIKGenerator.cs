@@ -14,7 +14,8 @@ namespace Baku.VMagicMirror.IK
         [Serializable]
         public class GamepadHandIkGeneratorSetting
         {
-            public ImageBasedBodyMotion imageBasedBodyMotion;            
+            // NOTE: このsettingクラスを使わないでもいいが、MediaPipeやExTrackerに由来する体の移動量を取得したい
+            //public ImageBasedBodyMotion imageBasedBodyMotion;            
         }
 
         // ゲームパッド全体を動かす速度ファクタ
@@ -235,7 +236,8 @@ namespace Baku.VMagicMirror.IK
             if (_handIsOnController)
             {
                 _posOffset =
-                    _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor +
+                    // TODO: MediaPipe / ExTrackerの使用中も↓に相当する処理をしたい (消すと忘れそうなのであえて残しておく)
+                    // _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor +
                     _posOffsetScale * (
                         Vector3.up * _offsetY +
                         _timeJitter.PosOffset +

@@ -12,7 +12,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private FaceAngleToBodyAngle _faceAngleToBodyAngle = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
-        [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
         
         [Tooltip("腰が1度傾いてたら0.01m=1cmだけ腰をずらす、みたいな比率。" +
                  "適当に決めた基準モデル向けに調整し、他モデルについてはHipsの高さベースで倍率かけて適用。")]
@@ -54,17 +53,17 @@ namespace Baku.VMagicMirror
             };
         }
 
+        // TODO: MediaPipeやExTrackerに由来するBodyOffsetに由来した体の傾き角度を作って適用したほうがいいかも
+        // やる場合、(削除した) ImageBasedBodyMotion と同様にするなら「X軸の移動をロール角に反映する」だけをやるのが丁度良さげ
         private void Update()
         {
             //NOTE:
             // _faceAngleToBodyAngle: 3DOFぜんぶ
-            // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
             // carHandle: ロール
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
                 _faceAngleToBodyAngle.BodyLeanSuggest *
-                _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
 
             if (_carHandleBasedFk.IsActive)

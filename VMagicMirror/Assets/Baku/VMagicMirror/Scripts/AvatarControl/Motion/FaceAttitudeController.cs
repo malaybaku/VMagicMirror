@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 deadZoneEnterRange = new Vector3(50f, 6f, 6f);
         [SerializeField] private int deadZoneEnterCount = 6;
 
-        private FaceTracker _faceTracker;
+        //private FaceTracker _faceTracker;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
 
@@ -88,39 +88,6 @@ namespace Baku.VMagicMirror
         private float _cutOffFrequency = CutOffFrequencySlow;
 
         private void Start() => ApplyCutOffFrequencyImmediate();
-
-        private void LateUpdate()
-        {
-            if (!(_hasModel && _faceTracker.HasInitDone && IsActive))
-            {
-                if (_isQuickMode)
-                {
-                    _isQuickMode = false;
-                    ApplyCutOffFrequencyImmediate();
-                }
-                _anglesFilter.ResetValue(Vector3.zero);
-                ImageBaseFaceRotationUpdated?.Invoke(Vector3.zero);
-                return;
-            }
-
-            var rawTarget = GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor);
-         
-            var target = Vector3.Scale(rawTarget, headEulerAnglesFactor);
-
-            var rotationAdjusted = _anglesFilter.Update(target);
-            CheckDeadZone(rotationAdjusted - target);
-            UpdateCutOffFrequency();
-            //NOTE: 30FPSの場合、60FPS用のフィルタリングを2回まわすと整合するので、雑にコレで済ませる
-            if (Time.deltaTime > 0.025f)
-            {
-                rotationAdjusted = _anglesFilter.Update(target);
-                CheckDeadZone(rotationAdjusted - target);
-                UpdateCutOffFrequency();
-            }
-            
-            //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
-            ApplyRotationToHeadBone(rotationAdjusted);
-        }
 
         //デッドゾーンから入ったり抜けたりの状態を管理します。
         private void CheckDeadZone(Vector3 diff)

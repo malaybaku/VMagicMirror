@@ -81,7 +81,6 @@ GameObject:
   - component: {fileID: 5813678808713813114}
   - component: {fileID: 5813678808713813111}
   - component: {fileID: 8506340368463674577}
-  - component: {fileID: 5813678808713813112}
   - component: {fileID: 5813678808713813113}
   - component: {fileID: 5813678808713813108}
   - component: {fileID: 3376032428813691452}
@@ -123,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyLeanIntegrator: {fileID: 8506340368463674577}
-  imageBasedBodyMotion: {fileID: 5813678808713813112}
+  imageBasedBodyMotion: {fileID: 0}
   exTrackerBodyMotion: {fileID: 6238302672375872197}
   mediaPipeBodyMotion: {fileID: 1104389569507054829}
   vmcpBodyOffset: {fileID: 129376348720160579}
@@ -147,30 +146,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _faceAngleToBodyAngle: {fileID: 3376032428813691452}
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
-  _imageBasedBodyMotion: {fileID: 5813678808713813112}
+  _imageBasedBodyMotion: {fileID: 0}
   _bodyRollDegToXOffsetFactor: 0.002
   _bodyRollReflectMaxDeg: 4
   x2y: 0.3
---- !u!114 &5813678808713813112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678808713813115}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0678b307db8ea584098fa503696aa6e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetAmplifier: {x: 0.05, y: 0.1, z: 0.5}
-  offsetAmplifierWhenNoHandTrack: {x: 0.4, y: 0.25, z: 0.5}
-  offsetLowerLimit: {x: -1, y: -1, z: -0.05}
-  offsetUpperLimit: {x: 1, y: 1, z: 0.1}
-  offsetToBodyRotEulerFactor: {x: 10, y: 0, z: 0}
-  offsetToBodyRotEulerFactorWhenNoHandTrack: {x: 0, y: 0, z: 0}
-  speedFactor: 12
-  timeScaleFactor: 0.3
 --- !u!114 &5813678808713813113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,6 +251,7 @@ MonoBehaviour:
   lerpFactorBlendDuration: 1
   useBiQuadFilter: 1
   positionFilterCutOffFrequency: 2.5
+  positionFilterCutOffFrequencySlow: 1.5
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,7 +262,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5813678809054739211}
   - component: {fileID: 7319070492286949183}
-  - component: {fileID: 5813678809054739210}
   - component: {fileID: 1338865419136667663}
   - component: {fileID: 3373783041301125446}
   - component: {fileID: 3163774597481480951}
@@ -321,29 +300,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cc37234a8ae192469b161d13ee5cb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageAttitude: {fileID: 5813678809054739210}
+  imageAttitude: {fileID: 0}
   externalTrackerAttitude: {fileID: 1338865419136667663}
   mediaPipeFaceAttitude: {fileID: 3042641768339499537}
   nonImageBasedMotion: {fileID: 3373783041301125446}
---- !u!114 &5813678809054739210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678809054739212}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headEulerAnglesFactor: {x: 1.1, y: 1.3, z: 1}
-  headRate: 0.5
-  facePartsPitchYawFactor: {x: 30, y: 30}
-  deadZoneLeaveRange: {x: 50, y: 10, z: 10}
-  deadZoneLeaveCount: 3
-  deadZoneEnterRange: {x: 50, y: 6, z: 6}
-  deadZoneEnterCount: 6
 --- !u!114 &1338865419136667663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -551,7 +511,7 @@ MonoBehaviour:
   waitingBody: {fileID: 5813678808713813113}
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
-    imageBasedBodyMotion: {fileID: 5813678808713813112}
+    imageBasedBodyMotion: {fileID: 0}
   elbowMotionModifier: {fileID: 5813678810248240001}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
@@ -753,7 +713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handIKIntegrator: {fileID: 5813678810404708495}
-  faceAttitude: {fileID: 5813678809054739210}
+  faceAttitude: {fileID: 0}
   headMotionClipPlayer: {fileID: 3163774597481480951}
   colliderBasedAvatarParamLoader: {fileID: 8229117264469737190}
   nonImageBasedMotion: {fileID: 3373783041301125446}

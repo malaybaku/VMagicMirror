@@ -14,7 +14,6 @@ namespace Baku.VMagicMirror
     public class BodyMotionManager : MonoBehaviour
     {
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
-        [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
         [SerializeField] private MediaPipeTrackerBodyOffset mediaPipeBodyMotion = null;
         [SerializeField] private VMCPBodyOffset vmcpBodyOffset = null;
@@ -106,8 +105,7 @@ namespace Baku.VMagicMirror
             var imageRelatedOffset = _faceControlConfig.HeadMotionControlModeValue switch
             {
                 FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
-                FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
-                _ => imageBasedBodyMotion.BodyIkXyOffset,
+                _ => mediaPipeBodyMotion.BodyOffset,
             };
 
             //通常時と同じ角度を参照するが、適用方法が異なり、直接ホネに値が入る
@@ -120,7 +118,6 @@ namespace Baku.VMagicMirror
         {
             //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
             _defaultBodyIkPosition = _bodyIk.position;
-            imageBasedBodyMotion.OnVrmLoaded(info);
             _vrmRoot = info.vrmRoot;
 
             _upperBodyBones = new[]
@@ -140,7 +137,6 @@ namespace Baku.VMagicMirror
             _isVrmLoaded = false;
 
             _vrmRoot = null;
-            imageBasedBodyMotion.OnVrmDisposing();
             _upperBodyBones = Array.Empty<Transform>();
         }
         
@@ -161,7 +157,6 @@ namespace Baku.VMagicMirror
 
         private void SetNoHandTrackMode(bool enable)
         {
-            imageBasedBodyMotion.NoHandTrackMode = enable;
             exTrackerBodyMotion.NoHandTrackMode.Value = enable;
             mediaPipeBodyMotion.NoHandTrackMode = enable;
         }

@@ -103,9 +103,6 @@
 - This mode uses higher load on PC than other modes.
 - In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
-
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Web Camera (Lite) mode is unavailable when hand tracking is enabled. Please use Web Camera (High Power) instead.</sys:String>            
-    
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
     
     <!-- Ex.Tracker -->

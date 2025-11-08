@@ -104,9 +104,6 @@
 - パーフェクトシンクが利用できますが、一部の表情は検出できません。</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
-
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">ハンドトラッキングが有効になっている場合は webカメラ(軽量) は選択できません。かわりに webカメラ (高品質) を使用して下さい。</sys:String>
-
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
     
     <!-- Ex.Tracker -->

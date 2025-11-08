@@ -34,6 +34,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [SerializeField] private bool useBiQuadFilter = true;
         [SerializeField] private float positionFilterCutOffFrequency = 2.5f;
+        [SerializeField] private float positionFilterCutOffFrequencySlow = 1.5f;
         
         private FaceControlConfiguration _config;
         //private ExternalTrackerDataSource _externalTracker;
@@ -58,8 +59,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _framerateChecker = framerateChecker;
             
             _framerateChecker.CurrentFramerate
-                .Subscribe(frameRate => 
-                    _positionFilter.SetUpAsLowPassFilter(frameRate, positionFilterCutOffFrequency))
+                .CombineLatest(_config.HeadMotionControlMode, 
+                    (framerate, headMotionControlMode) => (framerate, headMotionControlMode))
+                .Subscribe(value =>
+                {
+                    var (frameRate, headMotionControlMode) = value;
+                    var cutOffFrequency = headMotionControlMode is FaceControlModes.WebCamHighPower
+                        ? positionFilterCutOffFrequency
+                        : positionFilterCutOffFrequencySlow;
+                    _positionFilter.SetUpAsLowPassFilter(frameRate, cutOffFrequency);
+                })
                 .AddTo(this);
         }
         

@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror
                 FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
                 FaceControlModes.VMCProtocol => vmcpBodyOffset.BodyOffset,
                 FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
-                _ => imageBasedBodyMotion.BodyIkXyOffset,
+                _ => mediaPipeBodyMotion.BodyOffset,
             };
 
             _bodyIk.localPosition =

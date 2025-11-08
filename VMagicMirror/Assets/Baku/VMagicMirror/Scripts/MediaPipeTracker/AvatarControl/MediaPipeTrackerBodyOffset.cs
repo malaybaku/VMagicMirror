@@ -116,7 +116,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void Update()
         {
-            if (_config.HeadMotionControlModeValue != FaceControlModes.WebCamHighPower)
+            if (_config.HeadMotionControlModeValue is not (FaceControlModes.WebCamHighPower or FaceControlModes.WebCamLowPower))
             {
                 BodyOffset = Vector3.zero;
                 _positionFilter.ResetValue(Vector3.zero);

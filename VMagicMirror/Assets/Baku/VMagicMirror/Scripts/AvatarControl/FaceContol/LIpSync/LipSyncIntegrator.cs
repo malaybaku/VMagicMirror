@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror
                 return externalTrackerLipSync.LipSyncSource;
             }
             
-            if (_mediaPipeLipSync.IsEnabledAndTracked)
+            if (_config.HeadMotionControlMode.CurrentValue is FaceControlModes.WebCamHighPower && _mediaPipeLipSync.IsEnabledAndTracked)
             {
                 return _mediaPipeLipSync.LipSyncSource;
             }

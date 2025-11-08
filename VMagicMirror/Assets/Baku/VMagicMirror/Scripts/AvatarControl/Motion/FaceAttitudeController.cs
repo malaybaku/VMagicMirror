@@ -80,12 +80,12 @@ namespace Baku.VMagicMirror
         
         public bool IsActive { get; set; } = true;
 
-        private readonly BiQuadFilterVector3 _anglesFilter = new BiQuadFilterVector3();
+        private readonly BiQuadFilterVector3 _anglesFilter = new();
 
         // すばやく動くモードのときはtrue
         private bool _isQuickMode;
         private int _deadZoneSwitchCount = 0;
-        private float _cutOffFrequency = 0.5f;
+        private float _cutOffFrequency = CutOffFrequencySlow;
 
         private void Start() => ApplyCutOffFrequencyImmediate();
 

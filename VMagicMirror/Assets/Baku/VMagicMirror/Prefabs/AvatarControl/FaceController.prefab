@@ -70,7 +70,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   externalTrackerBlink: {fileID: 7456683640387377309}
-  imageBasedBlinkController: {fileID: 0}
   autoBlink: {fileID: 2335327280039312852}
   randomEyeJitter: {fileID: 3748028267383499190}
   externalTrackEyeJitter: {fileID: 1428360342779558990}
@@ -158,7 +157,6 @@ GameObject:
   - component: {fileID: 5356487033938143835}
   - component: {fileID: 7456683640387377309}
   - component: {fileID: 1428360342779558990}
-  - component: {fileID: 3499730392626530847}
   - component: {fileID: 4339509367763658613}
   m_Layer: 0
   m_Name: EyeController
@@ -267,20 +265,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f973d8153abf846afa3506168d14c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3499730392626530847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3748028267383499195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd4bde96e479b9048a4d5bfce4aa5f5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pitchRotFactor: 0.02
-  yawRotFactor: 0.04
 --- !u!114 &4339509367763658613
 MonoBehaviour:
   m_ObjectHideFlags: 0

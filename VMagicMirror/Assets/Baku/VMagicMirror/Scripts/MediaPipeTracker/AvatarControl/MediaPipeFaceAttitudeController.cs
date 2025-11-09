@@ -4,9 +4,10 @@ using R3;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    //NOTE: 筋肉的には「首が横に振るときはピッチを下げるべき」みたいな解釈もあるけど一旦やらない
     /// <summary>
-    /// 外部トラッキングベースで<see cref="FaceAttitudeController"/>と同等の処理を提供します。
-    /// どっちか片方だけがEnableされているのを期待しています
+    /// MediaPipeベースでアバターの首/頭ボーンを動かすクラス。
+    /// このクラスと <see cref="ExternalTrackerFaceAttitudeController"/> のいずれか片方が排他で動いてるのが期待値
     /// </summary>
     public class MediaPipeFaceAttitudeController : MonoBehaviour
     {

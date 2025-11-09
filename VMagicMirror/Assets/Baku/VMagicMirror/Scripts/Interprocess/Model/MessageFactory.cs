@@ -12,7 +12,6 @@ namespace Baku.VMagicMirror
         
         public static Message CloseConfigWindow() => Message.None(VmmServerCommands.CloseConfigWindow);
 
-        public static Message SetCalibrationFaceData(string data) => Message.String(VmmServerCommands.SetCalibrationFaceData, data);
         public static Message SetCalibrationFaceDataHighPower(string data) => Message.String(VmmServerCommands.SetCalibrationFaceDataHighPower, data);
 
         public static Message MicrophoneVolumeLevel(int level) => Message.Int(VmmServerCommands.MicrophoneVolumeLevel, level);

@@ -36,11 +36,8 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
-                case VmmServerCommands.SetCalibrationFaceData:
-                    // NOTE: Unity側がすでにこの値を把握しているので、投げ返す必要がない。HighPowerのほうも同様
-                    _motionSetting.CalibrateFaceData.SilentSet(e.GetStringValue());
-                    break;
                 case VmmServerCommands.SetCalibrationFaceDataHighPower:
+                    // NOTE: Unity側がすでにこの値を把握しているので、投げ返す必要がない
                     _motionSetting.CalibrateFaceDataHighPower.SilentSet(e.GetStringValue());
                     break;
                 case VmmServerCommands.AutoAdjustResults:

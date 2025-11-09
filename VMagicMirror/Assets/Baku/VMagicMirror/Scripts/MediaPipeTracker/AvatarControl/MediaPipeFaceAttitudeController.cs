@@ -32,6 +32,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [SerializeField] private bool useBiQuadFilter = true;
         [SerializeField] private float headRotationCutOffFrequency = 3f;
+        [SerializeField] private float headRotationCutOffFrequencySlow = 1.5f;
         
         public bool IsActive { get; set; } = true;
 
@@ -39,6 +40,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
+        private FaceControlConfiguration _config;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
@@ -50,12 +52,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
+            FaceControlConfiguration faceControlConfig,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
             MediaPipeKinematicSetter mediaPipeKinematicSetter,
             CurrentFramerateChecker framerateChecker
             )
         {
+            _config = faceControlConfig;
             _gameInputBodyMotionController = gameInputBodyMotionController;
             _carHandleBasedFk = carHandleBasedFk;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
@@ -78,8 +82,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             };
             
             _framerateChecker.CurrentFramerate
-                .Subscribe(framerate => 
-                    _rotationFilter.SetUpAsLowPassFilter(framerate, headRotationCutOffFrequency))
+                .CombineLatest(
+                    _config.HeadMotionControlMode, 
+                    (framerate, mode) => (framerate, mode))
+                .Subscribe(value =>
+                {
+                    var (framerate, mode) = value;
+                    var cutoffFrequency = mode is FaceControlModes.WebCamHighPower
+                        ? headRotationCutOffFrequency
+                        : headRotationCutOffFrequencySlow;
+                    _rotationFilter.SetUpAsLowPassFilter(framerate, cutoffFrequency);
+                })
                 .AddTo(this);
         }
 

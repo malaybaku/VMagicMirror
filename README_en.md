@@ -58,7 +58,7 @@ Open Unity project with Unity 6.0.x, and open WPF project with Visual Studio 202
 Maintainer's environment is as following.
 
 * Unity 6.0.58f2 Personal
-* Visual Studio Community 2022 (17.14.16)
+* Visual Studio Community 2022 (17.14.19)
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 
@@ -67,7 +67,6 @@ Maintainer's environment is as following.
 * From Asset Store:
     * DOTween
     * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * Other
     * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
     * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
@@ -80,11 +79,9 @@ Maintainer's environment is as following.
     * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
     * Roslyn Scripting (see the last part of this section for detail)
 
-Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
+Note that `FinalIK` is paid asset.
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
-
-Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 
 About MediaPipeUnityPlugin, move following model files (`.bytes`) in the package into `StreamingAssets/MediaPipeTracker` folder.
 

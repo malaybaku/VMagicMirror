@@ -23,7 +23,9 @@ namespace Baku.VMagicMirror
         private MediaPipeBlink _mediaPipeBlink;
         private MediaPipeEyeJitter _mediaPipeEyeJitter;
 
-        // WebCam (低負荷) でのトラッキング中に自動瞬きを使う場合はtrue
+        // TODO: 今このオプションは使えていないが、高品質/ExTrackerについてoptionalに有効化できるようにしたい。
+        // - 軽量では常にAutoBlinkでよい
+        // - フラグ自体はこのクラスから引っ越してもよい (_config内に入れるのが無難かも)
         private readonly ReactiveProperty<bool> AutoBlinkOnWebCamLowPower = new(true);
         
         [Inject]

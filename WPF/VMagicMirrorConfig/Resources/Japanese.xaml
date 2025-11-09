@@ -89,11 +89,10 @@
     <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
     <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて、低負荷に顔トラッキングを行います。
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて顔トラッキングを行います。
 
 - PC単体で、CPU負荷を抑えながらアバターにも動きを反映したいときに使用します。
 - このモードでカメラの使用を停止した場合、非常に低負荷で動作します。
-- ハンドトラッキングをオンにすると、自動で高品質モードに切り替わります。
 - 表情スイッチ機能が使えないなどの制限があります。</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>

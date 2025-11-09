@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -7,6 +8,7 @@ namespace Baku.VMagicMirror
     {
         private readonly IMessageReceiver _receiver;
 
+        [Inject]
         public CameraDeviceListQueryHandler(IMessageReceiver receiver)
         {
             _receiver = receiver;

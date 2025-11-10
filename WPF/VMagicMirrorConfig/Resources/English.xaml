@@ -89,11 +89,10 @@
     <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
     <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with low CPU load.
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera.
 
 - This mode is useful to apply your motion to the avatar without additional device, with low PC load.
 - When disabling the camera in this mode, the app will run very light.
-- High power mode is automatically applied during hand tracking is active.
 - The mode has limitation about Face Switch feature, image based blink, etc.</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">Web Camera (High Power)</sys:String>
@@ -103,9 +102,6 @@
 - This mode uses higher load on PC than other modes.
 - In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
-
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Web Camera (Lite) mode is unavailable when hand tracking is enabled. Please use Web Camera (High Power) instead.</sys:String>            
-    
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
     
     <!-- Ex.Tracker -->

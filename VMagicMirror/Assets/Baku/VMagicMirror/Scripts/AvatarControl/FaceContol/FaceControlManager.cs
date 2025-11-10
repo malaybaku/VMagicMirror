@@ -13,7 +13,6 @@ namespace Baku.VMagicMirror
     {
         //NOTE: まばたき自体は3種類どれかが排他で適用される。複数走っている場合、external > image > autoの優先度で適用する。
         [SerializeField] private ExternalTrackerBlink externalTrackerBlink = null;
-        [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
         
         [SerializeField] private EyeJitter randomEyeJitter = null;
@@ -24,7 +23,9 @@ namespace Baku.VMagicMirror
         private MediaPipeBlink _mediaPipeBlink;
         private MediaPipeEyeJitter _mediaPipeEyeJitter;
 
-        // WebCam (低負荷) でのトラッキング中に自動瞬きを使う場合はtrue
+        // TODO: 今このオプションは使えていないが、高品質/ExTrackerについてoptionalに有効化できるようにしたい。
+        // - 軽量では常にAutoBlinkでよい
+        // - フラグ自体はこのクラスから引っ越してもよい (_config内に入れるのが無難かも)
         private readonly ReactiveProperty<bool> AutoBlinkOnWebCamLowPower = new(true);
         
         [Inject]
@@ -67,8 +68,8 @@ namespace Baku.VMagicMirror
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
                 FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
-                FaceControlModes.WebCamLowPower when !AutoBlinkOnWebCamLowPower.Value
-                    => imageBasedBlinkController.BlinkSource,
+                // NOTE: MediaPipeの軽量モードは諸説ある (_autoBlinkを強制する or 設定次第にする)
+                FaceControlModes.WebCamLowPower => autoBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };
 

@@ -103,7 +103,6 @@
         // NOTE: HorizontalFlipControllerのみからこの値を参照すること (ゲーム入力モードの状態とかも踏まえて最終的な反転on/offを計算するため)
         DisableFaceTrackingHorizontalFlip,
         CalibrateFace,
-        SetCalibrateFaceData,
         SetCalibrateFaceDataHighPower,
 
         FaceDefaultFun,

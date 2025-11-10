@@ -7,7 +7,6 @@ namespace Baku.VMagicMirror
     /// <summary> 頭のFK処理のアクティブ状態を制御するやつ </summary>
     public class HeadFKIntegrator : MonoBehaviour
     {
-        [SerializeField] private FaceAttitudeController imageAttitude = null;
         [SerializeField] private ExternalTrackerFaceAttitudeController externalTrackerAttitude = null;
         [SerializeField] private MediaPipeFaceAttitudeController mediaPipeFaceAttitude = null;
         [SerializeField] private NonImageBasedMotion nonImageBasedMotion = null;
@@ -28,22 +27,15 @@ namespace Baku.VMagicMirror
             case FaceControlModes.ExternalTracker:
                 externalTrackerAttitude.IsActive = true;
                 mediaPipeFaceAttitude.IsActive = false;
-                imageAttitude.IsActive = false;
                 break;
             case FaceControlModes.WebCamLowPower:
-                externalTrackerAttitude.IsActive = false;
-                mediaPipeFaceAttitude.IsActive = false;
-                imageAttitude.IsActive = true;
-                break;
             case FaceControlModes.WebCamHighPower:
                 externalTrackerAttitude.IsActive = false;
                 mediaPipeFaceAttitude.IsActive = true;
-                imageAttitude.IsActive = false;
                 break;
             default:
                 externalTrackerAttitude.IsActive = false;
                 mediaPipeFaceAttitude.IsActive = false;
-                imageAttitude.IsActive = false;
                 break;
             }
 

@@ -11,7 +11,6 @@ namespace Baku.VMagicMirror
         ModelNameConfirmedOnLoad,
         RequestShowError,
         CloseConfigWindow,
-        SetCalibrationFaceData,
         SetCalibrationFaceDataHighPower,
         MicrophoneVolumeLevel,
         AutoAdjustResults,

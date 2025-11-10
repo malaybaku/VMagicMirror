@@ -165,7 +165,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _useHandTracking,
                     (faceTrackingEnabled, deviceName, isHighPowerMode, useExTracker, useHandTracking) =>
                         faceTrackingEnabled &&
-                        isHighPowerMode &&
                         !useExTracker &&
                         !useHandTracking &&
                         IsAvailableWebCamDevice(deviceName))

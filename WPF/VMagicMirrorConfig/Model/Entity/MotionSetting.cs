@@ -62,7 +62,6 @@
         // - 起動時に空でなければUnityへ送る
         // - Unityからデータが来たら受け取る
         // - 終了時にはファイルに保存する
-        public string CalibrateFaceData { get; set; } = "";
         public string CalibrateFaceDataHighPower { get; set; } = "";
 
         public int FaceDefaultFun { get; set; } = 0;

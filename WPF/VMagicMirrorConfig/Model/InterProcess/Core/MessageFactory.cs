@@ -107,9 +107,8 @@ namespace Baku.VMagicMirrorConfig
         public static Message WaitMotionScale(int scalePercent) => IntContent(VmmCommands.WaitMotionScale, scalePercent);
         public static Message WaitMotionPeriod(int periodSec) => IntContent(VmmCommands.WaitMotionPeriod, periodSec);
 
-        // NOTE: Unity側の状態によって実際に行うキャリブレーションは変わる(低負荷/高負荷では別々のキャリブレーションを行う)
         public static Message CalibrateFace() => None(VmmCommands.CalibrateFace);
-        public static Message SetCalibrateFaceData(string data) => StringContent(VmmCommands.SetCalibrateFaceData, data);
+        // NOTE: 歴史的経緯により HighPower suffixがないコマンドはobsoleteになって削除した / HighPower版から`HighPower` suffixを外してもよい
         public static Message SetCalibrateFaceDataHighPower(string data) => StringContent(VmmCommands.SetCalibrateFaceDataHighPower, data);
 
         public static Message EnableFaceTracking(bool enable) => BoolContent(VmmCommands.EnableFaceTracking, enable);

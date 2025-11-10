@@ -33,7 +33,6 @@ Transform:
   - {fileID: 6641653339800321961}
   - {fileID: 464634161239495479}
   - {fileID: 464634161373680878}
-  - {fileID: 464634160456065511}
   - {fileID: 464634160986390038}
   - {fileID: 5576425534309717448}
   m_Father: {fileID: 0}
@@ -53,7 +52,7 @@ MonoBehaviour:
   globalHookInputChecker: {fileID: 3968200917505937623}
   robustRawInputChecker: {fileID: 1881006542137438839}
   mousePositionProvider: {fileID: 5115481182964325839}
-  faceTracker: {fileID: 464634160456065510}
+  faceTracker: {fileID: 0}
   externalTracker: {fileID: 3222385201041346576}
   gamepadListener: {fileID: 464634161239495476}
   midiInputObserver: {fileID: 464634160986390039}
@@ -358,60 +357,4 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6717032853679108915, guid: da066efd8bf153f47bac0fca61289af1,
     type: 3}
   m_PrefabInstance: {fileID: 6576671094749192196}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &9103914377715274913
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 7714441295874403606}
-    m_Modifications:
-    - target: {fileID: 8657378269927355717, guid: 0e82b614f7b2fe84da55e82db28a1900,
-        type: 3}
-      propertyPath: m_Name
-      value: FaceTracker
-      objectReference: {fileID: 0}
-    - target: {fileID: 8657378269927355718, guid: 0e82b614f7b2fe84da55e82db28a1900,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8657378269927355718, guid: 0e82b614f7b2fe84da55e82db28a1900,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8657378269927355718, guid: 0e82b614f7b2fe84da55e82db28a1900,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8657378269927355718, guid: 0e82b614f7b2fe84da55e82db28a1900,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0e82b614f7b2fe84da55e82db28a1900, type: 3}
---- !u!114 &464634160456065510 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8657378269927355719, guid: 0e82b614f7b2fe84da55e82db28a1900,
-    type: 3}
-  m_PrefabInstance: {fileID: 9103914377715274913}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c46089e00f194442983c97c9bdedd65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &464634160456065511 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8657378269927355718, guid: 0e82b614f7b2fe84da55e82db28a1900,
-    type: 3}
-  m_PrefabInstance: {fileID: 9103914377715274913}
   m_PrefabAsset: {fileID: 0}

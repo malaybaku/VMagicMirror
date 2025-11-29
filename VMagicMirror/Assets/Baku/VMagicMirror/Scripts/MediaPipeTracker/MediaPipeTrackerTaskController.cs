@@ -69,6 +69,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             SubscribeIpcMessages();
             SubscribeTaskRunningFlags();
+            SubscribeHighPowerModeFlag();
             SetupTaskAndWebCamTextureActiveStatus();
         }
 
@@ -201,6 +202,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .AddTo(this);
         }
 
+        private void SubscribeHighPowerModeFlag()
+        {
+            _useWebCamHighPowerMode
+                .Subscribe(value =>
+                {
+                    _face.SetBlendShapeOutputActive(value);
+                    _handAndFace.SetBlendShapeOutputActive(value);
+                    _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
+                })
+                .AddTo(this);
+        }
+        
         private void SetupTaskAndWebCamTextureActiveStatus()
         {
             // 下記5個のSubscribeにより、_face ~ _handAndFaceWithElbow が排他的に動く。もちろん何も動かないこともある

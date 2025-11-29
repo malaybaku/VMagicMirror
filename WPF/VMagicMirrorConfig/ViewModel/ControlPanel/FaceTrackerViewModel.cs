@@ -118,18 +118,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void UpdateBaseMode()
         {
-            // NOTE: どのフラグが参照されるか明記しないとわかりにくいので一旦全て説明変数で受ける。
-            // webcamについて、カメラの使用on/off自体は見に行かないことに注意
+            // NOTE: webcamについて、カメラの使用on/off自体は見に行かないことに注意
             var exTrackerEnabled = _exTrackerModel.EnableExternalTracking.Value;
             var webCamHighPowerModeEnabled = _motionModel.EnableWebCamHighPowerMode.Value;
-            var handTrackingEnabled = _motionModel.EnableImageBasedHandTracking.Value;
 
-
-
-            var preferHighPowerModeInWebCamera = webCamHighPowerModeEnabled || handTrackingEnabled;
-            // NOTE: ハンドトラッキングが有効だと高負荷モードになる (MediaPipeが起動するため)
-            UseLiteWebCamera.Value = !exTrackerEnabled && !preferHighPowerModeInWebCamera;
-            UseHighPowerWebCamera.Value = !exTrackerEnabled && preferHighPowerModeInWebCamera;
+            UseLiteWebCamera.Value = !exTrackerEnabled && !webCamHighPowerModeEnabled;
+            UseHighPowerWebCamera.Value = !exTrackerEnabled && webCamHighPowerModeEnabled;
             FaceSwitchSupported.Value = exTrackerEnabled || UseHighPowerWebCamera.Value;
             // NOTE: ExTrackerはModelのフラグを素通ししているのでそのまんまでOK
         }

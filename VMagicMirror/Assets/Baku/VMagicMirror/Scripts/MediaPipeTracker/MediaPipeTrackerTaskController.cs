@@ -161,10 +161,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,
-                    _useWebCamHighPowerMode,
                     _useExternalTracking,
                     _useHandTracking,
-                    (faceTrackingEnabled, deviceName, isHighPowerMode, useExTracker, useHandTracking) =>
+                    (faceTrackingEnabled, deviceName, useExTracker, useHandTracking) =>
                         faceTrackingEnabled &&
                         !useExTracker &&
                         !useHandTracking &&
@@ -173,7 +172,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(runTask => _isFaceTaskRunning.Value = runTask)
                 .AddTo(this);
             
-            // ↑とかなり似ているが、ハンドトラッキングのフラグ条件が逆だったり、高負荷モードのフラグを無視したりすることに注意
+            // ↑とかなり似ているが、ハンドトラッキングのフラグ条件が逆なすることに注意
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,

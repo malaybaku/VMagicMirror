@@ -100,7 +100,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void StartTask()
         {
-            // Stopしないでもシーケンス上は大丈夫だけど、まあ気になるので…
             StopTask();
             OnStartTask();
 

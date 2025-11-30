@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
 
-            _faceControlConfig.HeadMotionControlMode
+            _faceControlConfig.BlendShapeControlMode
                 .CombineLatest(
                     _isExTrackerLipSyncActive,
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,

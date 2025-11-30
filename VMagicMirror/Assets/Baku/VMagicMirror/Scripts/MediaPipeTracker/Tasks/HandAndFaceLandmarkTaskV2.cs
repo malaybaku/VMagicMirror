@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Mediapipe;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
@@ -15,7 +14,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private FaceLandmarker _landmarker;
         private int _interlaceCount;
 
-        private readonly Dictionary<string, float> _blendShapeValues = new(52);
+        private bool _blendShapeOutputActive;
+        private bool _isRunningWithBlendShapeOutput;
+        private readonly FaceLandmarkResultHandler _resultHandler;
 
         [Inject]
         public HandAndFaceLandmarkTaskV2(
@@ -29,11 +30,32 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeTrackerStatusPreviewSender previewSender
         ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer, fingerPoseCalculator, previewSender)
         {
+            _resultHandler = new FaceLandmarkResultHandler(
+                textureSource,
+                settingsRepository, 
+                mediaPipeKinematicSetter, 
+                facialValueRepository,
+                calibrator,
+                previewSender
+            );
+        }
+
+        public void SetBlendShapeOutputActive(bool active)
+        {
+            if (_blendShapeOutputActive == active)
+            {
+                return;
+            }
+
+            _blendShapeOutputActive = active;
+            RestartTaskIfActive();
         }
         
         protected override void OnStartTask()
         {
             base.OnStartTask();
+
+            _isRunningWithBlendShapeOutput = _blendShapeOutputActive;
             
             var options = new FaceLandmarkerOptions(
                 baseOptions: new BaseOptions(
@@ -41,7 +63,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 ),
                 Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM,
                 numFaces: 1,
-                outputFaceBlendshapes: true,
+                outputFaceBlendshapes: _isRunningWithBlendShapeOutput,
                 outputFaceTransformationMatrixes: true,
                 resultCallback: OnResult
             );
@@ -88,31 +110,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void OnResult(FaceLandmarkerResult result, Image image, long timestamp)
         {
-            if (result.faceBlendshapes is not { Count: > 0 })
-            {
-                FacialValueRepository.RequestReset();
-                MediaPipeKinematicSetter.ClearHeadPose();
-                return;
-            }
-            
-            // 一度入った BlendShape はPlayMode中に消えない…という前提でこうしてます
-            foreach (var c in result.faceBlendshapes[0].categories)
-            {
-                _blendShapeValues[c.categoryName] = c.score;
-            }
-            FacialValueRepository.SetValues(_blendShapeValues);
-
-            var eye = FacialValueRepository.BlendShapes.Eye;
-            PreviewSender.SetBlinkResult(eye.LeftBlink, eye.RightBlink);
-
-            var matrix = result.facialTransformationMatrixes[0];
-            var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());
-            MediaPipeKinematicSetter.SetHeadPose6Dof(headPose);
-
-            if (SettingsRepository.HasCalibrationRequest)
-            {
-                _ = Calibrator.TrySetSixDofData(result, WebCamTextureAspect);
-            }
+            _resultHandler.OnFaceLandmarkResult(result, _isRunningWithBlendShapeOutput);
         }
     }
 }

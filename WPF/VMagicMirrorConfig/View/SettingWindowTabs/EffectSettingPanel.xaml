@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:AntiAliasStyleToTextConverter x:Key="AntiAliasStyleToTextConverter"/>
+        <view:AvailableFramerateToTextConverter x:Key="AvailableFramerateToTextConverter"/>
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
             <Setter Property="Margin" Value="20,5"/>
         </Style>
@@ -51,33 +52,29 @@
                     </StackPanel>
 
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0"
+                        <TextBlock Grid.Row="0" Grid.Column="0"
                                    Text="{DynamicResource ImageQuality_CurrentQuality}"/>
-
-                        <ComboBox Grid.Column="1"
-                                  Margin="5,0"
+                        <ComboBox Grid.Row="0" Grid.Column="1"
+                                  Margin="5"
                                   ItemsSource="{Binding ImageQualityNames}"
                                   SelectedItem="{Binding ImageQuality.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                   md:HintAssist.Hint="Quality"
                                   />
-                    </Grid>
 
-                    <Grid Margin="0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
+                        <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource ImageQuality_AntiAlias}"/>
-
-                        <ComboBox Grid.Column="1"
-                                  Margin="5,0"
+                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                  Margin="5"
                                   ItemsSource="{Binding AvailableAntiAliasStyle}"
                                   SelectedItem="{Binding AntiAliasStyle.Value}"
                                   md:HintAssist.Hint="Choose..."
@@ -88,11 +85,21 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="{DynamicResource ImageQuality_Framerate}"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1"
+                                  Margin="5"
+                                  ItemsSource="{Binding AvailableTargetFramerateStyle}"
+                                  SelectedItem="{Binding TargetFramerateStyle.Value}"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path={}, Converter={StaticResource AvailableFramerateToTextConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
-                    <CheckBox Margin="10,5"
-                              Content="{DynamicResource ImageQuality_HalfFpsMode}"
-                              IsChecked="{Binding HalfFpsMode.Value}"
-                              />
 
                     <CheckBox Margin="10,5,10,15"
                               Content="{DynamicResource ImageQuality_UseBoneFrameReduction}"

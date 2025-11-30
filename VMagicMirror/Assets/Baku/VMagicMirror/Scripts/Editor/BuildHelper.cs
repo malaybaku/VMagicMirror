@@ -167,8 +167,7 @@ namespace Baku.VMagicMirror
             foreach (var file in Directory.GetFiles(streamingAssetDir))
             {
                 var fileName = Path.GetFileName(file);
-                if (fileName != StreamingAssetFileNames.DlibFaceTrackingDataFileName &&
-                    fileName != StreamingAssetFileNames.BuddyApiXmlDocFileName)
+                if (fileName != StreamingAssetFileNames.BuddyApiXmlDocFileName)
                 {
                     File.Delete(file);
                 }

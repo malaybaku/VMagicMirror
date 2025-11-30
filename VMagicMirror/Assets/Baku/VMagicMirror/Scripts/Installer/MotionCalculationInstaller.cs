@@ -8,7 +8,6 @@ namespace Baku.VMagicMirror.Installer
     public class MotionCalculationInstaller : InstallerBase
     {
         [SerializeField] private HandIKIntegrator handIKIntegrator;
-        [SerializeField] private FaceAttitudeController faceAttitude;
         [SerializeField] private HeadMotionClipPlayer headMotionClipPlayer;
         [SerializeField] private ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader;
         [SerializeField] private NonImageBasedMotion nonImageBasedMotion;
@@ -25,7 +24,6 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<SwitchableHandDownIkData>().AsSingle();
             container.BindInstances(
                 handIKIntegrator,
-                faceAttitude,
                 colliderBasedAvatarParamLoader,
                 nonImageBasedMotion,
                 fingerController,

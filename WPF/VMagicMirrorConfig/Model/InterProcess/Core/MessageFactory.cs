@@ -107,9 +107,8 @@ namespace Baku.VMagicMirrorConfig
         public static Message WaitMotionScale(int scalePercent) => IntContent(VmmCommands.WaitMotionScale, scalePercent);
         public static Message WaitMotionPeriod(int periodSec) => IntContent(VmmCommands.WaitMotionPeriod, periodSec);
 
-        // NOTE: Unity側の状態によって実際に行うキャリブレーションは変わる(低負荷/高負荷では別々のキャリブレーションを行う)
         public static Message CalibrateFace() => None(VmmCommands.CalibrateFace);
-        public static Message SetCalibrateFaceData(string data) => StringContent(VmmCommands.SetCalibrateFaceData, data);
+        // NOTE: 歴史的経緯により HighPower suffixがないコマンドはobsoleteになって削除した / HighPower版から`HighPower` suffixを外してもよい
         public static Message SetCalibrateFaceDataHighPower(string data) => StringContent(VmmCommands.SetCalibrateFaceDataHighPower, data);
 
         public static Message EnableFaceTracking(bool enable) => BoolContent(VmmCommands.EnableFaceTracking, enable);
@@ -278,7 +277,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message GetQualitySettingsInfo() => None(VmmCommands.GetQualitySettingsInfo);
         public static Message SetImageQuality(string name) => StringContent(VmmCommands.SetImageQuality, name);
         public static Message SetAntiAliasStyle(int style) => IntContent(VmmCommands.SetAntiAliasStyle, style);
-        public static Message SetHalfFpsMode(bool enable) => BoolContent(VmmCommands.SetHalfFpsMode, enable);
+        public static Message SetTargetFramerate(int framerate) => IntContent(VmmCommands.SetTargetFramerate, framerate);
         public static Message UseFrameReductionEffect(bool enable) => BoolContent(VmmCommands.UseFrameReductionEffect, enable);
 
         /// <summary>

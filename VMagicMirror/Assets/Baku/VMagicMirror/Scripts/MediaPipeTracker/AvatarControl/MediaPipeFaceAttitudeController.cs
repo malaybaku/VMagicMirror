@@ -4,9 +4,10 @@ using R3;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    //NOTE: 筋肉的には「首が横に振るときはピッチを下げるべき」みたいな解釈もあるけど一旦やらない
     /// <summary>
-    /// 外部トラッキングベースで<see cref="FaceAttitudeController"/>と同等の処理を提供します。
-    /// どっちか片方だけがEnableされているのを期待しています
+    /// MediaPipeベースでアバターの首/頭ボーンを動かすクラス。
+    /// このクラスと <see cref="ExternalTrackerFaceAttitudeController"/> のいずれか片方が排他で動いてるのが期待値
     /// </summary>
     public class MediaPipeFaceAttitudeController : MonoBehaviour
     {
@@ -31,6 +32,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [SerializeField] private bool useBiQuadFilter = true;
         [SerializeField] private float headRotationCutOffFrequency = 3f;
+        [SerializeField] private float headRotationCutOffFrequencySlow = 1.5f;
         
         public bool IsActive { get; set; } = true;
 
@@ -38,6 +40,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
+        private FaceControlConfiguration _config;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
@@ -49,12 +52,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
+            FaceControlConfiguration faceControlConfig,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
             MediaPipeKinematicSetter mediaPipeKinematicSetter,
             CurrentFramerateChecker framerateChecker
             )
         {
+            _config = faceControlConfig;
             _gameInputBodyMotionController = gameInputBodyMotionController;
             _carHandleBasedFk = carHandleBasedFk;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
@@ -77,8 +82,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             };
             
             _framerateChecker.CurrentFramerate
-                .Subscribe(framerate => 
-                    _rotationFilter.SetUpAsLowPassFilter(framerate, headRotationCutOffFrequency))
+                .CombineLatest(
+                    _config.HeadMotionControlMode, 
+                    (framerate, mode) => (framerate, mode))
+                .Subscribe(value =>
+                {
+                    var (framerate, mode) = value;
+                    var cutoffFrequency = mode is FaceControlModes.WebCamHighPower
+                        ? headRotationCutOffFrequency
+                        : headRotationCutOffFrequencySlow;
+                    _rotationFilter.SetUpAsLowPassFilter(framerate, cutoffFrequency);
+                })
                 .AddTo(this);
         }
 

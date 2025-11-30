@@ -69,6 +69,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             SubscribeIpcMessages();
             SubscribeTaskRunningFlags();
+            SubscribeHighPowerModeFlag();
             SetupTaskAndWebCamTextureActiveStatus();
         }
 
@@ -160,12 +161,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,
-                    _useWebCamHighPowerMode,
                     _useExternalTracking,
                     _useHandTracking,
-                    (faceTrackingEnabled, deviceName, isHighPowerMode, useExTracker, useHandTracking) =>
+                    (faceTrackingEnabled, deviceName, useExTracker, useHandTracking) =>
                         faceTrackingEnabled &&
-                        isHighPowerMode &&
                         !useExTracker &&
                         !useHandTracking &&
                         IsAvailableWebCamDevice(deviceName))
@@ -173,7 +172,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(runTask => _isFaceTaskRunning.Value = runTask)
                 .AddTo(this);
             
-            // ↑とかなり似ているが、ハンドトラッキングのフラグ条件が逆だったり、高負荷モードのフラグを無視したりすることに注意
+            // ↑とかなり似ているが、ハンドトラッキングのフラグ条件が逆なすることに注意
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,
@@ -202,6 +201,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .AddTo(this);
         }
 
+        private void SubscribeHighPowerModeFlag()
+        {
+            _useWebCamHighPowerMode
+                .Subscribe(value =>
+                {
+                    _face.SetBlendShapeOutputActive(value);
+                    _handAndFace.SetBlendShapeOutputActive(value);
+                    _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
+                })
+                .AddTo(this);
+        }
+        
         private void SetupTaskAndWebCamTextureActiveStatus()
         {
             // 下記5個のSubscribeにより、_face ~ _handAndFaceWithElbow が排他的に動く。もちろん何も動かないこともある

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker;
+using Baku.VMagicMirror.MediaPipeTracker;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// 外部トラッキングベースで<see cref="FaceAttitudeController"/>と同等の処理を提供します。
-    /// どっちか片方だけがEnableされているのを期待しています
+    /// 外部トラッキングベースでアバターの首/頭ボーンを動かすクラス。
+    /// このクラスと <see cref="MediaPipeFaceAttitudeController"/> のいずれか片方が排他で動いてるのが期待値
     /// </summary>
     public class ExternalTrackerFaceAttitudeController : MonoBehaviour
     {

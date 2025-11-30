@@ -52,6 +52,8 @@ namespace Baku.VMagicMirror.IK
             _gamepad = gamepad;
         }
 
+        public GamepadLeanModes LeanMode => _leanMode;
+
         private readonly ReactiveProperty<float> _handleRate = new(0f);
         /// <summary>
         /// -1 ~ +1 の範囲を取る値。角度は<see cref="HandleAngle"/>で取得できる
@@ -161,7 +163,7 @@ namespace Baku.VMagicMirror.IK
         }
         
         /// <summary> どの入力をBodyLeanの値に反映するか考慮するやつ </summary>
-        private enum GamepadLeanModes
+        public enum GamepadLeanModes
         {
             GamepadLeanNone,
             GamepadLeanLeftButtons,

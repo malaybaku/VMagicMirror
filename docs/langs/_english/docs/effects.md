@@ -16,7 +16,7 @@ lang: en
 #### 1. Settings
 {: .doc-sec2 }
 
-`Image Quality`: Select whole image quality.
+`Image Quality`: Select whole image quality and framerate.
 
 `Anti Alias`: Choose anti alias (Multisample Anti-Alias) option. Note that higher setting leads more computational load. The feature is off by default.
 

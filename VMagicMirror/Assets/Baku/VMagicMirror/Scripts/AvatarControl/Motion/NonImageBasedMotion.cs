@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
 
-        private FaceTracker _faceTracker;
+        //private FaceTracker _faceTracker;
         private FaceControlConfiguration _faceConfig;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
@@ -45,14 +45,14 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
-            FaceTracker faceTracker,
+            //FaceTracker faceTracker,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
             VmmLipSyncContextBase lipSyncContext,
             VoiceOnOffParser voiceOnOffParser
             )
         {
-            _faceTracker = faceTracker;
+            //_faceTracker = faceTracker;
             _gameInputBodyMotionController = gameInputBodyMotionController;
             _carHandleBasedFk = carHandleBasedFk;
             
@@ -100,9 +100,11 @@ namespace Baku.VMagicMirror
 
         //外部トラッキングについては接続できてる/できてないが明確なほうがバリューありそうなので、適用しない。
         //いっぽうwebカメラで顔トラが動く前 == 初期インストール直後を意味し、ここは親切にしたいので適用する。
-        private void UpdateShouldApply() => _shouldApply.Value = 
-            FaceControlMode == FaceControlModes.None || 
-            (FaceControlMode == FaceControlModes.WebCamLowPower && !_faceTracker.FaceDetectedAtLeastOnce);
+        private void UpdateShouldApply() => _shouldApply.Value =
+            FaceControlMode == FaceControlModes.None ||
+            // TODO: 「MediaPipe実装で顔検出が成功してるかどうか」みたいなフラグを取ってきて使いたい
+            (FaceControlMode == FaceControlModes.WebCamLowPower && false);
+            //(FaceControlMode == FaceControlModes.WebCamLowPower && !_faceTracker.FaceDetectedAtLeastOnce);
         
         private FaceControlModes _faceControlMode = FaceControlModes.WebCamLowPower;
         public FaceControlModes FaceControlMode
@@ -212,14 +214,17 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
-            if (Application.targetFrameRate == 30)
+            //NOTE: ちょっとイビツな処理だが、秒数に関係するカウントなので大まかに揃えるために下記のようにしてる
+            if (Application.targetFrameRate == 30 && QualitySettings.vSyncCount == 0)
             {
                 _voiceOnOffParser.OnCountThreshold = 3;
                 _voiceOnOffParser.OffCountThreshold = 8;
             }
             else
             {
+                // NOTE:
+                // - vSync onの場合、モニターのリフレッシュレートのメジャーケースが60Hzと想定して60FPS相当に扱う
+                // - vSync on設定 && 高リフレッシュレートのモニターだとカウントの消費時間が早くなるのでちょっとワタワタするかも
                 _voiceOnOffParser.OnCountThreshold = 6;
                 _voiceOnOffParser.OffCountThreshold = 16;
             }

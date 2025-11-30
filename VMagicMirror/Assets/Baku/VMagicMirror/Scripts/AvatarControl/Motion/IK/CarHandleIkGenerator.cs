@@ -46,29 +46,28 @@ namespace Baku.VMagicMirror.IK
                 Quaternion.Euler(-90f, -90f, GripHandPitchAngle)
                 );
             
-            //該当モードでスティックに触ると両手がハンドル用IKになる: 片手ずつでもいいかもだが
-            dependency.Events.MoveLeftGamepadStick += v =>
+            // 該当モードでスティックに触ると両手がハンドル用IKになる
+            // NOTE: 選択中のスティックの種類を特定したほうがいいかも
+            dependency.Events.MoveLeftGamepadStick += _ =>
             {
-                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
-                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.CarController)
+                if (angleGenerator.LeanMode == CarHandleAngleGenerator.GamepadLeanModes.GamepadLeanLeftStick)
                 {
-                    return;
+                    OnGamepadStickMoved(dependency.Config);
                 }
-
-                _leftHandState.RaiseRequest();
-                _rightHandState.RaiseRequest();
             };
-
-            dependency.Events.MoveRightGamepadStick += v =>
+            dependency.Events.MoveRightGamepadStick += _ =>
             {
-                if (dependency.Config.IsAlwaysHandDown.CurrentValue || 
-                    dependency.Config.GamepadMotionMode.CurrentValue != GamepadMotionModes.CarController)
+                if (angleGenerator.LeanMode == CarHandleAngleGenerator.GamepadLeanModes.GamepadLeanRightStick)
                 {
-                    return;
+                    OnGamepadStickMoved(dependency.Config);
                 }
-
-                _leftHandState.RaiseRequest();
-                _rightHandState.RaiseRequest();
+            };
+            dependency.Events.GamepadButtonStick += _ =>
+            {
+                if (angleGenerator.LeanMode == CarHandleAngleGenerator.GamepadLeanModes.GamepadLeanLeftButtons)
+                {
+                    OnGamepadStickMoved(dependency.Config);
+                }
             };
         }
         
@@ -115,6 +114,18 @@ namespace Baku.VMagicMirror.IK
             UpdateFingerState();
         }
 
+        private void OnGamepadStickMoved(HandIkRuntimeConfigs config)
+        {
+            if (config.IsAlwaysHandDown.CurrentValue || 
+                config.GamepadMotionMode.CurrentValue != GamepadMotionModes.CarController)
+            {
+                return;
+            }
+
+            _leftHandState.RaiseRequest();
+            _rightHandState.RaiseRequest();
+        }
+        
         private void UpdateFingerState()
         {
             if (Dependency.Config.LeftTarget.CurrentValue is HandTargetType.CarHandle)

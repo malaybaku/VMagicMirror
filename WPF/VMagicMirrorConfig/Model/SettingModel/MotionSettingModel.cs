@@ -74,7 +74,6 @@ namespace Baku.VMagicMirrorConfig
             HandTrackingMotionOffsetY = new RProperty<int>(setting.HandTrackingMotionOffsetY, v => SendMessage(MessageFactory.SetHandTrackingMotionOffsetY(v)));
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(MessageFactory.SetCameraDeviceName(v)));
-            CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(MessageFactory.SetCalibrateFaceData(v)));
             CalibrateFaceDataHighPower = new RProperty<string>(setting.CalibrateFaceDataHighPower, v => SendMessage(MessageFactory.SetCalibrateFaceDataHighPower(v)));
 
             FaceDefaultFun = new RProperty<int>(setting.FaceDefaultFun, v => SendMessage(MessageFactory.FaceDefaultFun(v)));
@@ -222,10 +221,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<string> CameraDeviceName { get; }
 
-        /// <summary>
-        /// NOTE: この値はUIに出す必要はないが、起動時に空でなければ送り、Unityからデータが来たら受け取り、終了時にはセーブする。
-        /// </summary>
-        public RProperty<string> CalibrateFaceData { get; }
+        // NOTE: この値はUIに出す必要はないが、起動時に空でなければ送り、Unityからデータが来たら受け取り、終了時にはセーブする。
         public RProperty<string> CalibrateFaceDataHighPower { get; }
 
         public RProperty<int> FaceDefaultFun { get; }
@@ -432,11 +428,6 @@ namespace Baku.VMagicMirrorConfig
             //ファイルに有効なキャリブレーション情報があれば送る。
             //NOTE: これ以外のタイミングではキャリブレーション情報は基本送らないでよい
             //(Unity側がすでにキャリブの値を知ってる状態でメッセージを投げてくるため)
-            if (!string.IsNullOrEmpty(CalibrateFaceData.Value))
-            {
-                SendMessage(MessageFactory.SetCalibrateFaceData(CalibrateFaceData.Value));
-            }
-
             if (!string.IsNullOrEmpty(CalibrateFaceDataHighPower.Value))
             {
                 SendMessage(MessageFactory.SetCalibrateFaceDataHighPower(CalibrateFaceDataHighPower.Value));

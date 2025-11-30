@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Baku.VMagicMirror.ExternalTracker;
+﻿using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +9,6 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private GlobalHookInputChecker globalHookInputChecker = null;
         [SerializeField] private RawInputChecker robustRawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
-        [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private XInputGamePad gamepadListener = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
@@ -22,7 +20,7 @@ namespace Baku.VMagicMirror.Installer
                 .FromInstance(new HybridInputChecker(robustRawInputChecker, globalHookInputChecker))
                 .AsCached();
             container.BindInstance(mousePositionProvider);
-            container.BindInstance(faceTracker);
+            //container.BindInstance(faceTracker);
             
             container.Bind<FaceSwitchExtractor>().AsSingle();
             container.BindInstance(externalTracker);

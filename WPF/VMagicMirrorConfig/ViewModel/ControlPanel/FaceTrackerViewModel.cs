@@ -59,7 +59,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 // NOTE: 視認性のためにプレビュー上ではUIがだいたい展開した状態にする。
                 UseLiteWebCamera.Value = true;
                 UseHighPowerWebCamera.Value = true;
-                HighPowerWebCameraAppliedByHandTracking.Value = true;
                 return;
             }
 
@@ -119,23 +118,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void UpdateBaseMode()
         {
-            // NOTE: どのフラグが参照されるか明記しないとわかりにくいので一旦全て説明変数で受ける。
-            // webcamについて、カメラの使用on/off自体は見に行かないことに注意
+            // NOTE: webcamについて、カメラの使用on/off自体は見に行かないことに注意
             var exTrackerEnabled = _exTrackerModel.EnableExternalTracking.Value;
             var webCamHighPowerModeEnabled = _motionModel.EnableWebCamHighPowerMode.Value;
-            var handTrackingEnabled = _motionModel.EnableImageBasedHandTracking.Value;
 
-
-
-            var preferHighPowerModeInWebCamera = webCamHighPowerModeEnabled || handTrackingEnabled;
-            // NOTE: ハンドトラッキングが有効だと高負荷モードになる (MediaPipeが起動するため)
-            UseLiteWebCamera.Value = !exTrackerEnabled && !preferHighPowerModeInWebCamera;
-            UseHighPowerWebCamera.Value = !exTrackerEnabled && preferHighPowerModeInWebCamera;
-            // 「GUI上で直近で選んだのは軽量トラッキングだが、ハンドトラッキングを有効かしたことで高品質モードに遷移している」の条件を入れている。
-            // ちょっと複雑なので注意
-            HighPowerWebCameraAppliedByHandTracking.Value =
-                !exTrackerEnabled && !webCamHighPowerModeEnabled && handTrackingEnabled;
-
+            UseLiteWebCamera.Value = !exTrackerEnabled && !webCamHighPowerModeEnabled;
+            UseHighPowerWebCamera.Value = !exTrackerEnabled && webCamHighPowerModeEnabled;
             FaceSwitchSupported.Value = exTrackerEnabled || UseHighPowerWebCamera.Value;
             // NOTE: ExTrackerはModelのフラグを素通ししているのでそのまんまでOK
         }
@@ -147,13 +135,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // 「ExTrackerが有効なら残り2つはオフ扱い」などの暗黙の優先度仕様を踏まえて値を制御するので、Settingの値をそのまま反映するわけではない
         public RProperty<bool> UseLiteWebCamera { get; } = new RProperty<bool>(false);
         public RProperty<bool> UseHighPowerWebCamera { get; } = new RProperty<bool>(false);
-        public RProperty<bool> HandTrackingEnabled => _motionModel.EnableImageBasedHandTracking;
-
         public RProperty<bool> EnableExternalTracking => _exTrackerModel.EnableExternalTracking;
-
-        // NOTE: 実は使ってないが、Unity側の状態の情報をWPF側にもいちおう書いときたいので残している
-        // 「ハンドトラッキングさえ切ったら低負荷モードになるような組み合わせで高負荷モードになってるとき」だけtrueになるフラグ
-        public RProperty<bool> HighPowerWebCameraAppliedByHandTracking { get; } = new RProperty<bool>(false);
 
         public RProperty<bool> FaceSwitchSupported { get; } = new RProperty<bool>(false);
         // NOTE: 制限つきでFace Switchが動くケースは実際にはwebカメラの高負荷モードだけだが、View向けに読み替えを行ってプロパティを公開してる

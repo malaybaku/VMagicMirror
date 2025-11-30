@@ -7,7 +7,7 @@ Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 v4.3.0
 
 * 作成: 獏星(ばくすたー)
-* 2025/10/11
+* 2025/11/30
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -55,7 +55,7 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 メンテナの開発環境は以下の通りです。
 
 * Unity 6.0.58f2 Personal
-* Visual Studio Community 2022 (17.14.16)
+* Visual Studio Community 2022 (17.14.19)
     * 「.NET Desktop」コンポーネントがインストール済みであること
     * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
@@ -66,7 +66,6 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 * Unity Asset Storeから:
     * DOTween
     * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * Asset Store以外から:
     * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
     * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
@@ -79,11 +78,9 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
     * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
     * Roslyn Scripting (後述)
 
-FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
+FinalIKは有償アセットであることに注意してください。
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
-
-Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
 MediaPipeUnityPluginについては、モデルデータ(`.bytes`　ファイル)のうち下記のファイルを `StreamingAssets/MediaPipeTracker` フォルダ以下に移動します。
 

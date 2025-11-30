@@ -1,23 +1,31 @@
 ﻿using System;
+using R3;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class ImageQualitySettingReceiver
+    public class ImageQualitySettingReceiver : PresenterBase
     {
-        private bool _halfFpsModeActive = false;
-        
-        public ImageQualitySettingReceiver(IMessageReceiver receiver, string defaultQualityName)
+        private const string DefaultQualityName = "High";
+
+        private readonly IMessageReceiver _receiver;
+        private readonly ReactiveProperty<int> _targetFramerate = new(60);
+
+        [Inject]
+        public ImageQualitySettingReceiver(IMessageReceiver receiver)
         {
-            receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
+            _receiver = receiver;
+        }
+
+        public override void Initialize()
+        {
+            _receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
                 c => SetImageQuality(c.GetStringValue())
             );
-            receiver.AssignCommandHandler(
-                VmmCommands.SetHalfFpsMode,
-                message => SetHalfFpsMode(message.ToBoolean())
-                );
+            _receiver.BindIntProperty(VmmCommands.SetTargetFramerate, _targetFramerate);
 
-            receiver.AssignQueryHandler(
+            _receiver.AssignQueryHandler(
                 VmmCommands.GetQualitySettingsInfo,
                 q =>
                 {
@@ -28,49 +36,47 @@ namespace Baku.VMagicMirror
                     });
                 });
             
-            receiver.AssignQueryHandler(
+            _receiver.AssignQueryHandler(
                 VmmCommands.ApplyDefaultImageQuality,
                 q => { 
-                    SetImageQuality(defaultQualityName);
-                    q.Result = defaultQualityName;
+                    SetImageQuality(DefaultQualityName);
+                    q.Result = DefaultQualityName;
                 });
 
-            SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
+            _targetFramerate
+                .Subscribe(SetTargetFramerate)
+                .AddTo(this);
         }
         
-        private void SetImageQuality(string name)
+        private static void SetImageQuality(string name)
         {
             var names = QualitySettings.names;
             //foreachにしてないのはIndexOfより手軽にパフォーマンス取れそうだから
-            for (int i = 0; i < names.Length; i++)
+            for (var i = 0; i < names.Length; i++)
             {
                 if (names[i] == name)
                 {
                     QualitySettings.SetQualityLevel(i, true);
-                    SetFrameRateWithQuality(i);
                     return;
                 }
             }
         }
 
-        private void SetHalfFpsMode(bool isHalfMode)
+        private static void SetTargetFramerate(int value)
         {
-            _halfFpsModeActive = isHalfMode;
-            SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
-        }
-
-        private void SetFrameRateWithQuality(int qualityLevel)
-        {
-            //Very LowまたはLowの場合は明示的にCPU負荷を抑えたいはずなので、FPSも30まで下げる。
-            //Medium以上の場合はVSyncに注意したうえでFPS60付近を狙いたいが、
-            //以下のような事情を踏まえ、ユーザーが明示的にハーフFPSにしたかどうかで判断していく。
-            // - VSyncを切っちゃうとティアリングが出る
-            // - モニター自体のリフレッシュレート変更は要求すべきでない
-            // - モニターのリフレッシュレート(というか平均FPS)を見て云々、とするのが比較的めんどう
-            Application.targetFrameRate = (qualityLevel < 2) ? 30 : 60;
-            QualitySettings.vSyncCount =
-                (qualityLevel < 2) ? 0 :
-                _halfFpsModeActive ? 2 : 1;
+            Debug.Log($"{nameof(SetTargetFramerate)}: {value}");
+            // - FPSが0以下の場合、vSyncを有効化してモニターのリフレッシュレートに合わせる要求だと解釈する
+            // - 30未満のFPSを指定された場合も異常値扱いし、vSyncが有効な状態に帰着させる
+            if (value < 30)
+            {
+                QualitySettings.vSyncCount = 1;
+                Application.targetFrameRate = 30;
+            }
+            else
+            {
+                QualitySettings.vSyncCount = 0;
+                Application.targetFrameRate = value;
+            }
         }
     }
     

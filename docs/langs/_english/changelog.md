@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.3.1
+{: .doc-sec2 }
+
+2025/11/30
+
+* Change: Internal tracking system for lite mode webcam now uses the same internal system as high-power mode. Note that there are still some restrictions for lite mode tracking (e.g. blink / lipsync cannot use webcam based input).
+* Fix: Adjusted lite mode face tracking motion parameters to avoid jerking.
+
+
 #### v4.3.0
 {: .doc-sec2 }
 

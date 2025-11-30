@@ -13,10 +13,12 @@ lang: en
 
 2025/11/30
 
-* Change: Internal tracking system for lite mode webcam now uses the same internal system as high-power mode. * Change: Add framerate setting option so that framerate can be set independently from quality option, at `Settings > Effects > Image Quality`.
+* Change: Internal tracking system for lite mode webcam now uses the same internal system as high-power mode. 
+* Change: Add framerate setting option so that framerate can be set independently from quality option, at `Settings > Effects > Image Quality`.
 * Fix: Adjusted lite mode face tracking motion parameters to avoid jerking.
 * Fix: Fixed bug that avatar tilt behavior with gamepads' D-pad was not working properly.
 * Fix: The UI text for the option to combine poses by tracking result and VMC Protocol was confusing.
+
 
 #### v4.3.0
 {: .doc-sec2 }

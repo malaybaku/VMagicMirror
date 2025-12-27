@@ -593,6 +593,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1574337991341618299}
   refCameraForRay: {fileID: 1848164788476612598}
+  postProcessVolume: {fileID: 2991729247724691209}
 --- !u!1 &1574337991882445229
 GameObject:
   m_ObjectHideFlags: 0

@@ -55,7 +55,7 @@
         ResetWindowSize,
         SetWholeWindowTransparencyLevel,
         SetAlphaValueOnTransparent,
-        EnebleCircleCrop,
+        EnableCircleCrop,
         // sizeとwidthは0~1000の値に量子化した値を送る(受信側は0.001倍して使うのが期待値)
         SetCircleCropSize,
         SetCircleCropBorderWidth,

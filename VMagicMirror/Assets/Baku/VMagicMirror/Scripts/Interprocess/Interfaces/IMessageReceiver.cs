@@ -93,7 +93,9 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(command, c =>
             {
                 var argb = c.ToColorFloats();
-                target.Value = new Color(argb[0], argb[1], argb[2], argb[3]);
+                target.Value = argb.Length == 4
+                    ? new Color(argb[0], argb[1], argb[2], argb[3])
+                    : new Color(argb[0], argb[1], argb[2]);
             });
         }
 

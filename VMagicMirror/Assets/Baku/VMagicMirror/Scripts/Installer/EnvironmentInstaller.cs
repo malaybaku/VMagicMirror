@@ -10,10 +10,14 @@ namespace Baku.VMagicMirror.Installer
     {
         [SerializeField] private Camera mainCamera;
         [SerializeField] private Camera refCameraForRay;
+        [SerializeField] private PostProcessVolume postProcessVolume;
+
         public override void Install(DiContainer container)
         {
             container.BindInstance(mainCamera);
             container.BindInstance(refCameraForRay).WithId("RefCameraForRay");
+            container.BindInstance(postProcessVolume);
+
             container.Bind<PostProcessLayer>().FromMethod(_ => GetComponent<PostProcessLayer>()).AsCached();
             container.BindInterfacesTo<CameraFovController>().AsSingle();
             container.Bind<CameraUtilWrapper>().AsSingle();
@@ -23,6 +27,7 @@ namespace Baku.VMagicMirror.Installer
             container.BindInterfacesAndSelfTo<CurrentFramerateChecker>().AsSingle();
 
             container.BindInterfacesTo<ImageQualitySettingReceiver>().AsSingle();
+            container.BindInterfacesTo<WindowCropPresenter>().AsSingle();
             
             // NOTE: サブキャラに依存している
             container.BindInterfacesAndSelfTo<Buddy.BuddyObjectRaycastChecker>().AsSingle();

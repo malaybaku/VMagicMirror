@@ -63,7 +63,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnCropBorderColorChanged(object? sender, PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(PickerColor));
+            RaisePropertyChanged(nameof(CropBorderColor));
         }
 
         /// <summary> ColorPickerに表示する、Alphaを考慮しない背景色を取得、設定します。 </summary>

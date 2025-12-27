@@ -24,6 +24,14 @@
 
         public bool EnableSpoutOutput { get; set; } = false;
         public int SpoutResolutionType { get; set; } = 0;
+
+        public bool EnableCircleCrop { get; set; } = false;
+        public float CircleCropSize { get; set; } = 0.98f;
+        public float CircleCropBorderWidth { get; set; } = 0.02f;
+
+        public int CropBorderR { get; set; } = 255;
+        public int CropBorderG { get; set; } = 255;
+        public int CropBorderB { get; set; } = 255;
     }
 
     public enum SpoutResolutionType

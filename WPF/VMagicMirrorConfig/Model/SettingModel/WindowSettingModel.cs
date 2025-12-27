@@ -81,6 +81,25 @@ namespace Baku.VMagicMirrorConfig
                 setting.SpoutResolutionType,
                 type => SendMessage(MessageFactory.SetSpoutOutputResolution(type))
                 );
+
+            EnableCircleCrop = new RProperty<bool>(
+                setting.EnableCircleCrop,
+                enable => SendMessage(MessageFactory.EnableCircleCrop(enable))
+                );
+
+            CircleCropSize = new RProperty<float>(
+                setting.CircleCropSize,
+                size => SendMessage(MessageFactory.SetCircleCropSize(size))
+                );
+            CircleCropBorderWidth = new RProperty<float>(
+                setting.CircleCropBorderWidth,
+                width => SendMessage(MessageFactory.SetCircleCropBorderWidth(width))
+                );
+
+            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
+            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
+            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
+
         }
 
         public RProperty<int> R { get; }
@@ -98,6 +117,14 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableSpoutOutput { get; }
         public RProperty<int> SpoutResolutionType { get; }
+
+        public RProperty<bool> EnableCircleCrop { get; }
+        public RProperty<float> CircleCropSize { get; }
+        public RProperty<float> CircleCropBorderWidth { get; }
+
+        public RProperty<int> CropBorderR { get; }
+        public RProperty<int> CropBorderG { get; }
+        public RProperty<int> CropBorderB { get; }
 
         #region Reset API
 
@@ -123,6 +150,17 @@ namespace Baku.VMagicMirrorConfig
             SpoutResolutionType.Value = setting.SpoutResolutionType;
         }
 
+        public void ResetCrop()
+        {
+            var setting = WindowSetting.Default;
+            EnableCircleCrop.Value = setting.EnableCircleCrop;
+            CircleCropSize.Value = setting.CircleCropSize;
+            CircleCropBorderWidth.Value = setting.CircleCropBorderWidth;
+            CropBorderR.Value = setting.CropBorderR;
+            CropBorderG.Value = setting.CropBorderG;
+            CropBorderB.Value = setting.CropBorderB;
+        }
+
         public override void ResetToDefault()
         {
             var setting = WindowSetting.Default;
@@ -137,6 +175,7 @@ namespace Baku.VMagicMirrorConfig
 
             ResetOpacity();
             ResetSpoutOutput();
+            ResetCrop();
             ResetWindowPosition();
         }
 
@@ -167,6 +206,16 @@ namespace Baku.VMagicMirrorConfig
                     ));
             }
         }
+
+        private void SendCropBorderColor()
+        {
+            SendMessage(MessageFactory.SetCircleCropBorderColor(
+                CropBorderR.Value, 
+                CropBorderG.Value,
+                CropBorderB.Value
+                ));
+        }
+
 
         public void SetBackgroundImage()
         {

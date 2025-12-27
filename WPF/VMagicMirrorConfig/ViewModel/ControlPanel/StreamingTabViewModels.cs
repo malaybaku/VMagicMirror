@@ -27,6 +27,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public RProperty<bool> IsTransparent => _model.IsTransparent;
         public RProperty<bool> WindowDraggable => _model.WindowDraggable;
+        public RProperty<bool> EnableCircleCrop => _model.EnableCircleCrop;
 
         public ActionCommand BackgroundImageSetCommand { get; }
         public ActionCommand BackgroundImageClearCommand { get; }

@@ -112,6 +112,11 @@
                         </StackPanel>
 
                         <CheckBox Style="{StaticResource SmallMarginCheckBox}"
+                                  Content="{DynamicResource Window_Crop_Cirlce_Enable_Streaming}"
+                                  IsChecked="{Binding EnableCircleCrop.Value, Mode=TwoWay}"
+                                  />
+
+                        <CheckBox Style="{StaticResource SmallMarginCheckBox}"
                                   Content="{DynamicResource Window_Draggable}"
                                   IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
                                   />

@@ -8,7 +8,7 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
              d:DesignWidth="400"
-             d:DesignHeight="1050"
+             d:DesignHeight="2050"
              >
     <UserControl.DataContext>
         <vm:WindowSettingViewModel />
@@ -169,6 +169,148 @@
                                 <md:ColorPicker Height="200" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
                                                 Margin="20"
                                                 Color="{Binding PickerColor, Mode=TwoWay}"
+                                                />
+                            </Grid>
+                        </Expander>
+
+                    </md:Card>
+
+
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
+                        <md:PackIcon Kind="Crop"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Window_Crop}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <md:Card Style="{StaticResource ColorIndicatorCard}"
+                                 Margin="10,5,5,0">
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{Binding CropBorderColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </md:Card>
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetCropSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <CheckBox Content="{DynamicResource Window_Crop_Circle_Enable}"
+                              IsChecked="{Binding EnableCircleCrop.Value, Mode=TwoWay}"
+                              Margin="15,5"
+                              />
+
+                    <Grid Margin="20,0,20,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="60"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{DynamicResource Window_Crop_Circle_Size}"/>
+                        <Slider Grid.Column="1"                                
+                                x:Name="sliderCropSize"
+                                Minimum="0" Maximum="100" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                Value="{Binding CircleCropSize.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderCropSize}"
+                                 />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="{DynamicResource Window_Crop_Circle_BorderWidth}"/>
+                        <Slider Grid.Row="1" Grid.Column="1"                                
+                                x:Name="sliderCropBorderWidth"
+                                Minimum="0" Maximum="100" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                Value="{Binding CircleCropBorderWidth.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderCropBorderWidth}"
+                                 />
+
+                    </Grid>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="{DynamicResource Window_Crop_Circle_BorderColor}"
+                               Margin="15,5,15,0"
+                               />
+
+                    <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
+                             Margin="5,10" 
+                             Padding="0">
+                        <Expander Margin="0">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Edit" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Setting_Color_Expander_Header}"/>
+                                </StackPanel>
+                            </Expander.Header>
+                            <Grid>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="R"/>
+                                <Slider Grid.Row="0" Grid.Column="1"
+                                        x:Name="cropBorderColorSliderR"
+                                        Value="{Binding CropBorderColorR.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="0" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=cropBorderColorSliderR}"
+                                         />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="G"/>
+                                <Slider Grid.Row="1" Grid.Column="1"
+                                        x:Name="cropBorderColorSliderG"
+                                        Value="{Binding CropBorderColorG.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="1" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=cropBorderColorSliderG}"
+                                         />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="B"/>
+                                <Slider Grid.Row="2" Grid.Column="1"
+                                        x:Name="cropBorderColorSliderB"
+                                        Value="{Binding CropBorderColorB.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="2" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=cropBorderColorSliderB}"
+                                         />
+
+                                <md:ColorPicker Height="200" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                                                Margin="20"
+                                                Color="{Binding CropBorderColor, Mode=TwoWay}"
                                                 />
                             </Grid>
                         </Expander>

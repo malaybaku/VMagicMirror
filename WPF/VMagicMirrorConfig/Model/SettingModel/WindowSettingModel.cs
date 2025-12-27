@@ -158,9 +158,10 @@ namespace Baku.VMagicMirrorConfig
         public void ResetCrop()
         {
             var setting = WindowSetting.Default;
-            EnableCrop.Value = setting.EnableCircleCrop;
-            CropSize.Value = setting.CircleCropSize;
-            CropBorderWidth.Value = setting.CircleCropBorderWidth;
+            EnableCrop.Value = setting.EnableCrop;
+            CropSize.Value = setting.CropSize;
+            CropBorderWidth.Value = setting.CropBorderWidth;
+            CropSquareRate.Value = setting.CropSquareRate;
             CropBorderR.Value = setting.CropBorderR;
             CropBorderG.Value = setting.CropBorderG;
             CropBorderB.Value = setting.CropBorderB;

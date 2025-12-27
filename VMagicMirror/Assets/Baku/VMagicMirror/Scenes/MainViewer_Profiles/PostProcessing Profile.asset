@@ -16,10 +16,13 @@ MonoBehaviour:
   enabled:
     overrideState: 1
     value: 1
-  borderWidth:
+  margin:
     overrideState: 1
     value: 0.02
-  margin:
+  squareRate:
+    overrideState: 1
+    value: 0
+  borderWidth:
     overrideState: 1
     value: 0.02
   borderColor:

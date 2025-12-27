@@ -207,7 +207,7 @@
                     </StackPanel>
 
                     <CheckBox Content="{DynamicResource Window_Crop_Enable}"
-                              IsChecked="{Binding EnableCrop.Value, Mode=TwoWay}"
+                              IsChecked="{Binding EnableCircleCrop.Value, Mode=TwoWay}"
                               Margin="15,5"
                               />
 
@@ -252,7 +252,7 @@
                                    Text="{DynamicResource Window_Crop_BorderWidth}"/>
                         <Slider Grid.Row="2" Grid.Column="1"                                
                                 x:Name="sliderCropBorderWidth"
-                                Minimum="0" Maximum="100" 
+                                Minimum="0" Maximum="10" 
                                 SmallChange="0.1" LargeChange="1"
                                 TickFrequency="0.1" IsSnapToTickEnabled="True"
                                 Value="{Binding CropBorderWidth.Value, Mode=TwoWay}"

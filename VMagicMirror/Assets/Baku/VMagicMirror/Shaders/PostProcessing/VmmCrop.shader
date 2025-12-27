@@ -35,13 +35,12 @@ Shader "Hidden/Vmm/Crop"
             float2 pos = (uv - 0.5) * screenPx;
 
             float2 d = abs(pos) - float2(halfStraightSegLength, halfStraightSegLength);
-            float2 d0 = max(d, 0.0);
-            float sd = length(d0) - radius;
+            float sd = length(max(d, 0.0)) + min(max(d.x, d.y), 0) - radius;
 
             if (sd > 0.0)
                 return float4(0.0, 0.0, 0.0, 0.0);
 
-            if (borderPx > 0.0 && sd > -borderPx)
+            if (borderPx > 0.0 && sd >= -borderPx)
                 return _BorderColor;
 
             return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);

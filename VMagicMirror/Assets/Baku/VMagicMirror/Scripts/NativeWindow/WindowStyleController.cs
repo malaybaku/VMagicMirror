@@ -29,7 +29,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private CameraController cameraController;
 
         private float _windowPositionCheckCount;
 
@@ -70,6 +69,7 @@ namespace Baku.VMagicMirror
         private const float AlphaLerpFactor = 0.2f;
 
         private CameraUtilWrapper _camera;
+        private CameraBackgroundColorController _cameraBackgroundColorController;
         private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
@@ -81,11 +81,13 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver, 
             IKeyMouseEventSource keyboardEventSource,
             CameraUtilWrapper cameraUtilWrapper,
+            CameraBackgroundColorController cameraBackgroundColorController,
             Buddy.BuddyObjectRaycastChecker buddyObjectRaycastChecker
             )
         {
             _camera = cameraUtilWrapper;
             _buddyObjectRaycastChecker = buddyObjectRaycastChecker;
+            _cameraBackgroundColorController = cameraBackgroundColorController;
 
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -194,7 +196,7 @@ namespace Baku.VMagicMirror
                 //見た目に関するものだけにしている(全部やるとクリックスルー設定が絡んで難しくなるので)
                 SetWindowTransparency(true);
                 SetWindowFrameVisibility(false);
-                cameraController.SetCameraBackgroundColor(0, 0, 0, 0);
+                _cameraBackgroundColorController.ForceSetBackgroundTransparent();
             }
         }
 

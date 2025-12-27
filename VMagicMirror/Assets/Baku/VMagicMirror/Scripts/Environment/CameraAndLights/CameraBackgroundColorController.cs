@@ -1,0 +1,66 @@
+using UnityEngine;
+using R3;
+
+namespace Baku.VMagicMirror
+{
+    public sealed class CameraBackgroundColorController : PresenterBase
+    {
+        private readonly IMessageReceiver _receiver;
+        private readonly WindowCropController _windowCropController;
+        private readonly Camera _camera;
+        
+        private bool _isTransparentBackground = false;
+        private Color _latestNotTransparentBackgroundColor = Color.green;
+        
+        public CameraBackgroundColorController(
+            IMessageReceiver receiver,
+            WindowCropController windowCropController,
+            Camera camera)
+        {
+            _receiver = receiver;
+            _windowCropController = windowCropController;
+            _camera = camera;
+        }
+        
+        public override void Initialize()
+        {
+            _receiver.AssignCommandHandler(
+                VmmCommands.Chromakey,
+                message =>
+                {
+                    var argb = message.ToColorFloats();
+                    var a = argb[0];
+
+                    _isTransparentBackground = a <= 0f;
+                    if (!_isTransparentBackground)
+                    {
+                        _latestNotTransparentBackgroundColor = new Color(argb[1], argb[2], argb[3]);
+                    }
+                    UpdateBackgroundColor();
+                });
+            
+            _windowCropController.EnableCircleCrop
+                .Skip(1)
+                .Subscribe(_ => UpdateBackgroundColor())
+                .AddTo(this);
+        }
+
+        public void ForceSetBackgroundTransparent()
+        {
+            _camera.backgroundColor = new Color(0, 0, 0, 0);
+        }
+        
+        private void UpdateBackgroundColor()
+        {
+            // NOTE: 切り抜きがオンの場合、cameraの背景色ではなくPost Processで背景を切り落とすので、背景色は非透過のままにする
+            if (_isTransparentBackground && !_windowCropController.EnableCircleCrop.CurrentValue)
+            {
+                _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+            }
+            else
+            {
+                _camera.backgroundColor = _latestNotTransparentBackgroundColor;
+            }
+        }
+    }
+}

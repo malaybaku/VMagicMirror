@@ -27,7 +27,8 @@ namespace Baku.VMagicMirror.Installer
             container.BindInterfacesAndSelfTo<CurrentFramerateChecker>().AsSingle();
 
             container.BindInterfacesTo<ImageQualitySettingReceiver>().AsSingle();
-            container.BindInterfacesTo<WindowCropPresenter>().AsSingle();
+            container.BindInterfacesAndSelfTo<WindowCropController>().AsSingle();
+            container.BindInterfacesAndSelfTo<CameraBackgroundColorController>().AsSingle();
             
             // NOTE: サブキャラに依存している
             container.BindInterfacesAndSelfTo<Buddy.BuddyObjectRaycastChecker>().AsSingle();

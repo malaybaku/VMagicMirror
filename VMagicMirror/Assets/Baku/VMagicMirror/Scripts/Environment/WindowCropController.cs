@@ -66,6 +66,11 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetCropBorderWidth,
                 value => vmmCrop.borderWidth.value = value.ToInt() * 0.001f
                 );
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetCropSquareRate,
+                value => vmmCrop.squareRate.value = value.ToInt() * 0.01f
+                );
         }
     }
 }

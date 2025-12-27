@@ -4,17 +4,19 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace Baku.VMagicMirror
 {
-    public class WindowCropPresenter : PresenterBase
+    public class WindowCropController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
         private readonly PostProcessVolume _postProcessVolume;
 
-        private readonly ReactiveProperty<bool> _enableCircleCrop = new(false);
+        private readonly ReactiveProperty<bool> _rawEnableCircleCrop = new(false);
         private readonly ReactiveProperty<bool> _windowFrameVisible = new(true);
         private readonly ReactiveProperty<bool> _enableFreeLayout = new(false);
-        private readonly ReactiveProperty<Color> _cropBorderColor = new(Color.white);
-        
-        public WindowCropPresenter(
+
+        private readonly ReactiveProperty<bool> _enableCircleCrop = new(false);
+        public ReadOnlyReactiveProperty<bool> EnableCircleCrop => _enableCircleCrop;
+
+        public WindowCropController(
             IMessageReceiver receiver,
             PostProcessVolume postProcessVolume
             )
@@ -29,18 +31,22 @@ namespace Baku.VMagicMirror
             
             // 透過中、かつフリーレイアウトがオフのときだけ切り抜く
             // (非透過で切り抜いても違和感ある + フリーレイアウト中に切り抜かれると操作が壊滅するため)
-            _receiver.BindBoolProperty(VmmCommands.EnableCircleCrop, _enableCircleCrop);
+            _receiver.BindBoolProperty(VmmCommands.EnableCircleCrop, _rawEnableCircleCrop);
             _receiver.BindBoolProperty(VmmCommands.WindowFrameVisibility, _windowFrameVisible);
             _receiver.BindBoolProperty(VmmCommands.EnableDeviceFreeLayout, _enableFreeLayout);
 
-            _enableCircleCrop
+            _rawEnableCircleCrop
                 .CombineLatest(
                     _windowFrameVisible,
                     _enableFreeLayout,
                     (circleCrop, frameVisible, freeLayout) => circleCrop && !frameVisible && !freeLayout
                 )
                 .DistinctUntilChanged()
-                .Subscribe(enabled => vmmCrop.active = enabled)
+                .Subscribe(enabled =>
+                {
+                    vmmCrop.active = enabled;
+                    _enableCircleCrop.Value = enabled;
+                })
                 .AddTo(this);
             
             _receiver.AssignCommandHandler(

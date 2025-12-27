@@ -82,18 +82,22 @@ namespace Baku.VMagicMirrorConfig
                 type => SendMessage(MessageFactory.SetSpoutOutputResolution(type))
                 );
 
-            EnableCircleCrop = new RProperty<bool>(
-                setting.EnableCircleCrop,
-                enable => SendMessage(MessageFactory.EnableCircleCrop(enable))
+            EnableCrop = new RProperty<bool>(
+                setting.EnableCrop,
+                enable => SendMessage(MessageFactory.EnableCrop(enable))
                 );
 
-            CircleCropSize = new RProperty<float>(
-                setting.CircleCropSize,
-                size => SendMessage(MessageFactory.SetCircleCropSize(size))
+            CropSize = new RProperty<float>(
+                setting.CropSize,
+                size => SendMessage(MessageFactory.SetCropSize(size))
                 );
-            CircleCropBorderWidth = new RProperty<float>(
-                setting.CircleCropBorderWidth,
-                width => SendMessage(MessageFactory.SetCircleCropBorderWidth(width))
+            CropBorderWidth = new RProperty<float>(
+                setting.CropBorderWidth,
+                width => SendMessage(MessageFactory.SetCropBorderWidth(width))
+                );
+            CropSquareRate = new RProperty<int>(
+                setting.CropSquareRate,
+                rate => SendMessage(MessageFactory.SetCropSquareRate(rate))
                 );
 
             CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
@@ -118,9 +122,10 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableSpoutOutput { get; }
         public RProperty<int> SpoutResolutionType { get; }
 
-        public RProperty<bool> EnableCircleCrop { get; }
-        public RProperty<float> CircleCropSize { get; }
-        public RProperty<float> CircleCropBorderWidth { get; }
+        public RProperty<bool> EnableCrop { get; }
+        public RProperty<float> CropSize { get; }
+        public RProperty<float> CropBorderWidth { get; }
+        public RProperty<int> CropSquareRate{ get; }
 
         public RProperty<int> CropBorderR { get; }
         public RProperty<int> CropBorderG { get; }
@@ -153,9 +158,9 @@ namespace Baku.VMagicMirrorConfig
         public void ResetCrop()
         {
             var setting = WindowSetting.Default;
-            EnableCircleCrop.Value = setting.EnableCircleCrop;
-            CircleCropSize.Value = setting.CircleCropSize;
-            CircleCropBorderWidth.Value = setting.CircleCropBorderWidth;
+            EnableCrop.Value = setting.EnableCircleCrop;
+            CropSize.Value = setting.CircleCropSize;
+            CropBorderWidth.Value = setting.CircleCropBorderWidth;
             CropBorderR.Value = setting.CropBorderR;
             CropBorderG.Value = setting.CropBorderG;
             CropBorderB.Value = setting.CropBorderB;
@@ -209,7 +214,7 @@ namespace Baku.VMagicMirrorConfig
 
         private void SendCropBorderColor()
         {
-            SendMessage(MessageFactory.SetCircleCropBorderColor(
+            SendMessage(MessageFactory.SetCropBorderColor(
                 CropBorderR.Value, 
                 CropBorderG.Value,
                 CropBorderB.Value

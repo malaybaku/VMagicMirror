@@ -330,11 +330,11 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">Clear</sys:String>
 
     <sys:String x:Key="Window_Crop">Crop</sys:String>
-    <sys:String x:Key="Window_Crop_Circle_Enable">(When Transparent) Enable Circle Crop</sys:String>
-    <sys:String x:Key="Window_Crop_Cirlce_Enable_Streaming">(When Transparent) Circle Crop</sys:String>
-    <sys:String x:Key="Window_Crop_Circle_Size">Area Size [%]</sys:String>
-    <sys:String x:Key="Window_Crop_Circle_BorderWidth">Border Width [%]</sys:String>
-    <sys:String x:Key="Window_Crop_Circle_BorderColor">Border Color:</sys:String>
+    <sys:String x:Key="Window_Crop_Enable">(When Transparent) Enable Crop</sys:String>
+    <sys:String x:Key="Window_Crop_Size">Area Size [%]</sys:String>
+    <sys:String x:Key="Window_Crop_SquareRate">Square Ratio [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderWidth">Border Width [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderColor">Border Color:</sys:String>
     
     <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.

@@ -25,10 +25,11 @@
         public bool EnableSpoutOutput { get; set; } = false;
         public int SpoutResolutionType { get; set; } = 0;
 
-        public bool EnableCircleCrop { get; set; } = false;
-        // 両方とも [%] 指定なのでこういう数値
-        public float CircleCropSize { get; set; } = 98f;
-        public float CircleCropBorderWidth { get; set; } = 2f;
+        public bool EnableCrop { get; set; } = false;
+        // この3つは [%] 指定で、SquareRate以外は0.1%刻み
+        public float CropSize { get; set; } = 98f;
+        public float CropBorderWidth { get; set; } = 2f;
+        public int CropSquareRate { get; set; } = 0;
 
         public int CropBorderR { get; set; } = 255;
         public int CropBorderG { get; set; } = 255;

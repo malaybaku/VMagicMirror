@@ -99,9 +99,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableSpoutOutput => _model.EnableSpoutOutput;
         public RProperty<int> SpoutResolutionType => _model.SpoutResolutionType;
 
-        public RProperty<bool> EnableCircleCrop => _model.EnableCircleCrop;
-        public RProperty<float> CircleCropSize => _model.CircleCropSize;
-        public RProperty<float> CircleCropBorderWidth => _model.CircleCropBorderWidth;
+        public RProperty<bool> EnableCrop => _model.EnableCrop;
+        public RProperty<float> CropSize => _model.CropSize;
+        public RProperty<float> CropBorderWidth => _model.CropBorderWidth;
+        public RProperty<int> CropSquareRate => _model.CropSquareRate;
         public RProperty<int> CropBorderColorR => _model.CropBorderR;
         public RProperty<int> CropBorderColorG => _model.CropBorderG;
         public RProperty<int> CropBorderColorB => _model.CropBorderB;

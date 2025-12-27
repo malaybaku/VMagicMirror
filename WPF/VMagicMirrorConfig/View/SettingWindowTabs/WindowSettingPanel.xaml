@@ -206,13 +206,14 @@
                                 />
                     </StackPanel>
 
-                    <CheckBox Content="{DynamicResource Window_Crop_Circle_Enable}"
-                              IsChecked="{Binding EnableCircleCrop.Value, Mode=TwoWay}"
+                    <CheckBox Content="{DynamicResource Window_Crop_Enable}"
+                              IsChecked="{Binding EnableCrop.Value, Mode=TwoWay}"
                               Margin="15,5"
                               />
 
                     <Grid Margin="20,0,20,10">
                         <Grid.RowDefinitions>
+                            <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
@@ -222,35 +223,48 @@
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{DynamicResource Window_Crop_Circle_Size}"/>
-                        <Slider Grid.Column="1"                                
+                        <TextBlock Grid.Row="0" Grid.Column="0" 
+                                   Text="{DynamicResource Window_Crop_Size}"/>
+                        <Slider Grid.Row="0" Grid.Column="1"                                
                                 x:Name="sliderCropSize"
                                 Minimum="0" Maximum="100" 
                                 SmallChange="0.1" LargeChange="1"
                                 TickFrequency="0.1" IsSnapToTickEnabled="True"
-                                Value="{Binding CircleCropSize.Value, Mode=TwoWay}"
+                                Value="{Binding CropSize.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Column="2"
+                        <TextBox Grid.Row="0" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderCropSize, StringFormat=F1}"
                                  />
 
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="{DynamicResource Window_Crop_Circle_BorderWidth}"/>
+                                   Text="{DynamicResource Window_Crop_SquareRate}"/>
                         <Slider Grid.Row="1" Grid.Column="1"                                
+                                x:Name="sliderCropSquareRate"
+                                Minimum="0" Maximum="100" 
+                                SmallChange="1" LargeChange="1" TickFrequency="1" IsSnapToTickEnabled="True"
+                                Value="{Binding CropSquareRate.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderCropSquareRate}"
+                                 />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="{DynamicResource Window_Crop_BorderWidth}"/>
+                        <Slider Grid.Row="2" Grid.Column="1"                                
                                 x:Name="sliderCropBorderWidth"
                                 Minimum="0" Maximum="100" 
                                 SmallChange="0.1" LargeChange="1"
                                 TickFrequency="0.1" IsSnapToTickEnabled="True"
-                                Value="{Binding CircleCropBorderWidth.Value, Mode=TwoWay}"
+                                Value="{Binding CropBorderWidth.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="1" Grid.Column="2"
+                        <TextBox Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderCropBorderWidth, StringFormat=F1}"
                                  />
 
                     </Grid>
 
                     <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="{DynamicResource Window_Crop_Circle_BorderColor}"
+                               Text="{DynamicResource Window_Crop_BorderColor}"
                                Margin="15,5,15,0"
                                />
 

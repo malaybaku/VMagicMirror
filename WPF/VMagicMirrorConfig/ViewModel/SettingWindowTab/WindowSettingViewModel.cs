@@ -80,7 +80,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public Color CropBorderColor
         {
-            get => Color.FromRgb((byte)R.Value, (byte)G.Value, (byte)B.Value);
+            get => Color.FromRgb((byte)CropBorderColorR.Value, (byte)CropBorderColorG.Value, (byte)CropBorderColorB.Value);
             set
             {
                 CropBorderColorR.Value = value.R;

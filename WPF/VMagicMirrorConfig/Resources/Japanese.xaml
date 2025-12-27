@@ -330,8 +330,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">クリア</sys:String>
 
     <sys:String x:Key="Window_Crop">切り抜き</sys:String>
-    <sys:String x:Key="Window_Crop_Circle_Enable">円形に切り抜く</sys:String>
-    <sys:String x:Key="Window_Crop_Cirlce_Enable_Streaming">円形に切り抜く</sys:String>
+    <sys:String x:Key="Window_Crop_Circle_Enable">(透過中) 円形に切り抜く</sys:String>
+    <sys:String x:Key="Window_Crop_Cirlce_Enable_Streaming">(透過中) 円形に切り抜く</sys:String>
     <sys:String x:Key="Window_Crop_Circle_Size">サイズ [%]</sys:String>
     <sys:String x:Key="Window_Crop_Circle_BorderWidth">枠線の太さ [%]</sys:String>
     <sys:String x:Key="Window_Crop_Circle_BorderColor">枠線の色:</sys:String>

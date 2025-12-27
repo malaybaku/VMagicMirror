@@ -70,9 +70,11 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableSpoutOutput(bool enable) => BoolContent(VmmCommands.EnableSpoutOutput, enable);
         public static Message SetSpoutOutputResolution(int type) => IntContent(VmmCommands.SetSpoutOutputResolution, type);
 
-        public static Message EnableCircleCrop(bool enable) => BoolContent(VmmCommands.EnebleCircleCrop, enable);
-        public static Message SetCircleCropSize(float size) => IntContent(VmmCommands.SetCircleCropSize, (int)(size * 1000));
-        public static Message SetCircleCropBorderWidth(float width) => IntContent(VmmCommands.SetCircleCropBorderWidth, (int)(width * 1000));
+        public static Message EnableCircleCrop(bool enable) => BoolContent(VmmCommands.EnableCircleCrop, enable);
+        public static Message SetCircleCropSize(float size) 
+            => IntContent(VmmCommands.SetCircleCropSize, (int)System.Math.Round(size * 10));
+        public static Message SetCircleCropBorderWidth(float width) 
+            => IntContent(VmmCommands.SetCircleCropBorderWidth, (int)System.Math.Round(width * 10));
         public static Message SetCircleCropBorderColor(int r, int g, int b) => IntArrayContent(VmmCommands.SetCircleCropBorderColor, [r, g, b]);
 
         public static Message StartupEnded() => None(VmmCommands.StartupEnded);

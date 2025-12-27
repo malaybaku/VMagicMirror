@@ -225,22 +225,26 @@
                         <TextBlock Text="{DynamicResource Window_Crop_Circle_Size}"/>
                         <Slider Grid.Column="1"                                
                                 x:Name="sliderCropSize"
-                                Minimum="0" Maximum="100" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                Minimum="0" Maximum="100" 
+                                SmallChange="0.1" LargeChange="1"
+                                TickFrequency="0.1" IsSnapToTickEnabled="True"
                                 Value="{Binding CircleCropSize.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Column="2"
-                                 Text="{Binding Value, ElementName=sliderCropSize}"
+                                 Text="{Binding Value, ElementName=sliderCropSize, StringFormat=F1}"
                                  />
 
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource Window_Crop_Circle_BorderWidth}"/>
                         <Slider Grid.Row="1" Grid.Column="1"                                
                                 x:Name="sliderCropBorderWidth"
-                                Minimum="0" Maximum="100" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                Minimum="0" Maximum="100" 
+                                SmallChange="0.1" LargeChange="1"
+                                TickFrequency="0.1" IsSnapToTickEnabled="True"
                                 Value="{Binding CircleCropBorderWidth.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Row="1" Grid.Column="2"
-                                 Text="{Binding Value, ElementName=sliderCropBorderWidth}"
+                                 Text="{Binding Value, ElementName=sliderCropBorderWidth, StringFormat=F1}"
                                  />
 
                     </Grid>

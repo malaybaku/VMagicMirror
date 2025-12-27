@@ -26,8 +26,9 @@
         public int SpoutResolutionType { get; set; } = 0;
 
         public bool EnableCircleCrop { get; set; } = false;
-        public float CircleCropSize { get; set; } = 0.98f;
-        public float CircleCropBorderWidth { get; set; } = 0.02f;
+        // 両方とも [%] 指定なのでこういう数値
+        public float CircleCropSize { get; set; } = 98f;
+        public float CircleCropBorderWidth { get; set; } = 2f;
 
         public int CropBorderR { get; set; } = 255;
         public int CropBorderG { get; set; } = 255;

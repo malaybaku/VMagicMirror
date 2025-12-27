@@ -97,8 +97,8 @@ namespace Baku.VMagicMirrorConfig
                 );
 
             CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
-            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
-            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
+            CropBorderG = new RProperty<int>(setting.CropBorderG, _ => SendCropBorderColor());
+            CropBorderB = new RProperty<int>(setting.CropBorderB, _ => SendCropBorderColor());
 
         }
 

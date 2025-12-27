@@ -17,23 +17,34 @@ Shader "Hidden/Vmm/Crop"
             float2 uv = i.texcoord;
 
             float2 screenPx = _ScreenParams.xy;
-            float size = min(screenPx.x, screenPx.y);
+            float  screenSize = min(screenPx.x, screenPx.y);
 
-            float radiusPx = 0.5 * size * saturate(1.0 - _Margin);
+            float shapeSize = screenSize * saturate(1.0 - _Margin);
+            float halfShapeSize = 0.5 * shapeSize;
 
-            float borderPx = max(0.0, size * _BorderWidth);
-            borderPx = min(borderPx, radiusPx);
+            // x0.5 of straight segment
+            float halfStraightSegLength = halfShapeSize * _SquareRate;
+            // Corner radius
+            float radius = halfShapeSize * (1.0 - _SquareRate);
 
-            float dist = length((uv - 0.5) * screenPx);
+            // Border width
+            float borderPx = max(0.0, screenSize * _BorderWidth);
+            borderPx = min(borderPx, halfShapeSize);
 
-            if (dist > radiusPx)
+            // Pixel space around screen center
+            float2 pos = (uv - 0.5) * screenPx;
+
+            float2 d = abs(pos) - float2(halfStraightSegLength, halfStraightSegLength);
+            float2 d0 = max(d, 0.0);
+            float sd = length(d0) - radius;
+
+            if (sd > 0.0)
                 return float4(0.0, 0.0, 0.0, 0.0);
 
-            if (borderPx > 0.0 && dist >= (radiusPx - borderPx))
+            if (borderPx > 0.0 && sd > -borderPx)
                 return _BorderColor;
 
-            float4 src = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
-            return src;
+            return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
         }
     ENDHLSL
 

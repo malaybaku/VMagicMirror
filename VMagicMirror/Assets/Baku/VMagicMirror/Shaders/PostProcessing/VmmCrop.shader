@@ -7,8 +7,9 @@ Shader "Hidden/Vmm/Crop"
 
         // Range(0, 1)
         float _Margin;
-        // Range(0, 1)
         float _BorderWidth;
+        float _SquareRate;
+
         float4 _BorderColor;
 
         float4 Frag(VaryingsDefault i) : SV_Target

@@ -97,9 +97,7 @@
                                   />
 
                         <StackPanel Orientation="Horizontal"
-                                    Margin="15,0,5,2"
-                                    IsEnabled="{Binding IsTransparent.Value,
-                                                        Converter={StaticResource BooleanReverseConverter}}">
+                                    Margin="15,0,5,2">
                             <TextBlock Text="{DynamicResource Window_BackgroundImage}"/>
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     Content="{DynamicResource Window_BackgroundImage_Load}"

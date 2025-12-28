@@ -4,19 +4,22 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace Baku.VMagicMirror
 {
-    public class CropAndOutlineController : PresenterBase
+    // NOTE: 縁取りエフェクトに「切り抜き処理中は無効」という条件をかけて排他するため、このクラスで2エフェクトをまとめて制御している
+    public sealed class CropAndOutlineController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
         private readonly PostProcessVolume _postProcessVolume;
 
         private readonly ReactiveProperty<bool> _rawEnableCircleCrop = new(false);
         private readonly ReactiveProperty<bool> _windowFrameVisible = new(true);
+        private readonly ReactiveProperty<bool> _enableOutlineEffect = new(false);
         private readonly ReactiveProperty<bool> _enableFreeLayout = new(false);
 
         private readonly ReactiveProperty<bool> _enableCircleCrop = new(false);
         public ReadOnlyReactiveProperty<bool> EnableCircleCrop => _enableCircleCrop;
 
         private VmmCrop _vmmCrop;
+        private VmmAlphaEdge _vmmAlphaEdge;
 
         public CropAndOutlineController(
             IMessageReceiver receiver,
@@ -31,6 +34,7 @@ namespace Baku.VMagicMirror
         {
             var vmmCrop = _postProcessVolume.profile.GetSetting<VmmCrop>();
             _vmmCrop = vmmCrop;
+            _vmmAlphaEdge = _postProcessVolume.profile.GetSetting<VmmAlphaEdge>();
             
             // 透過中、かつフリーレイアウトがオフのときだけ切り抜く
             // (非透過で切り抜いても違和感ある + フリーレイアウト中に切り抜かれると操作が壊滅するため)
@@ -73,6 +77,37 @@ namespace Baku.VMagicMirror
             _receiver.AssignCommandHandler(
                 VmmCommands.SetCropSquareRate,
                 value => vmmCrop.squareRate.value = value.ToInt() * 0.01f
+                );
+            
+            _receiver.BindBoolProperty(VmmCommands.OutlineEffectEnable, _enableOutlineEffect);
+            // NOTE: 透過、かつ切り抜きも無効なときに限定して縁取りを効かせる
+            // (切り抜き中に縁取りをすると角丸の縁に縁取りがかかるが、これは意図した見た目ではないため)
+            _windowFrameVisible.CombineLatest(
+                _enableOutlineEffect,
+                _enableCircleCrop,
+                (windowFrameVisible, enableOutline, enableCircleCrop) => 
+                    !windowFrameVisible && enableOutline && !enableCircleCrop
+                )
+                .DistinctUntilChanged()
+                .Subscribe(active => _vmmAlphaEdge.active = active)
+                .AddTo(this);
+            
+            //NOTE: GUIからは整数指定するが設定上はfloat
+            _receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectThickness,
+                message =>　_vmmAlphaEdge.thickness.Override(message.ToInt())
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectColor,
+                message =>
+                {
+                    var rgb = message.ToColorFloats();
+                    var color = new Color(rgb[0], rgb[1], rgb[2]);
+                    _vmmAlphaEdge.edgeColor.Override(color);
+                });
+            _receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectHighQualityMode,
+                message => _vmmAlphaEdge.highQualityMode.Override(message.ToBoolean())
                 );
         }
 

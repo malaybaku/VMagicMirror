@@ -66,17 +66,17 @@ namespace Baku.VMagicMirror
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SetCropSize,
-                value => vmmCrop.margin.value = 1.0f - value.ToInt() * 0.001f
+                value => vmmCrop.margin.Override(1.0f - value.ToInt() * 0.001f)
                 );
 
             _receiver.AssignCommandHandler(
                 VmmCommands.SetCropBorderWidth,
-                value => vmmCrop.borderWidth.value = value.ToInt() * 0.001f
+                value => vmmCrop.borderWidth.Override(value.ToInt() * 0.001f)
                 );
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SetCropSquareRate,
-                value => vmmCrop.squareRate.value = value.ToInt() * 0.01f
+                value => vmmCrop.squareRate.Override(value.ToInt() * 0.01f)
                 );
             
             _receiver.BindBoolProperty(VmmCommands.OutlineEffectEnable, _enableOutlineEffect);

@@ -201,16 +201,8 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         private void SendBackgroundColor()
         {
-            if (IsTransparent.Value == true)
-            {
-                SendMessage(MessageFactory.Chromakey(0, 0, 0, 0));
-            }
-            else
-            {
-                SendMessage(MessageFactory.Chromakey(
-                    255, R.Value, G.Value, B.Value
-                    ));
-            }
+            var alpha = IsTransparent.Value ? 0 : 255;
+            SendMessage(MessageFactory.Chromakey(alpha, R.Value, G.Value, B.Value));
         }
 
         private void SendCropBorderColor()

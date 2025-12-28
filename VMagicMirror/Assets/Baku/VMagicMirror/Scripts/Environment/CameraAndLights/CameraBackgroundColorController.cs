@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         private readonly Camera _camera;
         
         private bool _isTransparentBackground = false;
-        private Color _latestNotTransparentBackgroundColor = Color.green;
+        private Color _latestNonTransparentBackgroundColor = Color.green;
         
         public CameraBackgroundColorController(
             IMessageReceiver receiver,
@@ -30,12 +30,9 @@ namespace Baku.VMagicMirror
                 {
                     var argb = message.ToColorFloats();
                     var a = argb[0];
-
                     _isTransparentBackground = a <= 0f;
-                    if (!_isTransparentBackground)
-                    {
-                        _latestNotTransparentBackgroundColor = new Color(argb[1], argb[2], argb[3]);
-                    }
+                    _latestNonTransparentBackgroundColor = new Color(argb[1], argb[2], argb[3]);
+                    
                     UpdateBackgroundColor();
                 });
             
@@ -59,7 +56,7 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                _camera.backgroundColor = _latestNotTransparentBackgroundColor;
+                _camera.backgroundColor = _latestNonTransparentBackgroundColor;
             }
         }
     }

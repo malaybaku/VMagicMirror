@@ -66,7 +66,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandState = new MediaPipeHandState(ReactedHand.Right, _finger);
         }
 
-
         private readonly MediaPipeHandState _leftHandState;
         public IHandIkState LeftHandState => _leftHandState;
 
@@ -79,6 +78,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _downHandIk = downHandIk;
             _trackingLostHandCalculator.SetupDownHandIk(downHandIk);
         }
+
+        public bool IsTracked(bool isLeft) => isLeft ? _leftHandState.IsTracked : _rightHandState.IsTracked;
 
         public override void Initialize()
         {
@@ -154,6 +155,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // - トラッキングロストの動作が始まった後は「手下げたまま」状態になることがあり、それを止める理由はないので流しっぱなしにする
             if (!IsInitialized || !_hasModel)
             {
+                _leftHandState.IsTracked = false;
+                _rightHandState.IsTracked = false;
                 return;
             }
             
@@ -179,7 +182,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void UpdateLeftHand()
         {
-            if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost))
+            var isTracked =
+                _mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost);
+            _leftHandState.IsTracked = isTracked;
+
+            if (isTracked)
             {
                 _trackingLostHandCalculator.CancelLeftHand();
                 var dt = Time.deltaTime;
@@ -232,7 +239,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void UpdateRightHand()
         {
-            if (_mediaPipeKinematicSetter.TryGetRightHandPose(out var handPose, out var maybeLost))
+            var isTracked =
+                _mediaPipeKinematicSetter.TryGetRightHandPose(out var handPose, out var maybeLost);
+            _rightHandState.IsTracked = isTracked;
+
+            if (isTracked)
             {
                 _trackingLostHandCalculator.CancelRightHand();
                 var dt = Time.deltaTime;
@@ -442,6 +453,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 Hand = hand;
                 Finger = finger;
             }
+
+            /// <summary>
+            /// トラッキング中かどうか。
+            /// トラッキングが瞬断しただけの(惰性で動かしてる)期間はtrueが継続し、トラッキングロスト動作で手を下げ始めるとfalse
+            /// </summary>
+            public bool IsTracked { get; set; }
 
             public bool SkipEnterIkBlend => false;
             public MediaPipeHandFinger Finger { get; set; }

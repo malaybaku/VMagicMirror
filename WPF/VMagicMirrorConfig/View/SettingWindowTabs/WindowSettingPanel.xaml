@@ -41,8 +41,19 @@
                               IsChecked="{Binding IsTransparent.Value, Mode=TwoWay}"
                               Margin="15,0"
                               />
+
+                    <CheckBox Content="{DynamicResource Window_Draggable}"
+                              IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
+                              Margin="30,0,15,0"
+                              />
+
+                    <CheckBox Content="{DynamicResource Window_TopMost}"
+                              IsChecked="{Binding TopMost.Value, Mode=TwoWay}"
+                              Margin="30,0,15,0"
+                              />
+
                     <StackPanel Orientation="Horizontal"
-                                Margin="25,0,5,5">
+                                Margin="15,0,5,5">
                         <TextBlock Text="{DynamicResource Window_BackgroundImage}"/>
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     Content="{DynamicResource Window_BackgroundImage_Load}"
@@ -52,18 +63,8 @@
                                     Content="{DynamicResource Window_BackgroundImage_Clear}"
                                     Command="{Binding BackgroundImageClearCommand}"
                                     />
-                    </StackPanel>
-
-                    <CheckBox Content="{DynamicResource Window_Draggable}"
-                              IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
-                              Margin="15,0"
-                              />
-
-                    <CheckBox Content="{DynamicResource Window_TopMost}"
-                              IsChecked="{Binding TopMost.Value, Mode=TwoWay}"
-                              Margin="15,0"
-                              />
-
+                    </StackPanel>                    
+                    
                     <Button Width="220"
                             Command="{Binding ResetWindowPositionCommand}"
                             >

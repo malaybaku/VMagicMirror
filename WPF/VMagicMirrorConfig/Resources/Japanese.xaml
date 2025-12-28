@@ -321,9 +321,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_Basics">基本設定</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
-    <sys:String x:Key="Window_Draggable">(透過中)アバター付近を掴んでドラッグ</sys:String>
-    <sys:String x:Key="Window_TopMost">(透過中)アバターをつねに最前面で表示</sys:String>
-    <sys:String x:Key="Window_ResetPosition">アバター位置のリセット</sys:String>
+    <sys:String x:Key="Window_Draggable">(透過中) アバター付近を掴んでドラッグ</sys:String>
+    <sys:String x:Key="Window_TopMost">(透過中) アバターをつねに最前面で表示</sys:String>
+    <sys:String x:Key="Window_ResetPosition">ウィンドウ位置のリセット</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>

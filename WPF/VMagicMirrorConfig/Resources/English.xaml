@@ -323,7 +323,7 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
     <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
     <sys:String x:Key="Window_Draggable">(When Transparent) Drag avatar</sys:String>
     <sys:String x:Key="Window_TopMost">(When Transparent) Always Foreground</sys:String>
-    <sys:String x:Key="Window_ResetPosition">Reset Avatar Position</sys:String>
+    <sys:String x:Key="Window_ResetPosition">Reset Window Position</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">BG Image:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>

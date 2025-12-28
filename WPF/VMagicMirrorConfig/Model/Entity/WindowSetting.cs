@@ -28,7 +28,7 @@
         public bool EnableCrop { get; set; } = false;
         // この3つは [%] 指定で、SquareRate以外は0.1%刻み
         public float CropSize { get; set; } = 98f;
-        public float CropBorderWidth { get; set; } = 2f;
+        public float CropBorderWidth { get; set; } = 1f;
         public int CropSquareRate { get; set; } = 0;
 
         public int CropBorderR { get; set; } = 255;

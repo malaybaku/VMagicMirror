@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     {
         public FloatParameter margin = new() { value = 0.02f };
         public FloatParameter squareRate = new() { value = 0.0f };
-        public FloatParameter borderWidth = new() { value = 0.02f };
+        public FloatParameter borderWidth = new() { value = 0.01f };
         public ColorParameter borderColor = new() { value = Color.white };
     }
 

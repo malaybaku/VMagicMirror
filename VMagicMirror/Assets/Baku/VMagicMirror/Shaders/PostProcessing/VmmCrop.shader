@@ -43,7 +43,8 @@ Shader "Hidden/Vmm/Crop"
             if (borderPx > 0.0 && sd >= -borderPx)
                 return _BorderColor;
 
-            return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
+            float4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
+            return float4(col.r, col.g, col.b, 1.0);
         }
     ENDHLSL
 

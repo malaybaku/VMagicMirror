@@ -29,14 +29,10 @@ Note that, this video refers older version, so some GUI has changed.
 ### 1. Start and Load Avatar
 {: .doc-sec1 }
 
-First step depends on the version of `VMagicMirror` you have.
-
-Please see one of following sections `1-1. Start v1.9.0 or later version` or `1-2. Start v1.8.2 or older version`.
-
-#### 1-1. Start v1.9.0 or later version
+#### 1-1. Install
 {: .doc-sec2 }
 
-Newer version of `VMagicMirror` is distributed with the form of installer (.exe) file.
+`VMagicMirror` is distributed with the form of an installer(.exe) file.
 
 Unzip the distributed file and run installer. After the installation, launch `VMagicMirror` from shortcut, or search in start menu to launch.
 
@@ -53,29 +49,8 @@ Installer run might be blocked by Windows system. In this case, right click inst
 </div>
 
 
-#### 1-2. Start v1.8.2 or older version
-{: .doc-sec2 }
 
-Unzip the distributed file and start `VMagicMirror.exe` in the folder.
-
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-If `VMagicMirror.exe` does not start correctly please check unzip settings. Right-click zip file to select `Property`, and check whether `Security` area exists at the bottom part. Check `Allow` and click `OK` to apply setting, then retry to unzip file.
-
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
-</div>
-
-Also please confirm the unzip folder is normal folder (like `C:\` or `My Document` folder).
-
-Please avoid special folder like `Program Files`, as those folder will lead tons of problem.
-
-</div>
-
-
-#### 1-3. Load Model after Start
+#### 1-2. Launch and Load Model
 {: .doc-sec2 }
 
 After the app started there appears 2 windows. One window shows GUI ("Control Panel"), and the other window shows avatar ("Avatar Window").
@@ -154,6 +129,8 @@ Also, if your avatar is not shown correctly, try `Adjust size by VRM` button. Yo
 Turn on `Transparent Window` to make avatar window to transparent. 
 
 When the window is transparent and `(When Transparent) Drag the avatar` is turned on, you can left-click and drag to move the avatar.
+
+In v4.4.0 and later, `(When Transparent) Enable Crop` option is available in the settings.
 
 If you do not want the dragging feature, then turn off `Drag the avatar` after placing your avatar.
 

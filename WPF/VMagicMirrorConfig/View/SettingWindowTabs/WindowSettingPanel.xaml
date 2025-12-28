@@ -205,7 +205,7 @@
                     </StackPanel>
 
                     <CheckBox Content="{DynamicResource Window_Crop_Enable}"
-                              IsChecked="{Binding EnableCircleCrop.Value, Mode=TwoWay}"
+                              IsChecked="{Binding EnableCrop.Value, Mode=TwoWay}"
                               Margin="15,5"
                               />
 

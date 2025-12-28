@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror
     public sealed class CameraBackgroundColorController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
-        private readonly WindowCropController _windowCropController;
+        private readonly CropAndOutlineController _cropAndOutlineController;
         private readonly Camera _camera;
         
         private bool _isTransparentBackground = false;
@@ -14,11 +14,11 @@ namespace Baku.VMagicMirror
         
         public CameraBackgroundColorController(
             IMessageReceiver receiver,
-            WindowCropController windowCropController,
+            CropAndOutlineController cropAndOutlineController,
             Camera camera)
         {
             _receiver = receiver;
-            _windowCropController = windowCropController;
+            _cropAndOutlineController = cropAndOutlineController;
             _camera = camera;
         }
         
@@ -36,7 +36,7 @@ namespace Baku.VMagicMirror
                     UpdateBackgroundColor();
                 });
             
-            _windowCropController.EnableCircleCrop
+            _cropAndOutlineController.EnableCircleCrop
                 .Skip(1)
                 .Subscribe(_ => UpdateBackgroundColor())
                 .AddTo(this);
@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror
         private void UpdateBackgroundColor()
         {
             // NOTE: 切り抜きがオンの場合、cameraの背景色ではなくPost Processで背景を切り落とすので、背景色は非透過のままにする
-            if (_isTransparentBackground && !_windowCropController.EnableCircleCrop.CurrentValue)
+            if (_isTransparentBackground && !_cropAndOutlineController.EnableCircleCrop.CurrentValue)
             {
                 _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
             }

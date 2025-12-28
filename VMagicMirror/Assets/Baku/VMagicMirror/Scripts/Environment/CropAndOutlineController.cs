@@ -4,7 +4,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace Baku.VMagicMirror
 {
-    public class WindowCropController : PresenterBase
+    public class CropAndOutlineController : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
         private readonly PostProcessVolume _postProcessVolume;
@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
 
         private VmmCrop _vmmCrop;
 
-        public WindowCropController(
+        public CropAndOutlineController(
             IMessageReceiver receiver,
             PostProcessVolume postProcessVolume
             )

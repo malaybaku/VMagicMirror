@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror
 
         private CameraUtilWrapper _camera;
         private CameraBackgroundColorController _cameraBackgroundColorController;
-        private WindowCropController _windowCropController;
+        private CropAndOutlineController _cropAndOutlineController;
         private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
@@ -83,14 +83,14 @@ namespace Baku.VMagicMirror
             IKeyMouseEventSource keyboardEventSource,
             CameraUtilWrapper cameraUtilWrapper,
             CameraBackgroundColorController cameraBackgroundColorController,
-            WindowCropController windowCropController,
+            CropAndOutlineController cropAndOutlineController,
             Buddy.BuddyObjectRaycastChecker buddyObjectRaycastChecker
             )
         {
             _camera = cameraUtilWrapper;
             _buddyObjectRaycastChecker = buddyObjectRaycastChecker;
             _cameraBackgroundColorController = cameraBackgroundColorController;
-            _windowCropController = windowCropController;
+            _cropAndOutlineController = cropAndOutlineController;
 
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -478,14 +478,14 @@ namespace Baku.VMagicMirror
             }
 
             // 切り抜き処理をしている場合: 切り抜き図形の形状が決まってるのを使って判定
-            if (_windowCropController.EnableCircleCrop.CurrentValue)
+            if (_cropAndOutlineController.EnableCircleCrop.CurrentValue)
             {
-                _isOnAvatarBoundingBoxOpaquePixel = _windowCropController.IsPointInsideCropArea(mousePos);
+                _isOnAvatarBoundingBoxOpaquePixel = _cropAndOutlineController.IsPointInsideCropArea(mousePos);
                 return;
             }
             
             // アバターのAABB上にマウスが載ってない: 無視してよい
-            if (!_windowCropController.EnableCircleCrop.CurrentValue &&
+            if (!_cropAndOutlineController.EnableCircleCrop.CurrentValue &&
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
                 _isOnAvatarBoundingBoxOpaquePixel = false;

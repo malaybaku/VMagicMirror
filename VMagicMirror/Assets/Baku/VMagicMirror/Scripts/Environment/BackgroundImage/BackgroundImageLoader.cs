@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _windowFrameVisible = new(true);
         private string _backgroundImagePath = "";
 
-        private WindowCropController _windowCropController;
+        private CropAndOutlineController _cropAndOutlineController;
         
         private string BackgroundImagePath
         {
@@ -32,9 +32,9 @@ namespace Baku.VMagicMirror
         }
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, WindowCropController windowCropController)
+        public void Initialize(IMessageReceiver receiver, CropAndOutlineController cropAndOutlineController)
         {
-            _windowCropController = windowCropController;
+            _cropAndOutlineController = cropAndOutlineController;
 
             receiver.AssignCommandHandler(
                 VmmCommands.SetBackgroundImagePath,
@@ -42,14 +42,14 @@ namespace Baku.VMagicMirror
 
             receiver.BindBoolProperty(VmmCommands.WindowFrameVisibility, _windowFrameVisible);
             _windowFrameVisible
-                .CombineLatest(windowCropController.EnableCircleCrop, (x, y) => Unit.Default)
+                .CombineLatest(cropAndOutlineController.EnableCircleCrop, (x, y) => Unit.Default)
                 .Subscribe(_ => Refresh())
                 .AddTo(this);
         }
 
         private void Refresh()
         {
-            if ((_windowFrameVisible.CurrentValue || _windowCropController.EnableCircleCrop.CurrentValue) && 
+            if ((_windowFrameVisible.CurrentValue || _cropAndOutlineController.EnableCircleCrop.CurrentValue) && 
                 File.Exists(_backgroundImagePath))
             {
                 LoadBackgroundImage(_backgroundImagePath);

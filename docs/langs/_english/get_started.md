@@ -155,6 +155,8 @@ Turn on `Transparent Window` to make avatar window to transparent.
 
 When the window is transparent and `(When Transparent) Drag the avatar` is turned on, you can left-click and drag to move the avatar.
 
+In v4.4.0 and later, `(When Transparent) Enable Crop` option is available in the settings.
+
 If you do not want the dragging feature, then turn off `Drag the avatar` after placing your avatar.
 
 <div class="row">

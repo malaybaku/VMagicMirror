@@ -81,6 +81,29 @@ namespace Baku.VMagicMirrorConfig
                 setting.SpoutResolutionType,
                 type => SendMessage(MessageFactory.SetSpoutOutputResolution(type))
                 );
+
+            EnableCrop = new RProperty<bool>(
+                setting.EnableCrop,
+                enable => SendMessage(MessageFactory.EnableCrop(enable))
+                );
+
+            CropSize = new RProperty<float>(
+                setting.CropSize,
+                size => SendMessage(MessageFactory.SetCropSize(size))
+                );
+            CropBorderWidth = new RProperty<float>(
+                setting.CropBorderWidth,
+                width => SendMessage(MessageFactory.SetCropBorderWidth(width))
+                );
+            CropSquareRate = new RProperty<int>(
+                setting.CropSquareRate,
+                rate => SendMessage(MessageFactory.SetCropSquareRate(rate))
+                );
+
+            CropBorderR = new RProperty<int>(setting.CropBorderR, _ => SendCropBorderColor());
+            CropBorderG = new RProperty<int>(setting.CropBorderG, _ => SendCropBorderColor());
+            CropBorderB = new RProperty<int>(setting.CropBorderB, _ => SendCropBorderColor());
+
         }
 
         public RProperty<int> R { get; }
@@ -98,6 +121,15 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableSpoutOutput { get; }
         public RProperty<int> SpoutResolutionType { get; }
+
+        public RProperty<bool> EnableCrop { get; }
+        public RProperty<float> CropSize { get; }
+        public RProperty<float> CropBorderWidth { get; }
+        public RProperty<int> CropSquareRate{ get; }
+
+        public RProperty<int> CropBorderR { get; }
+        public RProperty<int> CropBorderG { get; }
+        public RProperty<int> CropBorderB { get; }
 
         #region Reset API
 
@@ -123,6 +155,18 @@ namespace Baku.VMagicMirrorConfig
             SpoutResolutionType.Value = setting.SpoutResolutionType;
         }
 
+        public void ResetCrop()
+        {
+            var setting = WindowSetting.Default;
+            EnableCrop.Value = setting.EnableCrop;
+            CropSize.Value = setting.CropSize;
+            CropBorderWidth.Value = setting.CropBorderWidth;
+            CropSquareRate.Value = setting.CropSquareRate;
+            CropBorderR.Value = setting.CropBorderR;
+            CropBorderG.Value = setting.CropBorderG;
+            CropBorderB.Value = setting.CropBorderB;
+        }
+
         public override void ResetToDefault()
         {
             var setting = WindowSetting.Default;
@@ -137,6 +181,7 @@ namespace Baku.VMagicMirrorConfig
 
             ResetOpacity();
             ResetSpoutOutput();
+            ResetCrop();
             ResetWindowPosition();
         }
 
@@ -156,17 +201,19 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         private void SendBackgroundColor()
         {
-            if (IsTransparent.Value == true)
-            {
-                SendMessage(MessageFactory.Chromakey(0, 0, 0, 0));
-            }
-            else
-            {
-                SendMessage(MessageFactory.Chromakey(
-                    255, R.Value, G.Value, B.Value
-                    ));
-            }
+            var alpha = IsTransparent.Value ? 0 : 255;
+            SendMessage(MessageFactory.Chromakey(alpha, R.Value, G.Value, B.Value));
         }
+
+        private void SendCropBorderColor()
+        {
+            SendMessage(MessageFactory.SetCropBorderColor(
+                CropBorderR.Value, 
+                CropBorderG.Value,
+                CropBorderB.Value
+                ));
+        }
+
 
         public void SetBackgroundImage()
         {

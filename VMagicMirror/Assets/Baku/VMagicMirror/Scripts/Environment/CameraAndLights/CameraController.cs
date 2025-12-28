@@ -46,14 +46,6 @@ namespace Baku.VMagicMirror
                 _hasModel = false;
                 _headPosition = Vector3.zero;
             };
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.Chromakey, 
-                message =>
-                {
-                    var argb = message.ToColorFloats();
-                    SetCameraBackgroundColor(argb[0], argb[1], argb[2], argb[3]);
-                });
 
             receiver.AssignCommandHandler(
                 VmmCommands.EnableFreeCameraMode,
@@ -104,9 +96,6 @@ namespace Baku.VMagicMirror
             _defaultCameraPosition = camTransform.position;
             _defaultCameraRotationEuler = camTransform.rotation.eulerAngles;
         }
-
-        public void SetCameraBackgroundColor(float a, float r, float g, float b) 
-            => cam.backgroundColor = new Color(r, g, b, a);
 
         private void EnableFreeCameraMode(bool v)
             => transformController.enabled = v;

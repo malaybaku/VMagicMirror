@@ -55,6 +55,13 @@
         ResetWindowSize,
         SetWholeWindowTransparencyLevel,
         SetAlphaValueOnTransparent,
+        EnableCrop,
+        // sizeとwidthは0~1000の値に量子化した値を送る(受信側は0.001倍して使うのが期待値)
+        SetCropSize,
+        SetCropBorderWidth,
+        // SquareRateは%指定の整数値をそのまま送る
+        SetCropSquareRate,
+        SetCropBorderColor,
         //NOTE: 「GUIの初期読み込みが終了した」という、1回だけ呼ばれるタイプのやつ
         StartupEnded,
 

@@ -309,18 +309,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7220499517934239985}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1335587171 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 464634160456065510, guid: 310af0090b9f7c24bb51c8b8523fc826,
-    type: 3}
-  m_PrefabInstance: {fileID: 464634161653977221}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c46089e00f194442983c97c9bdedd65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1480384361 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5551199448068241020, guid: 4a10b4c0ecdd434479b4d403edd1c1f9,
@@ -1046,7 +1034,7 @@ PrefabInstance:
         type: 3}
       propertyPath: faceTracker
       value: 
-      objectReference: {fileID: 1335587171}
+      objectReference: {fileID: 0}
     - target: {fileID: 5813678808713813112, guid: f6c219998e9cac44181a454adad331bf,
         type: 3}
       propertyPath: deadZoneLeaveDistance
@@ -1061,7 +1049,7 @@ PrefabInstance:
         type: 3}
       propertyPath: faceTracker
       value: 
-      objectReference: {fileID: 1335587171}
+      objectReference: {fileID: 0}
     - target: {fileID: 5813678810404708493, guid: f6c219998e9cac44181a454adad331bf,
         type: 3}
       propertyPath: gamePad
@@ -1565,7 +1553,7 @@ PrefabInstance:
         type: 3}
       propertyPath: faceTracker
       value: 
-      objectReference: {fileID: 1335587171}
+      objectReference: {fileID: 0}
     - target: {fileID: 8218640737285604642, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: handTracker

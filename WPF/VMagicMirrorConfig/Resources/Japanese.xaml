@@ -321,14 +321,21 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_Basics">基本設定</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
-    <sys:String x:Key="Window_Draggable">(透過中)アバター付近を掴んでドラッグ</sys:String>
-    <sys:String x:Key="Window_TopMost">(透過中)アバターをつねに最前面で表示</sys:String>
-    <sys:String x:Key="Window_ResetPosition">アバター位置のリセット</sys:String>
+    <sys:String x:Key="Window_Draggable">(透過中) アバター付近を掴んでドラッグ</sys:String>
+    <sys:String x:Key="Window_TopMost">(透過中) アバターをつねに最前面で表示</sys:String>
+    <sys:String x:Key="Window_ResetPosition">ウィンドウ位置のリセット</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">クリア</sys:String>
 
+    <sys:String x:Key="Window_Crop">切り抜き</sys:String>
+    <sys:String x:Key="Window_Crop_Enable">(透過中) 切り抜き処理を適用</sys:String>
+    <sys:String x:Key="Window_Crop_Size">サイズ [%]</sys:String>
+    <sys:String x:Key="Window_Crop_SquareRate">四角くする [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderWidth">枠線の太さ [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderColor">枠線の色:</sys:String>
+    
     <sys:String x:Key="Window_SpoutOutput">Spout出力</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spoutを用いて固定解像度で映像を出力できます。
 

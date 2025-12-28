@@ -29,7 +29,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private CameraController cameraController;
 
         private float _windowPositionCheckCount;
 
@@ -70,6 +69,8 @@ namespace Baku.VMagicMirror
         private const float AlphaLerpFactor = 0.2f;
 
         private CameraUtilWrapper _camera;
+        private CameraBackgroundColorController _cameraBackgroundColorController;
+        private CropAndOutlineController _cropAndOutlineController;
         private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
@@ -81,11 +82,15 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver, 
             IKeyMouseEventSource keyboardEventSource,
             CameraUtilWrapper cameraUtilWrapper,
+            CameraBackgroundColorController cameraBackgroundColorController,
+            CropAndOutlineController cropAndOutlineController,
             Buddy.BuddyObjectRaycastChecker buddyObjectRaycastChecker
             )
         {
             _camera = cameraUtilWrapper;
             _buddyObjectRaycastChecker = buddyObjectRaycastChecker;
+            _cameraBackgroundColorController = cameraBackgroundColorController;
+            _cropAndOutlineController = cropAndOutlineController;
 
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -194,7 +199,7 @@ namespace Baku.VMagicMirror
                 //見た目に関するものだけにしている(全部やるとクリックスルー設定が絡んで難しくなるので)
                 SetWindowTransparency(true);
                 SetWindowFrameVisibility(false);
-                cameraController.SetCameraBackgroundColor(0, 0, 0, 0);
+                _cameraBackgroundColorController.ForceSetBackgroundTransparent();
             }
         }
 
@@ -465,9 +470,22 @@ namespace Baku.VMagicMirror
             }
             _prevMousePosition = mousePos;
 
-            //書いてる通りマウスがウィンドウ外にあるか、またはウィンドウ内であっても明らかに
-            //キャラクター上にマウスがないと判断出来る場合は続きを処理しない。
-            if (!_camera.PixelRectContains(mousePos) ||
+            // マウスがウィンドウ外にある: 明らかに無視してよい
+            if (!_camera.PixelRectContains(mousePos))
+            {
+                _isOnAvatarBoundingBoxOpaquePixel = false;
+                return;
+            }
+
+            // 切り抜き処理をしている場合: 切り抜き図形の形状が決まってるのを使って判定
+            if (_cropAndOutlineController.EnableCircleCrop.CurrentValue)
+            {
+                _isOnAvatarBoundingBoxOpaquePixel = _cropAndOutlineController.IsPointInsideCropArea(mousePos);
+                return;
+            }
+            
+            // アバターのAABB上にマウスが載ってない: 無視してよい
+            if (!_cropAndOutlineController.EnableCircleCrop.CurrentValue &&
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
                 _isOnAvatarBoundingBoxOpaquePixel = false;
@@ -478,7 +496,7 @@ namespace Baku.VMagicMirror
             {
                 // マウス直下の画素を読む (参考 http://tsubakit1.hateblo.jp/entry/20131203/1386000440 )
                 _colorPickerTexture.ReadPixels(new Rect(mousePos, Vector2.one), 0, 0);
-                Color color = _colorPickerTexture.GetPixel(0, 0);
+                var color = _colorPickerTexture.GetPixel(0, 0);
 
                 // アルファ値がしきい値以上ならば不透過
                 _isOnAvatarBoundingBoxOpaquePixel = (color.a >= opaqueThreshold);

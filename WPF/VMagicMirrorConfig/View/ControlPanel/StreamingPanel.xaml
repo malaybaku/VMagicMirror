@@ -96,10 +96,20 @@
                                   IsChecked="{Binding IsTransparent.Value, Mode=TwoWay}"
                                   />
 
+                        <CheckBox Style="{StaticResource SmallMarginCheckBox}"
+                                  Margin="25,1,10,1"
+                                  Content="{DynamicResource Window_Crop_Enable}"
+                                  IsChecked="{Binding EnableCrop.Value, Mode=TwoWay}"
+                                  />
+
+                        <CheckBox Style="{StaticResource SmallMarginCheckBox}"
+                                  Margin="25,1,10,1"
+                                  Content="{DynamicResource Window_Draggable}"
+                                  IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
+                                  />
+
                         <StackPanel Orientation="Horizontal"
-                                    Margin="15,0,5,2"
-                                    IsEnabled="{Binding IsTransparent.Value,
-                                                        Converter={StaticResource BooleanReverseConverter}}">
+                                    Margin="10,1">
                             <TextBlock Text="{DynamicResource Window_BackgroundImage}"/>
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
                                     Content="{DynamicResource Window_BackgroundImage_Load}"
@@ -111,10 +121,6 @@
                                     />
                         </StackPanel>
 
-                        <CheckBox Style="{StaticResource SmallMarginCheckBox}"
-                                  Content="{DynamicResource Window_Draggable}"
-                                  IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
-                                  />
                     </StackPanel>
                 </Border>
 

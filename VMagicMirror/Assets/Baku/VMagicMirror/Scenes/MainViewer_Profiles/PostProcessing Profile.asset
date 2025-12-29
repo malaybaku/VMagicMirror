@@ -24,7 +24,7 @@ MonoBehaviour:
     value: 0
   borderWidth:
     overrideState: 1
-    value: 0.02
+    value: 0.01
   borderColor:
     overrideState: 1
     value: {r: 1, g: 1, b: 1, a: 1}

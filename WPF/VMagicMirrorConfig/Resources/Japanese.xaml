@@ -329,8 +329,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">クリア</sys:String>
 
-    <sys:String x:Key="Window_Crop">切り抜き</sys:String>
-    <sys:String x:Key="Window_Crop_Enable">(透過中) 切り抜き処理を適用</sys:String>
+    <sys:String x:Key="Window_Crop">形状を指定して切り抜き</sys:String>
+    <sys:String x:Key="Window_Crop_Enable">(透過中) 丸/角丸に切り抜く</sys:String>
     <sys:String x:Key="Window_Crop_Size">サイズ [%]</sys:String>
     <sys:String x:Key="Window_Crop_SquareRate">四角くする [%]</sys:String>
     <sys:String x:Key="Window_Crop_BorderWidth">枠線の太さ [%]</sys:String>

@@ -29,6 +29,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetSpoutOutputSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetSpoutOutput)
                 );
+            ResetCropSettingCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetCrop)
+                );
 
             if (IsInDesignMode)
             {
@@ -38,8 +41,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model.R.AddWeakEventHandler(OnPickerColorChanged);
             _model.G.AddWeakEventHandler(OnPickerColorChanged);
             _model.B.AddWeakEventHandler(OnPickerColorChanged);
-            //初期値を反映しないと変な事になるので注意
+            //初期値を反映しないと変な事になるので注意。Cropのほうも同様
             RaisePropertyChanged(nameof(PickerColor));
+
+            _model.CropBorderR.AddWeakEventHandler(OnCropBorderColorChanged);
+            _model.CropBorderG.AddWeakEventHandler(OnCropBorderColorChanged);
+            _model.CropBorderB.AddWeakEventHandler(OnCropBorderColorChanged);
+            RaisePropertyChanged(nameof(CropBorderColor));
         }
 
         private readonly WindowSettingModel _model;
@@ -51,6 +59,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void OnPickerColorChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(PickerColor));
+        }
+
+        private void OnCropBorderColorChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(CropBorderColor));
         }
 
         /// <summary> ColorPickerに表示する、Alphaを考慮しない背景色を取得、設定します。 </summary>
@@ -65,6 +78,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        public Color CropBorderColor
+        {
+            get => Color.FromRgb((byte)CropBorderColorR.Value, (byte)CropBorderColorG.Value, (byte)CropBorderColorB.Value);
+            set
+            {
+                CropBorderColorR.Value = value.R;
+                CropBorderColorG.Value = value.G;
+                CropBorderColorB.Value = value.B;
+            }
+        }
+
         public RProperty<bool> IsTransparent => _model.IsTransparent;
         public RProperty<bool> WindowDraggable => _model.WindowDraggable;
         public RProperty<bool> TopMost => _model.TopMost;
@@ -75,6 +99,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableSpoutOutput => _model.EnableSpoutOutput;
         public RProperty<int> SpoutResolutionType => _model.SpoutResolutionType;
 
+        public RProperty<bool> EnableCrop => _model.EnableCrop;
+        public RProperty<float> CropSize => _model.CropSize;
+        public RProperty<float> CropBorderWidth => _model.CropBorderWidth;
+        public RProperty<int> CropSquareRate => _model.CropSquareRate;
+        public RProperty<int> CropBorderColorR => _model.CropBorderR;
+        public RProperty<int> CropBorderColorG => _model.CropBorderG;
+        public RProperty<int> CropBorderColorB => _model.CropBorderB;
+
         public ActionCommand BackgroundImageSetCommand { get; }
         public ActionCommand BackgroundImageClearCommand { get; }
 
@@ -82,6 +114,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetBackgroundColorSettingCommand { get; }
         public ActionCommand ResetOpacitySettingCommand { get; }
         public ActionCommand ResetSpoutOutputSettingCommand { get; }
+        public ActionCommand ResetCropSettingCommand { get; }
 
         public SpoutResolutionTypeNameViewModel[] SpoutResolutionTypes => SpoutResolutionTypeNameViewModel.AvailableItems;
     }

@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.4.0
+{: .doc-sec2 }
+
+2025/12/29
+
+* Add: Feature to crop avatar window by circle or rounded-square shape. The feature is available at `Streaming` tab > `Window`, and settings are at `Settings > Window > Crop`.
+* Change: While hand tracking via the webcam is active and your hand is tracked, the avatar’s hand movements will no longer switch to other motions (e.g., keyboard/mouse/gamepad).
+
+
 #### v4.3.1
 {: .doc-sec2 }
 

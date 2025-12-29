@@ -323,12 +323,19 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
     <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
     <sys:String x:Key="Window_Draggable">(When Transparent) Drag avatar</sys:String>
     <sys:String x:Key="Window_TopMost">(When Transparent) Always Foreground</sys:String>
-    <sys:String x:Key="Window_ResetPosition">Reset Avatar Position</sys:String>
+    <sys:String x:Key="Window_ResetPosition">Reset Window Position</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">BG Image:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">Clear</sys:String>
 
+    <sys:String x:Key="Window_Crop">Crop</sys:String>
+    <sys:String x:Key="Window_Crop_Enable">(When Transparent) Enable Crop</sys:String>
+    <sys:String x:Key="Window_Crop_Size">Area Size [%]</sys:String>
+    <sys:String x:Key="Window_Crop_SquareRate">Square Ratio [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderWidth">Border Width [%]</sys:String>
+    <sys:String x:Key="Window_Crop_BorderColor">Border Color:</sys:String>
+    
     <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.
 

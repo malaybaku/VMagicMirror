@@ -24,6 +24,16 @@
 
         public bool EnableSpoutOutput { get; set; } = false;
         public int SpoutResolutionType { get; set; } = 0;
+
+        public bool EnableCrop { get; set; } = false;
+        // この3つは [%] 指定で、SquareRate以外は0.1%刻み
+        public float CropSize { get; set; } = 98f;
+        public float CropBorderWidth { get; set; } = 1f;
+        public int CropSquareRate { get; set; } = 0;
+
+        public int CropBorderR { get; set; } = 255;
+        public int CropBorderG { get; set; } = 255;
+        public int CropBorderB { get; set; } = 255;
     }
 
     public enum SpoutResolutionType

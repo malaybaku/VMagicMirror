@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -9,21 +10,10 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private BackgroundImageBoard board = null;
 
-        private bool _windowFrameVisible = true;
+        private readonly ReactiveProperty<bool> _windowFrameVisible = new(true);
         private string _backgroundImagePath = "";
 
-        private bool WindowFrameVisible
-        {
-            get => _windowFrameVisible;
-            set
-            {
-                if (_windowFrameVisible != value)
-                {
-                    _windowFrameVisible = value;
-                    Refresh();
-                }
-            }
-        }
+        private CropAndOutlineController _cropAndOutlineController;
         
         private string BackgroundImagePath
         {
@@ -42,20 +32,25 @@ namespace Baku.VMagicMirror
         }
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public void Initialize(IMessageReceiver receiver, CropAndOutlineController cropAndOutlineController)
         {
+            _cropAndOutlineController = cropAndOutlineController;
+
             receiver.AssignCommandHandler(
                 VmmCommands.SetBackgroundImagePath,
                 command => BackgroundImagePath = command.GetStringValue());
 
-            receiver.AssignCommandHandler(
-                VmmCommands.WindowFrameVisibility,
-                command => WindowFrameVisible = command.ToBoolean());
+            receiver.BindBoolProperty(VmmCommands.WindowFrameVisibility, _windowFrameVisible);
+            _windowFrameVisible
+                .CombineLatest(cropAndOutlineController.EnableCircleCrop, (x, y) => Unit.Default)
+                .Subscribe(_ => Refresh())
+                .AddTo(this);
         }
 
         private void Refresh()
         {
-            if (_windowFrameVisible && File.Exists(_backgroundImagePath))
+            if ((_windowFrameVisible.CurrentValue || _cropAndOutlineController.EnableCircleCrop.CurrentValue) && 
+                File.Exists(_backgroundImagePath))
             {
                 LoadBackgroundImage(_backgroundImagePath);
             }

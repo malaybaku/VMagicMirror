@@ -540,12 +540,13 @@ namespace Baku.VMagicMirror
             );
         }
 
-        private bool CanChangeState(HandTargetType current, HandTargetType target)
+        private bool CanChangeState(HandTargetType current, HandTargetType target, bool isLeft)
         {
             //書いてる通りだが、
             // - 同じ状態には遷移できない
             // - 拍手は実行優先度がすごく高いので、他の状態に遷移できない
             // - 手下げモード有効時は手下げ, ハンドトラッキング, 拍手のどれかにしか遷移できない
+            // - ハンドトラッキングで手をトラッキングできてる間は他に遷移しない (拍手はWord to Motionで動くものなので例外)
 
             if (current == target)
             {
@@ -563,12 +564,20 @@ namespace Baku.VMagicMirror
                 return false;
             }
             
-            return true; 
+            if (current is HandTargetType.ImageBaseHand &&
+                target is not HandTargetType.ClapMotion &&
+                _mediaPipeHand.IsTracked(isLeft)
+               )
+            {
+                return false;
+            }
+            
+            return true;
         }
         
         private void SetLeftHandState(IHandIkState state)
         {
-            if (!CanChangeState(_leftTargetType.Value, state.TargetType))
+            if (!CanChangeState(_leftTargetType.Value, state.TargetType, true))
             {
                 return;
             }
@@ -591,7 +600,7 @@ namespace Baku.VMagicMirror
 
         private void SetRightHandState(IHandIkState state)
         {
-            if (!CanChangeState(_rightTargetType.Value, state.TargetType))
+            if (!CanChangeState(_rightTargetType.Value, state.TargetType, false))
             {
                 return;
             }

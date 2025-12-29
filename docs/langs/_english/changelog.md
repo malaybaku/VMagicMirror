@@ -13,7 +13,7 @@ lang: en
 
 2025/12/29
 
-* Add: Window crop feature for the option to make background transparent. The feature can be enabled at `Streaming` tab's `Window` menu, and edit detail settings at `Settings > Window > Crop`.
+* Add: Feature to crop avatar window by circle or rounded-square shape. The feature is available at `Streaming` tab > `Window`, and settings are at `Settings > Window > Crop`.
 * Change: While hand tracking via the webcam is active and your hand is tracked, the avatar’s hand movements will no longer switch to other motions (e.g., keyboard/mouse/gamepad).
 
 

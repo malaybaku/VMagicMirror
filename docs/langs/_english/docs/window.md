@@ -42,7 +42,7 @@ Crop feature is available in VMM v4.4.0 and later.
 With this feature, the window is cropped by circle or rounded square shape.
 
 <div class="row">
-{% include docimg.html file="/images/docs/window_crop.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/window_crop.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
 <div class="doc-ul" markdown="1">

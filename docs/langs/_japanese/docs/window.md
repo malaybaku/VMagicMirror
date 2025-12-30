@@ -46,7 +46,7 @@ title: Window
 この機能はVMM v4.4.0かそれ以降で使用でき、アバター表示ウィンドウを円または角丸の枠で切り抜きます。
 
 <div class="row">
-{% include docimg.html file="/images/docs/window_crop" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/window_crop.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
 </div>
 
 以下のオプションが利用できます。

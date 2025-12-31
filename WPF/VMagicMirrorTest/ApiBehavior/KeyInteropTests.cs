@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.Test.ApiBehavior
             for (var i = 0; i < 26; i++)
             {
                 var k = KeyInterop.VirtualKeyFromKey(Key.A + i);
-                Assert.AreEqual(k, Start + i);
+                Assert.That(Start + i, Is.EqualTo(k));
             }
         }
 
@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.Test.ApiBehavior
         public void VirtualKeyFromKey_特殊なキーが想定通りにマップされる(Key key, int num)
         {
             var k = KeyInterop.VirtualKeyFromKey(key);
-            Assert.AreEqual(num, k);
+            Assert.That(k, Is.EqualTo(num));
         }
     }
 }

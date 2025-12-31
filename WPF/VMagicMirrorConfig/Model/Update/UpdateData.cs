@@ -145,7 +145,7 @@ namespace Baku.VMagicMirrorConfig
                     .Where(line => !string.IsNullOrEmpty(line))
                 );
 
-            var imageUrlLine = lines.FirstOrDefault(line => !line.StartsWith("Image:"))
+            var imageUrlLine = lines.FirstOrDefault(line => line.StartsWith("Image:"))
                 ?.Substring("Image:".Length)
                 .Trim() ?? "";
 

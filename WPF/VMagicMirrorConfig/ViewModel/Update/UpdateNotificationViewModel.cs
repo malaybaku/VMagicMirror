@@ -1,4 +1,7 @@
-﻿namespace Baku.VMagicMirrorConfig.ViewModel
+﻿using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class UpdateNotificationViewModel : ViewModelBase
     {
@@ -15,6 +18,11 @@
             AskMeLaterCommand = new ActionCommand(() => SetResult(UpdateDialogResult.AskMeLater));
             SkipThisVersionCommand = new ActionCommand(() => SetResult(UpdateDialogResult.SkipThisVersion));
             OpenChangeLogPageCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_changelog")));
+        
+            if (_modelData.ReleaseNote.ImageUrl != null)
+            {
+                ReleaseNoteImageSource = new BitmapImage(_modelData.ReleaseNote.ImageUrl);
+            }
         }
 
         private readonly UpdateCheckResult _modelData;
@@ -29,6 +37,9 @@
         public string ReleaseNote => (LanguageSelector.Instance.LanguageName == LanguageSelector.LangNameJapanese)
             ? _modelData.ReleaseNote.JapaneseNote
             : _modelData.ReleaseNote.EnglishNote;
+
+        public bool HasReleaseNoteImage => _modelData.ReleaseNote.ImageUrl != null;
+        public ImageSource? ReleaseNoteImageSource { get; private set; }
 
         public ActionCommand GetLatestVersionCommand { get; }
         public ActionCommand AskMeLaterCommand { get; }

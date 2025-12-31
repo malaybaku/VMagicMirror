@@ -19,7 +19,7 @@
     WindowStartupLocation="CenterOwner"
     GlowBrush="{DynamicResource MahApps.Brushes.Gray2}"
     d:DataContext="{d:DesignInstance vm:UpdateNotificationViewModel}"
-    Height="280" Width="500"
+    Height="380" Width="500"
     >
     <i:Interaction.Behaviors>
         <view:DialogBehavior Result="{Binding DialogResult, Mode=OneWay}" />
@@ -78,6 +78,11 @@
                            TextWrapping="Wrap"
                            Margin="10"
                            />
+                <Image Visibility="{Binding HasReleaseNoteImage}"
+                       Height="160"
+                       Source="{Binding ReleaseNoteImageSource}"
+                       Stretch="Uniform"
+                       />
             </StackPanel>
         </ScrollViewer>
 

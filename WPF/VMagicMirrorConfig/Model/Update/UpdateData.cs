@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Baku.VMagicMirrorConfig
@@ -99,7 +100,11 @@ namespace Baku.VMagicMirrorConfig
         public override string ToString() => $"v{Major}.{Minor}.{Build}";
     }
 
-    public record ReleaseNote(string JapaneseNote, string EnglishNote, string DateString)
+    public record ReleaseNote(
+        string JapaneseNote, 
+        string EnglishNote, 
+        string DateString,
+        Uri? ImageUrl)
     {
         /// <summary>
         /// 日英のリリースノートが混在しているはずのテキストをパースし、
@@ -140,21 +145,46 @@ namespace Baku.VMagicMirrorConfig
                     .Where(line => !string.IsNullOrEmpty(line))
                 );
 
+            var imageUrlLine = lines.FirstOrDefault(line => !line.StartsWith("Image:"))
+                ?.Substring("Image:".Length)
+                .Trim() ?? "";
+
             if (string.IsNullOrEmpty(japaneseNote) || string.IsNullOrEmpty(englishNote))
             {
-                return new ReleaseNote(rawValue, rawValue, "");
+                return new ReleaseNote(rawValue, rawValue, "", null);
             }
             else
             {
-                return new ReleaseNote(japaneseNote, englishNote, dateString);
+                return new ReleaseNote(japaneseNote, englishNote, dateString, TryGetImageUrl(imageUrlLine));
             }
         }
 
+        private static Uri? TryGetImageUrl(string rawUrl)
+        {
+            if (!Uri.TryCreate(rawUrl, UriKind.Absolute, out var uri))
+            {
+                return null;
+            }
 
-        public static ReleaseNote Empty => new ReleaseNote("", "", "");
+            // GitHubで本文中に埋め込用のURLだけ通す
+            if (uri.Scheme != Uri.UriSchemeHttps ||
+                uri.Host != "github.com" ||
+                !uri.AbsolutePath.StartsWith("/user-attachments/assets/"))
+            {
+                return null;
+            }
+
+            return uri;
+        }
+
+
+        public static ReleaseNote Empty => new ReleaseNote("", "", "", null);
     }
 
-    public record UpdateCheckResult(bool UpdateNeeded, VmmAppVersion Version, ReleaseNote ReleaseNote)
+    public record UpdateCheckResult(
+        bool UpdateNeeded, 
+        VmmAppVersion Version, 
+        ReleaseNote ReleaseNote)
     {
         public static UpdateCheckResult NoUpdateNeeded()
             => new UpdateCheckResult(false, VmmAppVersion.LoadInvalid(), ReleaseNote.Empty);

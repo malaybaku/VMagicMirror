@@ -143,7 +143,6 @@
                         </StackPanel>
                     </Border>
 
-
                     <Border Style="{StaticResource SectionBorder}" Padding="5" Margin="5">
                         <StackPanel>
                             <TextBlock Style="{StaticResource HeaderText}"
@@ -215,7 +214,7 @@
                                             Text="{DynamicResource Home_Manual_Header}"
                                             Margin="5"
                                             />
-                            </StackPanel>                            
+                            </StackPanel>
 
                             <TextBlock Margin="10,5">
                                 <Hyperlink Command="{Binding OpenManualUrlCommand}"
@@ -280,8 +279,8 @@
                                            Margin="5"
                                            />
                             </StackPanel>
-                            
-                        
+
+
                             <Grid Margin="0,5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -328,8 +327,6 @@
                         Command="{Binding ResetToDefaultCommand}"
                         />
                 </StackPanel>
-
-
             </Grid>
         </ScrollViewer>
         <Border x:Name="DragDropIndicator" 

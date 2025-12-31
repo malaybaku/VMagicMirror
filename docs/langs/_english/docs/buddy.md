@@ -142,8 +142,18 @@ The page shows simple template buddy data and the list of the script APIs availa
 
 In v4.0.0, it is expected that creating your own buddy will require advanced programming skills.
 
-I am planning to create and distribute templates that allow you to use the scripts as they are, on the documentation page mentioned above and on BOOTH.
+I am planning to create and distribute additional templates that allow you to setup the buddy without writing new script or complicated setup. The assets will be available in this page, on the documentation page above, BOOTH etc.
 
 </div>
 
+
+#### Buddy Template Data Example
+{: .doc-sec2 }
+
+Following template enables to create your own buddy by preparing some image files.
+By this template, you can setup a buddy with almost same behavior as built-in buddy in v4.0.0 app.
+
+[VMMサブキャラ_画像入れ替え用テンプレート](https://baku-dreameater.booth.pm/items/6998661)
+
+*The detailed information about the template is almost in Japanese. Please use translation tools if needed.
 

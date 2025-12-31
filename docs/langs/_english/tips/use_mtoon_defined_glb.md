@@ -24,7 +24,19 @@ You need to setup and export model data by following steps.
 #### 1. Create Unity Project to Export .glb File
 {: .doc-sec2 }
 
-Install Unity 6 or later version and create a new project. Then, introduce following packages.
+Install Unity 2022.3 or later version and create a new project. Choose Built-in Render Pipeline for the project.
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+VMagicMirror uses Built-in Render Pipeline.
+
+Please select Built-in Render Pipeline so that your object to export looks similarly in Unity Editor and VMagicMirror.
+
+</div>
+
+In the new project, introduce following packages.
 
 - [UniVRM v0.121.0](https://github.com/vrm-c/UniVRM/releases/tag/v0.121.0)
 - [UnityMToonGltfExtension v0.1.0](https://github.com/malaybaku/UnityMToonGltfExtension/releases/tag/v0.1.0)
@@ -49,6 +61,8 @@ Select `+` button at the top left of the window, select `Add Package from git UR
 Create or import 3D asset prefab into the project, and attach material with MToon shader and setup parameters. Note that you can use several formats (`.fbx` or other data) in this step.
 
 Open export window from `MToonGltf -> Export MToon glTF...`. Select the prefab and export the data as `.glb`.
+
+You might see some warnings about material fallback in export window, but you can ignore them.
 
 If you want to check export is successful, you can test it by importing exported `.glb` file.
 

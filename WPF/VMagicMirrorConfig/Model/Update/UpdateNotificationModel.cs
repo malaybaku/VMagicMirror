@@ -34,13 +34,7 @@ namespace Baku.VMagicMirrorConfig
                 }
 
                 var rawReleaseNote = jobj["body"] is JValue jvBody ? ((string?)jvBody) : null;
-                // DEBUG: 検証用に画像URLを強制適用する
-                var releaseNote = ReleaseNote.FromRawString(rawReleaseNote)
-                with
-                {
-                    ImageUrl = new Uri("https://github.com/user-attachments/assets/3b3972e2-110d-4d72-ace6-4637519c339f"),
-                }
-                ;
+                var releaseNote = ReleaseNote.FromRawString(rawReleaseNote);
 
                 return new UpdateCheckResult(
                     version.IsNewerThan(AppConsts.AppVersion),

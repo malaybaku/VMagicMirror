@@ -10,7 +10,7 @@
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d"        
     Title="{DynamicResource UpdateDialog_Title}" 
-    ResizeMode="NoResize"
+    ResizeMode="CanResize"
     TitleCharacterCasing="Normal"
     WindowTransitionsEnabled="False"
     WindowTitleBrush="{StaticResource MahApps.Brushes.Gray1}"
@@ -19,7 +19,7 @@
     WindowStartupLocation="CenterOwner"
     GlowBrush="{DynamicResource MahApps.Brushes.Gray2}"
     d:DataContext="{d:DesignInstance vm:UpdateNotificationViewModel}"
-    Height="280" Width="500"
+    Height="400" Width="500"
     >
     <i:Interaction.Behaviors>
         <view:DialogBehavior Result="{Binding DialogResult, Mode=OneWay}" />
@@ -78,6 +78,13 @@
                            TextWrapping="Wrap"
                            Margin="10"
                            />
+                <Image Visibility="{Binding HasReleaseNoteImage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       Height="180" Width="320"
+                       HorizontalAlignment="Left"
+                       Margin="12"
+                       Source="{Binding ReleaseNoteImageSource}"
+                       Stretch="Uniform"
+                       />
             </StackPanel>
         </ScrollViewer>
 

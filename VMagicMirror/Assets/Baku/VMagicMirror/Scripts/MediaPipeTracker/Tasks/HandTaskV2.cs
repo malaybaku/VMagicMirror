@@ -73,8 +73,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
         {
-            var hasLeftHand = result.HasLeftHandResult();
-            var hasRightHand = result.HasRightHandResult();
+            var hasLeftHand =
+                result.HasLeftHandResult() &&
+                !IsCrossedWristPos(result.leftHandLandmarks.landmarks[0], true);
+            var hasRightHand = 
+                result.HasRightHandResult() &&
+                !IsCrossedWristPos(result.rightHandLandmarks.landmarks[0], false);
 
             // NOTE: Poseの信頼性がないケースは甘めに見て通す: バストアップしか映ってないときにconfidenceが下がる可能性があるので
             if (!hasLeftHand && !hasRightHand)
@@ -92,7 +96,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             if (hasLeftHand)
             {
-                SetLeftHandPose(result.leftHandLandmarks, result.leftHandWorldLandmarks);
+                SetLeftHandPose(result.leftHandLandmarks, result.leftHandWorldLandmarks, _fingerPoseCalculator);
             }
             else
             {
@@ -101,7 +105,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             if (hasRightHand)
             {
-                SetRightHandPose(result.rightHandLandmarks, result.rightHandWorldLandmarks);
+                SetRightHandPose(result.rightHandLandmarks, result.rightHandWorldLandmarks, _fingerPoseCalculator);
             }
             else
             {
@@ -124,28 +128,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             LandmarksVisualizer.Visualizer2D.SetPositions(
                 landmarks.landmarks.Select(m => m.ToVector2()
                 ));
-        }
-        
-        private void SetLeftHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
-        {
-            // 指のFK + 手首のローカル回転の取得までは下記で実施
-            _fingerPoseCalculator.SetLeftHandPose(worldLandmarks);
-
-            // 手首の位置は normalized の画像座標に基づいた値を言う。このとき、縦横のスケールだけ合わせる
-            var wristLandmark = landmarks.landmarks[0];
-            var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
-            var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            MediaPipeKinematicSetter.SetLeftHandPose(posOffset, _fingerPoseCalculator.LeftHandRotation);
-        }
-
-        private void SetRightHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
-        {
-            _fingerPoseCalculator.SetRightHandPose(worldLandmarks);
-
-            var wristLandmark = landmarks.landmarks[0];
-            var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
-            var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            MediaPipeKinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
         }
 
         //TODO: 開き具合ではなく幾何的な角度を計算するように直す。

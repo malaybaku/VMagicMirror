@@ -98,14 +98,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 switch (categoryName)
                 {
                     case LeftHandHandednessName:
-                        if (!IsCrossedWristPos(result.handLandmarks[i].landmarks[0], true))
+                        var leftWristLandmark = result.handLandmarks[i].landmarks[0];
+                        if (!IsWristPosOnEdgeAndUntracked(leftWristLandmark, true) &&
+                            !IsCrossedWristPos(leftWristLandmark, true))
                         {
                             SetLeftHandPose(result.handLandmarks[i], result.handWorldLandmarks[i], _fingerPoseCalculator);
                             hasLeftHand = true;
                         }
                         break;
                     case RightHandHandednessName:
-                        if (!IsCrossedWristPos(result.handLandmarks[i].landmarks[0], false))
+                        var rightWristLandmark = result.handLandmarks[i].landmarks[0];
+                        if (!IsWristPosOnEdgeAndUntracked(rightWristLandmark, false) &&
+                            !IsCrossedWristPos(rightWristLandmark, false))
                         {
                             SetRightHandPose(result.handLandmarks[i], result.handWorldLandmarks[i], _fingerPoseCalculator);
                             hasRightHand = true;

@@ -123,6 +123,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
+        public bool IsRawLeftHandTracked() => IsHandMirrored ? _hasRightHandPose.Value : _hasLeftHandPose.Value;
+        public bool IsRawRightHandTracked() => IsHandMirrored ? _hasLeftHandPose.Value : _hasRightHandPose.Value;
+
         // NOTE: maybeLostは、トラッキングロストが始まってるかもしれないときにtrueになる。トラッキングロスト動作の前で惰性を演出したい場合に用いる
         public bool TryGetLeftHandPose(out Pose result, out bool maybeLost)
         {

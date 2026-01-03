@@ -84,6 +84,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             );
         }
 
+        // 点が画像の端に近すぎるかどうか判定する。marginには 0.5 未満の値を指定する
+        public static bool IsOutOfEdge(NormalizedLandmark landmark, float margin) =>
+            landmark.x < margin || landmark.x > 1f - margin ||
+            landmark.y < margin || landmark.y > 1f - margin;
+
         public static (Vector2 leftBottom, Vector2 rightTop) GetNormalizedPointsFromBound(
             Rect bound, float webCamTextureWidth, float webCamTextureHeight)
         {

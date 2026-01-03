@@ -121,7 +121,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
 
         // 手の位置が交差しており、それを問題視する(トラッキングロスト相当に扱いたい)場合はtrueを返す
-        public bool IsCrossedWristPos(NormalizedLandmark wristLandmark, bool isLeft)
+        protected bool IsCrossedWristPos(NormalizedLandmark wristLandmark, bool isLeft)
         {
             if (!SettingsRepository.GuardCrossingHand.Value)
             {
@@ -139,6 +139,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 (false, < -0.15f) => true,
                 _ => false,
             };
+        }
+
+        // 手のトラッキングが開始しておらず、かつ手首が画像の十分内側に映ってない(=トラッキング開始に適さないと考えられる)場合にはtrueを返す
+        protected bool IsWristPosOnEdgeAndUntracked(NormalizedLandmark wristLandmark, bool isLeft)
+        {
+            var isTracked = isLeft
+                ? MediaPipeKinematicSetter.IsRawLeftHandTracked()
+                : MediaPipeKinematicSetter.IsRawRightHandTracked();
+
+            return !isTracked && MediapipeMathUtil.IsOutOfEdge(wristLandmark, 0.05f);
         }
         
         protected void SetLeftHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks, MediaPipeFingerPoseCalculator fingerPoseCalculator)

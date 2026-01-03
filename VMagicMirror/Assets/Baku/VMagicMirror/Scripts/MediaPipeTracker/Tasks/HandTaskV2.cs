@@ -75,9 +75,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             var hasLeftHand =
                 result.HasLeftHandResult() &&
+                !IsWristPosOnEdgeAndUntracked(result.leftHandLandmarks.landmarks[0], true) &&
                 !IsCrossedWristPos(result.leftHandLandmarks.landmarks[0], true);
             var hasRightHand = 
                 result.HasRightHandResult() &&
+                !IsWristPosOnEdgeAndUntracked(result.rightHandLandmarks.landmarks[0], false) &&
                 !IsCrossedWristPos(result.rightHandLandmarks.landmarks[0], false);
 
             // NOTE: Poseの信頼性がないケースは甘めに見て通す: バストアップしか映ってないときにconfidenceが下がる可能性があるので

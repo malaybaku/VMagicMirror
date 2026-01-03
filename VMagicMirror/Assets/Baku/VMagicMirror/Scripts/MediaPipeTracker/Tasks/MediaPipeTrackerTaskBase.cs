@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Mediapipe;
+using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
 using UnityEngine;
 using R3;
+using NormalizedLandmark = Mediapipe.Tasks.Components.Containers.NormalizedLandmark;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -116,6 +118,49 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             OnStopTask();
             _textureSourceSubscriber?.Dispose();
             _textureSourceSubscriber = null;
+        }
+
+        // 手の位置が交差しており、それを問題視する(トラッキングロスト相当に扱いたい)場合はtrueを返す
+        public bool IsCrossedWristPos(NormalizedLandmark wristLandmark, bool isLeft)
+        {
+            if (!SettingsRepository.GuardCrossingHand.Value)
+            {
+                return false;
+            }
+            
+            // 手首の位置は normalized の画像座標に基づいた値を言う。このとき、縦横のスケールだけ合わせる
+            var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
+            var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
+
+            // 画像座標が [-0.5, 0.5] の範囲なのを前提とした処理。しきい値はそのうち可変にしたくなるかもしれない
+            return (isLeft, posOffset.x) switch 
+            {
+                (true, > 0.15f) => true,
+                (false, < -0.15f) => true,
+                _ => false,
+            };
+        }
+        
+        protected void SetLeftHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks, MediaPipeFingerPoseCalculator fingerPoseCalculator)
+        {
+            // 指のFK + 手首のローカル回転の取得までは下記で実施
+            fingerPoseCalculator.SetLeftHandPose(worldLandmarks);
+
+            // 手首の位置は normalized の画像座標に基づいた値を言う。このとき、縦横のスケールだけ合わせる
+            var wristLandmark = landmarks.landmarks[0];
+            var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
+            var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
+            MediaPipeKinematicSetter.SetLeftHandPose(posOffset, fingerPoseCalculator.LeftHandRotation);
+        }
+
+        protected void SetRightHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks, MediaPipeFingerPoseCalculator fingerPoseCalculator)
+        {
+            fingerPoseCalculator.SetRightHandPose(worldLandmarks);
+
+            var wristLandmark = landmarks.landmarks[0];
+            var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
+            var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
+            MediaPipeKinematicSetter.SetRightHandPose(posOffset, fingerPoseCalculator.RightHandRotation);
         }
     }
 

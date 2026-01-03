@@ -50,6 +50,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public Atomic<float> HandTrackingOffsetX { get; } = new(0f);
         public Atomic<float> HandTrackingOffsetY { get; } = new(0f);
 
+        // trueの場合、「右手は画像の大まかに左側にしか映らない」のようなヒューリスティックを適用することでアバターの手のクロスを防ぐ
+        public Atomic<bool> GuardCrossingHand { get; } = new(true);
+
         // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない
         public Atomic<bool> UseInterlace { get; } = new(false);
         

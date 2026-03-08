@@ -38,6 +38,8 @@
 - Decision: 作業ブランチは `feature/codex/` で始まる命名にする
 - Decision: AI はローカルでベースブランチの read と作業ブランチへの write（`git commit`）を行う
 - Decision: `feature/codex/` ブランチの `git push` と `gh pr create` は原則として都度許可なしで実行してよい
+- Decision: 初回 push は `git push -u origin` を使い、リモートブランチ名は暗黙にローカル名を使う
+- Decision: 2回目以降は `git push` を使う
 - Decision: 保護ブランチへの直接 push はリモート側 branch rule によって禁止する
 - Decision: PR のマージ先は `feature/refactor_with_ui_less_mode` とする
 - Reason: 権限最小化を維持しつつ、レビューと統合の流れを一定化するため

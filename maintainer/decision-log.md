@@ -1,0 +1,42 @@
+# Decision Log
+
+## 2026-03-08
+
+### D-001: 対象課題の優先順位
+
+- Decision: テスト性の改善を、保存形式などのマクロ課題より先に実施する
+- Reason: 安全に変更可能な土台を先に作る必要があるため
+
+### D-002: 実装順
+
+- Decision: **WPF 先行**で着手する
+- Reason: UI 非依存レイヤー分解が進めば、早期に自動テスト化しやすいため
+
+### D-003: レビュー重視の編集粒度
+
+- Decision: 1変更1目的で分割し、レビュー待ち中の別目的追記を避ける
+- Reason: レビュー効率と手戻り抑制を優先するため
+
+### D-004: 進捗管理の入口
+
+- Decision: 本ディレクトリの [index.md](./index.md) を単一の入口にする
+- Reason: 作業中の参照先を固定し、見落としを防ぐため
+
+### D-005: WPF自動化の初期コマンド方針
+
+- Decision: WPF は `.sln` ではなく `.csproj` 直指定を初期標準とする
+- Reason: 実行時の切り分けが明確で、ビルド/テスト自動化に使いやすいため
+
+### D-006: WPFテスト結果の出力先
+
+- Decision: `dotnet test` は `--results-directory WPF/TestResults` を明示する
+- Reason: 実行環境差分での書き込み先問題を避けるため
+
+### D-007: Branch / PR 運用ルール
+
+- Decision: 本相談での作業は常に `feature/refactor_with_ui_less_mode` をベースブランチとして扱う
+- Decision: 作業ブランチは `feature/codex/` で始まる命名にする
+- Decision: AI はローカルでベースブランチの read と作業ブランチへの write（`git commit`）を行う
+- Decision: `git push` と `gh pr create` はメンテナーの許可後に実行する
+- Decision: PR のマージ先は `feature/refactor_with_ui_less_mode` とする
+- Reason: 権限最小化を維持しつつ、レビューと統合の流れを一定化するため

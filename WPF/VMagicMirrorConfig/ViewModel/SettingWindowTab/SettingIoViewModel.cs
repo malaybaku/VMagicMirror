@@ -6,15 +6,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     {
         public SettingIoViewModel() : this(
             ModelResolver.Instance.Resolve<AutomationSettingModel>(),
-            ModelResolver.Instance.Resolve<PreferenceSettingModel>()
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
+            new SettingIoDialogInteraction()
             )
         {
         }
 
-        internal SettingIoViewModel(AutomationSettingModel model, PreferenceSettingModel preferenceSettingModel)
+        internal SettingIoViewModel(
+            AutomationSettingModel model,
+            PreferenceSettingModel preferenceSettingModel,
+            ISettingIoDialogInteraction dialogInteraction)
         {
             _model = model;
             _preferenceSettingModel = preferenceSettingModel;
+            _dialogInteraction = dialogInteraction;
 
             OpenInstructionUrlCommand = new ActionCommand(OpenInstructionUrl);
             RequestEnableAutomationCommand = new ActionCommand(OnEnableAutomationRequested);
@@ -40,6 +45,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private readonly AutomationSettingModel _model;
         private readonly PreferenceSettingModel _preferenceSettingModel;
+        private readonly ISettingIoDialogInteraction _dialogInteraction;
 
         public RProperty<bool> IsAutomationEnabled => _model.IsAutomationEnabled;
 
@@ -56,10 +62,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void OnEnableAutomationRequested()
         {
-            var indication = MessageIndication.EnableAutomation();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
+            var result = await _dialogInteraction.ConfirmEnableAutomationAsync();
 
             if (result)
             {
@@ -69,10 +72,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void OnDisableAutomationRequested()
         {
-            var indication = MessageIndication.DisableAutomation();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
+            var result = await _dialogInteraction.ConfirmDisableAutomationAsync();
 
             if (result)
             {
@@ -100,13 +100,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void ToggleSkipLocalVrmLicenseCheck()
         {
-            var indication = SkipLocalVrmLicenseCheck.Value
-                ? MessageIndication.DisableSkipLocalVrmLicenseCheck()
-                : MessageIndication.SkipLocalVrmLicenseCheck();
-
-            var result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
+            var result = await _dialogInteraction
+                .ConfirmToggleSkipLocalVrmLicenseCheckAsync(SkipLocalVrmLicenseCheck.Value);
 
             if (result)
             {

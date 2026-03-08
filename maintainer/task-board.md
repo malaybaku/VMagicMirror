@@ -10,7 +10,7 @@
 
 ## Doing
 
-- [ ] WPF: `SaveLoadDataViewModel` の分離設計（境界 interface の定義）
+- [ ] WPF: 次の分離候補のDiscovery（HomeViewModel / SettingIoViewModelの比較）
 
 ## Review
 
@@ -23,6 +23,7 @@
 - [x] 2026-03-08 WPF build/test コマンド実行確認（build成功、test 32件成功）
 - [x] 2026-03-08 WPFテスト性改善タスクを Phase 単位に分解
 - [x] 2026-03-08 WPF ViewModel のUI直接依存ホットスポットを棚卸し
+- [x] 2026-03-08 SaveLoadDataUseCase のユニットテスト追加（6件、合計38件成功）
 
 ## Update Rule
 

@@ -26,10 +26,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ISaveLoadDataInteraction interaction)
         {
             _rootModel = rootModel;
-            _model = model;
+            _service = new SaveLoadDataService(model);
             _actToClose = actToClose;
             _interaction = interaction;
-            _useCase = new SaveLoadDataUseCase(_rootModel, _model, _interaction);
+            _useCase = new SaveLoadDataUseCase(_rootModel, _service, _interaction);
             Items = new ReadOnlyObservableCollection<SaveLoadFileItemViewModel>(_items);
             CancelCommand = new ActionCommand(CloseDialog);
 
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private readonly RootSettingModel? _rootModel;
-        private readonly SaveFileManager _model;
+        private readonly ISaveLoadDataService _service;
         private readonly Action _actToClose;
         private readonly ISaveLoadDataInteraction _interaction;
         private readonly SaveLoadDataUseCase _useCase;
@@ -68,7 +68,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 var meta = SettingFileOverview.CreateOverviewFromFile(SpecialFilePath.GetSaveFilePath(i), i);
                 _items.Add(new SaveLoadFileItemViewModel(
-                    IsLoadMode, i == _model.FocusedFileIndex, meta, this
+                    IsLoadMode, i == _service.FocusedFileIndex, meta, this
                     ));
             }
         }

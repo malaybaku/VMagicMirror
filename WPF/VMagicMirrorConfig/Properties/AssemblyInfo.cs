@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 // ComVisible を false に設定すると、このアセンブリ内の型は COM コンポーネントから
@@ -24,3 +25,5 @@ using System.Windows;
                                               //(リソースがページ、
                                               //アプリケーション、またはいずれのテーマ固有のリソース ディクショナリにも見つからない場合に使用されます)
 )]
+
+[assembly: InternalsVisibleTo("VMagicMirrorTest")]

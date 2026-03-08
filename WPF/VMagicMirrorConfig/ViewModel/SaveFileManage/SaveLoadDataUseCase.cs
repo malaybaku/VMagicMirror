@@ -6,16 +6,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     internal sealed class SaveLoadDataUseCase
     {
         private readonly RootSettingModel? _rootModel;
-        private readonly SaveFileManager _model;
+        private readonly ISaveLoadDataService _service;
         private readonly ISaveLoadDataInteraction _interaction;
 
         public SaveLoadDataUseCase(
             RootSettingModel? rootModel,
-            SaveFileManager model,
+            ISaveLoadDataService service,
             ISaveLoadDataInteraction interaction)
         {
             _rootModel = rootModel;
-            _model = model;
+            _service = service;
             _interaction = interaction;
         }
 
@@ -26,7 +26,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Action closeDialog)
         {
             // オートセーブ(0番)もロード対象として扱う。
-            if (index < 0 || index > SaveFileManager.FileCount || !_model.CheckFileExist(index))
+            if (index < 0 || index > _service.FileCount || !_service.CheckFileExist(index))
             {
                 return;
             }
@@ -42,7 +42,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             // 先に閉じないと、VRoidロード時にダイアログが閉じきれない場合がある。
             closeDialog();
 
-            _model.LoadSetting(
+            _service.LoadSetting(
                 index,
                 loadCharacterWhenSettingLoaded,
                 loadNonCharacterWhenSettingLoaded,
@@ -60,7 +60,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public async Task ExecuteSaveAsync(int index, Action refresh)
         {
             // 保存は手動スロットのみ。0番(オートセーブ)は対象外。
-            if (index <= 0 || index > SaveFileManager.FileCount)
+            if (index <= 0 || index > _service.FileCount)
             {
                 return;
             }
@@ -71,7 +71,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _model.SaveCurrentSetting(index);
+            _service.SaveCurrentSetting(index);
 
             // ファイル単位の操作結果は通知を出す。
             _interaction.NotifySaveCompleted(index);

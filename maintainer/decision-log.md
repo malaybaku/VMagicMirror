@@ -81,3 +81,9 @@
 - Decision: `HomeViewModel` の初手分割は `ResetToDefault` 経路を対象にする
 - Decision: 確認ダイアログ/終了操作とファイル削除処理を境界化し、UseCaseで統合する
 - Reason: 影響範囲を限定して、既存挙動を維持したままテスト可能な単位を先に作るため
+
+### D-015: seam追加時のDIセットアップ必須化
+
+- Decision: `*Interaction` / `*Storage` / `*Service` などのseamを追加したら、`ModelInstaller` に登録する
+- Decision: ViewModelの既定コンストラクタでは `new` ではなく `ModelResolver.Resolve<...>()` を使う
+- Reason: 起動時の依存解決失敗と、構成の散逸を防ぐため

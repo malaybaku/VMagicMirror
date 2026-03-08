@@ -27,11 +27,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ModelResolver.Instance.Resolve<ScreenshotTaker>(),
             ModelResolver.Instance.Resolve<AppQuitSetting>(),
             ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
-            new HomeResetStorage(
-                ModelResolver.Instance.Resolve<SaveFileManager>(),
-                ModelResolver.Instance.Resolve<PreferenceFileManager>()
-            ),
-            new HomeResetInteraction()
+            ModelResolver.Instance.Resolve<IHomeResetStorage>(),
+            ModelResolver.Instance.Resolve<IHomeResetInteraction>()
             )
         {
         }

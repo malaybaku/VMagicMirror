@@ -45,3 +45,11 @@
 - WPF build: `dotnet build WPF/VMagicMirrorConfig/VMagicMirrorConfig.csproj -c Debug -p:Platform=x86`
 - WPF test: `dotnet test WPF/VMagicMirrorTest/VMagicMirrorTest.csproj -c Debug -p:Platform=x86 --results-directory WPF/TestResults`
 - 前提: NuGet への到達性（`https://api.nuget.org/v3/index.json`）
+
+## Implementation Memo
+
+- ViewModelに `*Interaction` / `*Storage` / `*Service` などの seam を追加した場合は、
+  既定コンストラクタで `new` せず、`ModelResolver.Instance.Resolve<...>()` で取得する
+- 同時に `Depdency/ModelInstaller.cs` へ `resolver.Add<Interface>(new Impl(...))` を追加する
+- 追加後は `dotnet test WPF/VMagicMirrorTest/VMagicMirrorTest.csproj -c Debug -p:Platform=x86 --results-directory WPF/TestResults`
+  で回帰確認する

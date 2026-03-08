@@ -7,7 +7,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public SettingIoViewModel() : this(
             ModelResolver.Instance.Resolve<AutomationSettingModel>(),
             ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
-            new SettingIoDialogInteraction()
+            ModelResolver.Instance.Resolve<ISettingIoDialogInteraction>()
             )
         {
         }

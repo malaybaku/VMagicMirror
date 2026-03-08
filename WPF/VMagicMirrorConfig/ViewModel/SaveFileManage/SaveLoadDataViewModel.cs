@@ -12,10 +12,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         //NOTE: セーブとロードで必要な素材が微妙に違うのでファクトリで作ります
 
         internal static SaveLoadDataViewModel CreateForSave(SaveFileManager model, Action actToClose)
-            => new SaveLoadDataViewModel(null, model, false, actToClose, new SaveLoadDataInteraction());
+            => new SaveLoadDataViewModel(
+                null,
+                model,
+                false,
+                actToClose,
+                ModelResolver.Instance.Resolve<ISaveLoadDataInteraction>());
 
         internal static SaveLoadDataViewModel CreateForLoad(RootSettingModel rootModel, SaveFileManager model, Action actToClose)
-            => new SaveLoadDataViewModel(rootModel, model, true, actToClose, new SaveLoadDataInteraction());
+            => new SaveLoadDataViewModel(
+                rootModel,
+                model,
+                true,
+                actToClose,
+                ModelResolver.Instance.Resolve<ISaveLoadDataInteraction>());
 
 
         private SaveLoadDataViewModel(

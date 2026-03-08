@@ -69,3 +69,9 @@
 - Decision: リファクタ時は既存コメントを原則保持し、不要と断定できる場合を除き削除しない
 - Decision: 文体調整は許容するが、意図・背景に関する情報量は維持する
 - Reason: 仕様背景や運用知見の喪失を防ぐため
+
+### D-013: 次候補選定（Home vs VMCP）
+
+- Decision: `HomeViewModel` は依存点が多いため、次の小PR対象は `VMCPSettingViewModel` とする
+- Decision: `HomeViewModel` はさらに小さい責務単位へ分割してから着手する
+- Reason: 1PRのサイズとレビュー負荷を抑え、既存の分離パターンを再利用しやすくするため

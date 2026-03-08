@@ -5,16 +5,19 @@
     {
         public VMCPSettingViewModel() : this(
             ModelResolver.Instance.Resolve<VMCPSettingModel>(),
-            ModelResolver.Instance.Resolve<PreferenceSettingModel>())
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
+            new VMCPDialogInteraction())
         {
         }
 
         internal VMCPSettingViewModel(
             VMCPSettingModel settingModel,
-            PreferenceSettingModel preferenceModel)
+            PreferenceSettingModel preferenceModel,
+            IVMCPDialogInteraction dialogInteraction)
         {
             _settingModel = settingModel;
             _preferenceModel = preferenceModel;
+            _dialogInteraction = dialogInteraction;
             EnableVMCPTabOnControlPanelCommand = new ActionCommand(EnableVMCPTab);
             DisableVMCPTabOnControlPanelCommand = new ActionCommand(DisableVMCPTab);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
@@ -22,6 +25,7 @@
 
         private readonly VMCPSettingModel _settingModel;
         private readonly PreferenceSettingModel _preferenceModel;
+        private readonly IVMCPDialogInteraction _dialogInteraction;
 
         public RProperty<bool> ShowVMCPTabOnControlPanel => _preferenceModel.ShowVMCPTabOnControlPanel;
 
@@ -31,8 +35,7 @@
 
         public async void EnableVMCPTab()
         {
-            var dialog = MessageIndication.EnableVMCPTab();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(dialog.Title, dialog.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel);
+            var result = await _dialogInteraction.ConfirmEnableVMCPTabAsync();
             if (result)
             {
                 _preferenceModel.ShowVMCPTabOnControlPanel.Value = true;
@@ -41,8 +44,7 @@
 
         public async void DisableVMCPTab()
         {
-            var dialog = MessageIndication.DisableVMCPTab();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(dialog.Title, dialog.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel);
+            var result = await _dialogInteraction.ConfirmDisableVMCPTabAsync();
             if (result)
             {
                 _preferenceModel.ShowVMCPTabOnControlPanel.Value = false;

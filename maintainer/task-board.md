@@ -24,6 +24,7 @@
 - [x] 2026-03-08 WPFテスト性改善タスクを Phase 単位に分解
 - [x] 2026-03-08 WPF ViewModel のUI直接依存ホットスポットを棚卸し
 - [x] 2026-03-08 SaveLoadDataUseCase のユニットテスト追加（6件、合計38件成功）
+- [x] 2026-03-08 SettingIoViewModel の確認ダイアログ境界を抽象化しテスト追加（合計41件成功）
 
 ## Update Rule
 

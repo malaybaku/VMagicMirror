@@ -37,7 +37,8 @@
 - Decision: 本相談での作業は常に `feature/refactor_with_ui_less_mode` をベースブランチとして扱う
 - Decision: 作業ブランチは `feature/codex/` で始まる命名にする
 - Decision: AI はローカルでベースブランチの read と作業ブランチへの write（`git commit`）を行う
-- Decision: `git push` と `gh pr create` はメンテナーの許可後に実行する
+- Decision: `feature/codex/` ブランチの `git push` と `gh pr create` は原則として都度許可なしで実行してよい
+- Decision: 保護ブランチへの直接 push はリモート側 branch rule によって禁止する
 - Decision: PR のマージ先は `feature/refactor_with_ui_less_mode` とする
 - Reason: 権限最小化を維持しつつ、レビューと統合の流れを一定化するため
 

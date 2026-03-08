@@ -26,10 +26,11 @@
 - Task board: [task-board.md](./task-board.md)
 - Decisions: [decision-log.md](./decision-log.md)
 
-## PR / Branch Policy (Draft)
+## PR / Branch Policy
 
 - AI はローカルで編集・コミットまでを担当
-- Push / PR 作成はメンテナーが実施（最小権限）
+- AI は `feature/codex/` ブランチの `push` と `PR作成` を原則実施してよい
+- 保護ブランチへの直接 push はリモート側の branch rule で禁止する
 - PR の粒度は「レビューで 1 回で意図が追える量」に制限
 - ブランチ命名: `testability/<area>/<short-topic>`
 

@@ -1,8 +1,6 @@
-﻿using Baku.VMagicMirrorConfig.View;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -14,17 +12,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         //NOTE: セーブとロードで必要な素材が微妙に違うのでファクトリで作ります
 
         internal static SaveLoadDataViewModel CreateForSave(SaveFileManager model, Action actToClose)
-            => new SaveLoadDataViewModel(null, model, false, actToClose);
+            => new SaveLoadDataViewModel(null, model, false, actToClose, new SaveLoadDataInteraction());
 
         internal static SaveLoadDataViewModel CreateForLoad(RootSettingModel rootModel, SaveFileManager model, Action actToClose) 
-            => new SaveLoadDataViewModel(rootModel, model, true, actToClose);
+            => new SaveLoadDataViewModel(rootModel, model, true, actToClose, new SaveLoadDataInteraction());
 
 
-        private SaveLoadDataViewModel(RootSettingModel? rootModel, SaveFileManager model, bool isLoadMode, Action actToClose)
+        private SaveLoadDataViewModel(
+            RootSettingModel? rootModel,
+            SaveFileManager model,
+            bool isLoadMode,
+            Action actToClose,
+            ISaveLoadDataInteraction interaction)
         {
             _rootModel = rootModel;
             _model = model;
             _actToClose = actToClose;
+            _interaction = interaction;
             Items = new ReadOnlyObservableCollection<SaveLoadFileItemViewModel>(_items);
             CancelCommand = new ActionCommand(CloseDialog);
 
@@ -41,6 +45,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly RootSettingModel? _rootModel;
         private readonly SaveFileManager _model;
         private readonly Action _actToClose;
+        private readonly ISaveLoadDataInteraction _interaction;
 
         private readonly ObservableCollection<SaveLoadFileItemViewModel> _items 
             = new ObservableCollection<SaveLoadFileItemViewModel>();
@@ -74,12 +79,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             //NOTE: オートセーブのデータに関しても、ここを通るケースではスロットのファイルと同格に扱う事に注意
-            var indication = MessageIndication.ConfirmSettingFileLoad();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                string.Format(indication.Content, index),
-                MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
+            var result = await _interaction.ConfirmLoadAsync(index);
 
             if (!result)
             {
@@ -87,9 +87,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             //NOTE: コケる事も考えられるんだけど判別がムズいんですよね…
-            SnackbarWrapper.Enqueue(string.Format(
-                LocalizedString.GetString("SettingFile_LoadCompleted"), index
-                ));
+            _interaction.NotifyLoadCompleted(index);
 
             //NOTE: ロードが先だとVRoidのロード時にダイアログがうまく閉じないため、先に閉じる
             _actToClose();
@@ -115,12 +113,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             //上書き保存があり得るので確認を挟む。
             //初セーブの場合は上書きにならないが、「次から上書きになるで」の意味で出しておく
-            var indication = MessageIndication.ConfirmSettingFileSave();
-            var result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                string.Format(indication.Content, index),
-                MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
+            var result = await _interaction.ConfirmSaveAsync(index);
             if (!result)
             {
                 return;
@@ -129,14 +122,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model.SaveCurrentSetting(index);
 
             //ファイルレベルの処理なので流石にスナックバーくらい出しておく(ロードとかインポート/エクスポートも同様)
-            SnackbarWrapper.Enqueue(string.Format(
-                LocalizedString.GetString("SettingFile_SaveCompleted"), index
-                ));
+            _interaction.NotifySaveCompleted(index);
 
             //ロードと違い、ダイアログは閉じず、代わりに更新時刻が変わった所を見に行く
-            _ = Application.Current.Dispatcher.BeginInvoke(new Action(() => Refresh()));
+            _interaction.BeginRefresh(Refresh);
         }
 
         private void CloseDialog() => _actToClose();
     }
 }
+

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         internal static SaveLoadDataViewModel CreateForSave(SaveFileManager model, Action actToClose)
             => new SaveLoadDataViewModel(null, model, false, actToClose, new SaveLoadDataInteraction());
 
-        internal static SaveLoadDataViewModel CreateForLoad(RootSettingModel rootModel, SaveFileManager model, Action actToClose) 
+        internal static SaveLoadDataViewModel CreateForLoad(RootSettingModel rootModel, SaveFileManager model, Action actToClose)
             => new SaveLoadDataViewModel(rootModel, model, true, actToClose, new SaveLoadDataInteraction());
 
 
@@ -29,13 +29,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model = model;
             _actToClose = actToClose;
             _interaction = interaction;
+            _useCase = new SaveLoadDataUseCase(_rootModel, _model, _interaction);
             Items = new ReadOnlyObservableCollection<SaveLoadFileItemViewModel>(_items);
             CancelCommand = new ActionCommand(CloseDialog);
 
             //NOTE: SaveモードではUIも出ないし何も使わない値なのでfalseのまま放置しとけばOK、という値
-            LoadCharacterWhenSettingLoaded 
+            LoadCharacterWhenSettingLoaded
                 = new RProperty<bool>(_rootModel?.LoadCharacterWhenLoadInternalFile?.Value ?? false);
-            LoadNonCharacterWhenSettingLoaded 
+            LoadNonCharacterWhenSettingLoaded
                 = new RProperty<bool>(_rootModel?.LoadNonCharacterWhenLoadInternalFile?.Value ?? false);
 
             IsLoadMode = isLoadMode;
@@ -46,8 +47,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly SaveFileManager _model;
         private readonly Action _actToClose;
         private readonly ISaveLoadDataInteraction _interaction;
+        private readonly SaveLoadDataUseCase _useCase;
 
-        private readonly ObservableCollection<SaveLoadFileItemViewModel> _items 
+        private readonly ObservableCollection<SaveLoadFileItemViewModel> _items
             = new ObservableCollection<SaveLoadFileItemViewModel>();
         public ReadOnlyObservableCollection<SaveLoadFileItemViewModel> Items { get; }
 
@@ -57,7 +59,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         //デフォルトではアバターロードだけ有効にして、「同じモデルで服が違うのをパッと切り替えます」みたいなUXを重視しておく。
         public RProperty<bool> LoadCharacterWhenSettingLoaded { get; }
-        public RProperty<bool> LoadNonCharacterWhenSettingLoaded { get; } 
+        public RProperty<bool> LoadNonCharacterWhenSettingLoaded { get; }
 
         private void Refresh()
         {
@@ -73,62 +75,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public async Task ExecuteLoad(int index)
         {
-            if (index < 0 || index > SaveFileManager.FileCount || !_model.CheckFileExist(index))
-            {
-                return;
-            }
-
-            //NOTE: オートセーブのデータに関しても、ここを通るケースではスロットのファイルと同格に扱う事に注意
-            var result = await _interaction.ConfirmLoadAsync(index);
-
-            if (!result)
-            {
-                return;
-            }
-
-            //NOTE: コケる事も考えられるんだけど判別がムズいんですよね…
-            _interaction.NotifyLoadCompleted(index);
-
-            //NOTE: ロードが先だとVRoidのロード時にダイアログがうまく閉じないため、先に閉じる
-            _actToClose();
-
-            _model.LoadSetting(
-                index, LoadCharacterWhenSettingLoaded.Value, LoadNonCharacterWhenSettingLoaded.Value, false
-                );
-
-            //NOTE: Loadでは必ず非nullのはず。ここで設定を覚えることで、次回以降もロード設定のチェックが残る
-            if (_rootModel != null)
-            {
-                _rootModel.LoadCharacterWhenLoadInternalFile.Value = LoadCharacterWhenSettingLoaded.Value;
-                _rootModel.LoadNonCharacterWhenLoadInternalFile.Value = LoadNonCharacterWhenSettingLoaded.Value;
-            }
+            // 実処理はUseCaseへ委譲し、ViewModelは入力値の橋渡しに専念する。
+            await _useCase.ExecuteLoadAsync(
+                index,
+                LoadCharacterWhenSettingLoaded.Value,
+                LoadNonCharacterWhenSettingLoaded.Value,
+                _actToClose
+            );
         }
 
         public async Task ExecuteSave(int index)
         {
-            if (index <= 0 || index > SaveFileManager.FileCount)
-            {
-                return;
-            }
-
-            //上書き保存があり得るので確認を挟む。
-            //初セーブの場合は上書きにならないが、「次から上書きになるで」の意味で出しておく
-            var result = await _interaction.ConfirmSaveAsync(index);
-            if (!result)
-            {
-                return;
-            }
-
-            _model.SaveCurrentSetting(index);
-
-            //ファイルレベルの処理なので流石にスナックバーくらい出しておく(ロードとかインポート/エクスポートも同様)
-            _interaction.NotifySaveCompleted(index);
-
-            //ロードと違い、ダイアログは閉じず、代わりに更新時刻が変わった所を見に行く
-            _interaction.BeginRefresh(Refresh);
+            // 実処理はUseCaseへ委譲し、ViewModelは入力値の橋渡しに専念する。
+            await _useCase.ExecuteSaveAsync(index, Refresh);
         }
 
         private void CloseDialog() => _actToClose();
     }
 }
-

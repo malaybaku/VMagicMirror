@@ -6,7 +6,7 @@
         public VMCPSettingViewModel() : this(
             ModelResolver.Instance.Resolve<VMCPSettingModel>(),
             ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
-            new VMCPDialogInteraction())
+            ModelResolver.Instance.Resolve<IVMCPDialogInteraction>())
         {
         }
 

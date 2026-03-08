@@ -44,6 +44,7 @@
 - [x] 2026-03-08 SettingIoViewModel の確認ダイアログ境界を抽象化しテスト追加（合計41件成功）
 - [x] 2026-03-08 次候補比較（Home vs VMCP）を実施し、VMCPを小PR対象として選定
 - [x] 2026-03-08 HomeViewModelのResetToDefault経路をUseCase化しテスト追加
+- [x] 2026-03-08 seam追加分のDI登録漏れを修正（ModelInstaller + Resolve方針に統一）
 
 ## Update Rule
 

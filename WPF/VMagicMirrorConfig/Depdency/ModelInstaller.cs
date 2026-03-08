@@ -1,4 +1,4 @@
-﻿namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig
 {
     static class ModelInstaller
     {
@@ -48,6 +48,7 @@
             //NOTE: 設定ファイル系の処理のモデルも必要なら入れてよい
             resolver.Add(new SettingFileIo());
             resolver.Add(new SaveFileManager());
+            resolver.Add(new PreferenceFileManager());
 
             resolver.Add(new AvatarLoader());
 
@@ -61,7 +62,14 @@
             resolver.Add(new FaceSettingReceiver());
             resolver.Add(new BuddySettingsReceiver());
 
-            resolver.Add(new PreferenceFileManager());
+            // ViewModel seams: add boundaries to resolver and consume via Resolve in default constructors.
+            resolver.Add<ViewModel.ISaveLoadDataInteraction>(new ViewModel.SaveLoadDataInteraction());
+            resolver.Add<ViewModel.ISettingIoDialogInteraction>(new ViewModel.SettingIoDialogInteraction());
+            resolver.Add<ViewModel.IVMCPDialogInteraction>(new ViewModel.VMCPDialogInteraction());
+            resolver.Add<ViewModel.IHomeResetInteraction>(new ViewModel.HomeResetInteraction());
+            resolver.Add<ViewModel.IHomeResetStorage>(new ViewModel.HomeResetStorage(
+                resolver.Resolve<SaveFileManager>(),
+                resolver.Resolve<PreferenceFileManager>()));
 
             resolver.Add(new HotKeySetter());
             resolver.Add(new HotKeyActionRunner());

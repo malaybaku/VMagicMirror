@@ -40,3 +40,14 @@
 - Decision: `git push` と `gh pr create` はメンテナーの許可後に実行する
 - Decision: PR のマージ先は `feature/refactor_with_ui_less_mode` とする
 - Reason: 権限最小化を維持しつつ、レビューと統合の流れを一定化するため
+
+### D-008: 高複雑度作業の開始ルール
+
+- Decision: 変更規模が大きくなる見込みの作業は、実装前にタスク分解ドキュメントを作成する
+- Decision: WPF テスト性改善の実装開始前に `wpf-task-breakdown.md` を管理基準として用いる
+- Reason: 巨大PRを避け、レビュー可能な単位で継続的に進めるため
+
+### D-009: WPF最初の分離対象候補
+
+- Decision: 初手の分離対象は `SaveLoadDataViewModel` を第一候補とする
+- Reason: UI依存点が明確で、影響範囲を抑えて分離パターンを確立しやすいため

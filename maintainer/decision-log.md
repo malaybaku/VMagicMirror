@@ -75,3 +75,9 @@
 - Decision: `HomeViewModel` は依存点が多いため、次の小PR対象は `VMCPSettingViewModel` とする
 - Decision: `HomeViewModel` はさらに小さい責務単位へ分割してから着手する
 - Reason: 1PRのサイズとレビュー負荷を抑え、既存の分離パターンを再利用しやすくするため
+
+### D-014: HomeViewModel分割の初手
+
+- Decision: `HomeViewModel` の初手分割は `ResetToDefault` 経路を対象にする
+- Decision: 確認ダイアログ/終了操作とファイル削除処理を境界化し、UseCaseで統合する
+- Reason: 影響範囲を限定して、既存挙動を維持したままテスト可能な単位を先に作るため

@@ -5,7 +5,6 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -19,6 +18,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly AvatarLoader _avatarLoader;
         private readonly AppQuitSetting _appQuitSetting;
         private readonly PreferenceSettingModel _preferenceSetting;
+        private readonly HomeResetUseCase _resetUseCase;
 
         public HomeViewModel() : this(
             ModelResolver.Instance.Resolve<RootSettingModel>(),
@@ -26,7 +26,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ModelResolver.Instance.Resolve<AvatarLoader>(),
             ModelResolver.Instance.Resolve<ScreenshotTaker>(),
             ModelResolver.Instance.Resolve<AppQuitSetting>(),
-            ModelResolver.Instance.Resolve<PreferenceSettingModel>()
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
+            new HomeResetStorage(
+                ModelResolver.Instance.Resolve<SaveFileManager>(),
+                ModelResolver.Instance.Resolve<PreferenceFileManager>()
+            ),
+            new HomeResetInteraction()
             )
         {
         }
@@ -37,7 +42,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             AvatarLoader avatarLoader,
             ScreenshotTaker screenshotTaker,
             AppQuitSetting appQuitSetting,
-            PreferenceSettingModel preferenceSetting
+            PreferenceSettingModel preferenceSetting,
+            IHomeResetStorage resetStorage,
+            IHomeResetInteraction resetInteraction
             )
         {
             _setting = rootSetting;
@@ -45,6 +52,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _avatarLoader = avatarLoader;
             _appQuitSetting = appQuitSetting;
             _preferenceSetting = preferenceSetting;
+            _resetUseCase = new HomeResetUseCase(_appQuitSetting, resetStorage, resetInteraction);
             
             LoadVrmCommand = new ActionCommand(LoadVrmByFileOpenDialog);
             LoadVrmByFilePathCommand = new ActionCommand<string>(LoadVrmByFilePath);
@@ -154,25 +162,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void ResetToDefault()
         {
-            var indication = MessageIndication.ResetSettingConfirmation();
-            bool res = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                indication.Content,
-                MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
-
-            if (!res)
-            {
-                return;
-            }
-
-            //書いてる通りだが、「設定のデフォルト化 == 設定ファイルを消してオートセーブが無効な状態で再起動」とすることで
-            //クリーンに再起動しようとしている
-            _appQuitSetting.SkipAutoSaveAndRestart = true;
-            _saveFileManager.SettingFileIo.DeleteSetting(SpecialFilePath.AutoSaveSettingFilePath);
-            //オートセーブじゃないほうの設定ファイルも消してしまう
-            ModelResolver.Instance.Resolve<PreferenceFileManager>().DeleteSaveFile();
-            Application.Current.MainWindow?.Close();
+            await _resetUseCase.ExecuteAsync();
         }
 
         #region セーブ/ロード
@@ -182,7 +172,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void ShowSaveModal()
         {
-            if (Application.Current.MainWindow is not MetroWindow window)
+            if (System.Windows.Application.Current.MainWindow is not MetroWindow window)
             {
                 return;
             }
@@ -211,7 +201,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void ShowLoadModal()
         {
-            if (Application.Current.MainWindow is not MetroWindow window)
+            if (System.Windows.Application.Current.MainWindow is not MetroWindow window)
             {
                 return;
             }

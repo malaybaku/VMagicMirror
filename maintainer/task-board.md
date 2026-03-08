@@ -27,7 +27,7 @@
 
 ## Doing
 
-- [ ] WPF: HomeViewModelの分離対象をさらに小さく分割（Reset/Export/Import/Modal表示の分離）
+- [ ] WPF: HomeViewModelの分離対象をさらに小さく分割（Export/Import/Modal表示の分離）
 
 ## Review
 
@@ -43,6 +43,7 @@
 - [x] 2026-03-08 SaveLoadDataUseCase のユニットテスト追加（6件、合計38件成功）
 - [x] 2026-03-08 SettingIoViewModel の確認ダイアログ境界を抽象化しテスト追加（合計41件成功）
 - [x] 2026-03-08 次候補比較（Home vs VMCP）を実施し、VMCPを小PR対象として選定
+- [x] 2026-03-08 HomeViewModelのResetToDefault経路をUseCase化しテスト追加
 
 ## Update Rule
 

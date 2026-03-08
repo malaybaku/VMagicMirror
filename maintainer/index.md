@@ -21,6 +21,7 @@
 - WPF: [wpf-testing.md](./wpf-testing.md)
 - WPF breakdown: [wpf-task-breakdown.md](./wpf-task-breakdown.md)
 - WPF discovery note: [wpf-discovery-2026-03-08.md](./wpf-discovery-2026-03-08.md)
+- WPF next candidate note: [wpf-next-candidate-2026-03-08.md](./wpf-next-candidate-2026-03-08.md)
 - Unity: [unity-testing.md](./unity-testing.md)
 - Task board: [task-board.md](./task-board.md)
 - Decisions: [decision-log.md](./decision-log.md)

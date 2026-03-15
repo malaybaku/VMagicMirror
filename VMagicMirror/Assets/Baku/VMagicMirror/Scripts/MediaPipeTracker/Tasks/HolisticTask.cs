@@ -136,14 +136,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 case HolisticTaskMode.FaceAndHand:
                     OnFaceResult(result);
-                    //OnHandAndElbowResult(result, false);
+                    OnHandAndElbowResult(result, false);
                     break;
                 case HolisticTaskMode.HandAndElbow:
-                    //OnHandAndElbowResult(result, true);
+                    OnHandAndElbowResult(result, true);
                     break;
                 case HolisticTaskMode.FaceHandAndElbow:
                     OnFaceResult(result);
-                    //OnHandAndElbowResult(result, true);
+                    OnHandAndElbowResult(result, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

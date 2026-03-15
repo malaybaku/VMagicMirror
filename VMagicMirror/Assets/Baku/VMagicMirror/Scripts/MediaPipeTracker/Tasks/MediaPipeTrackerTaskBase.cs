@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
+using Mediapipe.Tasks.Vision.HolisticLandmarker;
 using UnityEngine;
 using R3;
 using NormalizedLandmark = Mediapipe.Tasks.Components.Containers.NormalizedLandmark;
@@ -236,6 +237,49 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (_settingsRepository.HasCalibrationRequest)
             {
                 _ = _calibrator.TrySetSixDofData(result, WebCamTextureAspect);
+            }
+        }
+
+        public void OnFaceLandmarkResult(
+            HolisticLandmarkerResult result,
+            bool expectBlendShapeOutput,
+            int imageWidth,
+            int imageHeight)
+        {
+            if (result.faceLandmarks.landmarks is not { Count: > 0 } || 
+                (expectBlendShapeOutput && result.faceBlendshapes.categories is not { Count: > 0 }) || 
+                MediaPipeUnityAddon.HolisticFacePoseEstimator.HolisticFacePoseEstimator.TryEstimate(
+                    result.faceLandmarks,
+                    imageWidth,
+                    imageHeight,
+                    out var faceTransformationMatrix
+                ))
+            {
+                _facialValueRepository.RequestReset();
+                _mediaPipeKinematicSetter.ClearHeadPose();
+                return;
+            }
+            
+            if (expectBlendShapeOutput)
+            {
+                // 一度入った BlendShape はPlayMode中に消えない…という前提を置いている
+                foreach (var c in result.faceBlendshapes.categories)
+                {
+                    _blendShapeValues[c.categoryName] = c.score;
+                }
+                _facialValueRepository.SetValues(_blendShapeValues);
+
+                var eye = _facialValueRepository.BlendShapes.Eye;
+                _previewSender.SetBlinkResult(eye.LeftBlink, eye.RightBlink);
+            }
+                
+            var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(
+                faceTransformationMatrix, _calibrator.GetCalibrationData());
+            _mediaPipeKinematicSetter.SetHeadPose6Dof(headPose);
+
+            if (_settingsRepository.HasCalibrationRequest)
+            {
+                _ = _calibrator.TrySetSixDofData(result, faceTransformationMatrix, WebCamTextureAspect);
             }
         }
     }

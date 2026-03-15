@@ -1,5 +1,6 @@
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
+using Mediapipe.Tasks.Vision.HolisticLandmarker;
 using UnityEngine;
 using Zenject;
 
@@ -53,6 +54,26 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             // NOTE: matrixesがあるのでlandmarkも必ず存在する前提
             var noseLandmark = result.faceLandmarks[0].landmarks[0];
+            var faceCenterNormalizedPosition
+                = MediapipeMathUtil.GetTrackingNormalizePosition(noseLandmark, webCamTextureAspect);
+
+            _repository.SetCalibrationResult(
+                CameraCalibrationData.SixDoF(faceCenterNormalizedPosition, faceToCameraPose)
+            );
+            return true;
+        }
+
+        // NOTE: Holisticの場合、Estimatorで明示的に顔姿勢を計算しているのでそれが引数に入り、ガード条件も変わる
+        public bool TrySetSixDofData(HolisticLandmarkerResult result, Matrix4x4 faceTransformationMatrix, float webCamTextureAspect)
+        {
+            // カメラから見た顔の位置: 直感的な値なので、まずはコッチを取得する(& デバッグ上必要ならビジュアライズ)
+            var cameraToFacePose = MediapipeMathUtil.GetWebCameraToFaceLocalPose(faceTransformationMatrix);
+
+            // 顔から見たカメラの位置: これが実際にはキャリブレーションデータとして保存される
+            var faceToCameraPose = MediapipeMathUtil.GetInvertedPose(cameraToFacePose);
+            
+            // NOTE: matrixがあるのでlandmarkも必ず存在する前提
+            var noseLandmark = result.faceLandmarks.landmarks[0];
             var faceCenterNormalizedPosition
                 = MediapipeMathUtil.GetTrackingNormalizePosition(noseLandmark, webCamTextureAspect);
 

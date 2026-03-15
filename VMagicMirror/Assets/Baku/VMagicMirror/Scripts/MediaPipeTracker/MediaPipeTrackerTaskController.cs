@@ -17,9 +17,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly FaceLandmarkTask _face;
 
         private readonly HandTask _hand;
-        private readonly HandAndFaceLandmarkTask _handAndFace;
-        private readonly HandTaskV2 _handWithElbow;
-        private readonly HandAndFaceLandmarkTaskV2 _handAndFaceWithElbow;
+        private readonly HolisticTask _holistic;
 
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly HorizontalFlipController _horizontalFlipController;
@@ -33,9 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             WebCamTextureSource webCamTextureSource,
             FaceLandmarkTask face,
             HandTask hand,
-            HandAndFaceLandmarkTask handAndFace,
-            HandTaskV2 handWithElbow,
-            HandAndFaceLandmarkTaskV2 handAndFaceWithElbow
+            HolisticTask holistic
             )
         {
             _receiver = receiver;
@@ -45,9 +41,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             _face = face;
             _hand = hand;
-            _handAndFace = handAndFace;
-            _handWithElbow = handWithElbow;
-            _handAndFaceWithElbow = handAndFaceWithElbow;
+            _holistic = holistic;
         }
 
         // IPCで直接受け取る値
@@ -57,13 +51,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly ReactiveProperty<bool> _useHandTracking = new();
         private readonly ReactiveProperty<bool> _useElbowTracking = new();
         private readonly ReactiveProperty<bool> _useExternalTracking = new();
-        
-        // MediaPipeタスクの稼働状況で、「顔だけ」「手だけ」「顔と手」のどれを行うか決めるフラグ。
-        // 下記3つのフラグは2つ以上は同時にtrueにならないように制御する。
-        // これらのフラグと _useElbowTracking の値によって、5種類のTaskクラスのうち最大で1つが動作する
-        private readonly ReactiveProperty<bool> _isFaceTaskRunning = new();
-        private readonly ReactiveProperty<bool> _isHandTaskRunning = new();
-        private readonly ReactiveProperty<bool> _isHandAndFaceTaskRunning = new();
+
+        // カメラの状態や外部トラッキングの利用状況も踏まえて実際にタスクを動かすかどうか決めるフラグ。
+        // 下記の2フラグと _useElbowTracking を組み合わせることで、3種類のタスクのどれが動くがが決定する
+        private readonly ReactiveProperty<bool> _runFaceTask = new();
+        private readonly ReactiveProperty<bool> _runHandTask = new();
         
         public override void Initialize()
         {
@@ -120,9 +112,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない
             _receiver.BindAction(VmmCommands.CalibrateFace, () =>
             {
-                if (_isFaceTaskRunning.Value || 
-                    _isHandTaskRunning.Value || 
-                    _isHandAndFaceTaskRunning.Value)
+                if (_runFaceTask.Value || _runHandTask.Value)
                 {
                     _settingsRepository.RaiseCalibrationRequest();
                 }
@@ -156,48 +146,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void SubscribeTaskRunningFlags()
         {
-            // 下記の3つのフラグは2つ以上同時にtrueにならないように実装している (ちょっと読み取りにくいが)
-            
+            // 顔トラッキングの条件として外部トラッキングが無効かどうかのチェックが入ることに注意
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,
                     _useExternalTracking,
-                    _useHandTracking,
-                    (faceTrackingEnabled, deviceName, useExTracker, useHandTracking) =>
+                    (faceTrackingEnabled, deviceName, useExTracker) =>
                         faceTrackingEnabled &&
                         !useExTracker &&
-                        !useHandTracking &&
                         IsAvailableWebCamDevice(deviceName))
                 .DistinctUntilChanged()
-                .Subscribe(runTask => _isFaceTaskRunning.Value = runTask)
-                .AddTo(this);
-            
-            // ↑とかなり似ているが、ハンドトラッキングのフラグ条件が逆なすることに注意
-            _faceTrackingEnabled
-                .CombineLatest(
-                    _cameraDeviceName,
-                    _useExternalTracking,
-                    _useHandTracking,
-                    (faceTrackingEnabled, deviceName, useExTracker, useHandTracking) =>
-                        faceTrackingEnabled &&
-                        !useExTracker &&
-                        useHandTracking &&
-                        IsAvailableWebCamDevice(deviceName))
-                .DistinctUntilChanged()
-                .Subscribe(runTask => _isHandAndFaceTaskRunning.Value = runTask)
+                .Subscribe(runTask => _runFaceTask.Value = runTask)
                 .AddTo(this);
 
-            // 書いてる通りではあるが、MediaPipeで手だけをトラッキングするのは「外部トラッキングで顔をトラッキングしてるとき」だけになる
-            _cameraDeviceName
+            // ハンドトラッキングについてはカメラの有効性だけで評価できる
+            _useHandTracking
                 .CombineLatest(
-                    _useExternalTracking,
-                    _useHandTracking,
-                    (deviceName, useExTracker, useHandTracking) =>
-                        useExTracker &&
-                        useHandTracking &&
-                        IsAvailableWebCamDevice(deviceName))
+                    _cameraDeviceName,
+                    (useHandTracking, deviceName) =>
+                        useHandTracking && IsAvailableWebCamDevice(deviceName))
                 .DistinctUntilChanged()
-                .Subscribe(runTask => _isHandTaskRunning.Value = runTask)
+                .Subscribe(runTask => _runHandTask.Value = runTask)
                 .AddTo(this);
         }
 
@@ -207,57 +176,72 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(value =>
                 {
                     _face.SetBlendShapeOutputActive(value);
-                    _handAndFace.SetBlendShapeOutputActive(value);
-                    _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
+                    // _handAndFace.SetBlendShapeOutputActive(value);
+                    // _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
+                    _holistic.SetBlendShapeOutputActive(value);
                 })
                 .AddTo(this);
         }
         
         private void SetupTaskAndWebCamTextureActiveStatus()
         {
-            // 下記5個のSubscribeにより、_face ~ _handAndFaceWithElbow が排他的に動く。もちろん何も動かないこともある
-            _isFaceTaskRunning
+            // 顔のみのトラッキングタスク: 顔だけトラッキングするとき発動
+            _runFaceTask
+                .CombineLatest(_runHandTask, (face, hand) => face && !hand)
+                .DistinctUntilChanged()
                 .Subscribe(run => _face.SetTaskActive(run))
                 .AddTo(this);
 
-            _isHandTaskRunning
+            // 手だけのトラッキング: 手だけトラッキングするとき発動。肘トラを含むときも停止させることに注意
+            _runHandTask
                 .CombineLatest(
-                    _useElbowTracking,
-                    (handTaskRunning, useElbow) => handTaskRunning && !useElbow)
+                    _runFaceTask,
+                    _useElbowTracking, 
+                    (hand, face, elbow) => hand && !face && !elbow)
                 .DistinctUntilChanged()
                 .Subscribe(run => _hand.SetTaskActive(run))
                 .AddTo(this);
-
-            _isHandTaskRunning
+            
+            // 複数のトラッキングをする場合: 内容に即してholisticタスクを動かす
+            _runFaceTask
                 .CombineLatest(
+                    _runHandTask,
                     _useElbowTracking,
-                    (handTaskRunning, useElbow) => handTaskRunning && useElbow)
+                    (face, hand, elbow) =>
+                    {
+                        // NOTE: 「trueが2つ以上」みたいな条件も無くはないが、下記の3種類しか想定してないので明示的にそういう分岐にしている
+                        var runHolistic = (face && hand) || (hand && elbow) || (face && hand && elbow);
+                        HolisticTask.HolisticTaskMode? taskMode = (face, hand, elbow) switch
+                        {
+                            (true, true, true) => HolisticTask.HolisticTaskMode.FaceHandAndElbow,
+                            (true, true, false) => HolisticTask.HolisticTaskMode.FaceAndHand,
+                            (false, true, true) => HolisticTask.HolisticTaskMode.HandAndElbow,
+                            _ => null,
+                        };
+                        
+                        return (runHolistic, taskMode);
+                    })
                 .DistinctUntilChanged()
-                .Subscribe(run => _handWithElbow.SetTaskActive(run))
-                .AddTo(this);
-            
-            _isHandAndFaceTaskRunning
-                .CombineLatest(
-                    _useElbowTracking,
-                    (handAndFaceTaskRunning, useElbow) => handAndFaceTaskRunning && !useElbow)
-                .Subscribe(run => _handAndFace.SetTaskActive(run))
+                .Subscribe(value =>
+                {
+                    if (value is { runHolistic: true, taskMode: not null })
+                    {
+                        _holistic.SetTaskActive(true, value.taskMode.Value);
+                    }
+                    else
+                    {
+                        _holistic.SetTaskActive(false);
+                    }
+                })
                 .AddTo(this);
 
-            _isHandAndFaceTaskRunning
-                .CombineLatest(
-                    _useElbowTracking,
-                    (handAndFaceTaskRunning, useElbow) => handAndFaceTaskRunning && useElbow)
-                .Subscribe(run => _handAndFaceWithElbow.SetTaskActive(run))
-                .AddTo(this);
-            
             // NOTE: FaceTrackerとの競合回避するうえで、オフにする処理の一部はThrottleFrameできないかも…
             // - ↑が実際に合っていた場合、FaceTrackerと本クラスでWebCamTextureの取得排他できるようなクラスを用意するのが良さそう
             _cameraDeviceName
                 .CombineLatest(
-                    _isHandTaskRunning,
-                    _isHandAndFaceTaskRunning,
-                    _isFaceTaskRunning,
-                    (cameraDeviceName, x, y, z) => (cameraDeviceName, useWebCam: x || y || z)
+                    _runHandTask,
+                    _runFaceTask,
+                    (cameraDeviceName, x, y) => (cameraDeviceName, useWebCam: x || y)
                 )
                 // NOTE: 「ハンドトラッキングを停止し、すぐにハンド + 表情トラッキングを開始」のようなケースの場合に最後の状態だけ通すようにしたい
                 .DebounceFrame(1)
@@ -265,11 +249,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(value => _webCamTextureSource.SetActive(value.useWebCam, value.cameraDeviceName))
                 .AddTo(this);
 
-            _isHandTaskRunning
-                .CombineLatest(
-                    _isHandAndFaceTaskRunning, 
-                    (x, y) => x || y
-                )
+            _runHandTask
                 .Subscribe(v => _settingsRepository.IsHandTrackingActive = v)
                 .AddTo(this);
         }
@@ -279,7 +259,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             base.Dispose();
             _face.StopTask();
             _hand.StopTask();
-            _handAndFace.StopTask();
+            _holistic.StopTask();
         }
 
         private static bool IsAvailableWebCamDevice(string name) => WebCamTexture.devices.Any(d => d.name == name);

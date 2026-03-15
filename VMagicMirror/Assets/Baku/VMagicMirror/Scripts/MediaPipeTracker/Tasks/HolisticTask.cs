@@ -62,15 +62,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
 
         /// <summary>
-        /// トラッキングの種類を指定する。
-        /// トラッキング中にmodeが変わった場合、内部的に再起動する
+        /// トラッキングの種類を指定しつつタスクを動かす。
         /// </summary>
-        /// <param name="mode"></param>
-        public void SetTaskMode(HolisticTaskMode mode)
+        public void SetTaskActive(bool isActive, HolisticTaskMode taskMode)
         {
-            if (_taskMode != mode)
+            // IsActive == falseの場合、起動するならbase.SetTaskActiveのなかで起動するので明示的な呼び出しは不要
+            // isActive == falseの場合、そもそも止めるので再起動が不要
+            // modeがそのままの場合、base.SetTaskActiveに任せればよい
+            var shouldRestart = IsActive && isActive && _taskMode != taskMode;
+            
+            _taskMode = taskMode;
+            SetTaskActive(isActive);
+            if (shouldRestart)
             {
-                _taskMode = mode;
                 RestartTaskIfActive();
             }
         }

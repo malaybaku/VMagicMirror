@@ -176,8 +176,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(value =>
                 {
                     _face.SetBlendShapeOutputActive(value);
-                    // _handAndFace.SetBlendShapeOutputActive(value);
-                    // _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
                     _holistic.SetBlendShapeOutputActive(value);
                 })
                 .AddTo(this);

@@ -132,32 +132,31 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
         {
-            if (!IsActive) return;
             switch (_taskMode)
             {
                 case HolisticTaskMode.FaceAndHand:
-                    OnFaceResult(result, image, timestamp);
-                    OnHandAndElbowResult(result, image, timestamp, false);
+                    OnFaceResult(result);
+                    OnHandAndElbowResult(result, false);
                     break;
                 case HolisticTaskMode.HandAndElbow:
-                    OnHandAndElbowResult(result, image, timestamp, true);
+                    OnHandAndElbowResult(result, true);
                     break;
                 case HolisticTaskMode.FaceHandAndElbow:
-                    OnFaceResult(result, image, timestamp);
-                    OnHandAndElbowResult(result, image, timestamp, true);
+                    OnFaceResult(result);
+                    OnHandAndElbowResult(result, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private void OnFaceResult(in HolisticLandmarkerResult result, Image image, long timestamp)
+        private void OnFaceResult(in HolisticLandmarkerResult result)
         {
             _resultHandler.OnFaceLandmarkResult(
                 result, _isRunningWithBlendShapeOutput, WebCamTextureWidth, WebCamTextureHeight);
         }
 
-        private void OnHandAndElbowResult(in HolisticLandmarkerResult result, Image image, long timestamp, bool useElbowPose)
+        private void OnHandAndElbowResult(in HolisticLandmarkerResult result, bool useElbowPose)
         {
             var hasLeftHand =
                 result.HasLeftHandResult() &&

@@ -79,9 +79,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 MediaPipeKinematicSetter.ClearLeftHandPose();
                 MediaPipeKinematicSetter.ClearRightHandPose();
-
-                //LandmarksVisualizer.ClearPositions();
-                //LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }
 
@@ -136,16 +133,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 PreviewSender.SetHandTrackingResult(result);
             }
-        }
-
-        private void VisualizeLeftHand(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
-        {
-            LandmarksVisualizer.SetPositions(
-                worldLandmarks.landmarks.Select(m => m.ToLocalPosition())
-                );
-            LandmarksVisualizer.Visualizer2D.SetPositions(
-                landmarks.landmarks.Select(m => m.ToVector2()
-                ));
         }
     }
 }

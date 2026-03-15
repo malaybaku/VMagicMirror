@@ -14,6 +14,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// HolisticLandmarkerを使って1人分のハンドトラッキングを行うクラス
     /// </summary>
+    [Obsolete("HolisticTaskで置き換え予定")]
     public class HandTaskV2 : MediaPipeTrackerTaskBase
     {
         private const string ModelFileName = "holistic_landmarker.bytes";
@@ -168,16 +169,5 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
             }
         }
-    }
-    
-    static class HolisticLandmarkerResultExtensions
-    {
-        public static bool HasLeftHandResult(this in HolisticLandmarkerResult result) =>
-            result.leftHandLandmarks.landmarks is { Count: > 0 } &&
-            result.leftHandWorldLandmarks.landmarks is { Count : > 0 };
-
-        public static bool HasRightHandResult(this in HolisticLandmarkerResult result) =>
-            result.rightHandLandmarks.landmarks is { Count: > 0 } &&
-            result.rightHandWorldLandmarks.landmarks is { Count : > 0 };
     }
 }

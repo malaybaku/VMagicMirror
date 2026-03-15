@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
 using Mediapipe.Tasks.Vision.HolisticLandmarker;
@@ -82,6 +81,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public void SetTaskActive(bool isActive)
         {
+            if (IsActive == isActive) return;
+
             IsActive = isActive;
             if (isActive)
             {

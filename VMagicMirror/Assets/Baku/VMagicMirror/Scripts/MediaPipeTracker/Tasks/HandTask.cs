@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using UnityEngine;
 using Mediapipe;
-using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.HandLandmarker;
 using Zenject;

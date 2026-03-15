@@ -248,10 +248,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .DistinctUntilChanged()
                 .Subscribe(value => _webCamTextureSource.SetActive(value.useWebCam, value.cameraDeviceName))
                 .AddTo(this);
-
-            _runHandTask
-                .Subscribe(v => _settingsRepository.IsHandTrackingActive = v)
-                .AddTo(this);
         }
         
         public override void Dispose()

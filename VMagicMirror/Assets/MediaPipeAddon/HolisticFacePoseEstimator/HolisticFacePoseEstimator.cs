@@ -19,7 +19,7 @@ namespace MediaPipeUnityAddon.HolisticFacePoseEstimator
     /// - 本家mediapipeとは姿勢の推定方法が異なる。本クラスではSVDを使わず、Hornの方法で重み付き最適回転を求める
     ///   - FaceLandmarkと同時に実行したときの推定結果がほぼ同じになるので、これでヨシとしている
     /// </remarks>
-    public sealed class HolisticFacePoseEstimator
+    public static class HolisticFacePoseEstimator
     {
         private const int RequiredLandmarkCount = 468;
         private const float VerticalFovDegrees = 63.0f;

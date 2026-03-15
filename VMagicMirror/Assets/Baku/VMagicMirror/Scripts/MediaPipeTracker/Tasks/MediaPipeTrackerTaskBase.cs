@@ -247,17 +247,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             int imageWidth,
             int imageHeight)
         {
+            var faceLandmarkCount = result.faceLandmarks.landmarks.Count;
+            var blendShapeCount = result.faceBlendshapes.categories.Count;
+            var hasMatrix = MediaPipeUnityAddon.HolisticFacePoseEstimator.HolisticFacePoseEstimator.TryEstimate(
+                result.faceLandmarks,
+                imageWidth,
+                imageHeight,
+                out var faceTransformationMatrix
+            );
+            // var faceTransformationMatrix = Matrix4x4.identity;
+
             if (result.faceLandmarks.landmarks is not { Count: > 0 } || 
                 (expectBlendShapeOutput && result.faceBlendshapes.categories is not { Count: > 0 }) || 
-                MediaPipeUnityAddon.HolisticFacePoseEstimator.HolisticFacePoseEstimator.TryEstimate(
-                    result.faceLandmarks,
-                    imageWidth,
-                    imageHeight,
-                    out var faceTransformationMatrix
-                ))
+                !hasMatrix)
             {
                 _facialValueRepository.RequestReset();
                 _mediaPipeKinematicSetter.ClearHeadPose();
+                Debug.Log($"invalid face landmark result, lm count={faceLandmarkCount}, blendshape count={blendShapeCount}, hasMatrix={hasMatrix}");
                 return;
             }
             

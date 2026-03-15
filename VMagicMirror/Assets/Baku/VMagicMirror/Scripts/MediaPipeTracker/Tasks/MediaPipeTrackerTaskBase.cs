@@ -10,11 +10,9 @@ using NormalizedLandmark = Mediapipe.Tasks.Components.Containers.NormalizedLandm
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
     // ref:
-    // Holistic: https://ai.google.dev/edge/mediapipe/solutions/vision/holistic_landmarker?hl=ja
+    // Face: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker?hl=ja
     // Hand: https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker?hl=ja
-    // Pose: https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=ja
-    // Face Detector: https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector?hl=ja
-    // Face Landmark: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker?hl=ja
+    // Holistic: https://ai.google.dev/edge/mediapipe/solutions/vision/holistic_landmarker?hl=ja
 
     public abstract class MediaPipeTrackerTaskBase
     {

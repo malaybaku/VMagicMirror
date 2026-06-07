@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class MediaPipeHand : PresenterBase, ITickable
     {
         private const float HandPositionCutoffFrequency = 5f;
+        private const float ReduceSetHeadOffsetPoseFactor = 6f;
 
         private readonly IMessageReceiver _receiver;
         private readonly ICoroutineSource _coroutineSource;
@@ -224,11 +225,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost);
             _leftHandState.IsTracked = isTracked;
 
+            var dt = Time.deltaTime;
             if (isTracked)
             {
                 _leftHandState.SetHeadOffsetPose(GetHeadOffsetPose());
                 _trackingLostHandCalculator.CancelLeftHand();
-                var dt = Time.deltaTime;
 
                 if (maybeLost)
                 {
@@ -268,9 +269,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     );
                 }
 
+                _leftHandState.ReduceSetHeadOffsetPose(dt * ReduceSetHeadOffsetPoseFactor);
                 _leftHandState.ForceSetPosition(_trackingLostHandCalculator.LeftHandPose.position);
                 _leftHandState.SetRotation(_trackingLostHandCalculator.LeftHandPose.rotation);
-                
+
                 // 完全にロストしてるケースで通過する
                 _leftHandTrackedSpeed = Vector3.zero;
             }
@@ -282,11 +284,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _mediaPipeKinematicSetter.TryGetRightHandPose(out var handPose, out var maybeLost);
             _rightHandState.IsTracked = isTracked;
 
+            var dt = Time.deltaTime;
             if (isTracked)
             {
                 _rightHandState.SetHeadOffsetPose(GetHeadOffsetPose());
                 _trackingLostHandCalculator.CancelRightHand();
-                var dt = Time.deltaTime;
 
                 if (maybeLost)
                 {
@@ -325,6 +327,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     );
                 }
 
+                _rightHandState.ReduceSetHeadOffsetPose(dt * ReduceSetHeadOffsetPoseFactor);
                 _rightHandState.ForceSetPosition(_trackingLostHandCalculator.RightHandPose.position);
                 _rightHandState.SetRotation(_trackingLostHandCalculator.RightHandPose.rotation);
                 
@@ -633,6 +636,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _headOffsetPose.rotation * RotationWithoutHeadPoseAdjust,
                     HeadPoseAdjustFactor
                 );
+            }
+
+            public void ReduceSetHeadOffsetPose(float factor)
+            {
+                SetHeadOffsetPose(new Pose(
+                    _headOffsetPose.position * (1 - factor),
+                    Quaternion.Slerp(_headOffsetPose.rotation, Quaternion.identity, 1 - factor)
+                ));
             }
         }
     }

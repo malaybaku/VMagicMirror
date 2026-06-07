@@ -245,7 +245,8 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">Hand Vertical Offset (cm)</sys:String>
-    
+    <sys:String x:Key="HandTracking_HeadPoseAdjustFactor">Hands Follow Head (%)</sys:String>
+
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>

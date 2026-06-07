@@ -152,6 +152,8 @@
         // +X: 手を体の横に広げる、+Y: 手を上げる
         SetHandTrackingOffsetX,
         SetHandTrackingOffsetY,
+        // percentベースで、頭の姿勢によってハンドトラッキングのIK姿勢が連動する強さを指定する
+        SetHandTrackingHeadPoseAdjustFactor,
 
         // Motion, GameInput
         UseGamepadForGameInput,

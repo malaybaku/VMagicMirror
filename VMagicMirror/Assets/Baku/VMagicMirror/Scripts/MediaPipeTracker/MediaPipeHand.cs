@@ -226,7 +226,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             if (isTracked)
             {
-                _rightHandState.SetHeadOffsetPose(GetHeadOffsetPose());
+                _leftHandState.SetHeadOffsetPose(GetHeadOffsetPose());
                 _trackingLostHandCalculator.CancelLeftHand();
                 var dt = Time.deltaTime;
 

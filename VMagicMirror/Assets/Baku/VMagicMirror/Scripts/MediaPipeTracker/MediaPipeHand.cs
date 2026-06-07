@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly CurrentFramerateChecker _framerateChecker;
         private readonly CancellationTokenSource _cts = new();
         private readonly MediaPipeHandFinger _finger;
-        private readonly ReactiveProperty<float> _headPoseAdjustFactor = new(0f);
+        private readonly ReactiveProperty<float> _headPoseAdjustFactor = new(0.25f);
 
         private bool _hasModel;
         private Transform _vrmRoot;

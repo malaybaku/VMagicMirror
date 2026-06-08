@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using RootMotion.FinalIK;
 using UnityEngine;
 using UniVRM10;
@@ -24,5 +25,7 @@ namespace Baku.VMagicMirror
         //[Obsolete("use `FacialExpression` instead")]
         //public VRMBlendShapeProxy blendShape;
         public Renderer[] renderers;
+
+        public Dictionary<HumanBodyBones, Transform> bones;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Baku.VMagicMirror.IK;
@@ -314,7 +315,7 @@ namespace Baku.VMagicMirror
             var renderers = go.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
             {
-                //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
+                // NOTE: セルフシャドウを一応切っているが、URPではこのプロパティにあまり意味はない
                 r.receiveShadows = false;
             }
             
@@ -329,9 +330,8 @@ namespace Baku.VMagicMirror
                 rightLegIk = setupResult.RightLegIk,
                 leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
                 rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
-                //NOTE: このbsがないことでエラーが起こるのはイベント購読側が悪い。
-                //blendShape = blendShapeProxy,
                 renderers = renderers,
+                bones = GetBones(animator),
             };
             
             PreVrmLoaded?.Invoke(info);
@@ -339,6 +339,27 @@ namespace Baku.VMagicMirror
             PostVrmLoaded?.Invoke(info);
         }
 
+        private static Dictionary<HumanBodyBones, Transform> GetBones(Animator animator)
+        {
+            var result = new Dictionary<HumanBodyBones, Transform>();
+            for (var i = (int)HumanBodyBones.Hips; i < (int)HumanBodyBones.LastBone; i++)
+            {
+                var bone = (HumanBodyBones)i;
+                if (bone == HumanBodyBones.Jaw)
+                {
+                    continue;
+                }
+
+                var boneTransform = animator.GetBoneTransform(bone);
+                if (boneTransform != null)
+                {
+                    result[bone] = boneTransform;
+                }
+            }
+
+            return result;
+        }
+        
         private void HandleLoadError(Exception ex)
         {
             string logContent =

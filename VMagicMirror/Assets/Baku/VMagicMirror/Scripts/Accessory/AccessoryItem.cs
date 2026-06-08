@@ -397,7 +397,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// ロードされたVRMのAnimatorを指定し、アイテムをモデルの特定部位にアタッチできるようにします。
+        /// ロードされたVRMのボーン情報を指定し、アイテムをモデルの特定部位にアタッチできるようにします。
         /// </summary>
         /// <param name="avatarBones"></param>
         public void SetAvatarBones(VRMAvatarBones avatarBones)

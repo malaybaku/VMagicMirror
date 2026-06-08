@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
-using RootMotion.FinalIK;
 using UniGLTF.Extensions.VRMC_vrm;
 using R3;
 using UnityEngine;

@@ -147,11 +147,11 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _ik = info.fbbIk;
-            _leftLegIk = info.leftLegIk;
-            _rightLegIk = info.rightLegIk;
-            _leftTwistRelaxer = info.leftArmTwistRelaxer;
-            _rightTwistRelaxer = info.rightArmTwistRelaxer;
+            _ik = info.FbbIk;
+            _leftLegIk = info.LeftLegIk;
+            _rightLegIk = info.RightLegIk;
+            _leftTwistRelaxer = info.LeftArmTwistRelaxer;
+            _rightTwistRelaxer = info.RightArmTwistRelaxer;
 
             var s = _ik.solver;
             _originWeight = new Weights(
@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror
                 LeftTwistRelaxerWeight,
                 RightTwistRelaxerWeight
             );
-            _simpleAnimation = info.vrmRoot.GetComponent<SimpleAnimation>();
+            _simpleAnimation = info.VrmRoot.GetComponent<SimpleAnimation>();
             if (!_simpleAnimationActive)
             {
                 _simpleAnimation.enabled = false;

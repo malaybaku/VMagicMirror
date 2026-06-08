@@ -318,22 +318,20 @@ namespace Baku.VMagicMirror
                 // NOTE: セルフシャドウを一応切っているが、URPではこのプロパティにあまり意味はない
                 r.receiveShadows = false;
             }
-            
-            var info = new VrmLoadedInfo()
-            {
-                modelVersion = _modelVersion.Value,
-                vrmRoot = go.transform,
-                animator = animator,
-                instance = instance,
-                fbbIk = setupResult.Fbbik,
-                leftLegIk = setupResult.LeftLegIk,
-                rightLegIk = setupResult.RightLegIk,
-                leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
-                rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
-                renderers = renderers,
-                AvatarBones = new VRMAvatarBones(animator),
-            };
-            
+
+            var info = new VrmLoadedInfo(
+                _modelVersion.Value,
+                go.transform,
+                animator,
+                instance,
+                setupResult.Fbbik,
+                setupResult.LeftLegIk,
+                setupResult.RightLegIk,
+                setupResult.LeftArmTwistRelaxer,
+                setupResult.RightArmTwistRelaxer,
+                renderers
+            );
+
             PreVrmLoaded?.Invoke(info);
             VrmLoaded?.Invoke(info);
             PostVrmLoaded?.Invoke(info);

@@ -197,9 +197,9 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _modelRoot = info.vrmRoot;
-            _instance = info.instance;
-            _springBones = info.instance.SpringBone.Springs.SelectMany(spring => spring.Joints).ToArray();
+            _modelRoot = info.VrmRoot;
+            _instance = info.Instance;
+            _springBones = info.Instance.SpringBone.Springs.SelectMany(spring => spring.Joints).ToArray();
             _originalGravityDirections = _springBones.Select(b => b.m_gravityDir).ToArray();
             _originalGravityFactors = _springBones.Select(b => b.m_gravityPower).ToArray();
             _hasModel = true;

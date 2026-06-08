@@ -102,9 +102,9 @@ namespace Baku.VMagicMirror
 
             _vrmLoadable.VrmLoaded += info =>
             {
-                _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
-                _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-                _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                _hips = info.Animator.GetBoneTransform(HumanBodyBones.Hips);
+                _leftUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+                _rightUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
                 _leftHandTarget.TargetTransform.SetParent(_hips, false);
                 _rightHandTarget.TargetTransform.SetParent(_hips, false);
 

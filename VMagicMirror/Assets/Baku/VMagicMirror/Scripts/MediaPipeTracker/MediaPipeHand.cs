@@ -107,10 +107,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             _vrmLoadable.VrmLoaded += info =>
             {
-                _vrmRoot = info.vrmRoot;
-                _leftHandBone = info.animator.GetBoneTransform(HumanBodyBones.LeftHand);
-                _rightHandBone = info.animator.GetBoneTransform(HumanBodyBones.RightHand);
-                _headBone = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _vrmRoot = info.VrmRoot;
+                _leftHandBone = info.Animator.GetBoneTransform(HumanBodyBones.LeftHand);
+                _rightHandBone = info.Animator.GetBoneTransform(HumanBodyBones.RightHand);
+                _headBone = info.Animator.GetBoneTransform(HumanBodyBones.Head);
                 _initialHeadPosition = _headBone.position;
                 _hasModel = true;
             };

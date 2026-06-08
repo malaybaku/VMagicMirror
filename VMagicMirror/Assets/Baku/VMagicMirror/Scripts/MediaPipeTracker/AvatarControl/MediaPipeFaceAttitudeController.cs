@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             vrmLoadable.VrmLoaded += info =>
             {
-                var animator = info.animator;
+                var animator = info.Animator;
                 _neck = animator.GetBoneTransform(HumanBodyBones.Neck);
                 _head = animator.GetBoneTransform(HumanBodyBones.Head);
                 _hasNeck = _neck != null;

@@ -118,13 +118,13 @@ namespace Baku.VMagicMirror
         {
             //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
             _defaultBodyIkPosition = _bodyIk.position;
-            _vrmRoot = info.vrmRoot;
+            _vrmRoot = info.VrmRoot;
 
             _upperBodyBones = new[]
                 {
-                    info.animator.GetBoneTransform(HumanBodyBones.Spine),
-                    info.animator.GetBoneTransform(HumanBodyBones.Chest),
-                    info.animator.GetBoneTransform(HumanBodyBones.UpperChest),
+                    info.Animator.GetBoneTransform(HumanBodyBones.Spine),
+                    info.Animator.GetBoneTransform(HumanBodyBones.Chest),
+                    info.Animator.GetBoneTransform(HumanBodyBones.UpperChest),
                 }
                 .Where(t => t != null)
                 .ToArray();

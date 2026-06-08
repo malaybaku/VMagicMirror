@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _expressionMap = info.instance.Vrm.Expression.LoadExpressionMap();
+                _expressionMap = info.Instance.Vrm.Expression.LoadExpressionMap();
                 //CheckBinaryClips(_expressionMap);
                 _hasModel = true;
             };

@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             _vrmLoadable.VrmLoaded += info =>
             {
-                SetLocalOffsets(info.animator);
+                SetLocalOffsets(info.Animator);
                 _hasModel.Value = true;
             };
 

@@ -166,18 +166,18 @@ namespace Baku.VMagicMirror
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftShoulder = info.animator.GetBoneTransform(HumanBodyBones.LeftShoulder);
-            _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            _leftLowerArm = info.animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            _leftShoulder = info.Animator.GetBoneTransform(HumanBodyBones.LeftShoulder);
+            _leftUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+            _leftLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
 
-            _rightShoulder = info.animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-            _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            _rightLowerArm = info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            _rightShoulder = info.Animator.GetBoneTransform(HumanBodyBones.RightShoulder);
+            _rightUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            _rightLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
 
-            _rightHandEffector = info.fbbIk.solver.rightHandEffector;
+            _rightHandEffector = info.FbbIk.solver.rightHandEffector;
             
             _handDiffMax = handDiffMaxBase * 
-                info.animator.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
+                info.Animator.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
             //値が0寄りすぎると危ないので念のため。
             if (_handDiffMax < 0.001f)
             {

@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror
         {
             vrmLoadable.VrmLoaded += info =>
             {
-                _headPosition = info.animator.GetBoneTransform(HumanBodyBones.Head).position;
+                _headPosition = info.Animator.GetBoneTransform(HumanBodyBones.Head).position;
                 _hasModel = true;
                 AdjustCameraPoseOnVrmLoaded();
                 ApplyReferenceHeadPositionIfAvailable();

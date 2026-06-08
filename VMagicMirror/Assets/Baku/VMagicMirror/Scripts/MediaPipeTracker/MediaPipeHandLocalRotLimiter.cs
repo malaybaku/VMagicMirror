@@ -45,8 +45,8 @@ namespace Baku.VMagicMirror
         {
             _vrmLoadable.VrmLoaded += info =>
             {
-                _leftHandBone = info.animator.GetBoneTransform(HumanBodyBones.LeftHand);
-                _rightHandBone = info.animator.GetBoneTransform(HumanBodyBones.RightHand);
+                _leftHandBone = info.Animator.GetBoneTransform(HumanBodyBones.LeftHand);
+                _rightHandBone = info.Animator.GetBoneTransform(HumanBodyBones.RightHand);
                 _hasModel = true;
             };
 

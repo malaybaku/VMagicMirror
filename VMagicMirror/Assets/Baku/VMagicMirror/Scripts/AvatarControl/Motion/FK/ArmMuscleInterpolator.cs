@@ -188,15 +188,15 @@ namespace Baku.VMagicMirror.FK
         {
             OnVrmDisposing();
 
-            _humanPoseHandler = new HumanPoseHandler(info.animator.avatar, info.animator.transform);
-            _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
+            _humanPoseHandler = new HumanPoseHandler(info.Animator.avatar, info.Animator.transform);
+            _hips = info.Animator.GetBoneTransform(HumanBodyBones.Hips);
             _humanPoseHandler.GetHumanPose(ref _humanPose);
             ResetBothArmFilters();
             
             foreach (var bone in (HumanBodyBones[])System.Enum.GetValues(typeof(HumanBodyBones)))
             {
                 if (bone is HumanBodyBones.Hips or HumanBodyBones.Jaw or HumanBodyBones.LastBone) continue;
-                var transform = info.animator.GetBoneTransform(bone);
+                var transform = info.Animator.GetBoneTransform(bone);
                 if (transform != null)
                 {
                     _bones[bone] = transform;

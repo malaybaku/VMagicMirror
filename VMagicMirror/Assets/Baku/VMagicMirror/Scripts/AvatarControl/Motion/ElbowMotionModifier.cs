@@ -288,8 +288,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _ik = info.fbbIk;
-            _spine = info.animator.GetBoneTransform(HumanBodyBones.Spine);
+            _ik = info.FbbIk;
+            _spine = info.Animator.GetBoneTransform(HumanBodyBones.Spine);
 
             _rightArmBendGoal = new GameObject().transform;
             _rightArmBendGoal.SetParent(_spine);
@@ -301,15 +301,15 @@ namespace Baku.VMagicMirror
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;
 
-            _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            var leftLowerArm = info.animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
+            _leftUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+            var leftLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
             _leftUpperArmLength = Vector3.Distance(_leftUpperArm, leftLowerArm);
 
-            _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var rightLowerArm = info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
+            _rightUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            var rightLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
             _rightUpperArmLength = Vector3.Distance(_rightUpperArm, rightLowerArm);
             
-            _vrmRoot = info.vrmRoot;
+            _vrmRoot = info.VrmRoot;
             _hasModel = true;
         }
 

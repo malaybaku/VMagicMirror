@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror.IK
 
         void IInitializable.Initialize()
         {
-            _vrmLoadable.VrmLoaded += info => SetupAvatar(info.animator);
+            _vrmLoadable.VrmLoaded += info => SetupAvatar(info.Animator);
             _vrmLoadable.VrmDisposing += ClearAvatarReference;
             _coroutineSource.StartCoroutine(SetHandPositionsIfHasModel());
         }

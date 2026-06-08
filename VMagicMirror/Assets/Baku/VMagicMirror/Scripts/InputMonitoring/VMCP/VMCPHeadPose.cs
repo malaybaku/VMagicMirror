@@ -35,8 +35,8 @@ namespace Baku.VMagicMirror.VMCP
             {
                 //NOTE: ロードした瞬間はyaw=0で立ってるはず
                 _defaultHeadOffsetOnHips =
-                    info.animator.GetBoneTransform(HumanBodyBones.Head).position -
-                    info.animator.GetBoneTransform(HumanBodyBones.Hips).position;
+                    info.Animator.GetBoneTransform(HumanBodyBones.Head).position -
+                    info.Animator.GetBoneTransform(HumanBodyBones.Hips).position;
                 _hasModel = true;
             };
 

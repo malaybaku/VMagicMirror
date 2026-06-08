@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror
                 _ => AutoAdjust()
                 );
 
-            vrmLoadable.PreVrmLoaded += info => _vrmRoot = info.vrmRoot;
+            vrmLoadable.PreVrmLoaded += info => _vrmRoot = info.VrmRoot;
             vrmLoadable.VrmDisposing += () => _vrmRoot = null;
         }
         

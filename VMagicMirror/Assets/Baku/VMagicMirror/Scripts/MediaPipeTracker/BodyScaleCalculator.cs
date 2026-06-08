@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // TODO: 体型計算してるコード、統一したい…
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var target = info.animator;
+            var target = info.Animator;
             
             var rootPosition = target.transform.position;
 

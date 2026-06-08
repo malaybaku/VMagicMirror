@@ -82,8 +82,8 @@ namespace Baku.VMagicMirror
             {
                 //TODO: これControlRigと相性が悪すぎるので何か考えて下さい
                 //ビルトインモーションもヤバそう
-                _humanPoseHandler = new HumanPoseHandler(info.animator.avatar, info.vrmRoot);
-                _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
+                _humanPoseHandler = new HumanPoseHandler(info.Animator.avatar, info.VrmRoot);
+                _hips = info.Animator.GetBoneTransform(HumanBodyBones.Hips);
                 _originHipsPos = _hips.localPosition;
                 _originHipsRot = _hips.localRotation;
                 _playRoutine = new CustomMotionPlayRoutine(

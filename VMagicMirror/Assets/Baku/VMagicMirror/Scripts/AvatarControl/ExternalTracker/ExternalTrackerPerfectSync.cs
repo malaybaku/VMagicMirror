@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             vrmLoadable.VrmLoaded += info =>
             {
                 //参照じゃなくて値コピーしとくことに注意(なにかと安全なので)
-                _modelBasedMap = info.instance.Vrm.Expression.LoadExpressionMap();
+                _modelBasedMap = info.Instance.Vrm.Expression.LoadExpressionMap();
                 NonPerfectSyncKeys = LoadNonPerfectSyncKeys();
                 _hasModel = true;
                 ParseClipCompletenessToSendMessage();

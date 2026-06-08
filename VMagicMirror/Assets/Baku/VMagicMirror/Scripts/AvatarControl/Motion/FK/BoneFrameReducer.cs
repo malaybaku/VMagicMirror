@@ -57,12 +57,12 @@ namespace Baku.VMagicMirror.FK
             _bones.Clear();
             _reducedRotations.Clear();
             _tempRotations.Clear();
-            _vrm10Instance = info.instance;
+            _vrm10Instance = info.Instance;
 
             for (var i = (int) HumanBodyBones.Hips; i < (int) HumanBodyBones.LastBone; i++)
             {
                 var boneType = (HumanBodyBones) i;
-                var bone = info.animator.GetBoneTransform(boneType);
+                var bone = info.Animator.GetBoneTransform(boneType);
                 if (bone != null)
                 {
                     _bones[boneType] = bone;

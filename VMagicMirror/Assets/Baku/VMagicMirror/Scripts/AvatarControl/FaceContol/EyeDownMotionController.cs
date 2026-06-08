@@ -43,7 +43,7 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _runtimeExpression = info.RuntimeFacialExpression;
-            _hasValidEyeSettings = CheckBlinkBlendShapeClips(info.instance.Vrm.Expression);
+            _hasValidEyeSettings = CheckBlinkBlendShapeClips(info.Instance.Vrm.Expression);
         }
 
         private void OnVrmDisposing()

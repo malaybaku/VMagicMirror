@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -27,10 +26,10 @@ namespace Baku.VMagicMirror
         private void ReadParams(VrmLoadedInfo info)
         {
             var leftHand = info.AvatarBones.LeftHand.position;
-            var leftPalm = GetLeftHandRaycastReferencePosition(info.Animator, leftHand);
+            var leftPalm = GetLeftHandRaycastReferencePosition(info.AvatarBones, leftHand);
             
             var rightHand = info.AvatarBones.RightHand.position;
-            var rightPalm = GetRightHandRaycastReferencePosition(info.Animator, rightHand);
+            var rightPalm = GetRightHandRaycastReferencePosition(info.AvatarBones, rightHand);
             
             var height = info.AvatarBones.Head.position.y;
 
@@ -67,21 +66,21 @@ namespace Baku.VMagicMirror
         }
 
         //手首ボーンと中指付け根ボーンの中点を取得します。この点はレイキャストの基準として使われます。
-        private Vector3 GetLeftHandRaycastReferencePosition(Animator animator, Vector3 leftHandPosition)
+        private Vector3 GetLeftHandRaycastReferencePosition(VRMAvatarBones avatarBones, Vector3 leftHandPosition)
         {
-            var finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
-            if (finger != null)
-            {
-                return finger.position;
-            }
-            
-            finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
+            var finger = avatarBones.LeftMiddleIntermediate;
             if (finger != null)
             {
                 return finger.position;
             }
 
-            finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+            finger = avatarBones.LeftMiddleDistal;
+            if (finger != null)
+            {
+                return finger.position;
+            }
+
+            finger = avatarBones.LeftMiddleProximal;
             if (finger != null)
             {
                 return finger.position;
@@ -91,21 +90,21 @@ namespace Baku.VMagicMirror
             return leftHandPosition;
         }
 
-        private Vector3 GetRightHandRaycastReferencePosition(Animator animator, Vector3 rightHandPosition)
+        private Vector3 GetRightHandRaycastReferencePosition(VRMAvatarBones avatarBones, Vector3 rightHandPosition)
         {
-            var finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
+            var finger = avatarBones.RightMiddleIntermediate;
             if (finger != null)
             {
                 return finger.position;
             }
             
-            finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+            finger = avatarBones.RightMiddleDistal;
             if (finger != null)
             {
                 return finger.position;
             }
 
-            finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+            finger = avatarBones.RightMiddleProximal;
             if (finger != null)
             {
                 return finger.position;

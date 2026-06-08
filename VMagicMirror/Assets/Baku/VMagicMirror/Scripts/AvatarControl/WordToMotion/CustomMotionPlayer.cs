@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirror.GameInput;
-using Baku.VMagicMirror.MotionExporter;
+﻿using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using R3;
 using UnityEngine;
@@ -83,7 +82,7 @@ namespace Baku.VMagicMirror
                 //TODO: これControlRigと相性が悪すぎるので何か考えて下さい
                 //ビルトインモーションもヤバそう
                 _humanPoseHandler = new HumanPoseHandler(info.Animator.avatar, info.VrmRoot);
-                _hips = info.Animator.GetBoneTransform(HumanBodyBones.Hips);
+                _hips = info.AvatarBones.Hips;
                 _originHipsPos = _hips.localPosition;
                 _originHipsRot = _hips.localRotation;
                 _playRoutine = new CustomMotionPlayRoutine(

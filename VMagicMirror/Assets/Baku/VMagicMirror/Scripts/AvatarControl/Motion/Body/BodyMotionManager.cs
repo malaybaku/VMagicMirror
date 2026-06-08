@@ -122,9 +122,9 @@ namespace Baku.VMagicMirror
 
             _upperBodyBones = new[]
                 {
-                    info.Animator.GetBoneTransform(HumanBodyBones.Spine),
-                    info.Animator.GetBoneTransform(HumanBodyBones.Chest),
-                    info.Animator.GetBoneTransform(HumanBodyBones.UpperChest),
+                    info.AvatarBones.Spine,
+                    info.AvatarBones.Chest,
+                    info.AvatarBones.UpperChest,
                 }
                 .Where(t => t != null)
                 .ToArray();

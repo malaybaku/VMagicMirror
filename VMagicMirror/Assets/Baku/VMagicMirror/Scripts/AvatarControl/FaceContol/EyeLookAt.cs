@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
         public EyeLookAt(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets)
         {
             _lookAtTarget = ikTargets.LookAt;
-            vrmLoadable.VrmLoaded += info => SetAvatarHead(info.Animator.GetBoneTransform(HumanBodyBones.Head));
+            vrmLoadable.VrmLoaded += info => SetAvatarHead(info.AvatarBones.Head);
             vrmLoadable.VrmDisposing += ReleaseAvatarHead;
         }
 

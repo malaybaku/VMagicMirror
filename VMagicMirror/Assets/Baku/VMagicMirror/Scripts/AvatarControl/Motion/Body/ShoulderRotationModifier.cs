@@ -166,18 +166,17 @@ namespace Baku.VMagicMirror
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftShoulder = info.Animator.GetBoneTransform(HumanBodyBones.LeftShoulder);
-            _leftUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            _leftLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            _leftShoulder = info.AvatarBones.LeftShoulder;
+            _leftUpperArm = info.AvatarBones.LeftUpperArm;
+            _leftLowerArm = info.AvatarBones.LeftLowerArm;
 
-            _rightShoulder = info.Animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-            _rightUpperArm = info.Animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            _rightLowerArm = info.Animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            _rightShoulder = info.AvatarBones.RightShoulder;
+            _rightUpperArm = info.AvatarBones.RightUpperArm;
+            _rightLowerArm = info.AvatarBones.RightLowerArm;
 
             _rightHandEffector = info.FbbIk.solver.rightHandEffector;
             
-            _handDiffMax = handDiffMaxBase * 
-                info.Animator.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
+            _handDiffMax = handDiffMaxBase * info.AvatarBones.Head.position.y / ReferenceHeadHeight;
             //値が0寄りすぎると危ないので念のため。
             if (_handDiffMax < 0.001f)
             {

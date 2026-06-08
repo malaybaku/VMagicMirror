@@ -189,7 +189,7 @@ namespace Baku.VMagicMirror.FK
             OnVrmDisposing();
 
             _humanPoseHandler = new HumanPoseHandler(info.Animator.avatar, info.Animator.transform);
-            _hips = info.Animator.GetBoneTransform(HumanBodyBones.Hips);
+            _hips = info.AvatarBones.Hips;
             _humanPoseHandler.GetHumanPose(ref _humanPose);
             ResetBothArmFilters();
             

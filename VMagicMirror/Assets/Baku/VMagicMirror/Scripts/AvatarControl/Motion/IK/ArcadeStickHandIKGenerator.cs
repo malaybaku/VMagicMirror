@@ -56,12 +56,7 @@ namespace Baku.VMagicMirror.IK
             _rightHandState = new ArcadeStickHandIkState(this, ReactedHand.Right);
 
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var h = info.Animator.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.Animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-                CacheHandOffsets(info.Animator);
-            };
+            vrmLoadable.VrmLoaded += info => CacheHandOffsets(info.Animator);
 
             dependency.Events.MoveLeftGamepadStick += v =>
             {

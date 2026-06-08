@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror
             _lipSyncContext = lipSyncContext;
             vrmLoadable.VrmLoaded += vrm =>
             {
-                _head = vrm.Animator.GetBoneTransform(HumanBodyBones.Head);
+                _head = vrm.AvatarBones.Head;
                 _prevHeadRotation = _head.rotation;
                 _headRotationDegree = 0;
                 _isVrmLoaded = true;

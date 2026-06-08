@@ -33,8 +33,8 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 SetZeroTarget();
-                _head = info.Animator.GetBoneTransform(HumanBodyBones.Head);
-                _neck = info.Animator.GetBoneTransform(HumanBodyBones.Neck);
+                _head = info.AvatarBones.Head;
+                _neck = info.AvatarBones.Neck;
                 _hasNeck = _neck != null;
                 _hasModel = true;
             };

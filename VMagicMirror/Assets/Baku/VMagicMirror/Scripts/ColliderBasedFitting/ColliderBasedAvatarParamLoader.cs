@@ -26,13 +26,13 @@ namespace Baku.VMagicMirror
 
         private void ReadParams(VrmLoadedInfo info)
         {
-            var leftHand = info.Animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var leftHand = info.AvatarBones.LeftHand.position;
             var leftPalm = GetLeftHandRaycastReferencePosition(info.Animator, leftHand);
             
-            var rightHand = info.Animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightHand = info.AvatarBones.RightHand.position;
             var rightPalm = GetRightHandRaycastReferencePosition(info.Animator, rightHand);
             
-            var height = info.Animator.GetBoneTransform(HumanBodyBones.Head).position.y;
+            var height = info.AvatarBones.Head.position.y;
 
             using (var colliders = AvatarColliders.LoadMeshColliders(
                 info.VrmRoot.gameObject, colliderPrefab, transform))

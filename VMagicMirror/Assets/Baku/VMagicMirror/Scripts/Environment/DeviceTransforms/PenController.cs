@@ -53,9 +53,9 @@ namespace Baku.VMagicMirror
             
             vrmLoadable.VrmLoaded += info =>
             {
-                _rightWrist = info.Animator.GetBoneTransform(HumanBodyBones.RightHand);
-                _rightIndexProximal = info.Animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate);
-                _rightThumbIntermediate = info.Animator.GetBoneTransform(HumanBodyBones.RightThumbDistal);
+                _rightWrist = info.AvatarBones.RightHand;
+                _rightIndexProximal = info.AvatarBones.RightIndexIntermediate;
+                _rightThumbIntermediate = info.AvatarBones.RightThumbDistal;
                 _hasValidFinger = (_rightIndexProximal != null && _rightThumbIntermediate != null);
                 _hasModel = true;
                 _sender.SendCommand(MessageFactory.SetModelDoesNotSupportPen(!_hasValidFinger));

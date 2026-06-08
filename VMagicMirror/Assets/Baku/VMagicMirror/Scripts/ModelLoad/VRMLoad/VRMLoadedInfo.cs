@@ -5,26 +5,49 @@ using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
-    [Serializable]
-    public struct VrmLoadedInfo
+    public readonly struct VrmLoadedInfo
     {
-        public CurrentModelVersion modelVersion;
-        public Transform vrmRoot;
-        public Animator animator;
-        //NOTE: property細分化してトレーサビリティとってもいいかも、ExpressionSettingsとか
-        public Vrm10Instance instance;
-        public Vrm10RuntimeExpression RuntimeFacialExpression => instance.Runtime.Expression;
-        public FullBodyBipedIK fbbIk;
-        public LimbIK leftLegIk;
-        public LimbIK rightLegIk;
-
-        public TwistRelaxer leftArmTwistRelaxer;
-        public TwistRelaxer rightArmTwistRelaxer;
+        public VrmLoadedInfo(
+            CurrentModelVersion modelVersion,
+            Transform vrmRoot,
+            Animator animator,
+            Vrm10Instance instance,
+            FullBodyBipedIK fbbIk,
+            LimbIK leftLegIk,
+            LimbIK rightLegIk,
+            TwistRelaxer leftArmTwistRelaxer,
+            TwistRelaxer rightArmTwistRelaxer,
+            Renderer[] renderers,
+            VRMAvatarBones avatarBones
+        )
+        {
+            this.modelVersion = modelVersion;
+            this.vrmRoot = vrmRoot;
+            this.animator = animator;
+            this.instance = instance;
+            this.fbbIk = fbbIk;
+            this.leftLegIk = leftLegIk;
+            this.rightLegIk = rightLegIk;
+            this.leftArmTwistRelaxer = leftArmTwistRelaxer;
+            this.rightArmTwistRelaxer = rightArmTwistRelaxer;
+            this.renderers = renderers;
+            AvatarBones = avatarBones;
+        }
         
-        //[Obsolete("use `FacialExpression` instead")]
-        //public VRMBlendShapeProxy blendShape;
-        public Renderer[] renderers;
+        public Vrm10RuntimeExpression RuntimeFacialExpression => instance.Runtime.Expression;
+        public CurrentModelVersion modelVersion { get; }
+        public Transform vrmRoot { get; }
+        public Animator animator { get; }
+        //NOTE: property細分化してトレーサビリティとってもいいかも、ExpressionSettingsとか
+        public Vrm10Instance instance { get; }
+        public FullBodyBipedIK fbbIk { get; }
+        public LimbIK leftLegIk { get; }
+        public LimbIK rightLegIk { get; }
 
-        public VRMAvatarBones AvatarBones;
+        public TwistRelaxer leftArmTwistRelaxer { get; }
+        public TwistRelaxer rightArmTwistRelaxer { get; }
+        public Renderer[] renderers { get; }
+
+        public VRMAvatarBones AvatarBones { get; }
     }
 }

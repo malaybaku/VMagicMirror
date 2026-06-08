@@ -337,27 +337,6 @@ namespace Baku.VMagicMirror
             PostVrmLoaded?.Invoke(info);
         }
 
-        private static Dictionary<HumanBodyBones, Transform> GetBones(Animator animator)
-        {
-            var result = new Dictionary<HumanBodyBones, Transform>();
-            for (var i = (int)HumanBodyBones.Hips; i < (int)HumanBodyBones.LastBone; i++)
-            {
-                var bone = (HumanBodyBones)i;
-                if (bone == HumanBodyBones.Jaw)
-                {
-                    continue;
-                }
-
-                var boneTransform = animator.GetBoneTransform(bone);
-                if (boneTransform != null)
-                {
-                    result[bone] = boneTransform;
-                }
-            }
-
-            return result;
-        }
-        
         private void HandleLoadError(Exception ex)
         {
             string logContent =

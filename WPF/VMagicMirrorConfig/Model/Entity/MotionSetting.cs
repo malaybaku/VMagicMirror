@@ -54,6 +54,7 @@
         // NOTE: X/Yいずれもcentimeter単位
         public int HandTrackingMotionOffsetX { get; set; } = 0;
         public int HandTrackingMotionOffsetY { get; set; } = 0;
+        public int HandTrackingHeadPoseAdjustFactor { get; set; } = 25;
 
 
         public string CameraDeviceName { get; set; } = "";

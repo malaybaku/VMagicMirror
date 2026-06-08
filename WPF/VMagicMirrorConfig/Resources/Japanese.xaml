@@ -248,7 +248,8 @@
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
-    
+    <sys:String x:Key="HandTracking_HeadPoseAdjustFactor">頭の動きで手も動かす (%)</sys:String>
+
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:

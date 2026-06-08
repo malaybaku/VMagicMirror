@@ -139,6 +139,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
         public static Message SetHandTrackingMotionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
         public static Message SetHandTrackingMotionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
+        public static Message SetHandTrackingHeadPoseAdjustFactor(int percent) => IntContent(VmmCommands.SetHandTrackingHeadPoseAdjustFactor, percent);
 
 
 

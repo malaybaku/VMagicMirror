@@ -103,6 +103,7 @@
                             <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -148,6 +149,20 @@
                                 />
                         <TextBox Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderHandOffsetY}"
+                                 />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_HeadPoseAdjustFactor}"/>
+                        <Slider Grid.Row="3" Grid.Column="1"
+                                x:Name="sliderHandTrackingHeadPoseAdjustFactor"
+                                Minimum="0"
+                                Maximum="100"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding HandTrackingHeadPoseAdjustFactor.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="3" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandTrackingHeadPoseAdjustFactor}"
                                  />
                     </Grid>
 

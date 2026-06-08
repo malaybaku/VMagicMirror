@@ -58,7 +58,6 @@ namespace Baku.VMagicMirror
         private KeyboardProvider _keyboard;
 
         private bool _hasModel;
-        private Animator _animator;
 
         //左手親指 = 0,
         //左手人差し指 = 1,
@@ -117,72 +116,71 @@ namespace Baku.VMagicMirror
         public bool RightHandPresentationMode { get; set; } = false;
         public bool RightHandPenTabletMode { get; set; } = false;
 
-        public void Initialize(Animator animator)
+        public void Initialize(VRMAvatarBones avatarBones)
         {
-            if(animator == null) { return; }
+            if(avatarBones == null) { return; }
 
-            _animator = animator;
             _fingers = new[]
             {
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbProximal),
+                    avatarBones.LeftThumbDistal,
+                    avatarBones.LeftThumbIntermediate,
+                    avatarBones.LeftThumbProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexProximal),
+                    avatarBones.LeftIndexDistal,
+                    avatarBones.LeftIndexIntermediate,
+                    avatarBones.LeftIndexProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal),
+                    avatarBones.LeftMiddleDistal,
+                    avatarBones.LeftMiddleIntermediate,
+                    avatarBones.LeftMiddleProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.LeftRingDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftRingIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftRingProximal),
+                    avatarBones.LeftRingDistal,
+                    avatarBones.LeftRingIntermediate,
+                    avatarBones.LeftRingProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleProximal),
+                    avatarBones.LeftLittleDistal,
+                    avatarBones.LeftLittleIntermediate,
+                    avatarBones.LeftLittleProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
+                    avatarBones.RightThumbDistal,
+                    avatarBones.RightThumbIntermediate,
+                    avatarBones.RightThumbProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                    avatarBones.RightIndexDistal,
+                    avatarBones.RightIndexIntermediate,
+                    avatarBones.RightIndexProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
+                    avatarBones.RightMiddleDistal,
+                    avatarBones.RightMiddleIntermediate,
+                    avatarBones.RightMiddleProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
+                    avatarBones.RightRingDistal,
+                    avatarBones.RightRingIntermediate,
+                    avatarBones.RightRingProximal,
                 },
                 new[]
                 {
-                    _animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
-                    _animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
-                    _animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+                    avatarBones.RightLittleDistal,
+                    avatarBones.RightLittleIntermediate,
+                    avatarBones.RightLittleProximal,
                 },
             };
 
@@ -212,7 +210,6 @@ namespace Baku.VMagicMirror
         public void Dispose()
         {
             _hasModel = false;
-            _animator = null;
             _fingers = null;
             _fingerBendAxis = null;
             _defaultFingerBendRotations = null;

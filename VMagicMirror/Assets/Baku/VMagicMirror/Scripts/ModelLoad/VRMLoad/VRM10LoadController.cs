@@ -331,7 +331,7 @@ namespace Baku.VMagicMirror
                 leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
                 rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
                 renderers = renderers,
-                bones = GetBones(animator),
+                AvatarBones = new VRMAvatarBones(animator),
             };
             
             PreVrmLoaded?.Invoke(info);

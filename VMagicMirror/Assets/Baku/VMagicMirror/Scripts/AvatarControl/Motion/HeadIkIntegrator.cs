@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
                 _lookAtIk = info.vrmRoot.GetComponentInChildren<LookAtIK>();
                 _hasModel = true;
             };

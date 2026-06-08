@@ -58,9 +58,9 @@ namespace Baku.VMagicMirror.IK
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
             vrmLoadable.VrmLoaded += info =>
             {
-                var h = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.controlRig.GetBoneTransform(HumanBodyBones.LeftFoot);
-                CacheHandOffsets(info.controlRig);
+                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                CacheHandOffsets(info.animator);
             };
 
             dependency.Events.MoveLeftGamepadStick += v =>

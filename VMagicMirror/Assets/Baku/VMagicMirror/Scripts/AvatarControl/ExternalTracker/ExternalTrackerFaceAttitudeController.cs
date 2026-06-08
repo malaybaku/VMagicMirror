@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                var animator = info.controlRig;
+                var animator = info.animator;
                 _neck = animator.GetBoneTransform(HumanBodyBones.Neck);
                 _head = animator.GetBoneTransform(HumanBodyBones.Head);
                 _hasNeck = _neck != null;

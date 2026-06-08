@@ -47,8 +47,8 @@ namespace Baku.VMagicMirror
 
             vrmLoader.VrmLoaded += info =>
             {
-                _items.ForEach(i => i.SetAnimator(info.controlRig));
-                _animator = info.controlRig;
+                _items.ForEach(i => i.SetAnimator(info.animator));
+                _animator = info.animator;
                 _hasModel = true;
             };
             vrmLoader.VrmDisposing += () =>

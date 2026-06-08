@@ -289,7 +289,7 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.fbbIk;
-            _spine = info.controlRig.GetBoneTransform(HumanBodyBones.Spine);
+            _spine = info.animator.GetBoneTransform(HumanBodyBones.Spine);
 
             _rightArmBendGoal = new GameObject().transform;
             _rightArmBendGoal.SetParent(_spine);

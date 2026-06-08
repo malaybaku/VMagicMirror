@@ -120,8 +120,8 @@ namespace Baku.VMagicMirror
             _autoBlink = autoBlink;
             vrmLoadable.VrmLoaded += info =>
             {
-                _neck = info.controlRig.GetBoneTransform(HumanBodyBones.Neck);
-                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                _neck = info.AvatarBones.Neck;
+                _head = info.AvatarBones.Head;
                 _hasNeck = (_neck != null);
                 _hasModel = true;
             };

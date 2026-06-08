@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         private IMessageSender _sender;
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
-        private Animator _animator;
+        private VRMAvatarBones _avatarBones;
         private bool _hasModel;
 
         [Inject]
@@ -47,13 +47,14 @@ namespace Baku.VMagicMirror
 
             vrmLoader.VrmLoaded += info =>
             {
-                _items.ForEach(i => i.SetAnimator(info.controlRig));
-                _animator = info.controlRig;
+                _items.ForEach(i => i.SetAvatarBones(info.AvatarBones));
+                _avatarBones = info.AvatarBones;
                 _hasModel = true;
             };
             vrmLoader.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _avatarBones = null;
                 _items.ForEach(i => i.UnsetModel());
             };
             
@@ -173,7 +174,7 @@ namespace Baku.VMagicMirror
                 item.FirstEnabled += OnItemFirstEnabled;
                 if (_hasModel)
                 {
-                    item.SetAnimator(_animator);
+                    item.SetAvatarBones(_avatarBones);
                 }
                 _items.Add(item);
             }

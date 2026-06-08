@@ -166,18 +166,17 @@ namespace Baku.VMagicMirror
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftShoulder = info.controlRig.GetBoneTransform(HumanBodyBones.LeftShoulder);
-            _leftUpperArm = info.controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            _leftLowerArm = info.controlRig.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            _leftShoulder = info.AvatarBones.LeftShoulder;
+            _leftUpperArm = info.AvatarBones.LeftUpperArm;
+            _leftLowerArm = info.AvatarBones.LeftLowerArm;
 
-            _rightShoulder = info.controlRig.GetBoneTransform(HumanBodyBones.RightShoulder);
-            _rightUpperArm = info.controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            _rightLowerArm = info.controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            _rightShoulder = info.AvatarBones.RightShoulder;
+            _rightUpperArm = info.AvatarBones.RightUpperArm;
+            _rightLowerArm = info.AvatarBones.RightLowerArm;
 
-            _rightHandEffector = info.fbbIk.solver.rightHandEffector;
+            _rightHandEffector = info.FbbIk.solver.rightHandEffector;
             
-            _handDiffMax = handDiffMaxBase * 
-                info.controlRig.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
+            _handDiffMax = handDiffMaxBase * info.AvatarBones.Head.position.y / ReferenceHeadHeight;
             //値が0寄りすぎると危ないので念のため。
             if (_handDiffMax < 0.001f)
             {

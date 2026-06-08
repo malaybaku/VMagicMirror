@@ -132,7 +132,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _animator = info.animator;
+            _animator = info.Animator;
 
             for (var i = 0; i < (int)HumanBodyBones.LastBone; i++)
             {

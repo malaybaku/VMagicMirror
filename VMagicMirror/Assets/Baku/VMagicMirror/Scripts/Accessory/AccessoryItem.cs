@@ -31,14 +31,13 @@ namespace Baku.VMagicMirror
         private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
-        private Animator _animator = null;
-        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
-            = new Dictionary<AccessoryAttachTarget, Transform>();
+        private VRMAvatarBones _avatarBones;
+        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones = new();
 
         private bool _firstEnabledCalled;
         public Action<AccessoryItem> FirstEnabled;
         
-        private readonly CancellationTokenSource _blinkCts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _blinkCts = new();
 
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
@@ -100,7 +99,7 @@ namespace Baku.VMagicMirror
         {
             get
             {
-                if (_file == null || _animator == null || ItemLayout == null)
+                if (_file == null || _avatarBones == null || ItemLayout == null)
                 {
                     return false;
                 }
@@ -176,7 +175,7 @@ namespace Baku.VMagicMirror
 
         public void RunBlinkTrigger()
         {
-            if (_file == null || _animator == null || ItemLayout == null ||
+            if (_file == null || _avatarBones == null || ItemLayout == null ||
                 !ItemLayout.UseAsBlinkEffect ||
                 VisibleByBlinkTrigger
                 )
@@ -330,7 +329,7 @@ namespace Baku.VMagicMirror
             HasLayoutChange = false;
             ItemLayout = layout;
             _fileActions?.UpdateLayout(layout);
-            if (_animator == null)
+            if (_avatarBones == null)
             {
                 return;
             }
@@ -398,20 +397,19 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// ロードされたVRMのAnimatorを指定し、アイテムをモデルの特定部位にアタッチできるようにします。
+        /// ロードされたVRMのボーン情報を指定し、アイテムをモデルの特定部位にアタッチできるようにします。
         /// </summary>
-        /// <param name="animator"></param>
-        public void SetAnimator(Animator animator)
+        /// <param name="avatarBones"></param>
+        public void SetAvatarBones(VRMAvatarBones avatarBones)
         {
-            _animator = animator;
+            _avatarBones = avatarBones;
 
-            _attachBones[AccessoryAttachTarget.Head] = animator.GetBoneTransform(HumanBodyBones.Head);
-            _attachBones[AccessoryAttachTarget.Neck] = 
-                animator.GetBoneTransform(HumanBodyBones.Neck) ?? animator.GetBoneTransform(HumanBodyBones.Head);
-            _attachBones[AccessoryAttachTarget.Chest] = animator.GetBoneTransform(HumanBodyBones.Chest);
-            _attachBones[AccessoryAttachTarget.Waist] = animator.GetBoneTransform(HumanBodyBones.Hips);
-            _attachBones[AccessoryAttachTarget.LeftHand] = animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            _attachBones[AccessoryAttachTarget.RightHand] = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            _attachBones[AccessoryAttachTarget.Head] = _avatarBones.Head;
+            _attachBones[AccessoryAttachTarget.Neck] = _avatarBones.Neck ?? avatarBones.Head;
+            _attachBones[AccessoryAttachTarget.Chest] = _avatarBones.Chest;
+            _attachBones[AccessoryAttachTarget.Waist] = _avatarBones.Hips;
+            _attachBones[AccessoryAttachTarget.LeftHand] = _avatarBones.LeftHand;
+            _attachBones[AccessoryAttachTarget.RightHand] = _avatarBones.RightHand;
 
             if (_file == null)
             {
@@ -431,7 +429,7 @@ namespace Baku.VMagicMirror
         public void UnsetModel()
         {
             transform.SetParent(null);
-            _animator = null;
+            _avatarBones = null;
             _attachBones.Clear();
             transformControl.mode = TransformControl.TransformMode.None;
             SetVisibility(false);
@@ -443,7 +441,7 @@ namespace Baku.VMagicMirror
         /// <param name="request"></param>
         public void ControlItemTransform(TransformControlRequest request)
         {
-            if (_animator == null && ItemLayout == null)
+            if (_avatarBones == null && ItemLayout == null)
             {
                 return;
             }
@@ -496,7 +494,7 @@ namespace Baku.VMagicMirror
         {
             Transform bone = null;
             if (ItemLayout == null || 
-                _animator == null || 
+                _avatarBones == null || 
                 (ItemLayout.AttachTarget != AccessoryAttachTarget.World &&
                  !_attachBones.TryGetValue(ItemLayout.AttachTarget, out bone)
                 ))

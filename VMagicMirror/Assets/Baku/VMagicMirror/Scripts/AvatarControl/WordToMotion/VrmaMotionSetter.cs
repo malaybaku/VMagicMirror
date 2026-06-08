@@ -98,8 +98,8 @@ namespace Baku.VMagicMirror
         
         private void OnModelLoaded(VrmLoadedInfo info)
         {
-            _runtime = info.instance.Runtime;
-            var animator = info.animator;
+            _runtime = info.Instance.Runtime;
+            var animator = info.Animator;
             for (var i = 0; i < BoneMax; i++)
             {
                 var bone = (HumanBodyBones)i;

@@ -29,8 +29,8 @@ namespace Baku.VMagicMirror
         {
             _vrmLoadable.VrmLoaded += info =>
             {
-                _expression = info.instance.Runtime.Expression;
-                var exprMap = info.instance.Vrm.Expression.LoadExpressionMap();
+                _expression = info.Instance.Runtime.Expression;
+                var exprMap = info.Instance.Vrm.Expression.LoadExpressionMap();
 
                 _values.Clear();
                 _keys.Clear();

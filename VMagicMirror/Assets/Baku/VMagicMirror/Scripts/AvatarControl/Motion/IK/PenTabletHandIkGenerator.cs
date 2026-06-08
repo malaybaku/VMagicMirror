@@ -71,12 +71,12 @@ namespace Baku.VMagicMirror.IK
 
             vrmLoadable.VrmLoaded += info =>
             {
-                var wrist = info.controlRig.GetBoneTransform(HumanBodyBones.RightHand);
+                var wrist = info.AvatarBones.RightHand;
                 var wristPosition = wrist.position;
-                var midProximal = info.controlRig.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
-                var midInter = info.controlRig.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
-                var littleDistal = info.controlRig.GetBoneTransform(HumanBodyBones.RightLittleDistal);
-                var thumbProximal = info.controlRig.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
+                var midProximal = info.AvatarBones.RightMiddleProximal;
+                var midInter = info.AvatarBones.RightMiddleIntermediate;
+                var littleDistal = info.AvatarBones.RightLittleDistal;
+                var thumbProximal = info.AvatarBones.RightThumbIntermediate;
                 
                 //NOTE: 人差し指の第2-第3関節の横でペンが縦に立つように調節するとこういう式になります
                 _wristToPenBasePosition = (midProximal != null && midInter != null && thumbProximal != null)

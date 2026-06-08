@@ -56,12 +56,7 @@ namespace Baku.VMagicMirror.IK
             _rightHandState = new ArcadeStickHandIkState(this, ReactedHand.Right);
 
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var h = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.controlRig.GetBoneTransform(HumanBodyBones.LeftFoot);
-                CacheHandOffsets(info.controlRig);
-            };
+            vrmLoadable.VrmLoaded += info => CacheHandOffsets(info.AvatarBones);
 
             dependency.Events.MoveLeftGamepadStick += v =>
             {
@@ -211,47 +206,47 @@ namespace Baku.VMagicMirror.IK
             }
         }
 
-        private void CacheHandOffsets(Animator animator)
+        private void CacheHandOffsets(VRMAvatarBones avatarBones)
         {
             //左手 : 手のひら中央の位置を推定するため、中指の付け根を見に行く
-            var leftWrist = animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            var leftMiddle = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+            var leftWrist = avatarBones.LeftHand;
+            var leftMiddle = avatarBones.LeftMiddleProximal;
             _leftHandPalmOffset = leftMiddle != null ? 0.5f * (leftMiddle.position - leftWrist.position) : Vector3.zero;
 
             //右手 : 指の位置を一通りチェックする
-            var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-            var intermediateBones = new Transform[]
+            var rightWristPos = avatarBones.RightHand.position;
+            var intermediateBones = new[]
             {
                 //NOTE: 指が約30度曲がったとき関節1個ぶんのズレが発生するので、あえてDistalではなくIntermediateを見る
-                animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
+                avatarBones.RightThumbIntermediate,
+                avatarBones.RightIndexIntermediate,
+                avatarBones.RightMiddleIntermediate,
+                avatarBones.RightRingIntermediate,
+                avatarBones.RightLittleIntermediate,
             };
             
             //NOTE: さらに、指が30度曲がるとだいたい関節2つぶんy方向にオフセットがつくので、その分を計算する
-            var proximalBones = new Transform[]
+            var proximalBones = new[]
             {
-                animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+                avatarBones.RightThumbProximal,
+                avatarBones.RightIndexProximal,
+                avatarBones.RightMiddleProximal,
+                avatarBones.RightRingProximal,
+                avatarBones.RightLittleProximal,
             };
             
-            var distalBones = new Transform[]
+            var distalBones = new[]
             {
-                animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
+                avatarBones.RightThumbDistal,
+                avatarBones.RightIndexDistal,
+                avatarBones.RightMiddleDistal,
+                avatarBones.RightRingDistal,
+                avatarBones.RightLittleDistal,
             };
             
             //NOTE: 指が一部なくてもエラーにはならないが、指の一部だけが欠けていると計算としてはかなり崩れる。
             //指が全部 or 全部あるモデルが大多数派であると考えての実装になっています
-            for (int i = 0; i < intermediateBones.Length; i++)
+            for (var i = 0; i < intermediateBones.Length; i++)
             {
                 if (i == 0)
                 {
@@ -285,9 +280,6 @@ namespace Baku.VMagicMirror.IK
             {
                 _wristToFingerOffsets[0] = Vector3.zero;
             }
-            
-
-
         }
 
         private void EnterState(ReactedHand hand)

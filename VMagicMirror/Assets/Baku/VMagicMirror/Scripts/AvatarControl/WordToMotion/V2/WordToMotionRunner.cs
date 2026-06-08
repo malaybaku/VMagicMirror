@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _vrmLoadable.VrmDisposing -= OnVrmUnloaded;
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info) => _blendShape.Initialize(info.instance.Vrm.Expression);
+        private void OnVrmLoaded(VrmLoadedInfo info) => _blendShape.Initialize(info.Instance.Vrm.Expression);
 
         private void OnVrmUnloaded() => _blendShape.DisposeProxy();
 

@@ -34,15 +34,24 @@ namespace Baku.VMagicMirror
                 _ => AutoAdjust()
                 );
 
-            vrmLoadable.PreVrmLoaded += info => _vrmRoot = info.vrmRoot;
-            vrmLoadable.VrmDisposing += () => _vrmRoot = null;
+            vrmLoadable.PreVrmLoaded += info =>
+            {
+                _avatarBones = info.AvatarBones;
+                _hasModel = true;
+            };
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _hasModel = false;
+                _avatarBones = null;
+            };
         }
         
         private readonly IMessageSender _sender;
         private readonly IMessageDispatcher _dispatcher;
         private readonly Transform _mainCam;
-        
-        private Transform _vrmRoot = null;
+
+        private bool _hasModel;
+        private VRMAvatarBones _avatarBones;
 
         /// <summary>
         /// VRMがロード済みの状態で呼び出すと、
@@ -52,28 +61,23 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public DeviceLayoutAutoAdjustParameters GetDeviceLayoutParameters()
         {
-            if (_vrmRoot == null)
+            if (!_hasModel)
             {
                 return null;
             }
             
             var result = new DeviceLayoutAutoAdjustParameters();
 
-            var animator = _vrmRoot.GetComponent<Animator>();
-            
-            Transform chest = animator.GetBoneTransform(HumanBodyBones.Chest);
+            var chest = _avatarBones.Chest;
             result.HeightFactor = 
                 (chest != null) ? 
                     chest.position.y / ReferenceChestHeight :
-                    animator.GetBoneTransform(HumanBodyBones.Spine).position.y / ReferenceSpineHeight;
+                    _avatarBones.Spine.position.y / ReferenceSpineHeight;
             
-            var upperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var lowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
-            var wrist = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-            float armLength =
-                Vector3.Distance(upperArm, lowerArm) +
-                Vector3.Distance(lowerArm, wrist);
-
+            var upperArm = _avatarBones.RightUpperArm.position;
+            var lowerArm = _avatarBones.RightLowerArm.position;
+            var wrist = _avatarBones.RightHand.position;
+            var armLength = Vector3.Distance(upperArm, lowerArm) + Vector3.Distance(lowerArm, wrist);
             result.ArmLengthFactor = armLength / ReferenceArmLength;
 
             return result;
@@ -81,7 +85,10 @@ namespace Baku.VMagicMirror
     
         private void AutoAdjust()
         {
-            if (_vrmRoot == null) { return; }
+            if (!_hasModel)
+            {
+                return;
+            }
 
             var parameters = new AutoAdjustParameters();
             //やること: 
@@ -91,11 +98,10 @@ namespace Baku.VMagicMirror
 
             try
             {
-                var animator = _vrmRoot.GetComponent<Animator>();
-
-                //3つのサブルーチンではanimatorのHumanoidBoneを使うが、部位である程度分けられるので分けておく
-                SetHandSizeRelatedParameters(animator, parameters);
-                AdjustCameraPosition(animator);
+                // Adjust対象の部位である程度分けられるので分けておく
+                SetHandSizeRelatedParameters(_avatarBones, parameters);
+                AdjustCameraPosition(_avatarBones);
+                
                 //デバイスレイアウト調整: これは別途調整が終わるとメッセージが飛ぶ
                 _dispatcher.ReceiveCommand(new ReceivedCommand(
                     MessageSerializer.None((ushort) VmmCommands.ResetDeviceLayout)
@@ -110,22 +116,22 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private void AdjustCameraPosition(Animator animator)
+        private void AdjustCameraPosition(VRMAvatarBones avatarBones)
         {
-            var head = animator.GetBoneTransform(HumanBodyBones.Neck);
+            var head = avatarBones.Head;
             _mainCam.position = new Vector3(0, head.position.y, 1.3f);
             _mainCam.rotation = Quaternion.Euler(0, 180, 0);
         }
         
-        private void SetHandSizeRelatedParameters(Animator animator, AutoAdjustParameters parameters)
+        private void SetHandSizeRelatedParameters(VRMAvatarBones avatarBones, AutoAdjustParameters parameters)
         {
-            var tip = animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+            var tip = avatarBones.RightMiddleDistal;
             if (tip == null) { return; }
 
-            var wrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
-            float distance = Vector3.Distance(tip.position, wrist.position);
+            var wrist = avatarBones.RightHand;
+            var distance = Vector3.Distance(tip.position, wrist.position);
 
-            float factor = distance / ReferenceHandLength;
+            var factor = distance / ReferenceHandLength;
             parameters.LengthFromWristToTip = (int)(parameters.LengthFromWristToTip * factor);
         }
     }

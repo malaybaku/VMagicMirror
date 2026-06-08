@@ -27,14 +27,14 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            if (info.instance.Vrm.LookAt.LookAtType != LookAtType.bone)
+            if (info.Instance.Vrm.LookAt.LookAtType != LookAtType.bone)
             {
                 _hasBoneApplier = false;
                 return;
             }
 
             _hasBoneApplier = true;
-            _applier = info.instance.Vrm.LookAt;
+            _applier = info.Instance.Vrm.LookAt;
         }
 
         private void OnVrmDisposed()

@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnModelLoaded(VrmLoadedInfo info)
         {
-            _animator = info.animator;
+            _animator = info.Animator;
             _hasModel = true;
             UpdateAllParentBone();
         }

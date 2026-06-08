@@ -25,7 +25,7 @@ namespace Baku.VMagicMirror
         {
             vrmLoadable.VrmLoaded += info =>
             {
-                _instance = info.instance;
+                _instance = info.Instance;
                 _hasModel = true;
             };
 

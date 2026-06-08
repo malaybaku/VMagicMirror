@@ -43,7 +43,7 @@ namespace Baku.VMagicMirror
 
         public override void Initialize()
         {
-            _vrmLoadable.VrmLoaded += info => AvatarRenderers = info.renderers ?? Array.Empty<Renderer>();
+            _vrmLoadable.VrmLoaded += info => AvatarRenderers = info.Renderers ?? Array.Empty<Renderer>();
             _vrmLoadable.VrmDisposing += () => AvatarRenderers = Array.Empty<Renderer>();
 
             _useAvatarDropShadow

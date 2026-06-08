@@ -77,10 +77,10 @@ namespace Baku.VMagicMirror.IK
                 //NOTE: Shoulderが必須ボーンでは無い事に注意
                 var bones = new List<Transform>()
                     {
-                        info.controlRig.GetBoneTransform(HumanBodyBones.RightShoulder),
-                        info.controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm),
-                        info.controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm),
-                        info.controlRig.GetBoneTransform(HumanBodyBones.RightHand),
+                        info.AvatarBones.RightShoulder,
+                        info.AvatarBones.RightUpperArm,
+                        info.AvatarBones.RightLowerArm,
+                        info.AvatarBones.RightHand,
                     }
                     .Where(t => t != null)
                     .ToArray();
@@ -92,10 +92,10 @@ namespace Baku.VMagicMirror.IK
                 }
                 _lengthFromShoulderToWrist = sum;
                 
-                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                _head = info.AvatarBones.Head;
                 //NOTE: ここも肩ボーンはオプションなことに注意
-                _rightShoulder = info.controlRig.GetBoneTransform(HumanBodyBones.RightShoulder) ??
-                                 info.controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                _rightShoulder = info.AvatarBones.RightShoulder ??
+                                 info.AvatarBones.RightUpperArm;
                 
                 _hasModel = true;
             };

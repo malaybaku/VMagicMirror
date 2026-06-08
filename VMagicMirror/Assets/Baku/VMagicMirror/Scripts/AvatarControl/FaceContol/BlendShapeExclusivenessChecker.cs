@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private void CheckBlendShape(VrmLoadedInfo info)
         {
             //表情のセットアップで排他系の設定がちゃんとあると検出するクラス
-            var expr = info.instance.Vrm.Expression;
+            var expr = info.Instance.Vrm.Expression;
             
             var clipAboutOverride = expr.Clips.FirstOrDefault(c =>
                 c.Clip.OverrideBlink != ExpressionOverrideType.none ||

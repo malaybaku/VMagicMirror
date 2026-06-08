@@ -129,7 +129,7 @@ namespace Baku.VMagicMirror.VMCP
             
             _vrmLoadable.VrmLoaded += info =>
             {
-                var a = info.animator;
+                var a = info.Animator;
                 
                 foreach (var bone in UpperBodyBones)
                 {

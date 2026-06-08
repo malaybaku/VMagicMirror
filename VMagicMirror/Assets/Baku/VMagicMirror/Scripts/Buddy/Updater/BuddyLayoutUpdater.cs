@@ -104,11 +104,11 @@ namespace Baku.VMagicMirror.Buddy
                     continue;
                 }
 
-                var parentBone = info.animator.GetBoneTransformAscending(layout.ParentBone);
+                var parentBone = info.Animator.GetBoneTransformAscending(layout.ParentBone);
                 transform.SetParent(parentBone);
             }
 
-            _animator = info.animator;
+            _animator = info.Animator;
             _hasModel = true;
         }
 

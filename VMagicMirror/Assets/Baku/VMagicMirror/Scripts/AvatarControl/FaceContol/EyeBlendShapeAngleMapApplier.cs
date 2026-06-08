@@ -43,14 +43,14 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            if (info.instance.Vrm.LookAt.LookAtType != LookAtType.expression)
+            if (info.Instance.Vrm.LookAt.LookAtType != LookAtType.expression)
             {
                 _hasApplier = false;
                 return;
             }
 
             _hasApplier = true;
-            _applier = info.instance.Vrm.LookAt;
+            _applier = info.Instance.Vrm.LookAt;
         }
 
         private void OnVrmDisposed()

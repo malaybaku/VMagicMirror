@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
-using RootMotion.FinalIK;
 using UniGLTF.Extensions.VRMC_vrm;
 using R3;
 using UnityEngine;
@@ -314,26 +313,23 @@ namespace Baku.VMagicMirror
             var renderers = go.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
             {
-                //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
+                // NOTE: セルフシャドウを一応切っているが、URPではこのプロパティにあまり意味はない
                 r.receiveShadows = false;
             }
-            
-            var info = new VrmLoadedInfo()
-            {
-                modelVersion = _modelVersion.Value,
-                vrmRoot = go.transform,
-                animator = animator,
-                instance = instance,
-                fbbIk = setupResult.Fbbik,
-                leftLegIk = setupResult.LeftLegIk,
-                rightLegIk = setupResult.RightLegIk,
-                leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
-                rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
-                //NOTE: このbsがないことでエラーが起こるのはイベント購読側が悪い。
-                //blendShape = blendShapeProxy,
-                renderers = renderers,
-            };
-            
+
+            var info = new VrmLoadedInfo(
+                _modelVersion.Value,
+                go.transform,
+                animator,
+                instance,
+                setupResult.Fbbik,
+                setupResult.LeftLegIk,
+                setupResult.RightLegIk,
+                setupResult.LeftArmTwistRelaxer,
+                setupResult.RightArmTwistRelaxer,
+                renderers
+            );
+
             PreVrmLoaded?.Invoke(info);
             VrmLoaded?.Invoke(info);
             PostVrmLoaded?.Invoke(info);

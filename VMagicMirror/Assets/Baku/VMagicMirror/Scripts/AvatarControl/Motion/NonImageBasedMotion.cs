@@ -289,8 +289,8 @@ namespace Baku.VMagicMirror
         {
             vrmLoadable.VrmLoaded += info =>
             {
-                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
-                _neck = info.controlRig.GetBoneTransform(HumanBodyBones.Neck);
+                _head = info.AvatarBones.Head;
+                _neck = info.AvatarBones.Neck;
                 _hasNeck = _neck != null;
                 _hasModel = true;
             };

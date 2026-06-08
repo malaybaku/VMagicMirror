@@ -32,7 +32,6 @@ namespace Baku.VMagicMirror
             AvatarBones = new VRMAvatarBones(animator);
         }
         
-        public Vrm10RuntimeExpression RuntimeFacialExpression => Instance.Runtime.Expression;
         public CurrentModelVersion ModelVersion { get; }
         public Transform VrmRoot { get; }
         public Animator Animator { get; }
@@ -45,5 +44,7 @@ namespace Baku.VMagicMirror
         public TwistRelaxer LeftArmTwistRelaxer { get; }
         public TwistRelaxer RightArmTwistRelaxer { get; }
         public Renderer[] Renderers { get; }
+
+        public Vrm10RuntimeExpression RuntimeFacialExpression => Instance.Runtime.Expression;
     }
 }

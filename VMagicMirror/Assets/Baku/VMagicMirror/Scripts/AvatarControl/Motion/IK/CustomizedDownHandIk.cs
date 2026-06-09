@@ -19,23 +19,26 @@ namespace Baku.VMagicMirror
 
         private readonly HandDownIkCalculator _handDownIkCalculator;
         private readonly DeviceTransformController _deviceTransformController;
+        private readonly RuntimeTransformControlFactory _transformControlFactory;
         private readonly IMessageReceiver _receiver;
         private readonly IMessageSender _sender;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
         private readonly BodyMotionModeController _bodyMotionModeController;
 
-        private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new(false);
+        private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new(false);
+        private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new(false);
         public ReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
 
-        private readonly IKDataRecord _leftHand = new IKDataRecord();
+        private readonly IKDataRecord _leftHand = new();
         public IIKData LeftHand => _leftHand;
-        private readonly IKDataRecord _rightHand = new IKDataRecord();
+        private readonly IKDataRecord _rightHand = new();
         public IIKData RightHand => _rightHand;
 
-        private readonly ReactiveProperty<bool> _showGizmo = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _showGizmo = new(false);
+        private RuntimeTransformControlHandle _leftHandControl;
+        private RuntimeTransformControlHandle _rightHandControl;
         private bool _hasModel;
         private Transform _hips;
         private Transform _leftUpperArm;
@@ -47,7 +50,7 @@ namespace Baku.VMagicMirror
         private Vector3 _leftUpperArmPosOffset;
         private Vector3 _rightUpperArmPosOffset;
 
-        private readonly HandDownRestPose _currentPose = new HandDownRestPose();
+        private readonly HandDownRestPose _currentPose = new();
 
         public CustomizedDownHandIk(
             IKTargetTransforms ikTargetTransforms, 
@@ -56,6 +59,7 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IMessageSender sender,
             DeviceTransformController deviceTransformController,
+            RuntimeTransformControlFactory transformControlFactory,
             ICoroutineSource coroutineSource,
             BodyMotionModeController bodyMotionModeController
             )
@@ -67,12 +71,16 @@ namespace Baku.VMagicMirror
             _vrmLoadable = vrmLoadable;
             _handDownIkCalculator = handDownIkCalculator;
             _deviceTransformController = deviceTransformController;
+            _transformControlFactory = transformControlFactory;
             _coroutineSource = coroutineSource;
             _bodyMotionModeController = bodyMotionModeController;
         }
 
         public override void Initialize()
         {
+            _transformControlFactory.DisableExisting(_leftHandTarget.TargetTransform);
+            _transformControlFactory.DisableExisting(_rightHandTarget.TargetTransform);
+
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableCustomHandDownPose,
                 command => _enableCustomHandDownPose.Value = command.ToBoolean()
@@ -127,6 +135,7 @@ namespace Baku.VMagicMirror
                 _rightUpperArmPosOffset = Vector3.zero;
                 _leftHandTarget.TargetTransform.SetParent(null);
                 _rightHandTarget.TargetTransform.SetParent(null);
+                ReleaseTransformControls();
             };
 
             _deviceTransformController.ControlRequested
@@ -146,8 +155,7 @@ namespace Baku.VMagicMirror
                     _rightHandTarget.SetGizmoImageActiveness(gizmoVisible);
                     if (!gizmoVisible)
                     {
-                        _leftHandTarget.TransformControl.mode = TransformControl.TransformMode.None;
-                        _rightHandTarget.TransformControl.mode = TransformControl.TransformMode.None;
+                        ReleaseTransformControls();
                     }
                 })
                 .AddTo(this);
@@ -162,28 +170,11 @@ namespace Baku.VMagicMirror
                     }
                 });
             
-            //gizmoの操作が確定するとWPF側にも姿勢が送られる: ドラッグ操作の途中では内部的にのみ反映する
-            _leftHandTarget.TransformControl.DragEnded += mode =>
-            {
-                if (mode == TransformControl.TransformMode.None) return;
-                var pose = GetPoseFromTransform(_leftHandTarget.TargetTransform, true);
-                SetPose(pose);
-                SendPose();
-            };
-
-            _rightHandTarget.TransformControl.DragEnded += mode =>
-            {
-                if (mode == TransformControl.TransformMode.None) return;
-                var pose = GetPoseFromTransform(_rightHandTarget.TargetTransform, false);
-                SetPose(pose);
-                SendPose();
-            };
-            
             _coroutineSource.StartCoroutine(UpdateOnEndOfFrame());
         }
 
         //片方の手の位置を調整
-        IEnumerator UpdateOnEndOfFrame()
+        private IEnumerator UpdateOnEndOfFrame()
         {
             var eof = new WaitForEndOfFrame();
             while (true)
@@ -201,13 +192,13 @@ namespace Baku.VMagicMirror
                 }
 
                 //操作中のgizmoは逐一見てIKに反映
-                if (_leftHandTarget.TransformControl.IsDragging)
+                if (_leftHandControl?.Control != null && _leftHandControl.Control.IsDragging)
                 {
                     var pose = GetPoseFromTransform(_leftHandTarget.TargetTransform, true);
                     SetPose(pose);
                 }
 
-                if (_rightHandTarget.TransformControl.IsDragging)
+                if (_rightHandControl?.Control != null && _rightHandControl.Control.IsDragging)
                 {
                     var pose = GetPoseFromTransform(_rightHandTarget.TargetTransform, false);
                     SetPose(pose);
@@ -224,13 +215,17 @@ namespace Baku.VMagicMirror
 
         private void OnGizmoControlRequested(TransformControlRequest request)
         {
-            if (!_showGizmo.Value)
+            if (!_showGizmo.Value || !_hasModel)
             {
                 return;
             }
 
-            _leftHandTarget.TransformControl.global = request.WorldCoordinate;
-            _rightHandTarget.TransformControl.global = request.WorldCoordinate;
+            EnsureTransformControls();
+            var leftControl = _leftHandControl.Control;
+            var rightControl = _rightHandControl.Control;
+
+            leftControl.global = request.WorldCoordinate;
+            rightControl.global = request.WorldCoordinate;
 
             var rawMode = request.Mode;
             var useMode =
@@ -239,10 +234,10 @@ namespace Baku.VMagicMirror
             var mode = useMode ? rawMode : TransformControl.TransformMode.None;
             
             //scaleは許可されてないことに注意
-            _leftHandTarget.TransformControl.mode = mode;
-            _rightHandTarget.TransformControl.mode = mode;
-            _leftHandTarget.TransformControl.Control();
-            _rightHandTarget.TransformControl.Control();
+            leftControl.mode = mode;
+            rightControl.mode = mode;
+            leftControl.Control();
+            rightControl.Control();
         }
 
         private void ApplyHandDownPose(string poseJson)
@@ -362,6 +357,69 @@ namespace Baku.VMagicMirror
                 LeftRotation = ik.Rotation.eulerAngles,
             };
             SetPose(pose);
+        }
+
+        public override void Dispose()
+        {
+            ReleaseTransformControls();
+            base.Dispose();
+        }
+
+        private void EnsureTransformControls()
+        {
+            if (_leftHandControl?.Control == null)
+            {
+                _leftHandControl = _transformControlFactory.Create(_leftHandTarget.TargetTransform);
+                _leftHandControl.Control.DragEnded += OnLeftHandDragEnded;
+            }
+
+            if (_rightHandControl?.Control == null)
+            {
+                _rightHandControl = _transformControlFactory.Create(_rightHandTarget.TargetTransform);
+                _rightHandControl.Control.DragEnded += OnRightHandDragEnded;
+            }
+        }
+
+        private void ReleaseTransformControls()
+        {
+            if (_leftHandControl?.Control != null)
+            {
+                _leftHandControl.Control.DragEnded -= OnLeftHandDragEnded;
+                _leftHandControl.Dispose();
+            }
+
+            if (_rightHandControl?.Control != null)
+            {
+                _rightHandControl.Control.DragEnded -= OnRightHandDragEnded;
+                _rightHandControl.Dispose();
+            }
+
+            _leftHandControl = null;
+            _rightHandControl = null;
+        }
+
+        private void OnLeftHandDragEnded(TransformControl.TransformMode mode)
+        {
+            if (mode == TransformControl.TransformMode.None)
+            {
+                return;
+            }
+
+            var pose = GetPoseFromTransform(_leftHandTarget.TargetTransform, true);
+            SetPose(pose);
+            SendPose();
+        }
+
+        private void OnRightHandDragEnded(TransformControl.TransformMode mode)
+        {
+            if (mode == TransformControl.TransformMode.None)
+            {
+                return;
+            }
+
+            var pose = GetPoseFromTransform(_rightHandTarget.TargetTransform, false);
+            SetPose(pose);
+            SendPose();
         }
     }
 

@@ -1,4 +1,3 @@
-using mattatz.TransformControl;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -17,9 +16,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform steering;
         [SerializeField] private AnimationCurve angleToHeadYawRateCurve;
 
-        [SerializeField] private TransformControl transformControl = default;
-        public TransformControl TransformControl => transformControl;
-        
         public Transform RootTransform => transform;
         public Transform OffsetAddedTransform => offset;
         //NOTE: 実際はこの値が更にフリーレイアウトモードでスケールする…はず

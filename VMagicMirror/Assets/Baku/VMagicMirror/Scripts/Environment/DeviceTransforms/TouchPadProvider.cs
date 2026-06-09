@@ -1,5 +1,4 @@
 ﻿using Baku.VMagicMirror.Installer;
-using mattatz.TransformControl;
 using UnityEngine;
 using Zenject;
 
@@ -8,9 +7,6 @@ namespace Baku.VMagicMirror
     public class TouchPadProvider : MonoBehaviour
     {
         private MousePositionProvider _mousePositionProvider = null;
-
-        [SerializeField] private TransformControl transformControl = null;
-        public TransformControl TransformControl => transformControl;
 
         private TouchpadVisibilityView _visibilityView = null;
         public TouchpadVisibilityView GetVisibilityView()

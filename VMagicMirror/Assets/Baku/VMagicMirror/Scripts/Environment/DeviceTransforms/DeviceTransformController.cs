@@ -41,26 +41,35 @@ namespace Baku.VMagicMirror
         private float _gamepadModelScale = 1.0f;
         
         private SettingAutoAdjuster _settingAutoAdjuster;
+        private RuntimeTransformControlFactory _transformControlFactory;
         private HidTransformController _hidTransformController;
         private GamepadProvider _gamepad;
         private ArcadeStickProvider _arcadeStick;
         private CarHandleProvider _carHandle;
         private PenTabletProvider _penTable;
 
-        private TransformControl _keyboardControl;
-        private TransformControl _touchPadControl;
-        private TransformControl _midiControl;
-        private TransformControl _gamepadControl;
-        private TransformControl _arcadeStickControl;
-        private TransformControl _carHandleControl;
-        private TransformControl _penTabletControl;
+        private Transform _keyboardTransform;
+        private Transform _touchPadTransform;
+        private Transform _midiTransform;
+        private Transform _gamepadTransform;
+        private Transform _arcadeStickTransform;
+        private Transform _carHandleTransform;
+        private Transform _penTabletTransform;
+
+        private RuntimeTransformControlHandle _keyboardControl;
+        private RuntimeTransformControlHandle _touchPadControl;
+        private RuntimeTransformControlHandle _midiControl;
+        private RuntimeTransformControlHandle _gamepadControl;
+        private RuntimeTransformControlHandle _arcadeStickControl;
+        private RuntimeTransformControlHandle _carHandleControl;
+        private RuntimeTransformControlHandle _penTabletControl;
         private Transform _gamepadModelScaleTarget;
         
         private bool _preferWorldCoordinate;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
-        private TransformControl[] _transformControls;
-        private TransformControl[] TransformControls => _transformControls ??= new[]
+        private RuntimeTransformControlHandle[] _transformControls;
+        private RuntimeTransformControlHandle[] TransformControls => _transformControls ??= new[]
         {
             _keyboardControl,
             _touchPadControl,
@@ -110,6 +119,7 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IMessageSender sender,
             SettingAutoAdjuster settingAutoAdjuster,
+            RuntimeTransformControlFactory transformControlFactory,
             HidTransformController hidTransformController,
             KeyboardProvider keyboard,
             TouchPadProvider touchPad,
@@ -122,6 +132,7 @@ namespace Baku.VMagicMirror
         {
             _sender = sender;
             _settingAutoAdjuster = settingAutoAdjuster;
+            _transformControlFactory = transformControlFactory;
 
             _hidTransformController = hidTransformController;
             _gamepad = gamepad;
@@ -129,22 +140,30 @@ namespace Baku.VMagicMirror
             _carHandle = carHandle;
             _penTable = penTablet;
 
-            _keyboardControl = keyboard.TransformControl;
-            _touchPadControl = touchPad.TransformControl;
-            _midiControl = midiController.TransformControl;
-            _gamepadControl = gamepad.TransformControl;
-            _arcadeStickControl = arcadeStick.TransformControl;
-            _carHandleControl = carHandle.TransformControl;
-            _penTabletControl = penTablet.TransformControl;
+            _keyboardTransform = keyboard.transform;
+            _touchPadTransform = touchPad.transform;
+            _midiTransform = midiController.transform;
+            _gamepadTransform = gamepad.transform;
+            _arcadeStickTransform = arcadeStick.transform;
+            _carHandleTransform = carHandle.transform;
+            _penTabletTransform = penTablet.transform;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
+
+            _transformControlFactory.DisableExisting(_keyboardTransform);
+            _transformControlFactory.DisableExisting(_touchPadTransform);
+            _transformControlFactory.DisableExisting(_midiTransform);
+            _transformControlFactory.DisableExisting(_gamepadTransform);
+            _transformControlFactory.DisableExisting(_arcadeStickTransform);
+            _transformControlFactory.DisableExisting(_carHandleTransform);
+            _transformControlFactory.DisableExisting(_penTabletTransform);
             
-            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibilityView>();
-            _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibilityView>();
-            _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityView>();
-            _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityView>();
-            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityView>();
-            _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();
-            _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibilityView>();
+            _keyboardVisibility = keyboard.GetComponent<KeyboardVisibilityView>();
+            _touchPadVisibility =  touchPad.GetComponent<TouchpadVisibilityView>();
+            _gamepadVisibility = gamepad.GetComponent<GamepadVisibilityView>();
+            _arcadeStickVisibility = arcadeStick.GetComponent<ArcadeStickVisibilityView>();
+            _carHandleVisibility = carHandle.GetComponent<CarHandleVisibilityView>();
+            _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
+            _penTabletVisibility = penTablet.GetComponent<PenTabletVisibilityView>();
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,
@@ -167,22 +186,24 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _keyboardControl.mode = _keyboardVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            _touchPadControl.mode = _touchPadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            _gamepadControl.mode = _gamepadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            EnsureTransformControls();
+
+            _keyboardControl.Control.mode = _keyboardVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _touchPadControl.Control.mode = _touchPadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _gamepadControl.Control.mode = _gamepadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             //NOTE:
             // アケコンは実機スケールを重んじるため、スケール変化は認めない
             // 車のハンドルも物理ベースで同様に考えうるが、ハンドルについてはスケールがxyzで歪まないことだけ保証している
-            _arcadeStickControl.mode = _arcadeStickVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale 
+            _arcadeStickControl.Control.mode = _arcadeStickVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale
                 ? _mode
                 : TransformControl.TransformMode.None;
-            _carHandleControl.mode = _carHandleVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _carHandleControl.Control.mode = _carHandleVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _midiControl.Control.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _penTabletControl.Control.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
             foreach (var transformControl in TransformControls)
             {
-                transformControl.Control();
+                transformControl.Control.Control();
             }
             
             AdjustCarHandleScale();
@@ -193,7 +214,8 @@ namespace Baku.VMagicMirror
         //CarHandleのscaleのx,y,z成分が等しい状態にする
         private void AdjustCarHandleScale()
         {
-            if (_carHandleControl.mode != TransformControl.TransformMode.Scale)
+            if (_carHandleControl?.Control == null ||
+                _carHandleControl.Control.mode != TransformControl.TransformMode.Scale)
             {
                 return;
             }
@@ -201,7 +223,7 @@ namespace Baku.VMagicMirror
             const float ScaleDiffThreshold = 0.0001f;
 
             //scaleに仲間外れの値がある場合、その値が編集されたと見なして他2つの値を追従させる
-            var t = _carHandleControl.transform;
+            var t = _carHandleTransform;
             
             var scale = t.localScale;
 
@@ -261,10 +283,18 @@ namespace Baku.VMagicMirror
                 RawCanvas.gameObject.SetActive(IsDeviceFreeLayoutEnabled);
             }
 
-            foreach (var transformControl in TransformControls)
+            if (enable)
             {
-                transformControl.enabled = enable;
-                transformControl.mode = enable ? _mode : TransformControl.TransformMode.None;
+                EnsureTransformControls();
+                foreach (var transformControl in TransformControls)
+                {
+                    transformControl.Control.global = _preferWorldCoordinate;
+                    transformControl.Control.mode = _mode;
+                }
+            }
+            else
+            {
+                ReleaseTransformControls();
             }
         }
 
@@ -272,13 +302,13 @@ namespace Baku.VMagicMirror
         {
             var data = new DeviceLayoutsData()
             {
-                keyboard = ToItem(_keyboardControl.transform),
-                touchPad = ToItem(_touchPadControl.transform),
-                midi = ToItem(_midiControl.transform),
-                gamepad = ToItem(_gamepadControl.transform),
-                arcadeStick = ToItem(_arcadeStickControl.transform),
-                carHandle = ToItem(_carHandleControl.transform),
-                penTablet = ToItem(_penTabletControl.transform),
+                keyboard = ToItem(_keyboardTransform),
+                touchPad = ToItem(_touchPadTransform),
+                midi = ToItem(_midiTransform),
+                gamepad = ToItem(_gamepadTransform),
+                arcadeStick = ToItem(_arcadeStickTransform),
+                carHandle = ToItem(_carHandleTransform),
+                penTablet = ToItem(_penTabletTransform),
                 gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
             _sender?.SendCommand(MessageFactory.UpdateDeviceLayout(data));
@@ -308,13 +338,13 @@ namespace Baku.VMagicMirror
                 // TODO: Transform編集に関するコードのトレーサビリティが悪いのを直したい
                 // 具体的には、各ControlなりProviderなりのクラスからSetPosition系のメソッドが生えてると嬉しい
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
-                ApplyItem(data.keyboard, _keyboardControl.transform);
-                ApplyItem(data.touchPad, _touchPadControl.transform);
-                ApplyItem(data.midi, _midiControl.transform);
-                ApplyItem(data.gamepad, _gamepadControl.transform);
-                ApplyItem(data.arcadeStick, _arcadeStickControl.transform);
-                ApplyItem(data.carHandle, _carHandleControl.transform);
-                ApplyItem(data.penTablet, _penTabletControl.transform);
+                ApplyItem(data.keyboard, _keyboardTransform);
+                ApplyItem(data.touchPad, _touchPadTransform);
+                ApplyItem(data.midi, _midiTransform);
+                ApplyItem(data.gamepad, _gamepadTransform);
+                ApplyItem(data.arcadeStick, _arcadeStickTransform);
+                ApplyItem(data.carHandle, _carHandleTransform);
+                ApplyItem(data.penTablet, _penTabletTransform);
 
                 _gamepadModelScale = Mathf.Clamp(
                     data.gamepadModelScale,
@@ -420,12 +450,59 @@ namespace Baku.VMagicMirror
             }
 
             act();
+            if (!IsDeviceFreeLayoutEnabled)
+            {
+                return;
+            }
+
+            EnsureTransformControls();
             foreach (var transformControl in TransformControls)
             {
-                transformControl.global = _preferWorldCoordinate;
-                transformControl.mode = _mode;
+                transformControl.Control.global = _preferWorldCoordinate;
+                transformControl.Control.mode = _mode;
             }
         }
+
+        private void EnsureTransformControls()
+        {
+            _keyboardControl ??= _transformControlFactory.Create(_keyboardTransform);
+            _touchPadControl ??= _transformControlFactory.Create(_touchPadTransform);
+            _midiControl ??= _transformControlFactory.Create(_midiTransform);
+            _gamepadControl ??= _transformControlFactory.Create(_gamepadTransform);
+            _arcadeStickControl ??= _transformControlFactory.Create(_arcadeStickTransform);
+            _carHandleControl ??= _transformControlFactory.Create(_carHandleTransform);
+            _penTabletControl ??= _transformControlFactory.Create(_penTabletTransform);
+
+            _transformControls = new[]
+            {
+                _keyboardControl,
+                _touchPadControl,
+                _midiControl,
+                _gamepadControl,
+                _arcadeStickControl,
+                _carHandleControl,
+                _penTabletControl,
+            };
+        }
+
+        private void ReleaseTransformControls()
+        {
+            foreach (var transformControl in TransformControls)
+            {
+                transformControl?.Dispose();
+            }
+
+            _keyboardControl = null;
+            _touchPadControl = null;
+            _midiControl = null;
+            _gamepadControl = null;
+            _arcadeStickControl = null;
+            _carHandleControl = null;
+            _penTabletControl = null;
+            _transformControls = null;
+        }
+
+        private void OnDestroy() => ReleaseTransformControls();
     }
     
     [Serializable]

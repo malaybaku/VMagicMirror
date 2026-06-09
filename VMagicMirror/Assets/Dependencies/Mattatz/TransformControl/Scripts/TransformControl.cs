@@ -82,7 +82,7 @@ namespace mattatz.TransformControl
                 //Noneに立ち下がった場合、AutoUpdateがfalseであっても無視してRendererをただちに隠す
                 if (_mode != TransformMode.None && value == TransformMode.None)
                 {
-                    gizmoRenderer.SetMode(TransformMode.None);
+                    gizmoRenderer?.SetMode(TransformMode.None);
                 }
                 _mode = value;
             }
@@ -143,13 +143,15 @@ namespace mattatz.TransformControl
 
         private void Awake() => InitializeCircumferences();
 
-        private void Start()
+        public void Initialize(Camera cam)
         {
-            _cam = TransformControlCameraStore.Get();
+            _cam = cam != null ? cam : TransformControlCameraStore.Get();
             EnsureGizmoRenderer();
             gizmoRenderer.Target = transform;
             gizmoRenderer.TargetCamera = _cam;
         }
+
+        private void Start() => Initialize(TransformControlCameraStore.Get());
 
         private void Update()
         {

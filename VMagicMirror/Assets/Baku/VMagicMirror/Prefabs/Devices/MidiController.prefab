@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 2586501903739760161}
   - component: {fileID: 4156540200492103377}
   - component: {fileID: 1188981740233513778}
-  - component: {fileID: 435494030810225623}
   - component: {fileID: 3297202513737065057}
   - component: {fileID: 7281621472733091659}
   m_Layer: 0
@@ -31,12 +30,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4038568870611727366}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6837477534495436142
 MeshFilter:
@@ -57,11 +57,17 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -83,9 +89,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2586501903739760161
 MonoBehaviour:
@@ -124,7 +132,6 @@ MonoBehaviour:
   initPos: {x: 0, y: 0.85, z: 0.3}
   initRot: {x: 0, y: 0, z: 0}
   initScale: {x: 0.35, y: 0.35, z: 0.35}
-  _transformControl: {fileID: 435494030810225623}
 --- !u!114 &1188981740233513778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,23 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6424102d6128eb4fb79da7e55b4ac60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &435494030810225623
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4038568870611727366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  global: 0
-  useDistance: 1
-  distance: 12
-  xyPlaneMode: 0
-  gizmoRenderer: {fileID: 0}
 --- !u!114 &3297202513737065057
 MonoBehaviour:
   m_ObjectHideFlags: 0

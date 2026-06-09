@@ -59,6 +59,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,9 +85,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8941411347322145325
 MonoBehaviour:
@@ -126,7 +133,6 @@ GameObject:
   - component: {fileID: 1795383079595422825}
   - component: {fileID: 2065479404992935130}
   - component: {fileID: 4230855241644607740}
-  - component: {fileID: 21559323284940690}
   - component: {fileID: 627030824324925011}
   - component: {fileID: 7400727536925904230}
   - component: {fileID: 5887662914163986934}
@@ -209,7 +215,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  transformControl: {fileID: 21559323284940690}
 --- !u!114 &4230855241644607740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,23 +227,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0764e93bf2166748a4c5cc646bb3d40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &21559323284940690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2457249424336435430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  global: 0
-  useDistance: 1
-  distance: 12
-  xyPlaneMode: 0
-  gizmoRenderer: {fileID: 0}
 --- !u!114 &627030824324925011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +259,7 @@ MonoBehaviour:
   _monoInstallers:
   - {fileID: 5887662914163986934}
   _installerPrefabs: []
+  _findSiblingMonoInstallers: 0
   _autoRun: 1
   _kernel: {fileID: 0}
 --- !u!114 &5887662914163986934
@@ -345,6 +334,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -366,9 +360,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8763232601968147042
 MonoBehaviour:

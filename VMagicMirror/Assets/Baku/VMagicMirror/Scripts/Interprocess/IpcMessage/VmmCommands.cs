@@ -77,6 +77,7 @@
         // Motion, Arm
         EnableHidRandomTyping,
         EnableShoulderMotionModify,
+        ShoulderRotationOffset, // 0.1deg刻みを表す整数値を受け取り、プラスで肩が上がってマイナスで下がる
         EnableTypingHandDownTimeout,
         SetWaistWidth,
         SetElbowCloseStrength,

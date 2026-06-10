@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using R3;
 using RootMotion.FinalIK;
 using UnityEngine;
 using Zenject;
@@ -107,7 +108,9 @@ namespace Baku.VMagicMirror
         private float _rightHandDiffY = 0f;
 
         #endregion
-        
+
+        private readonly ReactiveProperty<float> _shoulderRotationOffset = new(0f);
+
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
@@ -122,7 +125,12 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.EnableWaitMotion,
                 command => EnableWaitMotion = command.ToBoolean()
-                );
+            );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.ShoulderRotationOffset,
+                command => _shoulderRotationOffset.Value = command.ToInt() * 0.1f
+            );
         }
 
         private bool _enableWaitMotion = true;
@@ -249,99 +257,98 @@ namespace Baku.VMagicMirror
                 rotRate * _staticRightShoulderEuler.y,
                 rotRate * (_staticRightShoulderEuler.z + _diffBasedRightRollDeg + _waitMotionBasedRightRollDeg)
             );
-            return;
+        }
 
-            void UpdateStaticRotation()
+        private void UpdateStaticRotation()
+        {
+            _staticLeftShoulderEuler = new Vector3(
+                0, 
+                Mathf.Clamp(
+                    Mathf.Asin(_leftElbowOrientation.z) * Mathf.Rad2Deg * angleScale, 
+                    yawMinDeg,
+                    yawMaxDeg
+                ),
+                Mathf.Clamp(
+                    -Mathf.Asin(_leftElbowOrientation.y) * Mathf.Rad2Deg * angleScale,
+                    -rollMaxDeg, 
+                    -rollMinDeg
+                ) - _shoulderRotationOffset.CurrentValue
+            );
+        
+            _staticRightShoulderEuler = new Vector3(
+                0, 
+                Mathf.Clamp(
+                    -Mathf.Asin(_rightElbowOrientation.z) * Mathf.Rad2Deg * angleScale,
+                    -yawMaxDeg,
+                    -yawMinDeg
+                ),
+                Mathf.Clamp(
+                    Mathf.Asin(_rightElbowOrientation.y) * Mathf.Rad2Deg * angleScale,
+                    rollMinDeg, 
+                    rollMaxDeg
+                ) + _shoulderRotationOffset.CurrentValue
+            );
+        }
+
+        //NOTE: 手のIK自体がキレイな値になっている前提で書かれています
+        private void UpdateDynamicRotation()
+        {
+            //最初のフレームは初期化だけで終わり
+            if (!_hasPrevFrameHandIkPosition)
             {
-                _staticLeftShoulderEuler = new Vector3(
-                    0, 
-                    Mathf.Clamp(
-                        Mathf.Asin(_leftElbowOrientation.z) * Mathf.Rad2Deg * angleScale, 
-                        yawMinDeg,
-                        yawMaxDeg
-                    ),
-                    Mathf.Clamp(
-                        -Mathf.Asin(_leftElbowOrientation.y) * Mathf.Rad2Deg * angleScale,
-                        -rollMaxDeg, 
-                        -rollMinDeg
-                    )
-                );
+                _prevLeftHandY = handIk.LeftHandPosition.y;
+                _prevRightHandY = handIk.RightHandPosition.y;
+
+                _leftHandDiffY = 0f;
+                _rightHandDiffY = 0f;
+                
+                _hasPrevFrameHandIkPosition = true;
+                return;
+            }
+
+            //書いてる手順の通りだが、積分値を角度にしたあとで範囲制限とか減衰をやっていく
             
-                _staticRightShoulderEuler = new Vector3(
-                    0, 
-                    Mathf.Clamp(
-                        -Mathf.Asin(_rightElbowOrientation.z) * Mathf.Rad2Deg * angleScale,
-                        -yawMaxDeg,
-                        -yawMinDeg
-                    ),
-                    Mathf.Clamp(
-                        Mathf.Asin(_rightElbowOrientation.y) * Mathf.Rad2Deg * angleScale,
-                        rollMinDeg, 
-                        rollMaxDeg
-                    )
+            var leftY =  handIk.LeftHandPosition.y;
+            _leftHandDiffY += leftY - _prevLeftHandY;
+            _diffBasedLeftRollDeg =
+                Mathf.Clamp(-_leftHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
+            
+            var rightY =  handIk.RightHandPosition.y;
+            _rightHandDiffY += rightY - _prevRightHandY;
+            _diffBasedRightRollDeg =
+                Mathf.Clamp(_rightHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
+
+            
+            _leftHandDiffY = Mathf.Clamp(
+                _leftHandDiffY,
+                -handDiffIntegrateFactor * _handDiffMax,
+                handDiffIntegrateFactor * _handDiffMax
                 );
-            }
+            _leftHandDiffY = Mathf.Lerp(_leftHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
 
-            //NOTE: 手のIK自体がキレイな値になっている前提で書かれています
-            void UpdateDynamicRotation()
-            {
-                //最初のフレームは初期化だけで終わり
-                if (!_hasPrevFrameHandIkPosition)
-                {
-                    _prevLeftHandY = handIk.LeftHandPosition.y;
-                    _prevRightHandY = handIk.RightHandPosition.y;
+            _rightHandDiffY = Mathf.Clamp(
+                _rightHandDiffY,
+                -handDiffIntegrateFactor * _handDiffMax,
+                handDiffIntegrateFactor * _handDiffMax
+            );
+            _rightHandDiffY = Mathf.Lerp(_rightHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
 
-                    _leftHandDiffY = 0f;
-                    _rightHandDiffY = 0f;
-                    
-                    _hasPrevFrameHandIkPosition = true;
-                    return;
-                }
+            _prevLeftHandY = leftY;
+            _prevRightHandY = rightY;
+        }
 
-                //書いてる手順の通りだが、積分値を角度にしたあとで範囲制限とか減衰をやっていく
-                
-                var leftY =  handIk.LeftHandPosition.y;
-                _leftHandDiffY += leftY - _prevLeftHandY;
-                _diffBasedLeftRollDeg =
-                    Mathf.Clamp(-_leftHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
-                
-                var rightY =  handIk.RightHandPosition.y;
-                _rightHandDiffY += rightY - _prevRightHandY;
-                _diffBasedRightRollDeg =
-                    Mathf.Clamp(_rightHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
-
-                
-                _leftHandDiffY = Mathf.Clamp(
-                    _leftHandDiffY,
-                    -handDiffIntegrateFactor * _handDiffMax,
-                    handDiffIntegrateFactor * _handDiffMax
-                    );
-                _leftHandDiffY = Mathf.Lerp(_leftHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
-
-                _rightHandDiffY = Mathf.Clamp(
-                    _rightHandDiffY,
-                    -handDiffIntegrateFactor * _handDiffMax,
-                    handDiffIntegrateFactor * _handDiffMax
-                );
-                _rightHandDiffY = Mathf.Lerp(_rightHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
-
-                _prevLeftHandY = leftY;
-                _prevRightHandY = rightY;
-            }
-
-            void UpdateWaitMotionBasedRotation()
-            {
-                var phase = Mathf.Repeat(
-                    (waitMotion.Phase - waitMotionPhaseDelay) * Mathf.PI * 2.0f,
-                    Mathf.PI * 2.0f
-                );
-                
-                //半角公式みたいな形にする: 肩は落とすと見栄えがわるいので、上げるほうにだけ動かすための式がコレです。
-                // float angle = waitMotionBasedAngleDeg * 0.5f * (1f - Mathf.Cos(phase));
-                var angle = - waitMotionBasedAngleDeg * Mathf.Cos(phase);
-                _waitMotionBasedLeftRollDeg = -angle;
-                _waitMotionBasedRightRollDeg = angle;
-            }
+        private void UpdateWaitMotionBasedRotation()
+        {
+            var phase = Mathf.Repeat(
+                (waitMotion.Phase - waitMotionPhaseDelay) * Mathf.PI * 2.0f,
+                Mathf.PI * 2.0f
+            );
+            
+            //半角公式みたいな形にする: 肩は落とすと見栄えがわるいので、上げるほうにだけ動かすための式がコレです。
+            // float angle = waitMotionBasedAngleDeg * 0.5f * (1f - Mathf.Cos(phase));
+            var angle = - waitMotionBasedAngleDeg * Mathf.Cos(phase);
+            _waitMotionBasedLeftRollDeg = -angle;
+            _waitMotionBasedRightRollDeg = angle;
         }
 
         private IEnumerator CheckElbowPostureOnEndOfFrame()

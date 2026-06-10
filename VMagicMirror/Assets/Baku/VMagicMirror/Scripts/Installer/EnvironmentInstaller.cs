@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<RuntimeTransformControlFactory>().AsSingle();
 
             container.BindInterfacesTo<CameraFovController>().AsSingle();
-            container.Bind<CameraUtilWrapper>().AsSingle();
+            container.BindInterfacesAndSelfTo<CameraUtilWrapper>().AsSingle();
             container.Bind<WindowStateRepository>().AsSingle();
 
             container.BindInterfacesTo<AntiAliasSettingSetter>().AsSingle();

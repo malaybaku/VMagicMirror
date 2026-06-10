@@ -6,13 +6,6 @@ namespace Baku.VMagicMirror
 {
     public sealed class RuntimeTransformControlFactory
     {
-        private readonly Camera _camera;
-
-        public RuntimeTransformControlFactory(Camera camera)
-        {
-            _camera = camera;
-        }
-
         public void DisableExisting(Transform target)
         {
             var control = target.GetComponent<TransformControl>();
@@ -34,7 +27,7 @@ namespace Baku.VMagicMirror
                 control = target.gameObject.AddComponent<TransformControl>();
             }
 
-            control.Initialize(_camera);
+            control.Initialize();
             control.enabled = true;
             control.mode = TransformControl.TransformMode.None;
             control.global = false;

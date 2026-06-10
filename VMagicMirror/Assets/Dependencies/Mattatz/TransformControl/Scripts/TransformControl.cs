@@ -143,15 +143,15 @@ namespace mattatz.TransformControl
 
         private void Awake() => InitializeCircumferences();
 
-        public void Initialize(Camera cam)
+        public void Initialize()
         {
-            _cam = cam != null ? cam : TransformControlCameraStore.Get();
+            _cam = TransformControlCameraStore.Get();
             EnsureGizmoRenderer();
             gizmoRenderer.Target = transform;
             gizmoRenderer.TargetCamera = _cam;
         }
 
-        private void Start() => Initialize(TransformControlCameraStore.Get());
+        private void Start() => Initialize();
 
         private void Update()
         {

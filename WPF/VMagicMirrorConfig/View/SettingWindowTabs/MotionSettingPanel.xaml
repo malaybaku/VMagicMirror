@@ -208,6 +208,7 @@
                             <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -216,30 +217,50 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Text="{DynamicResource Motion_Arm_WaistWidth}"/>
+                                   Margin="20,0,5,0"
+                                   IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                   Text="{DynamicResource Motion_Arm_ShoulderRotationOffset}"/>
                         <Slider Grid.Row="0" Grid.Column="1"
+                                x:Name="sliderShoulderRotationOffset"
+                                Minimum="-200"
+                                Maximum="200"
+                                SmallChange="1"
+                                LargeChange="10"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                Value="{Binding ShoulderRotationOffset.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="0" Grid.Column="2"
+                                 IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                 Text="{Binding Value, ElementName=sliderShoulderRotationOffset}"
+                                 />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="{DynamicResource Motion_Arm_WaistWidth}"/>
+                        <Slider Grid.Row="1" Grid.Column="1"
                                 x:Name="sliderSpineWaistWidth"
                                 Minimum="1"
                                 Maximum="100"
                                 Value="{Binding WaistWidth.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="0" Grid.Column="2"
+                        <TextBox Grid.Row="1" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderSpineWaistWidth}"
                                  />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0"
+                        <TextBlock Grid.Row="2" Grid.Column="0"
                                        Text="{DynamicResource Motion_Arm_ElbowCloseStrength}"/>
-                        <Slider Grid.Row="1" Grid.Column="1"
+                        <Slider Grid.Row="2" Grid.Column="1"
                                 x:Name="sliderElbowCloseStrength"
                                 Minimum="0"
                                 Maximum="100"
                                 Value="{Binding ElbowCloseStrength.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="1" Grid.Column="2"
+                        <TextBox Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderElbowCloseStrength}"
                                  />
 
-                        <CheckBox Grid.Row="2" Grid.Column="0"
+                        <CheckBox Grid.Row="3" Grid.Column="0"
                                   Grid.ColumnSpan="3"
                                   Margin="5" 
                                   Content="{DynamicResource Motion_Arm_FpsAssumedRightHand}"

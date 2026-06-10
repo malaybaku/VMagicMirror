@@ -145,6 +145,7 @@ namespace Baku.VMagicMirrorConfig
 
             EnableHidRandomTyping = new RProperty<bool>(setting.EnableHidRandomTyping, v => SendMessage(MessageFactory.EnableHidRandomTyping(v)));
             EnableShoulderMotionModify = new RProperty<bool>(setting.EnableShoulderMotionModify, v => SendMessage(MessageFactory.EnableShoulderMotionModify(v)));
+            ShoulderRotationOffset = new RProperty<int>(setting.ShoulderRotationOffset, v => SendMessage(MessageFactory.ShoulderRotationOffset(v)));
             EnableHandDownTimeout = new RProperty<bool>(setting.EnableHandDownTimeout, v => SendMessage(MessageFactory.EnableTypingHandDownTimeout(v)));
             WaistWidth = new RProperty<int>(setting.WaistWidth, v => SendMessage(MessageFactory.SetWaistWidth(v)));
             ElbowCloseStrength = new RProperty<int>(setting.ElbowCloseStrength, v => SendMessage(MessageFactory.SetElbowCloseStrength(v)));
@@ -281,6 +282,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableHidRandomTyping { get; }
         public RProperty<bool> EnableShoulderMotionModify { get; }
+        public RProperty<int> ShoulderRotationOffset { get; }
         public RProperty<bool> EnableHandDownTimeout { get; }
 
         public RProperty<int> WaistWidth { get; }
@@ -365,6 +367,7 @@ namespace Baku.VMagicMirrorConfig
 
             EnableHidRandomTyping.Value = setting.EnableHidRandomTyping;
             EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
+            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
             EnableHandDownTimeout.Value = setting.EnableHandDownTimeout;
             WaistWidth.Value = setting.WaistWidth;
             ElbowCloseStrength.Value = setting.ElbowCloseStrength;

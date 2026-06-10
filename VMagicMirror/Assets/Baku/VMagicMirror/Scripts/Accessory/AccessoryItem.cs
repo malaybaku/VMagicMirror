@@ -22,7 +22,6 @@ namespace Baku.VMagicMirror
         
         [SerializeField] private Renderer imageRenderer;
         [SerializeField] private Transform modelParent;
-        [SerializeField] private TransformControl transformControl;
         
         public AccessoryItemLayout ItemLayout { get; private set; }
         public string FileId => _file?.FileId ?? "";
@@ -30,6 +29,8 @@ namespace Baku.VMagicMirror
         private AccessoryFile _file = null;
         private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
+        private RuntimeTransformControlFactory _transformControlFactory = null;
+        private RuntimeTransformControlHandle _transformControl = null;
 
         private VRMAvatarBones _avatarBones;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones = new();
@@ -158,10 +159,12 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="cam"></param>
         /// <param name="file"></param>
-        public void Initialize(Camera cam, AccessoryFile file)
+        public void Initialize(Camera cam, AccessoryFile file, RuntimeTransformControlFactory transformControlFactory)
         {
             _cam = cam;
             _file = file;
+            _transformControlFactory = transformControlFactory;
+            _transformControlFactory.DisableExisting(transform);
 
             SetVisibility(false);
         }
@@ -169,6 +172,7 @@ namespace Baku.VMagicMirror
         //ファイル等から動的ロードしたものも含めて、アクセサリのリソースを解放し、ゲームオブジェクトを破棄します。
         public void Dispose()
         {
+            ReleaseTransformControl();
             _fileActions?.Dispose();
             Destroy(gameObject);
         }
@@ -204,11 +208,6 @@ namespace Baku.VMagicMirror
             _fileActions?.SetClampEndEnable(false);
         }
 
-        private void Start()
-        {
-            transformControl.DragEnded += UpdateLayout;
-        }
-
         private void Update()
         {
             if (ShouldBeVisible)
@@ -230,9 +229,9 @@ namespace Baku.VMagicMirror
         private void LateUpdate()
         {
             UpdateIfBillboard();
-            if (ShouldAdjustBillboard)
+            if (ShouldAdjustBillboard && _transformControl?.Control != null)
             {
-                transformControl.RequestUpdateGizmo();
+                _transformControl.Control.RequestUpdateGizmo();
             }
         }
 
@@ -241,10 +240,7 @@ namespace Baku.VMagicMirror
             _blinkCts.Cancel();
             _blinkCts.Dispose();
 
-            if (transformControl != null)
-            {
-                transformControl.DragEnded -= UpdateLayout;
-            }
+            ReleaseTransformControl();
         }
 
         private void InitializeImage(AccessoryFile file)
@@ -296,7 +292,7 @@ namespace Baku.VMagicMirror
             {
                 imageRenderer.gameObject.SetActive(false);
                 modelParent.gameObject.SetActive(false);
-                transformControl.mode = TransformControl.TransformMode.None;
+                ReleaseTransformControl();
                 return;
             }
 
@@ -342,8 +338,7 @@ namespace Baku.VMagicMirror
                 ItemLayout.UseBillboardMode = false;
             }
             //ビルボードモードではLateUpdateでアイテムを動かすときがGizmoの更新タイミングになるので、手動更新にする
-            transformControl.AutoUpdateGizmo = !ItemLayout.UseBillboardMode;
-            transformControl.XyPlaneMode = ItemLayout.UseBillboardMode;
+            ApplyTransformControlSettings();
             
             SetVisibility(ShouldBeVisible);
             
@@ -431,7 +426,7 @@ namespace Baku.VMagicMirror
             transform.SetParent(null);
             _avatarBones = null;
             _attachBones.Clear();
-            transformControl.mode = TransformControl.TransformMode.None;
+            ReleaseTransformControl();
             SetVisibility(false);
         }
 
@@ -441,21 +436,22 @@ namespace Baku.VMagicMirror
         /// <param name="request"></param>
         public void ControlItemTransform(TransformControlRequest request)
         {
-            if (_avatarBones == null && ItemLayout == null)
+            if (_avatarBones == null || ItemLayout == null)
             {
                 return;
             }
 
-            transformControl.global = request.WorldCoordinate;
             //NOTE: 表情やモーションに付随して一瞬表示されるような状態に対しては位置編集UIは出さない
             var visible = ItemLayout.IsVisible;
-            transformControl.mode = visible ? request.Mode : TransformControl.TransformMode.None;
-
             if (!visible)
             {
+                ReleaseTransformControl();
                 return;
             }
 
+            var transformControl = EnsureTransformControl();
+            transformControl.global = request.WorldCoordinate;
+            transformControl.mode = request.Mode;
             transformControl.Control();
 
             //スケールについては1軸だけいじったとき、残りの2軸を追従させる
@@ -486,7 +482,7 @@ namespace Baku.VMagicMirror
         /// <summary> フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。 </summary>
         public void EndControlItemTransform()
         {
-            transformControl.mode = TransformControl.TransformMode.None;
+            ReleaseTransformControl();
         }
         
         //Unity上でTransformControlによって改変したPosition/Rotation/Scaleがある場合に呼び出すことで、layoutを更新します。
@@ -593,7 +589,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (transformControl.IsDragging)
+            if (_transformControl?.Control != null && _transformControl.Control.IsDragging)
             {
                 //NOTE: ここをガードすると一時的にrotationとかz軸方向の移動がヘンになる事があるが、それは許容する
                 return;
@@ -644,6 +640,44 @@ namespace Baku.VMagicMirror
                 camTransform.rotation *
                 //NOTE: 180度ひっくり返すのは、カメラに対して正面向きにする必要があるため
                 Quaternion.Euler(0, 180, ItemLayout.Rotation.z);
+        }
+
+        private TransformControl EnsureTransformControl()
+        {
+            if (_transformControl?.Control != null)
+            {
+                return _transformControl.Control;
+            }
+
+            _transformControl = _transformControlFactory.Create(transform);
+            _transformControl.Control.DragEnded += UpdateLayout;
+            ApplyTransformControlSettings();
+            return _transformControl.Control;
+        }
+
+        private void ReleaseTransformControl()
+        {
+            if (_transformControl?.Control == null)
+            {
+                _transformControl = null;
+                return;
+            }
+
+            _transformControl.Control.DragEnded -= UpdateLayout;
+            _transformControl.Dispose();
+            _transformControl = null;
+        }
+
+        private void ApplyTransformControlSettings()
+        {
+            if (_transformControl?.Control == null || ItemLayout == null)
+            {
+                return;
+            }
+
+            //ビルボードモードではLateUpdateでアイテムを動かすときがGizmoの更新タイミングになるので、手動更新にする
+            _transformControl.Control.AutoUpdateGizmo = !ItemLayout.UseBillboardMode;
+            _transformControl.Control.XyPlaneMode = ItemLayout.UseBillboardMode;
         }
     }
 }

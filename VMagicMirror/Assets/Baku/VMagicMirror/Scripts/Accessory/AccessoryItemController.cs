@@ -23,6 +23,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private AccessoryItem itemPrefab = null;
 
         private Camera _cam;
+        private RuntimeTransformControlFactory _transformControlFactory;
         private IMessageSender _sender;
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
@@ -35,6 +36,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
+            RuntimeTransformControlFactory transformControlFactory,
             FaceSwitchUpdater faceSwitchUpdater,
             DeviceTransformController deviceTransformController,
             WordToMotionAccessoryRequest accessoryRequest,
@@ -43,6 +45,7 @@ namespace Baku.VMagicMirror
             )
         {
             _cam = cam;
+            _transformControlFactory = transformControlFactory;
             _sender = sender;
 
             vrmLoader.VrmLoaded += info =>
@@ -170,7 +173,7 @@ namespace Baku.VMagicMirror
             foreach (var file in files)
             {
                 var item = Instantiate(itemPrefab);
-                item.Initialize(_cam, file);
+                item.Initialize(_cam, file, _transformControlFactory);
                 item.FirstEnabled += OnItemFirstEnabled;
                 if (_hasModel)
                 {

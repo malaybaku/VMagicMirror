@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using mattatz.TransformControl;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -34,9 +33,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private Vector3 basePosition = new Vector3(0f, .93f, 0.3f);
         [SerializeField] private Vector3 baseRotation = new Vector3(-20f, 0f, 0f);
-
-        [SerializeField] private TransformControl transformControl = default;
-        public TransformControl TransformControl => transformControl;
 
         private void Awake()
         {

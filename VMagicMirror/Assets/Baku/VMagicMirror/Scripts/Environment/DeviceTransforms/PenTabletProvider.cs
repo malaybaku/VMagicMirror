@@ -1,6 +1,5 @@
 ﻿using Baku.VMagicMirror.IK;
 using Baku.VMagicMirror.Installer;
-using mattatz.TransformControl;
 using UnityEngine;
 using Zenject;
 
@@ -16,9 +15,6 @@ namespace Baku.VMagicMirror
     {
         private MousePositionProvider _mousePositionProvider = null;
 
-        [SerializeField] private TransformControl transformControl = null;
-        public TransformControl TransformControl => transformControl;
-        
         [SerializeField] private Vector3 basePosition = new Vector3(.15f, .98f, 0.12f);
         [SerializeField] private Vector3 baseRotation = new Vector3(60f, 0f, 0f);
         [SerializeField] private Vector3 baseScale = new Vector3(.3f, .2f, 1f);

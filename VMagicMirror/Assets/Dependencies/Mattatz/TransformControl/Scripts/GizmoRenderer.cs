@@ -81,14 +81,7 @@ namespace mattatz.TransformControl
         {
             if (targetCamera == null)
             {
-                //It is better to avoid to pass this line
-                targetCamera = Camera.main;
-            }
-
-            if (targetCamera == null)
-            {
-                //This line passes only when scene or code setup has some problems
-                Debug.LogError("TransformControl cannot find main camera");
+                Debug.LogError("TransformControl target camera is not initialized");
                 return;
             }
 

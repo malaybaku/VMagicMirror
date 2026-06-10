@@ -163,6 +163,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> EnableHidRandomTyping => _model.EnableHidRandomTyping;
         public RProperty<bool> EnableShoulderMotionModify => _model.EnableShoulderMotionModify;
+        public RProperty<int> ShoulderRotationOffset => _model.ShoulderRotationOffset;
         public RProperty<bool> EnableHandDownTimeout => _model.EnableHandDownTimeout;
         public RProperty<int> WaistWidth => _model.WaistWidth;
         public RProperty<int> ElbowCloseStrength => _model.ElbowCloseStrength;

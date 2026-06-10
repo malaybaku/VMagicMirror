@@ -117,6 +117,7 @@
 
         public bool EnableHidRandomTyping { get; set; } = false;
         public bool EnableShoulderMotionModify { get; set; } = true;
+        public int ShoulderRotationOffset { get; set; } = 0;
         public bool EnableHandDownTimeout { get; set; } = true;
 
         public int WaistWidth { get; set; } = 30;
@@ -203,6 +204,7 @@
 
             EnableHidRandomTyping = false;
             EnableShoulderMotionModify = true;
+            ShoulderRotationOffset = 0;
             EnableHandDownTimeout = true;
             WaistWidth = 30;
             ElbowCloseStrength = 30;

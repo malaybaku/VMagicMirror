@@ -98,6 +98,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableHidRandomTyping(bool enable) => BoolContent(VmmCommands.EnableHidRandomTyping, enable);
         public static Message EnableShoulderMotionModify(bool enable) => BoolContent(VmmCommands.EnableShoulderMotionModify, enable);
+        public static Message ShoulderRotationOffset(int offset) => IntContent(VmmCommands.ShoulderRotationOffset, offset);
         public static Message EnableTypingHandDownTimeout(bool enable) => BoolContent(VmmCommands.EnableTypingHandDownTimeout, enable);
         public static Message SetWaistWidth(int waistWidthCentimeter) => IntContent(VmmCommands.SetWaistWidth, waistWidthCentimeter);
         public static Message SetElbowCloseStrength(int strengthPercent) => IntContent(VmmCommands.SetElbowCloseStrength, strengthPercent);

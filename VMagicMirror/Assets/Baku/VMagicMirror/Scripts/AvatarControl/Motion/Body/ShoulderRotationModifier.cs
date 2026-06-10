@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
 
         //基準長はMegumi Baxterさんの体型。(https://hub.vroid.com/characters/9003440353945198963/models/7418874241157618732)
         //Headボーンの高さ. コレ以外の値はSettingAutoAdjusterとかにも載ってます
-        public const float ReferenceHeadHeight = 1.176175f;
+        private const float ReferenceHeadHeight = 1.176175f;
         
         [SerializeField] private HandIKIntegrator handIk = null;
         [SerializeField] private WaitingBodyMotion waitMotion = null;
@@ -236,7 +236,7 @@ namespace Baku.VMagicMirror
             }
 
             //IKが効かない = ビルトインモーションが動いてるはずなので、この場合は肩も止める
-            float rotRate = _rightHandEffector.positionWeight;
+            var rotRate = _rightHandEffector.positionWeight;
 
             _leftShoulder.localRotation = Quaternion.Euler(
                 0,
@@ -249,7 +249,8 @@ namespace Baku.VMagicMirror
                 rotRate * _staticRightShoulderEuler.y,
                 rotRate * (_staticRightShoulderEuler.z + _diffBasedRightRollDeg + _waitMotionBasedRightRollDeg)
             );
-            
+            return;
+
             void UpdateStaticRotation()
             {
                 _staticLeftShoulderEuler = new Vector3(
@@ -299,12 +300,12 @@ namespace Baku.VMagicMirror
 
                 //書いてる手順の通りだが、積分値を角度にしたあとで範囲制限とか減衰をやっていく
                 
-                float leftY =  handIk.LeftHandPosition.y;
+                var leftY =  handIk.LeftHandPosition.y;
                 _leftHandDiffY += leftY - _prevLeftHandY;
                 _diffBasedLeftRollDeg =
                     Mathf.Clamp(-_leftHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
                 
-                float rightY =  handIk.RightHandPosition.y;
+                var rightY =  handIk.RightHandPosition.y;
                 _rightHandDiffY += rightY - _prevRightHandY;
                 _diffBasedRightRollDeg =
                     Mathf.Clamp(_rightHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
@@ -330,14 +331,14 @@ namespace Baku.VMagicMirror
 
             void UpdateWaitMotionBasedRotation()
             {
-                float phase = Mathf.Repeat(
+                var phase = Mathf.Repeat(
                     (waitMotion.Phase - waitMotionPhaseDelay) * Mathf.PI * 2.0f,
                     Mathf.PI * 2.0f
                 );
                 
                 //半角公式みたいな形にする: 肩は落とすと見栄えがわるいので、上げるほうにだけ動かすための式がコレです。
                 // float angle = waitMotionBasedAngleDeg * 0.5f * (1f - Mathf.Cos(phase));
-                float angle = - waitMotionBasedAngleDeg * Mathf.Cos(phase);
+                var angle = - waitMotionBasedAngleDeg * Mathf.Cos(phase);
                 _waitMotionBasedLeftRollDeg = -angle;
                 _waitMotionBasedRightRollDeg = angle;
             }

@@ -55,10 +55,10 @@ namespace Baku.VMagicMirror
                 _rightLegIk.solver.Update();
             }
 
+            _spineBoneModifier.Apply();
             _mediaPipeHandLocalRotLimiter.LateUpdate();
             _vrmaMotionSetter.ApplyUpdate();
             _armMuscleInterpolator.Update();
-            _spineBoneModifier.Apply();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

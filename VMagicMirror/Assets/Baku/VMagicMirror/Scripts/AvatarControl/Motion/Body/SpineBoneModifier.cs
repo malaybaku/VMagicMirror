@@ -1,28 +1,26 @@
+using System.Collections.Generic;
 using R3;
+using RootMotion.FinalIK;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class SpineBoneModifier : PresenterBase
     {
+        private const float PositiveAngleFactor = 0.3f;
+        private const float NegativeAngleFactor = 0.2f;
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
 
         private bool _hasModel;
-        private static readonly float[] SpineBoneAngleWeights = { 0.4f, 0.4f, 0.2f };
-        private readonly Transform[] _spineBones = new Transform[3];
+        private readonly List<Transform> _spineBones = new(3);
         // neckがない場合はhead
         private Transform _neckBone;
-        // shoulderがない場合はupperArm
-        private Transform _leftShoulder;
-        private Transform _rightShoulder;
+        private FullBodyBipedIK _fbbik;
         
         private readonly ReactiveProperty<int> _spineAngleOffset = new(0);
         
-        public SpineBoneModifier(
-            IMessageReceiver receiver,
-            IVRMLoadable vrmLoadable)
+        public SpineBoneModifier(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
@@ -38,20 +36,15 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _spineBones[0] = info.AvatarBones.Spine;
-            _spineBones[1] = info.AvatarBones.Chest;
-            _spineBones[2] = info.AvatarBones.UpperChest;
-            if (_spineBones[1] == null) _spineBones[1] = _spineBones[0];
-            if (_spineBones[2] == null) _spineBones[2] = _spineBones[1];
+            if (info.AvatarBones.Spine != null) _spineBones.Add(info.AvatarBones.Spine);
+            if (info.AvatarBones.Chest != null) _spineBones.Add(info.AvatarBones.Chest);
+            if (info.AvatarBones.UpperChest != null) _spineBones.Add(info.AvatarBones.UpperChest);
 
             _neckBone = info.AvatarBones.Neck;
             if (_neckBone == null) _neckBone = info.AvatarBones.Head;
-            
-            _leftShoulder = info.AvatarBones.LeftShoulder;
-            if (_leftShoulder == null) _leftShoulder = info.AvatarBones.LeftUpperArm;
 
-            _rightShoulder = info.AvatarBones.RightShoulder;
-            if (_rightShoulder == null) _rightShoulder = info.AvatarBones.RightUpperArm;
+            _fbbik = info.FbbIk;
+            _fbbik.solver.OnPreRead += Apply;
             
             _hasModel = true;
         }
@@ -59,32 +52,33 @@ namespace Baku.VMagicMirror
         private void OnVrmUnloaded()
         {
             _hasModel = false;
-            _spineBones[0] = null;
-            _spineBones[1] = null;
-            _spineBones[2] = null;
+            
+            if (_fbbik != null)
+            {
+                _fbbik.solver.OnPreRead -= Apply;
+            }
+            _fbbik = null;
+            _spineBones.Clear();
             _neckBone = null;
-            _leftShoulder = null;
-            _rightShoulder = null;
         }
 
-        public void Apply()
+        private void Apply()
         {
-            if (!_hasModel)
+            if (!_hasModel || _spineAngleOffset.CurrentValue == 0)
             {
                 return;
             }
 
-            var angle = (float) _spineAngleOffset.CurrentValue;
-            for (var i = 0; i < _spineBones.Length; i++)
+            var angleFactor = _spineAngleOffset.CurrentValue > 0 ? PositiveAngleFactor : NegativeAngleFactor;
+            var angle = _spineAngleOffset.CurrentValue * angleFactor;
+            var dividedAngle = angle / _spineBones.Count;
+            foreach (var spineBone in _spineBones)
             {
-                var spineBone = _spineBones[i];
-                spineBone.localRotation *= Quaternion.Euler(angle * SpineBoneAngleWeights[i], 0, 0);
+                spineBone.localRotation *= Quaternion.Euler(dividedAngle, 0, 0);
             }
 
-            // 肩ボーンも逆回転させないと腕が後ろ向きになっちゃうので少し打ち消す。多少腰より後ろに行くようにする
+            // 腰を曲げたぶんが頭の向きに影響しないように打ち消す
             _neckBone.localRotation *= Quaternion.Euler(-angle, 0, 0);
-            _leftShoulder.localRotation *= Quaternion.Euler(-angle * .4f, 0, 0);
-            _rightShoulder.localRotation *= Quaternion.Euler(-angle * .4f, 0, 0);
         }
     }
 }

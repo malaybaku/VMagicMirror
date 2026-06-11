@@ -135,8 +135,8 @@
                                        Text="{DynamicResource Motion_FullBody_SpineAngleOffset}"/>
                             <Slider Grid.Column="1"
                                     x:Name="sliderSpineAngleOffset"
-                                    Minimum="-30"
-                                    Maximum="30"
+                                    Minimum="-100"
+                                    Maximum="100"
                                     SmallChange="1"
                                     LargeChange="10"
                                     TickFrequency="1"

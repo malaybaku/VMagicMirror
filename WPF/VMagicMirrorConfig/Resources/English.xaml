@@ -393,7 +393,9 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
 - Turn on "Free Layout Mode"</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">Reset Hand Down Pose to Default</sys:String>
     <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">Game Locomotion Setting...</sys:String>
-    
+
+    <sys:String x:Key="Motion_ShoulderAndBack">Shoulder / Back</sys:String>
+
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">Arm</sys:String>    
     <sys:String x:Key="Motion_Arm_EnableHidMotion">Enable Typing / Mouse Motion</sys:String>

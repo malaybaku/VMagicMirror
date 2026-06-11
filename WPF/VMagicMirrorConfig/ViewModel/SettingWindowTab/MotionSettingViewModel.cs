@@ -26,6 +26,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetArmMotionSettingCommand = new ActionCommand(
                  () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetArmSetting)
                  );
+            ResetShoulderAndBackMotionSettingCommand = new ActionCommand(
+                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetShoulderAndBackSetting)
+                 );
             ResetHandMotionSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetHandSetting)
                 );
@@ -186,6 +189,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public ActionCommand ResetCustomHandDownPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
+        public ActionCommand ResetShoulderAndBackMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }
         public ActionCommand ResetWaitMotionSettingCommand { get; }
     }

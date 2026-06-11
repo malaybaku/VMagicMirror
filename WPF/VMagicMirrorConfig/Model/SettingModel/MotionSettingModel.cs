@@ -369,14 +369,20 @@ namespace Baku.VMagicMirrorConfig
             GamepadMotionMode.Value = setting.GamepadMotionMode;
 
             EnableHidRandomTyping.Value = setting.EnableHidRandomTyping;
-            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
-            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
             EnableHandDownTimeout.Value = setting.EnableHandDownTimeout;
             WaistWidth.Value = setting.WaistWidth;
             ElbowCloseStrength.Value = setting.ElbowCloseStrength;
             EnableFpsAssumedRightHand.Value = setting.EnableFpsAssumedRightHand;
             ShowPresentationPointer.Value = setting.ShowPresentationPointer;
             PresentationArmRadiusMin.Value = setting.PresentationArmRadiusMin;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            var setting = MotionSetting.Default;
+            SpineAngleOffset.Value = setting.SpineAngleOffset;
+            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
+            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
         }
 
         public void ResetHandSetting()
@@ -401,11 +407,11 @@ namespace Baku.VMagicMirrorConfig
             EnableNoHandTrackMode.Value = setting.EnableNoHandTrackMode;
             EnableGameInputLocomotionMode.Value = setting.EnableGameInputLocomotionMode;
             EnableTwistBodyMotion.Value = setting.EnableTwistBodyMotion;
-            SpineAngleOffset.Value = setting.SpineAngleOffset;
             EnableCustomHandDownPose.Value = setting.EnableCustomHandDownPose;
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

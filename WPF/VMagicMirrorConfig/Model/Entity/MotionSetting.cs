@@ -205,14 +205,19 @@
             GamepadMotionMode = 0;
 
             EnableHidRandomTyping = false;
-            EnableShoulderMotionModify = true;
-            ShoulderRotationOffset = 0;
             EnableHandDownTimeout = true;
             WaistWidth = 30;
             ElbowCloseStrength = 30;
             EnableFpsAssumedRightHand = false;
             ShowPresentationPointer = false;
             PresentationArmRadiusMin = 20;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            SpineAngleOffset = 0;
+            EnableShoulderMotionModify = true;
+            ShoulderRotationOffset = 0;
         }
 
         public void ResetHandSetting()
@@ -234,12 +239,12 @@
             EnableNoHandTrackMode = false;
             EnableGameInputLocomotionMode = false;
             EnableTwistBodyMotion = false;
-            SpineAngleOffset = 0;
             EnableCustomHandDownPose = false;
             CustomHandDownPose = "";
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

@@ -392,7 +392,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 フリーレイアウトモードを有効にします</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">手の位置をデフォルトにリセット</sys:String>
     <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">ゲーム入力の詳細設定…</sys:String>
-    
+
+    <sys:String x:Key="Motion_ShoulderAndBack">肩・背中</sys:String>
+
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>
     <sys:String x:Key="Motion_Arm_EnableHidMotion">タイピング / マウス動作を反映</sys:String>

@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class SpineBoneModifier : PresenterBase, ITickable
+    public class SpineBoneModifier : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
@@ -67,8 +67,6 @@ namespace Baku.VMagicMirror
             _rightShoulder = null;
         }
 
-        void ITickable.Tick() => Apply();
-        
         public void Apply()
         {
             if (!_hasModel)

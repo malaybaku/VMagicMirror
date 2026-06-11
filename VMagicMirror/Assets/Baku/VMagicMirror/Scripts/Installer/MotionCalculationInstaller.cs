@@ -56,6 +56,7 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<LateUpdateSourceAfterFinalIK>().FromNewComponentOnNewGameObject().AsSingle();
 
             container.BindInterfacesAndSelfTo<ArmMuscleInterpolator>().AsSingle();
+            container.BindInterfacesAndSelfTo<SpineBoneModifier>().AsSingle();
             container.BindInterfacesTo<LateUpdateAfterFinalIKRunner>().AsSingle();
         }
     }

@@ -23,6 +23,8 @@
 
         public bool EnableTwistBodyMotion { get; set; } = false;
 
+        public int SpineAngleOffset { get; set; } = 0;
+
         public bool EnableCustomHandDownPose { get; set; } = false;
 
         //NOTE: jsonがUnityから飛んでくるのを保持するだけ
@@ -232,6 +234,7 @@
             EnableNoHandTrackMode = false;
             EnableGameInputLocomotionMode = false;
             EnableTwistBodyMotion = false;
+            SpineAngleOffset = 0;
             EnableCustomHandDownPose = false;
             CustomHandDownPose = "";
             ResetFaceBasicSetting();

@@ -85,6 +85,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableNoHandTrackMode(bool enable) => BoolContent(VmmCommands.EnableNoHandTrackMode, enable);
         public static Message EnableGameInputLocomotionMode(bool enable) => BoolContent(VmmCommands.EnableGameInputLocomotionMode, enable);
         public static Message EnableTwistBodyMotion(bool enable) => BoolContent(VmmCommands.EnableTwistBodyMotion, enable);
+        public static Message SetSpineAngleOffset(int offset) => IntContent(VmmCommands.SetSpineAngleOffset, offset);
 
         public static Message EnableCustomHandDownPose(bool enable) => BoolContent(VmmCommands.EnableCustomHandDownPose, enable);
         public static Message SetHandDownModeCustomPose(string poseJson) => StringContent(VmmCommands.SetHandDownModeCustomPose, poseJson);

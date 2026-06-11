@@ -55,6 +55,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -121,17 +122,43 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                              Margin="5,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       Text="{DynamicResource Motion_FullBody_SpineAngleOffset}"/>
+                            <Slider Grid.Column="1"
+                                    x:Name="sliderSpineAngleOffset"
+                                    Minimum="-30"
+                                    Maximum="30"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding SpineAngleOffset.Value, Mode=TwoWay}"
+                                    />
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding Value, ElementName=sliderSpineAngleOffset}"
+                                     />
+                        </Grid>
+
+                        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
                                   Margin="5,15,5,0"
                                   IsChecked="{Binding EnableCustomHandDownPose.Value}"
                                   Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose}"/>
-                        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                        <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
                                   Margin="20,2,15,5"
                                   Visibility="{Binding EnableCustomHandDownPose.Value,
                                                       Converter={StaticResource BooleanToVisibilityConverter}}"
                                   IsChecked="{Binding EnableDeviceFreeLayout.Value}"
                                   Content="{DynamicResource Layout_DeviceFreeLayout}"/>
-                        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                        <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
                                 Width="NaN"
                                 HorizontalAlignment="Left"
                                 Margin="20,5"
@@ -140,7 +167,7 @@
                                 Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose_Reset}"
                                 Command="{Binding ResetCustomHandDownPoseCommand}"
                                 />
-                        <Border Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
+                        <Border Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
                                 Style="{StaticResource SideMarginSectionBorder}"
                                 HorizontalAlignment="Left"
                                 Margin="20,5,10,5"
@@ -160,7 +187,7 @@
                             </StackPanel>
                         </Border>
 
-                        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
+                        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2"
                                 Width="NaN"
                                 HorizontalAlignment="Left"
                                 Margin="20,5"

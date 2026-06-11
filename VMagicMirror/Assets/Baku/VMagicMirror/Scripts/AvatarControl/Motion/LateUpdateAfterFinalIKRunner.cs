@@ -13,6 +13,7 @@ namespace Baku.VMagicMirror
         private readonly MediaPipeHandLocalRotLimiter _mediaPipeHandLocalRotLimiter;
         private readonly VrmaMotionSetter _vrmaMotionSetter;
         private readonly ArmMuscleInterpolator _armMuscleInterpolator;
+        private readonly SpineBoneModifier _spineBoneModifier;
         private LimbIK _leftLegIk;
         private LimbIK _rightLegIk;
         private bool _hasModel;
@@ -23,7 +24,8 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             MediaPipeHandLocalRotLimiter mediaPipeHandLocalRotLimiter,
             VrmaMotionSetter vrmaMotionSetter,
-            ArmMuscleInterpolator armMuscleInterpolator
+            ArmMuscleInterpolator armMuscleInterpolator,
+            SpineBoneModifier spineBoneModifier
             )
         {
             _source = source;
@@ -31,6 +33,7 @@ namespace Baku.VMagicMirror
             _mediaPipeHandLocalRotLimiter = mediaPipeHandLocalRotLimiter;
             _vrmaMotionSetter = vrmaMotionSetter;
             _armMuscleInterpolator = armMuscleInterpolator;
+            _spineBoneModifier = spineBoneModifier;
         }
         
         public override void Initialize()
@@ -55,6 +58,7 @@ namespace Baku.VMagicMirror
             _mediaPipeHandLocalRotLimiter.LateUpdate();
             _vrmaMotionSetter.ApplyUpdate();
             _armMuscleInterpolator.Update();
+            _spineBoneModifier.Apply();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

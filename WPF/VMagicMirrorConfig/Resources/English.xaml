@@ -385,6 +385,7 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">Enable Twist Motion</sys:String>    
+    <sys:String x:Key="Motion_FullBody_SpineAngleOffset">Bend Back</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">Custom Hand Down Pose</sys:String>    
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Notice">*Pose adjuster appears on Free Layout Mode</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">To edit hand pose,

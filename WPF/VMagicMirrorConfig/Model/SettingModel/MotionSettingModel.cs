@@ -38,6 +38,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.EnableGameInputLocomotionMode, v => SendMessage(MessageFactory.EnableGameInputLocomotionMode(v))
                 );
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(MessageFactory.EnableTwistBodyMotion(v)));
+            SpineAngleOffset = new RProperty<int>(setting.SpineAngleOffset, v => SendMessage(MessageFactory.SetSpineAngleOffset(v)));
             EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(MessageFactory.EnableCustomHandDownPose(v)));
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(MessageFactory.SetHandDownModeCustomPose(v)));
 
@@ -191,6 +192,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableGameInputLocomotionMode { get; }
 
         public RProperty<bool> EnableTwistBodyMotion { get; }
+
+        public RProperty<int> SpineAngleOffset { get; }
 
         public RProperty<bool> EnableCustomHandDownPose { get; }
 
@@ -398,6 +401,7 @@ namespace Baku.VMagicMirrorConfig
             EnableNoHandTrackMode.Value = setting.EnableNoHandTrackMode;
             EnableGameInputLocomotionMode.Value = setting.EnableGameInputLocomotionMode;
             EnableTwistBodyMotion.Value = setting.EnableTwistBodyMotion;
+            SpineAngleOffset.Value = setting.SpineAngleOffset;
             EnableCustomHandDownPose.Value = setting.EnableCustomHandDownPose;
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();

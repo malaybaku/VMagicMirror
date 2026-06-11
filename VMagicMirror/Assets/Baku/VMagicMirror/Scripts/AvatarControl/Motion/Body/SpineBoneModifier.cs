@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
 {
     public class SpineBoneModifier : PresenterBase
     {
-        private const float PositiveAngleFactor = 0.3f;
+        private const float PositiveAngleFactor = 0.4f;
         private const float NegativeAngleFactor = 0.2f;
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;

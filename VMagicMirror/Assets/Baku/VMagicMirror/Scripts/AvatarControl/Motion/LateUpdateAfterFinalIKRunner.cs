@@ -23,8 +23,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             MediaPipeHandLocalRotLimiter mediaPipeHandLocalRotLimiter,
             VrmaMotionSetter vrmaMotionSetter,
-            ArmMuscleInterpolator armMuscleInterpolator,
-            SpineBoneModifier spineBoneModifier
+            ArmMuscleInterpolator armMuscleInterpolator
             )
         {
             _source = source;

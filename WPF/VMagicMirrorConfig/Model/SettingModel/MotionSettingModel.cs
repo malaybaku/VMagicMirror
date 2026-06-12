@@ -38,6 +38,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.EnableGameInputLocomotionMode, v => SendMessage(MessageFactory.EnableGameInputLocomotionMode(v))
                 );
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(MessageFactory.EnableTwistBodyMotion(v)));
+            SpineAngleOffset = new RProperty<int>(setting.SpineAngleOffset, v => SendMessage(MessageFactory.SetSpineAngleOffset(v)));
             EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(MessageFactory.EnableCustomHandDownPose(v)));
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(MessageFactory.SetHandDownModeCustomPose(v)));
 
@@ -191,6 +192,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableGameInputLocomotionMode { get; }
 
         public RProperty<bool> EnableTwistBodyMotion { get; }
+
+        public RProperty<int> SpineAngleOffset { get; }
 
         public RProperty<bool> EnableCustomHandDownPose { get; }
 
@@ -366,14 +369,20 @@ namespace Baku.VMagicMirrorConfig
             GamepadMotionMode.Value = setting.GamepadMotionMode;
 
             EnableHidRandomTyping.Value = setting.EnableHidRandomTyping;
-            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
-            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
             EnableHandDownTimeout.Value = setting.EnableHandDownTimeout;
             WaistWidth.Value = setting.WaistWidth;
             ElbowCloseStrength.Value = setting.ElbowCloseStrength;
             EnableFpsAssumedRightHand.Value = setting.EnableFpsAssumedRightHand;
             ShowPresentationPointer.Value = setting.ShowPresentationPointer;
             PresentationArmRadiusMin.Value = setting.PresentationArmRadiusMin;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            var setting = MotionSetting.Default;
+            SpineAngleOffset.Value = setting.SpineAngleOffset;
+            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
+            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
         }
 
         public void ResetHandSetting()
@@ -402,6 +411,7 @@ namespace Baku.VMagicMirrorConfig
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

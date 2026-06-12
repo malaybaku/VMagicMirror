@@ -100,6 +100,7 @@
         EnableGameInputLocomotionMode,
         EnableTwistBodyMotion,
         EnableBodyLeanZ,
+        SetSpineAngleOffset, // 1deg刻みの値で、Spine ~ UpperChestに回転が分配される
 
         // Motion, Face
         EnableFaceTracking,

@@ -23,6 +23,8 @@
 
         public bool EnableTwistBodyMotion { get; set; } = false;
 
+        public int SpineAngleOffset { get; set; } = 0;
+
         public bool EnableCustomHandDownPose { get; set; } = false;
 
         //NOTE: jsonがUnityから飛んでくるのを保持するだけ
@@ -203,14 +205,19 @@
             GamepadMotionMode = 0;
 
             EnableHidRandomTyping = false;
-            EnableShoulderMotionModify = true;
-            ShoulderRotationOffset = 0;
             EnableHandDownTimeout = true;
             WaistWidth = 30;
             ElbowCloseStrength = 30;
             EnableFpsAssumedRightHand = false;
             ShowPresentationPointer = false;
             PresentationArmRadiusMin = 20;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            SpineAngleOffset = 0;
+            EnableShoulderMotionModify = true;
+            ShoulderRotationOffset = 0;
         }
 
         public void ResetHandSetting()
@@ -237,6 +244,7 @@
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

@@ -59,6 +59,7 @@ namespace Baku.VMagicMirrorConfig
                 v => SendMessage(MessageFactory.FixedShadowWhenLocomotionActiveEnable(v))
                 );
 
+            EnableBloom = new RProperty<bool>(s.EnableBloom, b => SendMessage(MessageFactory.BloomEnable(b)));
             BloomIntensity = new RProperty<int>(s.BloomIntensity, i => SendMessage(MessageFactory.BloomIntensity(i)));
             BloomThreshold = new RProperty<int>(s.BloomThreshold, i => SendMessage(MessageFactory.BloomThreshold(i)));
             Action sendBloomColor = () =>
@@ -156,6 +157,7 @@ namespace Baku.VMagicMirrorConfig
 
         #region Bloom
 
+        public RProperty<bool> EnableBloom { get; }
         public RProperty<int> BloomIntensity { get; }
         public RProperty<int> BloomThreshold { get; }
 
@@ -255,6 +257,7 @@ namespace Baku.VMagicMirrorConfig
         public void ResetBloomSetting()
         {
             var setting = LightSetting.Default;
+            EnableBloom.Value = setting.EnableBloom;
             BloomR.Value = setting.BloomR;
             BloomG.Value = setting.BloomG;
             BloomB.Value = setting.BloomB;

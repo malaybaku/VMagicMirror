@@ -259,6 +259,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #region Bloom
 
+        public RProperty<bool> EnableBloom => _model.EnableBloom;
         public RProperty<int> BloomIntensity => _model.BloomIntensity;
         public RProperty<int> BloomThreshold => _model.BloomThreshold;
 

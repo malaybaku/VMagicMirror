@@ -615,6 +615,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">下半身モーションの適用時には適用</sys:String>
         
     <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Enable">エフェクトを有効化</sys:String>
     <sys:String x:Key="Bloom_Color">Bloomの色</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>

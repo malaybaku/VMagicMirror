@@ -229,6 +229,7 @@
         FixedShadowAlwaysEnable,
         FixedShadowWhenLocomotionActiveEnable,
 
+        BloomEnable,
         BloomIntensity,
         BloomThreshold,
         BloomColor,

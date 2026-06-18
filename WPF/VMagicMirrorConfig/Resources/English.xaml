@@ -615,6 +615,7 @@ Translate (2 way):
     <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">Apply When Locomotion is Active</sys:String>
     
     <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Enable">Enable Effect</sys:String>
     <sys:String x:Key="Bloom_Color">Bloom Color</sys:String>
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>

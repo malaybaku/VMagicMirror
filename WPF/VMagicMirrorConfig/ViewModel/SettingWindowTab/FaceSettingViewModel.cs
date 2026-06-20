@@ -100,7 +100,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public bool ShowInstallPathWarning { get; }
 
-        public RProperty<bool> AutoBlinkDuringFaceTracking => _model.AutoBlinkDuringFaceTracking;
         public RProperty<bool> EnableBodyLeanZ => _model.EnableBodyLeanZ;
         public RProperty<bool> EnableBlinkAdjust => _model.EnableBlinkAdjust;
         public RProperty<bool> EnableVoiceBasedMotion => _model.EnableVoiceBasedMotion;

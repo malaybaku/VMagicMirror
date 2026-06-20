@@ -43,7 +43,6 @@ namespace Baku.VMagicMirrorConfig
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(MessageFactory.SetHandDownModeCustomPose(v)));
 
             EnableFaceTracking = new RProperty<bool>(setting.EnableFaceTracking, v => SendMessage(MessageFactory.EnableFaceTracking(v)));
-            AutoBlinkDuringFaceTracking = new RProperty<bool>(setting.AutoBlinkDuringFaceTracking, v => SendMessage(MessageFactory.AutoBlinkDuringFaceTracking(v)));
             EnableBodyLeanZ = new RProperty<bool>(setting.EnableBodyLeanZ, v => SendMessage(MessageFactory.EnableBodyLeanZ(v)));
             EnableBlinkAdjust = new RProperty<bool>(setting.EnableBlinkAdjust, v =>
             {
@@ -207,8 +206,6 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableFaceTracking { get; }
 
-        public RProperty<bool> AutoBlinkDuringFaceTracking { get; }
-
         public RProperty<bool> EnableBodyLeanZ { get; }
 
         public RProperty<bool> EnableBlinkAdjust { get; }
@@ -325,7 +322,6 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             EnableFaceTracking.Value = setting.EnableFaceTracking;
             CameraDeviceName.Value = setting.CameraDeviceName;
-            AutoBlinkDuringFaceTracking.Value = setting.AutoBlinkDuringFaceTracking;
 
             EnableVoiceBasedMotion.Value = setting.EnableVoiceBasedMotion;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;

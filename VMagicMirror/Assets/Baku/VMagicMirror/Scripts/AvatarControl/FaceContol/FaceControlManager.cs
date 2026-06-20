@@ -1,5 +1,4 @@
 ﻿using Baku.VMagicMirror.MediaPipeTracker;
-using R3;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -23,11 +22,6 @@ namespace Baku.VMagicMirror
         private MediaPipeBlink _mediaPipeBlink;
         private MediaPipeEyeJitter _mediaPipeEyeJitter;
 
-        // TODO: 今このオプションは使えていないが、高品質/ExTrackerについてoptionalに有効化できるようにしたい。
-        // - 軽量では常にAutoBlinkでよい
-        // - フラグ自体はこのクラスから引っ越してもよい (_config内に入れるのが無難かも)
-        private readonly ReactiveProperty<bool> AutoBlinkOnWebCamLowPower = new(true);
-        
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, 
@@ -41,7 +35,6 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
-            receiver.BindBoolProperty(VmmCommands.AutoBlinkDuringFaceTracking, AutoBlinkOnWebCamLowPower);
             receiver.AssignCommandHandler(
                 VmmCommands.FaceDefaultFun,
                 message => DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
@@ -68,7 +61,6 @@ namespace Baku.VMagicMirror
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
                 FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
-                // NOTE: MediaPipeの軽量モードは諸説ある (_autoBlinkを強制する or 設定次第にする)
                 FaceControlModes.WebCamLowPower => autoBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };

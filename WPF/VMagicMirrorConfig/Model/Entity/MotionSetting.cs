@@ -36,8 +36,6 @@
 
         public bool EnableFaceTracking { get; set; } = true;
 
-        public bool AutoBlinkDuringFaceTracking { get; set; } = true;
-
         public bool EnableBodyLeanZ { get; set; } = false;
 
         public bool EnableBlinkAdjust { get; set; } = true;
@@ -154,7 +152,6 @@
         {
             EnableFaceTracking = true;
             CameraDeviceName = "";
-            AutoBlinkDuringFaceTracking = true;
             EnableBodyLeanZ = false;
 
             EnableVoiceBasedMotion = true;

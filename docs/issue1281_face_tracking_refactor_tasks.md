@@ -30,8 +30,8 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 ## WPF Tasks
 
-- [ ] `MotionSetting` から `AutoBlinkDuringFaceTracking` を削除する。
-- [ ] `MotionSettingModel` から `AutoBlinkDuringFaceTracking` を削除する。
+- [x] `MotionSetting` から `AutoBlinkDuringFaceTracking` を削除する。
+- [x] `MotionSettingModel` から `AutoBlinkDuringFaceTracking` を削除する。
 - [ ] `MotionSetting` に「カメラで検出したまばたきを適用」用の bool 設定を追加する。デフォルトは ON。
 - [ ] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
 - [ ] `MotionSetting` に「動きをすばやく反映」用の bool 設定を追加する。デフォルトは ON。
@@ -65,7 +65,7 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 ## IPC Tasks
 
-- [ ] WPF / Unity 共通の `VmmCommands` から `AutoBlinkDuringFaceTracking` を削除する。
+- [x] WPF / Unity 共通の `VmmCommands` から `AutoBlinkDuringFaceTracking` を削除する。
 - [ ] `EnableWebCamHighPowerMode` コマンドを、実態に合う名前へ変更する。
 - [ ] 「カメラで検出したまばたきを適用」用の IPC コマンドを追加する。
 - [ ] 「動きをすばやく反映」用の IPC コマンドを追加する。
@@ -76,7 +76,7 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 ## Unity Tasks
 
-- [ ] `FaceControlConfigurationReceiver` から `AutoBlinkDuringFaceTracking` 依存をなくす。
+- [x] `FaceControlManager` から `AutoBlinkDuringFaceTracking` 依存をなくす。
 - [ ] `FaceControlConfigurationReceiver` で、新しい「表情をカメラでトラッキング」コマンドを受ける。
 - [ ] `FaceControlConfiguration` の `WebCamHighPower` コメントや意味が新仕様と矛盾しないように整理する。
 - [ ] MediaPipe FaceLandmarker の BlendShape 出力 ON/OFF を「表情をカメラでトラッキング」に基づかせる。
@@ -110,5 +110,6 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - Unity のコンパイルチェックはしないでよい。
 - Codex は差分を生成して確認するが、commit までは行わない。
 - commit はユーザーが差分を読んだうえで行う。
-- 文字列リソースは日本語と英語のみメンテナンスし、中国語のローカライズはしない。
+- 文字列リソースの追加 / 変更は日本語と英語のみメンテナンスし、中国語のローカライズはしない。
 - 中国語文言はユーザーが妥当性を判断できないため、必要な場合は英語へ fallback させる方針とする。
+- 機能廃止などで絶対に使われなくなる中国語リソースキーは削除してよい。

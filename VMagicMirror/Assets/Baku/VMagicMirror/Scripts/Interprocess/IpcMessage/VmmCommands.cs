@@ -105,7 +105,6 @@
         // Motion, Face
         EnableFaceTracking,
         SetCameraDeviceName,
-        AutoBlinkDuringFaceTracking,
         EnableHeadRotationBasedBlinkAdjust,
         EnableLipSyncBasedBlinkAdjust,
         EnableVoiceBasedMotion,

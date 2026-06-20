@@ -120,7 +120,6 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableFaceTracking(bool enable) => BoolContent(VmmCommands.EnableFaceTracking, enable);
         public static Message SetCameraDeviceName(string deviceName) => StringContent(VmmCommands.SetCameraDeviceName, deviceName);
-        public static Message AutoBlinkDuringFaceTracking(bool enable) => BoolContent(VmmCommands.AutoBlinkDuringFaceTracking, enable);
         public static Message EnableBodyLeanZ(bool enable) => BoolContent(VmmCommands.EnableBodyLeanZ, enable);
         public static Message EnableLipSyncBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableLipSyncBasedBlinkAdjust, enable);
         public static Message EnableHeadRotationBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableHeadRotationBasedBlinkAdjust, enable);

@@ -103,6 +103,10 @@
 - In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode">Mouse pointer look-at</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Always">Always look</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_CameraOffOnly">Look when camera is off</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Never">Never look</sys:String>
     
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>

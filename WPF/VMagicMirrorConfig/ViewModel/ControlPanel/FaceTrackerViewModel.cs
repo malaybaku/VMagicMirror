@@ -78,8 +78,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
             _motionModel.EnableImageBasedHandTracking.AddWeakEventHandler(OnHandTrackingEnabledChanged);
+            _motionModel.WebCamMouseLookAtMode.AddWeakEventHandler(OnWebCamMouseLookAtModeChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
             UpdateBaseMode();
+            UpdateWebCamMouseLookAtMode();
 
             LoadFaceSwitchSetting();
         }
@@ -122,6 +124,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void OnWebCamHighPowerModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
         private void OnEnableExternalTrackingChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
+
+        private void OnWebCamMouseLookAtModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateWebCamMouseLookAtMode();
 
         private void UpdateBaseMode()
         {
@@ -200,8 +204,37 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> UseLookAtPointMousePointer => _motionModel.UseLookAtPointMousePointer;
         public RProperty<bool> UseLookAtPointMainCamera => _motionModel.UseLookAtPointMainCamera;
 
+        public RProperty<bool> EnableWebCamApplyBlink => _motionModel.EnableWebCamApplyBlink;
+        public RProperty<bool> EnableWebCamQuickMotion => _motionModel.EnableWebCamQuickMotion;
 
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync => _motionModel.EnableWebCameraHighPowerModeLipSync;
+
+        public WebCamMouseLookAtModeItemViewModel[] WebCamMouseLookAtModeItems { get; } =
+            WebCamMouseLookAtModeItemViewModel.LoadAvailableItems();
+
+        private WebCamMouseLookAtModeItemViewModel? _selectedWebCamMouseLookAtMode;
+        public WebCamMouseLookAtModeItemViewModel? SelectedWebCamMouseLookAtMode
+        {
+            get => _selectedWebCamMouseLookAtMode;
+            set
+            {
+                if (value == null || _selectedWebCamMouseLookAtMode?.Mode == value.Mode)
+                {
+                    return;
+                }
+
+                _selectedWebCamMouseLookAtMode = value;
+                _motionModel.WebCamMouseLookAtMode.Value = value.Mode;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void UpdateWebCamMouseLookAtMode()
+        {
+            _selectedWebCamMouseLookAtMode = WebCamMouseLookAtModeItems
+                .FirstOrDefault(item => item.Mode == _motionModel.WebCamMouseLookAtMode.Value);
+            RaisePropertyChanged(nameof(SelectedWebCamMouseLookAtMode));
+        }
 
         private ActionCommand? _calibrateWebCameraCommand;
         public ActionCommand CalibrateWebCameraCommand => _calibrateWebCameraCommand ??= new ActionCommand(CalibrateWebCamera);
@@ -396,5 +429,39 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand EndExTrackerIfNeededCommand { get; }      
 
         #endregion
+    }
+
+    public class WebCamMouseLookAtModeItemViewModel : ViewModelBase
+    {
+        private const string DisplayNameKeyPrefix = "FaceTracker_WebCamMouseLookAtMode_";
+
+        private WebCamMouseLookAtModeItemViewModel(int mode, string displayNameKeySuffix)
+        {
+            Mode = mode;
+            _displayNameKeySuffix = displayNameKeySuffix;
+            LanguageSelector.Instance.LanguageChanged += RefreshDisplayName;
+            RefreshDisplayName();
+        }
+
+        public int Mode { get; }
+
+        private readonly string _displayNameKeySuffix;
+
+        private string _displayName = "";
+        public string DisplayName
+        {
+            get => _displayName;
+            private set => SetValue(ref _displayName, value);
+        }
+
+        private void RefreshDisplayName()
+            => DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + _displayNameKeySuffix);
+
+        public static WebCamMouseLookAtModeItemViewModel[] LoadAvailableItems() =>
+        [
+            new WebCamMouseLookAtModeItemViewModel(MotionSetting.WebCamMouseLookAtModeAlways, "Always"),
+            new WebCamMouseLookAtModeItemViewModel(MotionSetting.WebCamMouseLookAtModeCameraOffOnly, "CameraOffOnly"),
+            new WebCamMouseLookAtModeItemViewModel(MotionSetting.WebCamMouseLookAtModeNever, "Never"),
+        ];
     }
 }

@@ -7,6 +7,10 @@
         public const int KeyboardMouseMotionPresentation = 1;
         public const int KeyboardMouseMotionPenTablet = 2;
 
+        public const int WebCamMouseLookAtModeCameraOffOnly = 0;
+        public const int WebCamMouseLookAtModeAlways = 1;
+        public const int WebCamMouseLookAtModeNever = 2;
+
 
         /// <summary>
         /// NOTE: 規約としてこの値は書き換えません。
@@ -45,7 +49,12 @@
 
         public bool DisableFaceTrackingHorizontalFlip { get; set; } = false;
 
+        // NOTE: 設定ファイル互換のため名称は据え置きだが、実体は「表情をカメラでトラッキング」するかどうかを表す。
         public bool EnableWebCamHighPowerMode { get; set; } = false;
+        public bool EnableWebCamApplyBlink { get; set; } = true;
+        public bool EnableWebCamQuickMotion { get; set; } = true;
+        public int WebCamMouseLookAtMode { get; set; } = WebCamMouseLookAtModeCameraOffOnly;
+
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool EnableImageBasedElbowTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
@@ -166,6 +175,9 @@
             AdjustLipSyncByVolume = true;
 
             EnableWebCamHighPowerMode = false;
+            EnableWebCamApplyBlink = true;
+            EnableWebCamQuickMotion = true;
+            WebCamMouseLookAtMode = WebCamMouseLookAtModeCameraOffOnly;
             EnableWebCameraHighPowerModeLipSync = false;
             // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
             // FaceEyeSettingのリセットと紐づける必要はない

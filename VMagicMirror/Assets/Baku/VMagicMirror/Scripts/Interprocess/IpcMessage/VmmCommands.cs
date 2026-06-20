@@ -122,6 +122,9 @@
 
         // Motion, Face, WebCam high power mode
         EnableWebCamHighPowerMode,
+        EnableWebCamApplyBlink,
+        EnableWebCamQuickMotion,
+        SetWebCamMouseLookAtMode,
         EnableWebCameraHighPowerModeLipSync,
 
         SetWebCamEyeOpenBlinkValue,

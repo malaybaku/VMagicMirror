@@ -91,35 +91,22 @@
                               />
 
                     <Grid Margin="15,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="{DynamicResource Motion_Eye_LookAtPoint}"
-                                   Margin="0,5"
+                                   Margin="0,5,10,5"
                                    />
 
-                        <CheckBox Grid.Row="1" Grid.Column="0"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointMousePointer.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
-                        <CheckBox Grid.Row="1" Grid.Column="1"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointMainCamera.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
-                        <CheckBox Grid.Row="1" Grid.Column="2"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointNone.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding WebCamMouseLookAtModeItems}"
+                                  SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
+                                  DisplayMemberPath="DisplayName"
+                                  md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                  />
                     </Grid>
 
                     <Button Width="NaN" 
@@ -239,36 +226,23 @@
                     <Grid Margin="15,10"
                           Visibility="{Binding EnableWebCamera.Value, 
                                                Converter={StaticResource BooleanReverseToVisibilityConverter}}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        <TextBlock Grid.Column="0"
                                    Text="{DynamicResource Motion_Eye_LookAtPoint_WebCamHighPower}"
-                                   Margin="0,5"
+                                   Margin="0,5,10,5"
                                    />
 
-                        <CheckBox Grid.Row="1" Grid.Column="0"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointMousePointer.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
-                        <CheckBox Grid.Row="1" Grid.Column="1"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointMainCamera.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
-                        <CheckBox Grid.Row="1" Grid.Column="2"
-                                  HorizontalAlignment="Left"
-                                  Margin="5"
-                                  IsChecked="{Binding UseLookAtPointNone.Value}"
-                                  Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding WebCamMouseLookAtModeItems}"
+                                  SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
+                                  DisplayMemberPath="DisplayName"
+                                  md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                  />
                     </Grid>
 
                     <Grid>

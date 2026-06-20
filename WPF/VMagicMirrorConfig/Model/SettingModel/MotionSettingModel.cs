@@ -56,6 +56,9 @@ namespace Baku.VMagicMirrorConfig
             DisableFaceTrackingHorizontalFlip = new RProperty<bool>(setting.DisableFaceTrackingHorizontalFlip, v => SendMessage(MessageFactory.DisableFaceTrackingHorizontalFlip(v)));
 
             EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamHighPowerMode(v)));
+            EnableWebCamApplyBlink = new RProperty<bool>(setting.EnableWebCamApplyBlink, v => SendMessage(MessageFactory.EnableWebCamApplyBlink(v)));
+            EnableWebCamQuickMotion = new RProperty<bool>(setting.EnableWebCamQuickMotion, v => SendMessage(MessageFactory.EnableWebCamQuickMotion(v)));
+            WebCamMouseLookAtMode = new RProperty<int>(setting.WebCamMouseLookAtMode, v => SendMessage(MessageFactory.SetWebCamMouseLookAtMode(v)));
 
             EnableImageBasedHandTracking = new RProperty<bool>(
                 setting.EnableImageBasedHandTracking,
@@ -216,6 +219,9 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableFaceTrackingHorizontalFlip { get; }
 
         public RProperty<bool> EnableWebCamHighPowerMode { get; }
+        public RProperty<bool> EnableWebCamApplyBlink { get; }
+        public RProperty<bool> EnableWebCamQuickMotion { get; }
+        public RProperty<int> WebCamMouseLookAtMode { get; }
         public RProperty<bool> EnableImageBasedHandTracking { get; }
         public RProperty<bool> EnableImageBasedElbowTracking { get; }
         public RProperty<bool> ShowEffectDuringHandTracking { get; }
@@ -322,6 +328,9 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             EnableFaceTracking.Value = setting.EnableFaceTracking;
             CameraDeviceName.Value = setting.CameraDeviceName;
+            EnableWebCamApplyBlink.Value = setting.EnableWebCamApplyBlink;
+            EnableWebCamQuickMotion.Value = setting.EnableWebCamQuickMotion;
+            WebCamMouseLookAtMode.Value = setting.WebCamMouseLookAtMode;
 
             EnableVoiceBasedMotion.Value = setting.EnableVoiceBasedMotion;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
@@ -457,6 +466,9 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
+            EnableWebCamApplyBlink.Value = setting.EnableWebCamApplyBlink;
+            EnableWebCamQuickMotion.Value = setting.EnableWebCamQuickMotion;
+            WebCamMouseLookAtMode.Value = setting.WebCamMouseLookAtMode;
             EnableBodyLeanZ.Value = setting.EnableBodyLeanZ;
         }
 

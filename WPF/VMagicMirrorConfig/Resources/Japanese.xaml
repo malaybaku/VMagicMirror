@@ -104,6 +104,10 @@
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode">マウスポインタのほうを見るかどうか</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Always">つねに見る</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_CameraOffOnly">カメラがオフのときは見る</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Never">つねに見ない</sys:String>
     
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>

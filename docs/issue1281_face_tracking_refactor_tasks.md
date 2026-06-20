@@ -32,12 +32,12 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 - [x] `MotionSetting` から `AutoBlinkDuringFaceTracking` を削除する。
 - [x] `MotionSettingModel` から `AutoBlinkDuringFaceTracking` を削除する。
-- [ ] `MotionSetting` に「カメラで検出したまばたきを適用」用の bool 設定を追加する。デフォルトは ON。
-- [ ] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
-- [ ] `MotionSetting` に「動きをすばやく反映」用の bool 設定を追加する。デフォルトは ON。
-- [ ] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
-- [ ] `MotionSetting` に「マウスポインタのほうを見るかどうか」用の int 設定を追加する。デフォルトは「カメラがオフのときは見る」。
-- [ ] `MotionSettingModel` に上記 int の `RProperty<int>` と IPC 送信を追加する。
+- [x] `MotionSetting` に「カメラで検出したまばたきを適用」用の bool 設定を追加する。デフォルトは ON。
+- [x] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
+- [x] `MotionSetting` に「動きをすばやく反映」用の bool 設定を追加する。デフォルトは ON。
+- [x] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
+- [x] `MotionSetting` に「マウスポインタのほうを見るかどうか」用の int 設定を追加する。デフォルトは「カメラがオフのときは見る」。
+- [x] `MotionSettingModel` に上記 int の `RProperty<int>` と IPC 送信を追加する。
 - [ ] `EnableWebCamHighPowerMode` が「表情をカメラでトラッキング」を表す互換名であることをコメントする。
 - [ ] 旧 LookAt 3 bool 設定の UI 利用箇所を、FaceTrackerPanel では新 int 設定ベースへ置き換える。
 - [ ] 旧 LookAt 3 bool 設定を他の画面でどう扱うか確認し、必要なら FaceTrackerPanel 側のみに新仕様を限定するか、全体を新仕様へ寄せる。
@@ -67,9 +67,9 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 - [x] WPF / Unity 共通の `VmmCommands` から `AutoBlinkDuringFaceTracking` を削除する。
 - [ ] `EnableWebCamHighPowerMode` コマンドを、実態に合う名前へ変更する。
-- [ ] 「カメラで検出したまばたきを適用」用の IPC コマンドを追加する。
-- [ ] 「動きをすばやく反映」用の IPC コマンドを追加する。
-- [ ] 「マウスポインタのほうを見るかどうか」用の IPC コマンドを追加する。
+- [x] 「カメラで検出したまばたきを適用」用の IPC コマンドを追加する。
+- [x] 「動きをすばやく反映」用の IPC コマンドを追加する。
+- [x] 「マウスポインタのほうを見るかどうか」用の IPC コマンドを追加する。
 - [ ] `EnableWebCameraHighPowerModeLipSync` コマンド名を実態に寄せるか、既存名維持にするかを実装時に判断する。
 - [ ] WPF の `MessageFactory` に新コマンド送信用メソッドを追加する。
 - [ ] Unity 側の受信箇所を新コマンド名へ更新する。

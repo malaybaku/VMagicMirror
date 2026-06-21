@@ -87,7 +87,7 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - [x] `FaceControlManager` の Blink 選択を新仕様へ変更する。
 - [x] 表情トラッキング ON かつまばたき適用 OFF の場合、Blink は自動まばたきを使う。
 - [x] 表情トラッキング ON かつリップシンク適用 OFF の場合でも、MediaPipe の BlendShape 出力自体は ON のままにする。
-- [ ] MediaPipe リップシンク適用の実効状態を Unity 側で判定する。
+- [x] MediaPipe リップシンク適用の実効状態を Unity 側で判定する。
 - [ ] パーフェクトシンク適用の実効状態を Unity 側で判定する。
 - [ ] `MediaPipeFaceSwitchSetter` の動作条件を「表情をカメラでトラッキング」基準へ変更する。
 - [ ] `MediaPipeFaceAttitudeController` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。

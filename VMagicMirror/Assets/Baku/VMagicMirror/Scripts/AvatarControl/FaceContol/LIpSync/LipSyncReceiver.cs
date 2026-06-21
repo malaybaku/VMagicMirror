@@ -86,14 +86,14 @@ namespace Baku.VMagicMirror
                 .CombineLatest(
                     _isExTrackerLipSyncActive,
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
-                    (mode, exTrackerLipSync, webCamHighPowerLipSync) => (mode, exTrackerLipSync, webCamHighPowerLipSync)
+                    (mode, exTrackerLipSync, webCamLipSync) => (mode, exTrackerLipSync, webCamLipSync)
                 )
                 .Subscribe(value =>
                 {
-                    var (mode, exTrackerLipSync, webCamHighPowerLipSync) = value;
+                    var (mode, exTrackerLipSync, webCamLipSync) = value;
                     _isImageBaseLipSyncActive.Value = 
                         (mode is FaceControlModes.ExternalTracker && exTrackerLipSync) ||
-                        (mode is FaceControlModes.WebCamHighPower && webCamHighPowerLipSync);
+                        (mode is FaceControlModes.WebCam && webCamLipSync);
                 })
                 .AddTo(this);
             

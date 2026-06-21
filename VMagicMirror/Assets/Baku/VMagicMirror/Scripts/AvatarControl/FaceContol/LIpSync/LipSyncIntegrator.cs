@@ -54,12 +54,12 @@ namespace Baku.VMagicMirror
 
         private IMouthLipSyncSource GetCurrentLipSyncSource()
         {
-            if (_config.HeadMotionControlMode.CurrentValue is FaceControlModes.ExternalTracker && PreferExternalTrackerLipSync)
+            if (_config.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && PreferExternalTrackerLipSync)
             {
                 return externalTrackerLipSync.LipSyncSource;
             }
             
-            if (_config.HeadMotionControlMode.CurrentValue is FaceControlModes.WebCamHighPower && _mediaPipeLipSync.IsEnabledAndTracked)
+            if (_config.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCam && _mediaPipeLipSync.IsEnabledAndTracked)
             {
                 return _mediaPipeLipSync.LipSyncSource;
             }

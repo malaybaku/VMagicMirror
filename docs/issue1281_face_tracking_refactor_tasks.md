@@ -79,8 +79,8 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 - [x] `FaceControlManager` から `AutoBlinkDuringFaceTracking` 依存をなくす。
 - [x] `FaceControlConfigurationReceiver` で、新しい「表情をカメラでトラッキング」コマンドを受ける。
-- [ ] `FaceControlConfiguration` の `WebCamHighPower` コメントや意味が新仕様と矛盾しないように整理する。
-- [ ] `FaceControlModes` の `WebCamLowPower` / `WebCamHighPower` を最終的に `WebCam` 相当へ統合する。
+- [x] `FaceControlConfiguration` の `WebCamHighPower` コメントや意味が新仕様と矛盾しないように整理する。
+- [x] `FaceControlModes` の `WebCamLowPower` / `WebCamHighPower` を最終的に `WebCam` 相当へ統合する。
 - [x] MediaPipe FaceLandmarker の BlendShape 出力 ON/OFF を「表情をカメラでトラッキング」に基づかせる。
 - [ ] BlendShape 出力 ON/OFF 変更時に必要なら MediaPipe タスクを restart する。
 - [ ] Unity 側で `表情トラッキング && カメラまばたき適用` の実効状態を判定する。

@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(value =>
                 {
                     var (frameRate, headMotionControlMode) = value;
-                    var cutOffFrequency = headMotionControlMode is FaceControlModes.WebCamHighPower
+                    var cutOffFrequency = headMotionControlMode is FaceControlModes.WebCam
                         ? positionFilterCutOffFrequency
                         : positionFilterCutOffFrequencySlow;
                     _positionFilter.SetUpAsLowPassFilter(frameRate, cutOffFrequency);
@@ -125,7 +125,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void Update()
         {
-            if (_config.HeadMotionControlModeValue is not (FaceControlModes.WebCamHighPower or FaceControlModes.WebCamLowPower))
+            if (_config.HeadMotionControlModeValue is not FaceControlModes.WebCam)
             {
                 BodyOffset = Vector3.zero;
                 _positionFilter.ResetValue(Vector3.zero);

@@ -76,7 +76,7 @@ namespace Baku.VMagicMirror
 
             var imageRelatedOffset = _faceControlConfig.HeadMotionControlModeValue switch
             {
-                FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
+                FaceControlModes.WebCam => mediaPipeBodyMotion.BodyOffset,
                 FaceControlModes.VMCProtocol => vmcpBodyOffset.BodyOffset,
                 FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
                 _ => mediaPipeBodyMotion.BodyOffset,

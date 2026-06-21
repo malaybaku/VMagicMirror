@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public FaceControlModes HeadMotionControlModeValue => _headMotionControlMode.Value;
         
-        private readonly ReactiveProperty<FaceControlModes> _headMotionControlMode = new(FaceControlModes.WebCamLowPower);
+        private readonly ReactiveProperty<FaceControlModes> _headMotionControlMode = new(FaceControlModes.WebCam);
         /// <summary>
         /// 頭部動作を制御している処理の種類を取得します。
         /// VMCProtocolについては、この値が<see cref="FaceControlModes.VMCProtocol"/>以外の場合であっても、
@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public ReadOnlyReactiveProperty<FaceControlModes> HeadMotionControlMode => _headMotionControlMode;
 
-        private readonly ReactiveProperty<FaceControlModes> _blendShapeControlMode = new(FaceControlModes.WebCamLowPower);
+        private readonly ReactiveProperty<FaceControlModes> _blendShapeControlMode = new(FaceControlModes.None);
 
         /// <summary> ブレンドシェイプを制御している処理の種類を取得します。 </summary>
         public ReadOnlyReactiveProperty<FaceControlModes> BlendShapeControlMode => _blendShapeControlMode;
@@ -52,17 +52,17 @@ namespace Baku.VMagicMirror
         public bool UseExternalTrackerPerfectSync { get; set; }
 
         /// <summary>
-        /// Webカメラの高負荷モードにおいてパーフェクトシンクを使用するかどうかを取得、設定します。
-        /// このフラグがtrueであり、かつ<see cref="HeadMotionControlModeValue"/>がWebCamHighPowerの場合はパーフェクトシンクがオンです。
+        /// Webカメラの表情トラッキングにおいてパーフェクトシンクを使用するかどうかを取得、設定します。
+        /// このフラグがtrueであり、かつ<see cref="BlendShapeControlMode"/>がWebCamの場合はパーフェクトシンクがオンです。
         /// </summary>
-        public bool UseWebCamHighPowerModePerfectSync { get; set; }
+        public bool UseWebCamPerfectSync { get; set; }
 
         /// <summary>
         /// 外部トラッキング機能またはWebカメラ機能に基づいてパーフェクトシンクを適用する場合はtrue、そうでなければfalse
         /// </summary>
         public bool PerfectSyncActive =>
             (BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
-            (BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
+            (BlendShapeControlMode.CurrentValue is FaceControlModes.WebCam && UseWebCamPerfectSync);
         
         #endregion
         
@@ -113,10 +113,8 @@ namespace Baku.VMagicMirror
     {
         /// <summary> 顔トラッキングを行っていません。 </summary>
         None,
-        /// <summary> Webカメラで低負荷な顔トラッキングを行っています。 </summary>
-        WebCamLowPower,
-        /// <summary> Webカメラの高負荷な顔トラッキングを行っています。 </summary>
-        WebCamHighPower,
+        /// <summary> Webカメラで顔トラッキングを行っています。 </summary>
+        WebCam,
         /// <summary> 外部アプリによる顔トラッキングを行っています。 </summary>
         ExternalTracker,
         /// <summary> VMC Protocolで受信した頭部トラッキング </summary>

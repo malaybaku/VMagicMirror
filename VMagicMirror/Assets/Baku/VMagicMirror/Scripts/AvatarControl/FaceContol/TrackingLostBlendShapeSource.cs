@@ -137,8 +137,7 @@ namespace Baku.VMagicMirror
                     _isActive = value.enabled && value.mode switch
                     {
                         FaceControlModes.ExternalTracker => true,
-                        FaceControlModes.WebCamHighPower or FaceControlModes.WebCamLowPower
-                            => !string.IsNullOrEmpty(value.cameraName),
+                        FaceControlModes.WebCam => !string.IsNullOrEmpty(value.cameraName),
                         _ => false,
                     };
                     

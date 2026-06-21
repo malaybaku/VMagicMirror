@@ -103,10 +103,10 @@ namespace Baku.VMagicMirror
         private void UpdateShouldApply() => _shouldApply.Value =
             FaceControlMode == FaceControlModes.None ||
             // TODO: 「MediaPipe実装で顔検出が成功してるかどうか」みたいなフラグを取ってきて使いたい
-            (FaceControlMode == FaceControlModes.WebCamLowPower && false);
-            //(FaceControlMode == FaceControlModes.WebCamLowPower && !_faceTracker.FaceDetectedAtLeastOnce);
+            (FaceControlMode == FaceControlModes.WebCam && false);
+            //(FaceControlMode == FaceControlModes.WebCam && !_faceTracker.FaceDetectedAtLeastOnce);
         
-        private FaceControlModes _faceControlMode = FaceControlModes.WebCamLowPower;
+        private FaceControlModes _faceControlMode = FaceControlModes.WebCam;
         public FaceControlModes FaceControlMode
         {
             get => _faceControlMode;

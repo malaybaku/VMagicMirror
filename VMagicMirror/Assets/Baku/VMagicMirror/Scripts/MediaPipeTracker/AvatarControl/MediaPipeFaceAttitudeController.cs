@@ -87,7 +87,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(value =>
                 {
                     var (framerate, mode) = value;
-                    var cutoffFrequency = mode is FaceControlModes.WebCamHighPower
+                    var cutoffFrequency = mode is FaceControlModes.WebCam
                         ? headRotationCutOffFrequency
                         : headRotationCutOffFrequencySlow;
                     _rotationFilter.SetUpAsLowPassFilter(framerate, cutoffFrequency);

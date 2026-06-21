@@ -66,15 +66,13 @@ namespace Baku.VMagicMirror
             var motionMode = 
                 (_vmcpHeadPose.IsActive.CurrentValue && !_enableVmcpUpperBodyAdditionalMove.CurrentValue) ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                (_enableWebCamTracking.Value && _enableWebCamExpressionTracking.Value) ? FaceControlModes.WebCamHighPower :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
+                _enableWebCamTracking.Value ? FaceControlModes.WebCam :
                 FaceControlModes.None;
 
             var blendShapeMode = 
                 _vmcpBlendShape.IsActive.CurrentValue ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                (_enableWebCamTracking.Value && _enableWebCamExpressionTracking.Value) ? FaceControlModes.WebCamHighPower :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
+                (_enableWebCamTracking.Value && _enableWebCamExpressionTracking.Value) ? FaceControlModes.WebCam :
                 FaceControlModes.None;
             
             _config.SetFaceControlMode(motionMode, blendShapeMode, useAdditionalVmcpHeadMotion);

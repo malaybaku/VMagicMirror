@@ -35,6 +35,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly ReactiveProperty<bool> _shouldUsePerfectSyncResult = new();
         public ReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
         public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;
+        public ReactiveProperty<bool> EnableQuickMotion { get; } = new(true);
         public bool EnableBodyMoveZAxis { get; set; }
 
         public float EyeOpenBlinkValue { get; set; } = 0.2f;

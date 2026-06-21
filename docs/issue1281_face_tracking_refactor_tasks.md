@@ -88,10 +88,10 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - [x] 表情トラッキング ON かつまばたき適用 OFF の場合、Blink は自動まばたきを使う。
 - [x] 表情トラッキング ON かつリップシンク適用 OFF の場合でも、MediaPipe の BlendShape 出力自体は ON のままにする。
 - [x] MediaPipe リップシンク適用の実効状態を Unity 側で判定する。
-- [ ] パーフェクトシンク適用の実効状態を Unity 側で判定する。
-- [ ] `MediaPipeFaceSwitchSetter` の動作条件を「表情をカメラでトラッキング」基準へ変更する。
-- [ ] `MediaPipeFaceAttitudeController` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
-- [ ] `MediaPipeTrackerBodyOffset` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
+- [x] パーフェクトシンク適用の実効状態を Unity 側で判定する。
+- [x] `MediaPipeFaceSwitchSetter` の動作条件を「表情をカメラでトラッキング」基準へ変更する。
+- [x] `MediaPipeFaceAttitudeController` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
+- [x] `MediaPipeTrackerBodyOffset` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
 - [ ] `HeadIkIntegrator` の Webカメラ中 LookAt 無効化ロジックを、新しいマウスポインタ注視設定に合わせる。
 - [ ] 「カメラがオフのときは見る」は、Webカメラ顔トラッキングが実効 ON の間はマウスポインタを見ないようにする。
 - [ ] 「つねに見る」は、Webカメラ顔トラッキング中でもマウスポインタを見るようにする。

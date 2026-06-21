@@ -56,12 +56,12 @@ namespace Baku.VMagicMirror
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
             DefaultBlendShape.Apply(accumulator);
 
+            // TODO: EnableWebCamApplyBlink と BlendShapeControlMode is WebCam の実効状態に基づいて、MediaPipe Blinkを適用するか判定する。
             var blinkSource = _config.BlendShapeControlMode.CurrentValue switch
             {
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
-                FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
-                FaceControlModes.WebCamLowPower => autoBlink.BlinkSource,
+                FaceControlModes.WebCam => _mediaPipeBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };
 
@@ -75,6 +75,7 @@ namespace Baku.VMagicMirror
 
             // 眼球運動は表情の制御モードに応じて切り替える。
             // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってると考えて、それをそのまま使い、微細運動とかも切っておく
+            // TODO: VmmCommands.SetWebCamMouseLookAtMode による Webカメラ中のマウスポインタ注視設定を反映する。
             switch (_config.BlendShapeControlMode.CurrentValue)
             {
                 // NOTE: Trackedではない場合にも単に各々のEyeJitterに帰着するようにするのもアリ
@@ -83,12 +84,12 @@ namespace Baku.VMagicMirror
                     _mediaPipeEyeJitter.IsActive = false;
                     randomEyeJitter.IsActive = false;
                     break;
-                case FaceControlModes.WebCamHighPower when _mediaPipeEyeJitter.IsEnabledAndTracked:
+                case FaceControlModes.WebCam when _mediaPipeEyeJitter.IsEnabledAndTracked:
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = true;
                     randomEyeJitter.IsActive = false;
                     break;
-                case FaceControlModes.ExternalTracker or FaceControlModes.WebCamHighPower:
+                case FaceControlModes.ExternalTracker or FaceControlModes.WebCam:
                     // NOTE: 「トラッキングしてれば目の動きが取れるはずのモードでトラッキングロスしてる」のときは眼球運動は止めてしまう
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = false;

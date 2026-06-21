@@ -93,6 +93,8 @@
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">表情をカメラでトラッキング</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">カメラで検出したまばたきを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
+    <sys:String x:Key="FaceTracker_EnableMicrophone">マイクをオン</sys:String>
+    <sys:String x:Key="FaceTracker_LipSyncMicrophoneName">リップシンク用マイク</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_Detail">詳細</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_QuickMotion">動きをすばやく反映</sys:String>

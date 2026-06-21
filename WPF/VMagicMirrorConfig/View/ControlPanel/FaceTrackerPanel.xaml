@@ -65,76 +65,84 @@
                                 Text="{DynamicResource FaceTracker_WebCamera_Instruction}"/>
 
                     <Grid Margin="15,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <CheckBox Grid.Column="0"
+                        <CheckBox Grid.Row="0" Grid.Column="0"
                                   Margin="0"
                                   IsChecked="{Binding EnableWebCamera.Value}"
                                   Content="{DynamicResource FaceTracker_EnableWebCamera}"
                                   />
-                        <ComboBox Grid.Column="1"
+                        <ComboBox Grid.Row="0" Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                Margin="5,0"
+                                Margin="5"
                                 IsEnabled="{Binding EnableWebCamera.Value}"
                                 ItemsSource="{Binding WebCameraNames}"
                                 SelectedItem="{Binding WebCameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                 md:HintAssist.Hint="Camera"
                                 />
 
+                        <CheckBox Grid.Row="1" Grid.Column="0"
+                                  Margin="0"
+                                  IsChecked="{Binding EnableLipSync.Value}"
+                                  Content="{DynamicResource FaceTracker_EnableMicrophone}"
+                                  />
+                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="5"
+                                  IsEnabled="{Binding EnableLipSync.Value}"
+                                  ItemsSource="{Binding MicrophoneNames}"
+                                  SelectedItem="{Binding LipSyncMicrophoneDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
+                                  md:HintAssist.Hint="{DynamicResource FaceTracker_LipSyncMicrophoneName}"
+                                  />
                     </Grid>
 
-                    <CheckBox Margin="15,0,10,0"
+                    <CheckBox Margin="15,5"
                               IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
 
-                    <CheckBox Margin="15,0,10,0"
+                    <CheckBox Margin="15,5"
                               IsChecked="{Binding EnableWebCamExpressionTracking.Value}"
                               Content="{DynamicResource FaceTracker_WebCamera_EnableExpressionTracking}"
                               />
 
-                    <StackPanel Margin="35,0,10,0"
-                                IsEnabled="{Binding EnableWebCamExpressionTracking.Value}">
+                    <StackPanel Margin="35,0,10,0">
                         <Grid Margin="0,0,0,5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
+                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <CheckBox Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Margin="0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource FaceTracker_WebCamera_ApplyBlink}"
                                       IsChecked="{Binding EnableWebCamApplyBlink.Value}"
+                                      IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
                                       />
-                            <Button Grid.Column="1"
+                            <Button Grid.Column="2"
                                     Width="NaN"
-                                    Margin="5,0"
+                                    Margin="5,0,5,0"
                                     Content="{DynamicResource FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow}"
                                     Command="{Binding OpenEyeCalibrationWindowCommand}"
+                                    IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
                                     />
                         </Grid>
 
-                        <Grid Margin="0,0,0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Column="0"
-                                      VerticalContentAlignment="Center"
-                                      Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}"
-                                      IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
-                                      />
-                            <ComboBox Grid.Column="1"
-                                      HorizontalAlignment="Stretch"
-                                      Margin="5,0"
-                                      IsEnabled="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
-                                      ItemsSource="{Binding MicrophoneNames}"
-                                      SelectedItem="{Binding LipSyncMicrophoneDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
-                                      md:HintAssist.Hint="{DynamicResource Motion_Mouth_MicrophoneName}"
-                                      />
-                        </Grid>
+                        <CheckBox Margin="0,0,0,5"
+                                  VerticalContentAlignment="Center"
+                                  Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}"
+                                  IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
+                                  IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
+                                  />
 
                         <Grid Margin="0,0,0,5">
                             <Grid.RowDefinitions>
@@ -147,6 +155,7 @@
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
                                       IsChecked="{Binding EnablePerfectSync.Value}"
+                                      IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
                                       />
                             <Button Grid.Row="1"
                                     HorizontalAlignment="Left"
@@ -181,40 +190,41 @@
                                     />
                         </Grid>
 
-                        <Expander Header="{DynamicResource FaceTracker_WebCamera_Detail}"
-                                  Margin="0,5">
-                            <StackPanel Margin="15,5,0,0">
-                                <CheckBox Margin="0,0,10,0"
-                                          IsChecked="{Binding EnableWebCamQuickMotion.Value}"
-                                          Content="{DynamicResource FaceTracker_WebCamera_QuickMotion}"
-                                          />
-                                <CheckBox Margin="0,0,10,0"
-                                          IsChecked="{Binding EnableBodyLeanZ.Value}"
-                                          Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
-                                          />
-
-                                <Grid Margin="0,10,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0"
-                                               Text="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
-                                               Margin="0,5,10,5"
-                                               />
-
-                                    <ComboBox Grid.Column="1"
-                                              HorizontalAlignment="Stretch"
-                                              ItemsSource="{Binding WebCamMouseLookAtModeItems}"
-                                              SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
-                                              DisplayMemberPath="DisplayName"
-                                              md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
-                                              />
-                                </Grid>
-                            </StackPanel>
-                        </Expander>
                     </StackPanel>
+
+                    <Expander Header="{DynamicResource FaceTracker_WebCamera_Detail}"
+                              Margin="15,5,10,5">
+                        <StackPanel Margin="15,5,0,0">
+                            <CheckBox Margin="0,0,10,0"
+                                      IsChecked="{Binding EnableWebCamQuickMotion.Value}"
+                                      Content="{DynamicResource FaceTracker_WebCamera_QuickMotion}"
+                                      />
+                            <CheckBox Margin="0,0,10,0"
+                                      IsChecked="{Binding EnableBodyLeanZ.Value}"
+                                      Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
+                                      />
+
+                            <Grid Margin="0,10,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                           Margin="0,5,10,5"
+                                           />
+
+                                <ComboBox Grid.Column="1"
+                                          HorizontalAlignment="Stretch"
+                                          ItemsSource="{Binding WebCamMouseLookAtModeItems}"
+                                          SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                          />
+                            </Grid>
+                        </StackPanel>
+                    </Expander>
 
                     <Grid>
                         <Button Width="NaN" 
@@ -317,7 +327,7 @@
                                        Margin="5"/>
                         </StackPanel>
 
- 
+
                         <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Padding="0"
                                 VerticalAlignment="Top"
@@ -327,7 +337,7 @@
                                 Content="{DynamicResource ExTracker_Source_HowToCollaborate}"
                                 />
                     </Grid>
-                    
+
                     <TextBlock Margin="15,5" 
                                Text="{DynamicResource ExTracker_SourceSelect_Instruction}"/>
                     <Grid Margin="15,10">
@@ -482,8 +492,8 @@
                                         Text="{DynamicResource FaceSwitch_Notice_WebCamHighPower}"
                                         />
                         </Grid>
-                    </md:Card>                    
-                    
+                    </md:Card>
+
                     <TextBlock Margin="15,5"
                                Text="{DynamicResource ExTracker_FaceSwitch_Instruction}"/>
 

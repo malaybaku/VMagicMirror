@@ -223,6 +223,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ReadOnlyObservableCollection<string> MicrophoneNames => _deviceList.MicrophoneNames;
         public RProperty<string> LipSyncMicrophoneDeviceName { get; }
+        public RProperty<bool> EnableLipSync => _motionModel.EnableLipSync;
 
         public RProperty<bool> EnableWebCamApplyBlink => _motionModel.EnableWebCamApplyBlink;
         public RProperty<bool> EnableWebCamQuickMotion => _motionModel.EnableWebCamQuickMotion;

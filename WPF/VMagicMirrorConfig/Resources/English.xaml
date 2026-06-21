@@ -92,6 +92,8 @@
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">Track facial expressions by camera</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">Apply blink detected by camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
+    <sys:String x:Key="FaceTracker_EnableMicrophone">Use microphone</sys:String>
+    <sys:String x:Key="FaceTracker_LipSyncMicrophoneName">LipSync microphone</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_Detail">Details</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_QuickMotion">Apply motion quickly</sys:String>

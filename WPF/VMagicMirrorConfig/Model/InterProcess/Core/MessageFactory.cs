@@ -185,7 +185,6 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static Message MicrophoneDeviceNames() => None(VmmCommands.MicrophoneDeviceNames);
 
-        public static Message LookAtStyle(string v) => StringContent(VmmCommands.LookAtStyle, v);
         public static Message EnableEyeMotionDuringClipApplied(bool enable) => BoolContent(VmmCommands.EnableEyeMotionDuringClipApplied, enable);
         public static Message SetUseAvatarEyeBoneMap(bool use) => BoolContent(VmmCommands.SetUseAvatarEyeBoneMap, use);
         public static Message SetEyeBoneRotationScale(int percent) => IntContent(VmmCommands.SetEyeBoneRotationScale, percent);

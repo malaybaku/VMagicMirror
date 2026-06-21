@@ -193,10 +193,6 @@
             
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">眼·视线</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">视线的伊东</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">鼠标</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">用户</sys:String>
     <sys:String x:Key="Motion_Eye_RotScale">眼睛的运动幅度[%]</sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(参考）眼球的大致可动范围: </sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg]</sys:String>

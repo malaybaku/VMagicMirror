@@ -13,13 +13,6 @@ namespace Baku.VMagicMirrorConfig
 
     class MotionSettingModel : SettingModelBase<MotionSetting>
     {
-        static class LookAtStyles
-        {
-            public const string UseLookAtPointNone = nameof(UseLookAtPointNone);
-            public const string UseLookAtPointMousePointer = nameof(UseLookAtPointMousePointer);
-            public const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
-        }
-
         public MotionSettingModel() : this(
             ModelResolver.Instance.Resolve<IMessageSender>(),
             ModelResolver.Instance.Resolve<IMessageReceiver>())
@@ -105,37 +98,6 @@ namespace Baku.VMagicMirrorConfig
                 setting.WebCamEyeApplySameBlinkValueBothEye, v => SendMessage(MessageFactory.SetWebCamEyeApplySameBlinkBothEye(v)));
             WebCamEyeApplyCorrectionToPerfectSync = new RProperty<bool>(
                 setting.WebCamEyeApplyCorrectionToPerfectSync, v => SendMessage(MessageFactory.SetWebCamEyeApplyCorrectionToPerfectSync(v)));
-
-            //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
-            UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointNone));
-                    UseLookAtPointMousePointer?.Set(false);
-                    UseLookAtPointMainCamera?.Set(false);
-                }
-            });
-
-            UseLookAtPointMousePointer = new RProperty<bool>(setting.UseLookAtPointMousePointer, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointMousePointer));
-                    UseLookAtPointNone.Value = false;
-                    UseLookAtPointMainCamera?.Set(false);
-                }
-            });
-
-            UseLookAtPointMainCamera = new RProperty<bool>(setting.UseLookAtPointMainCamera, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointMainCamera));
-                    UseLookAtPointNone.Value = false;
-                    UseLookAtPointMousePointer.Value = false;
-                }
-            });
 
             UseAvatarEyeBoneMap = new RProperty<bool>(setting.UseAvatarEyeBoneMap, v => SendMessage(MessageFactory.SetUseAvatarEyeBoneMap(v)));
             EyeBoneRotationScale = new RProperty<int>(setting.EyeBoneRotationScale, v => SendMessage(MessageFactory.SetEyeBoneRotationScale(v)));
@@ -262,10 +224,6 @@ namespace Baku.VMagicMirrorConfig
 
         #region Eye
 
-        public RProperty<bool> UseLookAtPointNone { get; }
-        public RProperty<bool> UseLookAtPointMousePointer { get; }
-        public RProperty<bool> UseLookAtPointMainCamera { get; }
-
         public RProperty<bool> UseAvatarEyeBoneMap { get; }
         public RProperty<int> EyeBoneRotationScale { get; }
         public RProperty<int> EyeBoneRotationScaleWithMap { get; }
@@ -348,9 +306,6 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = MotionSetting.Default;
             EnableBlinkAdjust.Value = setting.EnableBlinkAdjust;
-            UseLookAtPointNone.Value = setting.UseLookAtPointNone;
-            UseLookAtPointMousePointer.Value = setting.UseLookAtPointMousePointer;
-            UseLookAtPointMainCamera.Value = setting.UseLookAtPointMainCamera;
 
             MoveEyesDuringFaceClipApplied.Value = setting.MoveEyesDuringFaceClipApplied;
             UseAvatarEyeBoneMap.Value = setting.UseAvatarEyeBoneMap;

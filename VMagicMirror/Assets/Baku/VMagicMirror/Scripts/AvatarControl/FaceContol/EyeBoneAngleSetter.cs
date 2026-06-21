@@ -182,11 +182,13 @@ namespace Baku.VMagicMirror
             leftRate = Vector2.ClampMagnitude(leftRate, RateMagnitudeLimit);
             rightRate = Vector2.ClampMagnitude(rightRate, RateMagnitudeLimit);
 
-            var meanRateWithoutJitter = 0.5f * (
-                (leftRate + rightRate) - 
-                (eyeJitter.LeftEyeRotationRate + eyeJitter.RightEyeRotationRate)
-            );
-            blinkAdjust.SetEyeMoveRate(meanRateWithoutJitter);
+            // ランダムのeyeJitterが適用対象の場合、それは自動瞬きの判定に使わない
+            var meanRateWithoutRandomJitter = 0.5f * (leftRate + rightRate);
+            if (eyeJitter.IsActive)
+            {
+                meanRateWithoutRandomJitter -= 0.5f * (eyeJitter.LeftEyeRotationRate + eyeJitter.RightEyeRotationRate);
+            }
+            blinkAdjust.SetEyeMoveRate(meanRateWithoutRandomJitter);
 
             // 符号に注意、Unityの普通の座標系ではピッチは下が正
             var leftYaw = leftRate.x * HorizontalRateToAngle;

@@ -89,7 +89,8 @@ namespace Baku.VMagicMirror
                     randomEyeJitter.IsActive = false;
                     break;
                 case FaceControlModes.WebCam
-                    when _mediaPipeEyeJitter.IsEnabledAndTracked &&
+                    when _enableWebCamApplyBlink.Value &&
+                         _mediaPipeEyeJitter.IsEnabledAndTracked &&
                          _config.WebCamMouseLookAtModeValue is not WebCamMouseLookAtModes.Always:
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = true;

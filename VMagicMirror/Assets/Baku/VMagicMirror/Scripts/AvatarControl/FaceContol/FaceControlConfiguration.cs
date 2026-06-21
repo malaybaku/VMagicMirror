@@ -34,6 +34,9 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _useAdditionalVmcpHeadMotion = new();
         /// <summary> 頭部加算ベースでVMCProtocolの頭部動作を適用するかどうかを取得します </summary>
         public ReadOnlyReactiveProperty<bool> UseAdditionalVmcpHeadMotion => _useAdditionalVmcpHeadMotion;
+
+        private readonly ReactiveProperty<int> _webCamMouseLookAtMode = new(WebCamMouseLookAtModes.CameraOffOnly);
+        public int WebCamMouseLookAtModeValue => _webCamMouseLookAtMode.Value;
         
         public void SetFaceControlMode(
             FaceControlModes headMotionMode,
@@ -43,6 +46,13 @@ namespace Baku.VMagicMirror
             _headMotionControlMode.Value = headMotionMode;
             _blendShapeControlMode.Value = blendShapeMode;
             _useAdditionalVmcpHeadMotion.Value = useAdditionalVmcpHeadMotion;
+        }
+
+        public void SetWebCamMouseLookAtMode(int mode)
+        {
+            _webCamMouseLookAtMode.Value = WebCamMouseLookAtModes.IsDefined(mode)
+                ? mode
+                : WebCamMouseLookAtModes.CameraOffOnly;
         }
 
         /// <summary>
@@ -122,5 +132,15 @@ namespace Baku.VMagicMirror
         /// この値が指定されていてもBlendShapeは適用してない…というケースが想定されています。
         /// </remarks>
         VMCProtocol,
+    }
+
+    public static class WebCamMouseLookAtModes
+    {
+        public const int CameraOffOnly = 0;
+        public const int Always = 1;
+        public const int Never = 2;
+
+        public static bool IsDefined(int value) =>
+            value is CameraOffOnly or Always or Never;
     }
 }

@@ -80,7 +80,6 @@ namespace Baku.VMagicMirror
 
             // 眼球運動は表情の制御モードに応じて切り替える。
             // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってると考えて、それをそのまま使い、微細運動とかも切っておく
-            // TODO: VmmCommands.SetWebCamMouseLookAtMode による Webカメラ中のマウスポインタ注視設定を反映する。
             switch (_config.BlendShapeControlMode.CurrentValue)
             {
                 // NOTE: Trackedではない場合にも単に各々のEyeJitterに帰着するようにするのもアリ
@@ -89,10 +88,18 @@ namespace Baku.VMagicMirror
                     _mediaPipeEyeJitter.IsActive = false;
                     randomEyeJitter.IsActive = false;
                     break;
-                case FaceControlModes.WebCam when _mediaPipeEyeJitter.IsEnabledAndTracked:
+                case FaceControlModes.WebCam
+                    when _mediaPipeEyeJitter.IsEnabledAndTracked &&
+                         _config.WebCamMouseLookAtModeValue is not WebCamMouseLookAtModes.Always:
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = true;
                     randomEyeJitter.IsActive = false;
+                    break;
+                case FaceControlModes.WebCam
+                    when _config.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Always:
+                    externalTrackEyeJitter.IsActive = false;
+                    _mediaPipeEyeJitter.IsActive = false;
+                    randomEyeJitter.IsActive = true;
                     break;
                 case FaceControlModes.ExternalTracker or FaceControlModes.WebCam:
                     // NOTE: 「トラッキングしてれば目の動きが取れるはずのモードでトラッキングロスしてる」のときは眼球運動は止めてしまう

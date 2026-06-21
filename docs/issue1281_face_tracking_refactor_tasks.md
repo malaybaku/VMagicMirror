@@ -92,11 +92,11 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - [x] `MediaPipeFaceSwitchSetter` の動作条件を「表情をカメラでトラッキング」基準へ変更する。
 - [x] `MediaPipeFaceAttitudeController` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
 - [x] `MediaPipeTrackerBodyOffset` の速い / 遅いフィルタ分岐を「動きをすばやく反映」設定へ置き換える。
-- [ ] `HeadIkIntegrator` の Webカメラ中 LookAt 無効化ロジックを、新しいマウスポインタ注視設定に合わせる。
-- [ ] 「カメラがオフのときは見る」は、Webカメラ顔トラッキングが実効 ON の間はマウスポインタを見ないようにする。
-- [ ] 「つねに見る」は、Webカメラ顔トラッキング中でもマウスポインタを見るようにする。
-- [ ] 「つねに見ない」は、常にマウスポインタ LookAt を無効にする。
-- [ ] 旧「ユーザーを見る」相当の MainCamera LookAt を今回の FaceTrackerPanel 新仕様から外す。
+- [x] `HeadIkIntegrator` の Webカメラ中 LookAt 無効化ロジックを、新しいマウスポインタ注視設定に合わせる。
+- [x] 「カメラがオフのときは見る」は、Webカメラ顔トラッキングが実効 ON の間はマウスポインタを見ないようにする。
+- [x] 「つねに見る」は、Webカメラ顔トラッキング中でもマウスポインタを見るようにする。
+- [x] 「つねに見ない」は、常にマウスポインタ LookAt を無効にする。
+- [x] 旧「ユーザーを見る」相当の MainCamera LookAt を今回の FaceTrackerPanel 新仕様から外す。
 
 ## Verification Tasks
 

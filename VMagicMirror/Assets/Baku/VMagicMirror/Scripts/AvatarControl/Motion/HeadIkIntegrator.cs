@@ -154,20 +154,17 @@ namespace Baku.VMagicMirror
         {
             _mouseActionCount = Mathf.Max(0f, _mouseActionCount - Time.deltaTime);
             _camBasedLookAt.CheckDepthAndWeight(_head);
+            var lookAtStyle = GetEffectiveLookAtStyle();
 
-            // - 十分高精度な顔トラッキングを行っている場合、マウスへの視線追従をしたくないのでLookAtを切る
+            // - Webカメラで顔トラッキングを行っている場合、設定に応じてマウスへの視線追従を切る
+            // - 十分高精度な外部トラッキングを行っている場合、マウスへの視線追従をしたくないのでLookAtを切る
+            // - LookAtなしの設定ではLookAtを切る
             // - 3人称視点でゲーム入力ベースの移動をする場合、正面付近に対してLookAtするとかえって不自然なので、この場合も何もしない
-            // TODO: VmmCommands.SetWebCamMouseLookAtMode による Webカメラ中のマウスポインタ注視設定を反映する。
-            if (_hasModel && 
-                (_faceControlConfig.HeadMotionControlModeValue is
-                    FaceControlModes.WebCam or FaceControlModes.ExternalTracker or FaceControlModes.VMCProtocol ||
-                IsGameInputAndThirdPersonViewMode()))
+            if (_hasModel && ShouldDisableLookAtIk(lookAtStyle))
             {
                 //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。
                 //当面はそっちのほうが分かりやすいので
-                _lookAtIk.enabled = false;
-                //NOTE: 正面向きに持っていけば安全、という考え方
-                _lookAtTarget.localPosition = _head.position + Vector3.forward * 5.0f;
+                DisableLookAtIk();
                 return;
             }
             
@@ -176,18 +173,9 @@ namespace Baku.VMagicMirror
                 _lookAtIk.enabled = true;
             }
 
-            var lookAtStyle = _lookAtStyle;
-            //マウスがゲーム入力扱いの場合、LookAtもやると二重適用になって変なことになるため、コッチは切ってしまう
-            if (_keyboardGameInputSource.MouseMoveLookAroundActive && 
-                lookAtStyle == LookAtStyles.MousePointer)
-            {
-                lookAtStyle = LookAtStyles.Fixed;
-            }
-            
             var pos = 
                 (lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
                 (lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                (_hasModel && lookAtStyle == LookAtStyles.Fixed) ? _head.position + Vector3.forward * 5.0f : 
                 new Vector3(1, 0, 1);
 
             //TODO: この処理をオンオフできてもいいかも？
@@ -202,6 +190,31 @@ namespace Baku.VMagicMirror
                 pos,
                 lookAtSpeedFactor * Time.deltaTime
             );
+        }
+
+        private LookAtStyles GetEffectiveLookAtStyle()
+        {
+            var lookAtStyle = _lookAtStyle;
+
+            if (_faceControlConfig.HeadMotionControlModeValue is FaceControlModes.WebCam &&
+                _faceControlConfig.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Always)
+            {
+                lookAtStyle = LookAtStyles.MousePointer;
+            }
+            else if (lookAtStyle is LookAtStyles.MousePointer &&
+                _faceControlConfig.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Never)
+            {
+                lookAtStyle = LookAtStyles.Fixed;
+            }
+
+            //マウスがゲーム入力扱いの場合、LookAtもやると二重適用になって変なことになるため、コッチは切ってしまう
+            if (_keyboardGameInputSource.MouseMoveLookAroundActive &&
+                lookAtStyle == LookAtStyles.MousePointer)
+            {
+                lookAtStyle = LookAtStyles.Fixed;
+            }
+
+            return lookAtStyle;
         }
 
         private Vector3 CreatePenTabletLookAt(Vector3 rawPos, Vector3 penTabletPos, float rate)
@@ -229,6 +242,34 @@ namespace Baku.VMagicMirror
             return 
                 _motionModeController.MotionMode.CurrentValue == BodyMotionMode.GameInputLocomotion &&
                 _motionModeController.CurrentGameInputLocomotionStyle.CurrentValue != GameInputLocomotionStyle.FirstPerson;
+        }
+
+        private void DisableLookAtIk()
+        {
+            _lookAtIk.enabled = false;
+            //NOTE: 正面向きに持っていけば安全、という考え方
+            _lookAtTarget.localPosition = _head.position + Vector3.forward * 5.0f;
+        }
+
+        private bool ShouldDisableLookAtIk(LookAtStyles lookAtStyle)
+        {
+            if (lookAtStyle is LookAtStyles.Fixed)
+            {
+                return true;
+            }
+
+            if (IsGameInputAndThirdPersonViewMode())
+            {
+                return true;
+            }
+
+            return _faceControlConfig.HeadMotionControlModeValue switch
+            {
+                FaceControlModes.WebCam =>
+                    _faceControlConfig.WebCamMouseLookAtModeValue is not WebCamMouseLookAtModes.Always,
+                FaceControlModes.ExternalTracker or FaceControlModes.VMCProtocol => true,
+                _ => false,
+            };
         }
 
         private class CameraBasedLookAtIk : IIKData

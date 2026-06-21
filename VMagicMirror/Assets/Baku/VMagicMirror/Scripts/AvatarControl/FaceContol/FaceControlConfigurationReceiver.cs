@@ -40,6 +40,10 @@ namespace Baku.VMagicMirror
             _receiver.BindBoolProperty(VmmCommands.EnableWebCamExpressionTracking, _enableWebCamExpressionTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _enableExTracker);
             _receiver.BindBoolProperty(VmmCommands.EnableVMCPUpperBodyAdditionalMove, _enableVmcpUpperBodyAdditionalMove);
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamMouseLookAtMode,
+                message => _config.SetWebCamMouseLookAtMode(message.ToInt())
+            );
             
             _vmcpHeadPose.IsActive.CombineLatest(
                 _vmcpBlendShape.IsActive,

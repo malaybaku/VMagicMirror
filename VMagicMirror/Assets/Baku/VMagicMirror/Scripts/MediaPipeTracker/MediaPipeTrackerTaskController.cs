@@ -91,7 +91,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
 
             _receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCameraHighPowerModeLipSync,
+                VmmCommands.EnableWebCamApplyLipSync,
                 m => _settingsRepository.SetShouldUseLipSyncResult(m.ToBoolean())
                 );
             

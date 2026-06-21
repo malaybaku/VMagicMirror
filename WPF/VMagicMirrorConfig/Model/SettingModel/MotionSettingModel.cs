@@ -95,7 +95,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.DisableBlendShapeInterpolate, v => SendMessage(MessageFactory.DisableBlendShapeInterpolate(v)));
             
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
-                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
+                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCamApplyLipSync(v)));
 
             WebCamEyeOpenBlinkValue = new RProperty<int>(
                 setting.WebCamEyeOpenBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeOpenBlinkValue(v)));

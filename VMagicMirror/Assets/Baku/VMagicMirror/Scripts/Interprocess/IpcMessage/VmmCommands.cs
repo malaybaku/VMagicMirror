@@ -123,9 +123,9 @@
         // Motion, Face, WebCam
         EnableWebCamExpressionTracking,
         EnableWebCamApplyBlink,
+        EnableWebCamApplyLipSync,
         EnableWebCamQuickMotion,
         SetWebCamMouseLookAtMode,
-        EnableWebCameraHighPowerModeLipSync,
 
         SetWebCamEyeOpenBlinkValue,
         SetWebCamEyeCloseBlinkValue,

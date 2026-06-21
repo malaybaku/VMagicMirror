@@ -62,10 +62,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (IsInDesignMode)
             {
                 // NOTE: 視認性のためにプレビュー上ではUIがだいたい展開した状態にする。
-                UseLiteWebCamera.Value = true;
-                UseHighPowerWebCamera.Value = true;
+                UseWebCamera.Value = true;
+                LipSyncMicrophoneDeviceName = new RProperty<string>("");
                 return;
             }
+
+            LipSyncMicrophoneDeviceName = new RProperty<string>(_motionModel.LipSyncMicrophoneDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _motionModel.LipSyncMicrophoneDeviceName.Value = v;
+                }
+            });
 
             MachineIpAddress.Value = NetworkEnvironmentUtils.GetLocalIpv4AddressAsString();
 
@@ -79,6 +87,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
             _motionModel.EnableImageBasedHandTracking.AddWeakEventHandler(OnHandTrackingEnabledChanged);
             _motionModel.WebCamMouseLookAtMode.AddWeakEventHandler(OnWebCamMouseLookAtModeChanged);
+            _motionModel.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
             UpdateBaseMode();
             UpdateWebCamMouseLookAtMode();
@@ -127,55 +136,51 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnWebCamMouseLookAtModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateWebCamMouseLookAtMode();
 
+        private void OnMicrophoneDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LipSyncMicrophoneDeviceName.Value = _motionModel.LipSyncMicrophoneDeviceName.Value;
+        }
+
         private void UpdateBaseMode()
         {
             // NOTE: webcamについて、カメラの使用on/off自体は見に行かないことに注意
             var exTrackerEnabled = _exTrackerModel.EnableExternalTracking.Value;
-            var webCamHighPowerModeEnabled = _motionModel.EnableWebCamHighPowerMode.Value;
+            var webCamExpressionTrackingEnabled = _motionModel.EnableWebCamHighPowerMode.Value;
 
-            UseLiteWebCamera.Value = !exTrackerEnabled && !webCamHighPowerModeEnabled;
-            UseHighPowerWebCamera.Value = !exTrackerEnabled && webCamHighPowerModeEnabled;
-            FaceSwitchSupported.Value = exTrackerEnabled || UseHighPowerWebCamera.Value;
+            UseWebCamera.Value = !exTrackerEnabled;
+            FaceSwitchSupported.Value = exTrackerEnabled || webCamExpressionTrackingEnabled;
+            FaceSwitchLimited.Value = !exTrackerEnabled && webCamExpressionTrackingEnabled;
+            FaceSwitchHasLimitation.Value = FaceSwitchLimited.Value;
             // NOTE: ExTrackerはModelのフラグを素通ししているのでそのまんまでOK
         }
 
 
         #region 基本モードの状態や、状態に応じた機能の利用可否のフラグ群
 
-        // NOTE: 下記の3フラグはどれか一つだけオンになるように制御される。
+        // NOTE: 下記の2フラグはどれか一つだけオンになる制御される。
         // 「ExTrackerが有効なら残り2つはオフ扱い」などの暗黙の優先度仕様を踏まえて値を制御するので、Settingの値をそのまま反映するわけではない
-        public RProperty<bool> UseLiteWebCamera { get; } = new RProperty<bool>(false);
-        public RProperty<bool> UseHighPowerWebCamera { get; } = new RProperty<bool>(false);
+        public RProperty<bool> UseWebCamera { get; } = new RProperty<bool>(false);
         public RProperty<bool> EnableExternalTracking => _exTrackerModel.EnableExternalTracking;
 
         public RProperty<bool> FaceSwitchSupported { get; } = new RProperty<bool>(false);
         // NOTE: 制限つきでFace Switchが動くケースは実際にはwebカメラの高負荷モードだけだが、View向けに読み替えを行ってプロパティを公開してる
-        public RProperty<bool> FaceSwitchLimited => UseHighPowerWebCamera;
+        public RProperty<bool> FaceSwitchLimited { get; } = new RProperty<bool>(false);
 
         // 高負荷Webカメラの場合だけ、「Face Switchが使えるけどCheekPuffとかTongueOutは使えない」という制限がかかる。UI上で注意喚起するために使う
-        public RProperty<bool> FaceSwitchHasLimitation => UseHighPowerWebCamera;
+        public RProperty<bool> FaceSwitchHasLimitation { get; } = new RProperty<bool>(false);
 
 
-        private ActionCommand? _selectWebCamLiteCommand;
-        private ActionCommand? _selectWebCamHighPowerCommand;
+        private ActionCommand? _selectWebCamCommand;
         private ActionCommand? _selectExTrackerCommand;
 
-        public ActionCommand SelectWebCamLiteCommand 
-            => _selectWebCamLiteCommand ??= new ActionCommand(SelectWebCamLite);
-        public ActionCommand SelectWebCamHighPowerCommand
-            => _selectWebCamHighPowerCommand ??= new ActionCommand(SelectWebCamHighPower);
+        public ActionCommand SelectWebCamCommand
+            => _selectWebCamCommand ??= new ActionCommand(SelectWebCam);
         public ActionCommand SelectExTrackerCommand
             => _selectExTrackerCommand ??= new ActionCommand(SelectExTracker);
 
-        private void SelectWebCamLite()
+        private void SelectWebCam()
         {
             _exTrackerModel.EnableExternalTracking.Value = false;
-            _motionModel.EnableWebCamHighPowerMode.Value = false;
-        }
-        private void SelectWebCamHighPower()
-        {
-            _exTrackerModel.EnableExternalTracking.Value = false;
-            _motionModel.EnableWebCamHighPowerMode.Value = true;
         }
 
         private void SelectExTracker()
@@ -196,13 +201,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         // NOTE: 歴史的経緯で名前がねじれてるけど意図的です
         public RProperty<bool> EnableWebCamera => _motionModel.EnableFaceTracking;
-        public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
+        public RProperty<bool> EnableWebCamExpressionTracking => _motionModel.EnableWebCamHighPowerMode;
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
+        public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
 
-        public RProperty<bool> UseLookAtPointNone => _motionModel.UseLookAtPointNone;
-        public RProperty<bool> UseLookAtPointMousePointer => _motionModel.UseLookAtPointMousePointer;
-        public RProperty<bool> UseLookAtPointMainCamera => _motionModel.UseLookAtPointMainCamera;
+        public ReadOnlyObservableCollection<string> MicrophoneNames => _deviceList.MicrophoneNames;
+        public RProperty<string> LipSyncMicrophoneDeviceName { get; }
 
         public RProperty<bool> EnableWebCamApplyBlink => _motionModel.EnableWebCamApplyBlink;
         public RProperty<bool> EnableWebCamQuickMotion => _motionModel.EnableWebCamQuickMotion;

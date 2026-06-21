@@ -82,28 +82,20 @@
     <!-- Face Tracker -->
     <sys:String x:Key="FaceTracker_Title">顔トラッキング</sys:String>
     <sys:String x:Key="FaceTracker_SelectType">顔トラッキングの種類を選択</sys:String>
-    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">webカメラ (軽量)</sys:String>
-    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam">webカメラ</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">外部トラッキング (iFacialMocap)</sys:String>
 
     <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて顔トラッキングを行います。
+    <sys:String x:Key="FaceTracker_WebCamera_Title">webカメラ</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_Instruction">webカメラを用いて顔トラッキングを行います。</sys:String>
 
-- PC単体で、CPU負荷を抑えながらアバターにも動きを反映したいときに使用します。
-- このモードでカメラの使用を停止した場合、非常に低負荷で動作します。
-- 表情スイッチ機能が使えないなどの制限があります。</sys:String>
-
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
-    
-- PC単体で、より正確にアバターへ動きを反映したいときに使用します。
-- 処理の負荷は高まるため、ゲームなどを同時に起動する場合は注意してください。
-- パーフェクトシンクが利用できますが、一部の表情は検出できません。</sys:String>
-
+    <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">表情をカメラでトラッキング</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">カメラで検出したまばたきを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_Detail">詳細</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_QuickMotion">動きをすばやく反映</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode">マウスポインタのほうを見るかどうか</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Always">つねに見る</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_CameraOffOnly">カメラがオフのときは見る</sys:String>
@@ -140,12 +132,12 @@
 
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
     
-    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) の使用中は本機能は制限され、下記のみが利用できます。
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">表情トラッキングがオフのとき、本機能は制限され、下記のみが利用できます。
 
 - トラッキングロスト時の表情の切り替え
 - VMC Protocolで表情データを受信することによる表情の切り替え</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の使用中は、「頬をふくらませる」と「舌を出す」の表情は検出されません。</sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">カメラで表情をトラッキングしている間は、「頬をふくらませる」と「舌を出す」の表情は検出されません。</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。
@@ -171,7 +163,7 @@
     <!-- Face Tracker Eye Calibration -->
     <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
     <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウではユーザーの目のトラッキングについて設定します。
-ここで編集した設定は、顔トラッキングで「Webカメラ (高品質)」を選択中にだけ適用されます。
+ここで編集した設定は、顔トラッキングで「表情をカメラでトラッキング」がオンのときに適用されます。
 
 - webカメラを物理的に動かしたり、メガネを買い替えたりしたときは、再設定が必要な場合があります。        
 - アバターの目の動かし方については、「詳細設定」ウィンドウの「顔・表情」タブから設定できます。</sys:String>

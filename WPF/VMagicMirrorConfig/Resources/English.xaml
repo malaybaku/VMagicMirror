@@ -82,27 +82,19 @@
     <!-- Face Tracker -->
     <sys:String x:Key="FaceTracker_Title">Face Tracking</sys:String>
     <sys:String x:Key="FaceTracker_SelectType">Face Tracking Type: </sys:String>
-    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
-    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam">Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>
     
     <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
-    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera.
-
-- This mode is useful to apply your motion to the avatar without additional device, with low PC load.
-- When disabling the camera in this mode, the app will run very light.
-- The mode has limitation about Face Switch feature, image based blink, etc.</sys:String>
-
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">Web Camera (High Power)</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
-    
-- This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
-- This mode uses higher load on PC than other modes.
-- In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_Title">Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_Instruction">Track your face by web camera.</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">Track facial expressions by camera</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">Apply blink detected by camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_Detail">Details</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_QuickMotion">Apply motion quickly</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode">Mouse pointer look-at</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_Always">Always look</sys:String>
     <sys:String x:Key="FaceTracker_WebCamMouseLookAtMode_CameraOffOnly">Look when camera is off</sys:String>
@@ -139,12 +131,12 @@
     
     <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) can only use following features:
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">When facial expression tracking is off, this feature can only use following inputs:
 
 - Tracking lost detection
 - Face Switch input data receive via VMC Protocol</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Cheek puff" and "Tongue Out" conditions.</sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Camera-based expression tracking does not detect "Cheek puff" and "Tongue Out" conditions.</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.
@@ -168,7 +160,7 @@ Also expression can be applied when face tracking is lost.</sys:String>
     <!-- Face Tracker Eye Calibration -->
     <sys:String x:Key="EyeCalibration_Header">Blink Tracking Settings</sys:String>
     <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about blink tracking handling.
-The properties here only affects during "Web Camera (High Power)" is selected.
+The properties here are applied while "Track facial expressions by camera" is enabled.
 
 - If you move your webcam or get new glasses, you might need to adjust the settings again.
 - The settings for avatar's eyes are available at Settings Window > Face tab.</sys:String>

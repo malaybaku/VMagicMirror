@@ -39,29 +39,30 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - [x] `MotionSetting` に「マウスポインタのほうを見るかどうか」用の int 設定を追加する。デフォルトは「カメラがオフのときは見る」。
 - [x] `MotionSettingModel` に上記 int の `RProperty<int>` と IPC 送信を追加する。
 - [ ] `EnableWebCamHighPowerMode` が「表情をカメラでトラッキング」を表す互換名であることをコメントする。
-- [ ] 旧 LookAt 3 bool 設定の UI 利用箇所を、FaceTrackerPanel では新 int 設定ベースへ置き換える。
-- [ ] 旧 LookAt 3 bool 設定を他の画面でどう扱うか確認し、必要なら FaceTrackerPanel 側のみに新仕様を限定するか、全体を新仕様へ寄せる。
-- [ ] `FaceTrackerViewModel` にマイク一覧と `LipSyncMicrophoneDeviceName` を追加する。
-- [ ] マイク選択の空文字同期は、既存の `StreamingTabViewModels.FaceViewModel` と同じ方針にする。
-- [ ] `FaceTrackerViewModel` の軽量 / 高品質選択状態を廃止し、Webカメラ / 外部トラッキングの切り替えへ整理する。
-- [ ] `FaceTrackerViewModel` の FaceSwitch 注意表示条件を新仕様へ変更する。
-- [ ] 「表情をカメラでトラッキング」が OFF のときは、表情トラッキング依存機能が使えない旨の注意を表示する。
-- [ ] 「表情をカメラでトラッキング」が ON のときは、頬 / 舌が使えない旨の注意を表示する。
-- [ ] `FaceTrackerPanel.xaml` の `Webカメラ (軽量)` / `Webカメラ (高品質)` UI を統合する。
-- [ ] `FaceTrackerPanel.xaml` の「webカメラを用いて、高品質な...」相当の説明を削除する。
-- [ ] `FaceTrackerPanel.xaml` にリップシンク用マイク一覧を追加する。
-- [ ] `FaceTrackerPanel.xaml` に「表情をカメラでトラッキング」チェックボックスを追加する。
-- [ ] 表情トラッキング配下の UI を indent し、親チェックボックス OFF 時に disabled にする。
-- [ ] `カメラで検出したまばたきを適用` チェックボックスを追加する。
-- [ ] `まばたきのトラッキング設定を開く` ボタンを、まばたきチェックボックスの右に移動する。
-- [ ] `カメラで検出したリップシンクを適用` チェックボックスを表情トラッキング配下へ移動する。
-- [ ] `パーフェクトシンクを使用` とヘルプ導線を表情トラッキング配下へ移動する。
-- [ ] `詳細` Expander を追加する。
-- [ ] `詳細` Expander に `動きをすばやく反映` を追加する。
-- [ ] `詳細` Expander に `手前・奥への移動を有効化` を移動する。
-- [ ] `詳細` Expander にマウスポインタ注視 ComboBox を追加する。
-- [ ] `現在位置で顔をキャリブレーション` ボタンは Webカメラ設定内に維持する。
-- [ ] 日英リソースを新 UI 文言へ更新する。
+- [x] 旧 LookAt 3 bool 設定の UI 利用箇所を、FaceTrackerPanel では新 int 設定ベースへ置き換える。
+- [x] 旧 LookAt 3 bool 設定を他の画面でどう扱うか確認し、必要なら FaceTrackerPanel 側のみに新仕様を限定するか、全体を新仕様へ寄せる。
+- [x] `FaceTrackerViewModel` にマイク一覧と `LipSyncMicrophoneDeviceName` を追加する。
+- [x] マイク選択の空文字同期は、既存の `StreamingTabViewModels.FaceViewModel` と同じ方針にする。
+- [x] `FaceTrackerViewModel` の軽量 / 高品質選択状態を廃止し、Webカメラ / 外部トラッキングの切り替えへ整理する。
+- [x] `FaceTrackerViewModel` の FaceSwitch 注意表示条件を新仕様へ変更する。
+- [x] 「表情をカメラでトラッキング」が OFF のときは、表情トラッキング依存機能が使えない旨の注意を表示する。
+- [x] 「表情をカメラでトラッキング」が ON のときは、頬 / 舌が使えない旨の注意を表示する。
+- [x] `FaceTrackerPanel.xaml` の `Webカメラ (軽量)` / `Webカメラ (高品質)` UI を統合する。
+- [x] `FaceTrackerPanel.xaml` の「webカメラを用いて、高品質な...」相当の説明を削除する。
+- [x] `FaceTrackerPanel.xaml` にリップシンク用マイク一覧を追加する。
+- [x] `FaceTrackerPanel.xaml` に「表情をカメラでトラッキング」チェックボックスを追加する。
+- [x] 表情トラッキング配下の UI を indent し、親チェックボックス OFF 時に disabled にする。
+- [x] `カメラで検出したまばたきを適用` チェックボックスを追加する。
+- [x] `まばたきのトラッキング設定を開く` ボタンを、まばたきチェックボックスの右に移動する。
+- [x] `カメラで検出したリップシンクを適用` チェックボックスを表情トラッキング配下へ移動する。
+- [x] `パーフェクトシンクを使用` とヘルプ導線を表情トラッキング配下へ移動する。
+- [x] `詳細` Expander を追加する。
+- [x] `詳細` Expander に `動きをすばやく反映` を追加する。
+- [x] `詳細` Expander に `手前・奥への移動を有効化` を移動する。
+- [x] `詳細` Expander にマウスポインタ注視 ComboBox を追加する。
+- [ ] `詳細` Expander の見栄えとサイズ感について、ユーザーに目視チェックを依頼する。
+- [x] `現在位置で顔をキャリブレーション` ボタンは Webカメラ設定内に維持する。
+- [x] 日英リソースを新 UI 文言へ更新する。
 
 ## IPC Tasks
 
@@ -98,12 +99,12 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 ## Verification Tasks
 
-- [ ] WPF プロジェクトをビルドする。
+- [x] WPF プロジェクトをビルドする。
 - [ ] WPF テストプロジェクトを実行できる範囲で確認する。
 - [ ] `rg` で `AutoBlinkDuringFaceTracking` の残存参照を確認する。
 - [ ] `rg` で `EnableWebCamHighPowerMode` の残存参照を確認し、保存互換名として残す箇所とIPC旧名として残ってしまった箇所を区別する。
-- [ ] `rg` で旧 UI 文言 `Webカメラ (軽量)` / `Webカメラ (高品質)` / `Web Camera (Lite)` / `Web Camera (High Power)` の残存を確認する。
-- [ ] 差分を生成して確認する。
+- [x] `rg` で旧 UI 文言 `Webカメラ (軽量)` / `Webカメラ (高品質)` / `Web Camera (Lite)` / `Web Camera (High Power)` の残存を確認する。
+- [x] 差分を生成して確認する。
 
 ## Notes For This Task
 
@@ -113,3 +114,4 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - 文字列リソースの追加 / 変更は日本語と英語のみメンテナンスし、中国語のローカライズはしない。
 - 中国語文言はユーザーが妥当性を判断できないため、必要な場合は英語へ fallback させる方針とする。
 - 機能廃止などで絶対に使われなくなる中国語リソースキーは削除してよい。
+- 旧 LookAt 3 bool 設定の UI は `FaceTrackerPanel` からは外したが、詳細設定画面側には既存設定として残している。

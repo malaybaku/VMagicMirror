@@ -63,9 +63,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 // NOTE: 視認性のためにプレビュー上ではUIがだいたい展開した状態にする。
                 UseWebCamera.Value = true;
+                WebCameraDeviceName = new RProperty<string>("");
                 LipSyncMicrophoneDeviceName = new RProperty<string>("");
                 return;
             }
+
+            WebCameraDeviceName = new RProperty<string>(_motionModel.CameraDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _motionModel.CameraDeviceName.Value = v;
+                }
+            });
 
             LipSyncMicrophoneDeviceName = new RProperty<string>(_motionModel.LipSyncMicrophoneDeviceName.Value, v =>
             {
@@ -87,6 +96,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
             _motionModel.EnableImageBasedHandTracking.AddWeakEventHandler(OnHandTrackingEnabledChanged);
             _motionModel.WebCamMouseLookAtMode.AddWeakEventHandler(OnWebCamMouseLookAtModeChanged);
+            _motionModel.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
             _motionModel.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
             UpdateBaseMode();
@@ -135,6 +145,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void OnEnableExternalTrackingChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
         private void OnWebCamMouseLookAtModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateWebCamMouseLookAtMode();
+
+        private void OnCameraDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            WebCameraDeviceName.Value = _motionModel.CameraDeviceName.Value;
+        }
 
         private void OnMicrophoneDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -204,7 +219,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableWebCamExpressionTracking => _motionModel.EnableWebCamHighPowerMode;
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
-        public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
+        public RProperty<string> WebCameraDeviceName { get; }
 
         public ReadOnlyObservableCollection<string> MicrophoneNames => _deviceList.MicrophoneNames;
         public RProperty<string> LipSyncMicrophoneDeviceName { get; }

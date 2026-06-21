@@ -120,8 +120,8 @@
         DisableBlendShapeInterpolate,
         SetTrackingLostFaceSwitchSetting,
 
-        // Motion, Face, WebCam high power mode
-        EnableWebCamHighPowerMode,
+        // Motion, Face, WebCam
+        EnableWebCamExpressionTracking,
         EnableWebCamApplyBlink,
         EnableWebCamQuickMotion,
         SetWebCamMouseLookAtMode,

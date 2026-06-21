@@ -38,7 +38,7 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 - [x] `MotionSettingModel` に上記 bool の `RProperty<bool>` と IPC 送信を追加する。
 - [x] `MotionSetting` に「マウスポインタのほうを見るかどうか」用の int 設定を追加する。デフォルトは「カメラがオフのときは見る」。
 - [x] `MotionSettingModel` に上記 int の `RProperty<int>` と IPC 送信を追加する。
-- [ ] `EnableWebCamHighPowerMode` が「表情をカメラでトラッキング」を表す互換名であることをコメントする。
+- [x] `EnableWebCamHighPowerMode` が「表情をカメラでトラッキング」を表す互換名であることをコメントする。
 - [x] 旧 LookAt 3 bool 設定の UI 利用箇所を、FaceTrackerPanel では新 int 設定ベースへ置き換える。
 - [x] 旧 LookAt 3 bool 設定を他の画面でどう扱うか確認し、必要なら FaceTrackerPanel 側のみに新仕様を限定するか、全体を新仕様へ寄せる。
 - [x] `FaceTrackerViewModel` にマイク一覧と `LipSyncMicrophoneDeviceName` を追加する。
@@ -67,20 +67,20 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 ## IPC Tasks
 
 - [x] WPF / Unity 共通の `VmmCommands` から `AutoBlinkDuringFaceTracking` を削除する。
-- [ ] `EnableWebCamHighPowerMode` コマンドを、実態に合う名前へ変更する。
+- [x] `EnableWebCamHighPowerMode` コマンドを、実態に合う名前へ変更する。
 - [x] 「カメラで検出したまばたきを適用」用の IPC コマンドを追加する。
 - [x] 「動きをすばやく反映」用の IPC コマンドを追加する。
 - [x] 「マウスポインタのほうを見るかどうか」用の IPC コマンドを追加する。
 - [ ] `EnableWebCameraHighPowerModeLipSync` コマンド名を実態に寄せるか、既存名維持にするかを実装時に判断する。
-- [ ] WPF の `MessageFactory` に新コマンド送信用メソッドを追加する。
-- [ ] Unity 側の受信箇所を新コマンド名へ更新する。
+- [x] WPF の `MessageFactory` に新コマンド送信用メソッドを追加する。
+- [x] Unity 側の受信箇所を新コマンド名へ更新する。
 
 ## Unity Tasks
 
 - [x] `FaceControlManager` から `AutoBlinkDuringFaceTracking` 依存をなくす。
-- [ ] `FaceControlConfigurationReceiver` で、新しい「表情をカメラでトラッキング」コマンドを受ける。
+- [x] `FaceControlConfigurationReceiver` で、新しい「表情をカメラでトラッキング」コマンドを受ける。
 - [ ] `FaceControlConfiguration` の `WebCamHighPower` コメントや意味が新仕様と矛盾しないように整理する。
-- [ ] MediaPipe FaceLandmarker の BlendShape 出力 ON/OFF を「表情をカメラでトラッキング」に基づかせる。
+- [x] MediaPipe FaceLandmarker の BlendShape 出力 ON/OFF を「表情をカメラでトラッキング」に基づかせる。
 - [ ] BlendShape 出力 ON/OFF 変更時に必要なら MediaPipe タスクを restart する。
 - [ ] Unity 側で `表情トラッキング && カメラまばたき適用` の実効状態を判定する。
 - [ ] `FaceControlManager` の Blink 選択を新仕様へ変更する。
@@ -101,8 +101,8 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 
 - [x] WPF プロジェクトをビルドする。
 - [ ] WPF テストプロジェクトを実行できる範囲で確認する。
-- [ ] `rg` で `AutoBlinkDuringFaceTracking` の残存参照を確認する。
-- [ ] `rg` で `EnableWebCamHighPowerMode` の残存参照を確認し、保存互換名として残す箇所とIPC旧名として残ってしまった箇所を区別する。
+- [x] `rg` で `AutoBlinkDuringFaceTracking` の残存参照を確認する。
+- [x] `rg` で `EnableWebCamHighPowerMode` の残存参照を確認し、保存互換名として残す箇所とIPC旧名として残ってしまった箇所を区別する。
 - [x] `rg` で旧 UI 文言 `Webカメラ (軽量)` / `Webカメラ (高品質)` / `Web Camera (Lite)` / `Web Camera (High Power)` の残存を確認する。
 - [x] 差分を生成して確認する。
 

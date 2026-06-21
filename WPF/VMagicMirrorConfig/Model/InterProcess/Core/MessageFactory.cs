@@ -144,7 +144,7 @@ namespace Baku.VMagicMirrorConfig
 
 
 
-        public static Message EnableWebCamHighPowerMode(bool enable) => BoolContent(VmmCommands.EnableWebCamHighPowerMode, enable);
+        public static Message EnableWebCamExpressionTracking(bool enable) => BoolContent(VmmCommands.EnableWebCamExpressionTracking, enable);
         public static Message EnableWebCamApplyBlink(bool enable) => BoolContent(VmmCommands.EnableWebCamApplyBlink, enable);
         public static Message EnableWebCamQuickMotion(bool enable) => BoolContent(VmmCommands.EnableWebCamQuickMotion, enable);
         public static Message SetWebCamMouseLookAtMode(int mode) => IntContent(VmmCommands.SetWebCamMouseLookAtMode, mode);

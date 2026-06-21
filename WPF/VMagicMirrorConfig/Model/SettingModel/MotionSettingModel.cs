@@ -55,7 +55,7 @@ namespace Baku.VMagicMirrorConfig
                 v => SendMessage(MessageFactory.SetTrackingLostFaceSwitchSetting(v)));
             DisableFaceTrackingHorizontalFlip = new RProperty<bool>(setting.DisableFaceTrackingHorizontalFlip, v => SendMessage(MessageFactory.DisableFaceTrackingHorizontalFlip(v)));
 
-            EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamHighPowerMode(v)));
+            EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamExpressionTracking(v)));
             EnableWebCamApplyBlink = new RProperty<bool>(setting.EnableWebCamApplyBlink, v => SendMessage(MessageFactory.EnableWebCamApplyBlink(v)));
             EnableWebCamQuickMotion = new RProperty<bool>(setting.EnableWebCamQuickMotion, v => SendMessage(MessageFactory.EnableWebCamQuickMotion(v)));
             WebCamMouseLookAtMode = new RProperty<int>(setting.WebCamMouseLookAtMode, v => SendMessage(MessageFactory.SetWebCamMouseLookAtMode(v)));
@@ -218,6 +218,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> DisableFaceTrackingHorizontalFlip { get; }
 
+        // NOTE: 設定ファイル互換のため名称は据え置きだが、実体は「表情をカメラでトラッキング」するかどうかを表す。
         public RProperty<bool> EnableWebCamHighPowerMode { get; }
         public RProperty<bool> EnableWebCamApplyBlink { get; }
         public RProperty<bool> EnableWebCamQuickMotion { get; }

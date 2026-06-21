@@ -101,7 +101,7 @@ Webカメラによる顔トラッキング設定について、従来の「軽�
 ## Verification Tasks
 
 - [x] WPF プロジェクトをビルドする。
-- [ ] WPF テストプロジェクトを実行できる範囲で確認する。
+- [x] WPF テストプロジェクトを実行できる範囲で確認する。
 - [x] `rg` で `AutoBlinkDuringFaceTracking` の残存参照を確認する。
 - [x] `rg` で `EnableWebCamHighPowerMode` の残存参照を確認し、保存互換名として残す箇所とIPC旧名として残ってしまった箇所を区別する。
 - [x] `rg` で旧 UI 文言 `Webカメラ (軽量)` / `Webカメラ (高品質)` / `Web Camera (Lite)` / `Web Camera (High Power)` の残存を確認する。

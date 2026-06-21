@@ -141,7 +141,6 @@
         AdjustLipSyncByVolume,
 
         // Motion, Eye
-        LookAtStyle,
         SetUseAvatarEyeBoneMap,
         SetEyeBoneRotationScale,
         SetEyeBoneRotationScaleWithMap,

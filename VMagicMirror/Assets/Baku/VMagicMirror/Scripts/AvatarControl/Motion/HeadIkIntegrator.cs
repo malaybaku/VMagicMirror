@@ -3,7 +3,6 @@ using Baku.VMagicMirror.IK;
 using RootMotion.FinalIK;
 using UnityEngine;
 using Zenject;
-using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
 namespace Baku.VMagicMirror
@@ -28,8 +27,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private float mouseClickIncrementValue = 2.0f;
 
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
-        private readonly CameraBasedLookAtIk _camBasedLookAt = new CameraBasedLookAtIk();
-        private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
         private bool _hasModel = false;
 
@@ -136,34 +133,20 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void SetLookAtStyle(string content)
-        {
-            _lookAtStyle = LookAtStyleUtil.GetLookAtStyle(content);
-        }
-
         private void Start()
         {
-            _camBasedLookAt.Camera = _camera;
             //起動後にマウスを動かさないとLookAtの先が原点になっちゃうので、それを防ぐためにやる
             _mouseBasedLookAt.Position = _camera.position;
-            _lookAtTarget.localPosition = _camBasedLookAt.Position;
+            _lookAtTarget.localPosition = _mouseBasedLookAt.Position;
         }
 
-        //NOTE: タイミングがIKの適用前になることに注意: つまりTボーンっぽい状態
+        //NOTE: タイミングがIKの適用前になることに注意
         private void Update()
         {
             _mouseActionCount = Mathf.Max(0f, _mouseActionCount - Time.deltaTime);
-            _camBasedLookAt.CheckDepthAndWeight(_head);
-            var lookAtStyle = GetEffectiveLookAtStyle();
 
-            // - Webカメラで顔トラッキングを行っている場合、設定に応じてマウスへの視線追従を切る
-            // - 十分高精度な外部トラッキングを行っている場合、マウスへの視線追従をしたくないのでLookAtを切る
-            // - LookAtなしの設定ではLookAtを切る
-            // - 3人称視点でゲーム入力ベースの移動をする場合、正面付近に対してLookAtするとかえって不自然なので、この場合も何もしない
-            if (_hasModel && ShouldDisableLookAtIk(lookAtStyle))
+            if (_hasModel && ShouldDisableLookAtIk())
             {
-                //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。
-                //当面はそっちのほうが分かりやすいので
                 DisableLookAtIk();
                 return;
             }
@@ -173,10 +156,7 @@ namespace Baku.VMagicMirror
                 _lookAtIk.enabled = true;
             }
 
-            var pos = 
-                (lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
-                (lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                new Vector3(1, 0, 1);
+            var pos = _mouseBasedLookAt.Position;
 
             //TODO: この処理をオンオフできてもいいかも？
             if (RightHandTargetType == HandTargetType.PenTablet)
@@ -190,31 +170,6 @@ namespace Baku.VMagicMirror
                 pos,
                 lookAtSpeedFactor * Time.deltaTime
             );
-        }
-
-        private LookAtStyles GetEffectiveLookAtStyle()
-        {
-            var lookAtStyle = _lookAtStyle;
-
-            if (_faceControlConfig.HeadMotionControlModeValue is FaceControlModes.WebCam &&
-                _faceControlConfig.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Always)
-            {
-                lookAtStyle = LookAtStyles.MousePointer;
-            }
-            else if (lookAtStyle is LookAtStyles.MousePointer &&
-                _faceControlConfig.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Never)
-            {
-                lookAtStyle = LookAtStyles.Fixed;
-            }
-
-            //マウスがゲーム入力扱いの場合、LookAtもやると二重適用になって変なことになるため、コッチは切ってしまう
-            if (_keyboardGameInputSource.MouseMoveLookAroundActive &&
-                lookAtStyle == LookAtStyles.MousePointer)
-            {
-                lookAtStyle = LookAtStyles.Fixed;
-            }
-
-            return lookAtStyle;
         }
 
         private Vector3 CreatePenTabletLookAt(Vector3 rawPos, Vector3 penTabletPos, float rate)
@@ -251,9 +206,15 @@ namespace Baku.VMagicMirror
             _lookAtTarget.localPosition = _head.position + Vector3.forward * 5.0f;
         }
 
-        private bool ShouldDisableLookAtIk(LookAtStyles lookAtStyle)
+        /// <summary>
+        /// LookAtを切るかどうかを判定する。
+        /// - 外部トラッキングやVMCProtocolでの動作中はそっちの動作を厳密に適用したいはずと想定して切る
+        /// - そうでない場合は、LookAtMode + ゲーム入力が適用中かどうかを考慮して切る
+        /// </summary>
+        /// <returns></returns>
+        private bool ShouldDisableLookAtIk()
         {
-            if (lookAtStyle is LookAtStyles.Fixed)
+            if (_faceControlConfig.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Never)
             {
                 return true;
             }
@@ -263,6 +224,14 @@ namespace Baku.VMagicMirror
                 return true;
             }
 
+            // マウス移動で頭部動作するモードの場合、LookAtが混ざると見栄えが悪いので切る
+            if (_keyboardGameInputSource.MouseMoveLookAroundActive)
+            {
+                return true;
+            }
+
+            // NOTE: 外部トラッキング + PenTablet等のときには実はLookAtしていい説もあるが、分岐のシンプルさを優先してやっていない。
+            // 「外部トラッキング + マウス注視」もできてOK、という思想に乗り換えたらこの辺の分岐を見直すかも
             return _faceControlConfig.HeadMotionControlModeValue switch
             {
                 FaceControlModes.WebCam =>
@@ -270,61 +239,6 @@ namespace Baku.VMagicMirror
                 FaceControlModes.ExternalTracker or FaceControlModes.VMCProtocol => true,
                 _ => false,
             };
-        }
-
-        private class CameraBasedLookAtIk : IIKData
-        {
-            public Transform Camera { get; set; }
-
-            public Vector3 Position => Vector3.Lerp(
-                Camera.position + _depth * Camera.forward,
-                _fixedLookAtPos,
-                _fixedLookAtBlendWeight);
-                
-            public Quaternion Rotation => Camera.rotation;
-
-            public void CheckDepthAndWeight(Transform head)
-            {
-                //Zの決め方に注意: キャラを正面から見ているときと後ろから見ているときで、手前にLookAtさせるか奥にLookAtさせるかを変更
-                var forward = Camera.forward;
-                var horizontalForward = new Vector3(forward.x, 0, forward.z).normalized;
-            
-                //zの値が小さい = カメラは真横、または後ろを向いている = キャラを正面から見ているハズ
-                if (horizontalForward.z < 0.1f || head == null)
-                {
-                    _depth = 0;
-                    _fixedLookAtBlendWeight = 0;
-                    return;
-                }
-            
-                //カメラのZ成分が増える(=真後ろから見る)のに近づくにつれて奥側を向かせる。
-                //このとき、途中のブレンディングをするとき正面向き成分を混ぜることで、遷移中のLookAtを体にめり込みにくくする
-                var depthFactor = 1.0f;
-                if (horizontalForward.z < 0.5f)
-                {
-                    depthFactor = horizontalForward.z * 2;
-                }
-
-                //キャラを背後から映してるハズ: 奥行き方向にLookAtをずらしていく
-                var camPosition = Camera.position;
-                //Vector3.Dotのとこ = カメラからみてキャラが立ってる位置の奥行き。Yを考慮すると面倒なことになるため、XZ平面でやってます
-                _depth = (2 * depthFactor) * Mathf.Abs(Vector3.Dot(
-                                  new Vector3(camPosition.x, 0, camPosition.z), horizontalForward
-                              ));
-
-                
-                //固定視点LookAtのウェイト (いわゆるテント写像)
-                //depthFactor == 1つまりキャラの中心付近を通るときに1になって固定視点を経由し、両端(=通常のケース)ではゼロになる
-                _fixedLookAtPos = head.position + head.forward * 1.0f;
-                _fixedLookAtBlendWeight = 1.0f - 2.0f * Mathf.Abs(depthFactor - 0.5f);
-            }
-
-            //カメラが前方向き = キャラを後ろから映しているときの見栄えが破綻しないように奥行きを追加するやつ
-            private float _depth = 0f;
-            private Vector3 _fixedLookAtPos = Vector3.zero;
-            private float _fixedLookAtBlendWeight = 0;
-
-            public IKTargets Target => IKTargets.HeadLookAt;
         }
     }
 }

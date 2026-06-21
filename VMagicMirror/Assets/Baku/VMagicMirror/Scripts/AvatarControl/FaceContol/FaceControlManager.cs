@@ -1,6 +1,7 @@
 ﻿using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using UniVRM10;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -21,6 +22,7 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _config;
         private MediaPipeBlink _mediaPipeBlink;
         private MediaPipeEyeJitter _mediaPipeEyeJitter;
+        private readonly ReactiveProperty<bool> _enableWebCamApplyBlink = new(true);
 
         [Inject]
         public void Initialize(
@@ -39,6 +41,10 @@ namespace Baku.VMagicMirror
                 VmmCommands.FaceDefaultFun,
                 message => DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
             );
+            receiver.BindBoolProperty(
+                VmmCommands.EnableWebCamApplyBlink,
+                _enableWebCamApplyBlink
+            );
         }
         
         public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new();
@@ -56,12 +62,11 @@ namespace Baku.VMagicMirror
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
             DefaultBlendShape.Apply(accumulator);
 
-            // TODO: EnableWebCamApplyBlink と BlendShapeControlMode is WebCam の実効状態に基づいて、MediaPipe Blinkを適用するか判定する。
             var blinkSource = _config.BlendShapeControlMode.CurrentValue switch
             {
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
-                FaceControlModes.WebCam => _mediaPipeBlink.BlinkSource,
+                FaceControlModes.WebCam when _enableWebCamApplyBlink.Value => _mediaPipeBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };
 

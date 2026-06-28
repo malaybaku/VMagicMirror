@@ -89,6 +89,7 @@ There are several options available.
 - `Motion Scale(%)`: Specify scale to apply your motion to the avatar by percentage. Default value is 100.
 - `Hand Horizontal Offset (cm)`: A positive value will make the hands spread out to the left and right.
 - `Hand Vertical Offset (cm)`: A positive value will the hands rise higher.
+- `Hands Follow Head (%)`: Set how strongly hand position and rotation follow face or head movement during hand tracking. Set the value to 0 to disable hands following head movement.
 - `Show Detection Status`: Turn on to show how hand is tracked in control panel window. At the first time using hand tracking feature, I recommend to use the option to see tracking stability and the area where the hand can be tracked.
 
 </div>

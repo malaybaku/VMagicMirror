@@ -8,6 +8,17 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v5.0.1
+{: .doc-sec2 }
+
+2026/06/28
+
+* Add: Added an option to move hands along with head movement during hand tracking. You can adjust the strength from `Hand Tracking` > `Hands Follow Head (%)`.
+* Add: Added posture adjustment options for shoulder lift and back bending. They are available from `Settings > Motion` > `Shoulder / Back`.
+* Add: Added an option to turn the effect on/off in `Settings > Effects` > `Bloom`. In v5.0.0 and earlier versions, setting `Intensity [%]` to 0 also turns the effect off.
+* Change: Optimized the internal generation timing of position and rotation control objects shown during Free Layout mode.
+
+
 #### v5.0.0
 {: .doc-sec2 }
 

@@ -81,8 +81,9 @@ Bloom is an effect to add soft light around the avatar.
 
 <div class="doc-ul" markdown="1">
 
+- `Enable Effect`: Turn on to enable Bloom. When this is off, Bloom is not applied regardless of the `Intensity [%]` value.
 - `Bloom Color`: Set bloom color.
-- `Intensity [%]`: Set bloom intensity. Set the value to 0 to disable bloom.
+- `Intensity [%]`: Set bloom intensity. When this value is 0, Bloom is not visible even if `Enable Effect` is on.
 - `Threshold [%]`: Set brightness threshold to apply bloom. Larger value applies bloom only to brighter areas.
 
 </div>

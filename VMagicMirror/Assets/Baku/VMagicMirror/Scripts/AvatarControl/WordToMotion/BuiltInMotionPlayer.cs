@@ -71,11 +71,11 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
+            _simpleAnimation = info.VrmRoot.gameObject.AddComponent<SimpleAnimation>();
             _simpleAnimation.playAutomatically = false;
             _simpleAnimation.AddState(_clipData.DefaultStandingAnimation, DefaultStateName);
             _simpleAnimation.Play(DefaultStateName);
-            _animator = info.animator;
+            _animator = info.Animator;
             _hasModel = true;
         }
 

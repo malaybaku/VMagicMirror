@@ -35,9 +35,6 @@
                     <StackPanel Orientation="Horizontal"
                                 Margin="5"
                                 >
-                        <md:PackIcon Kind="HumanHandsdown"
-                                     Style="{StaticResource SettingHeaderPackIcon}"
-                                     />
                         <TextBlock Text="{DynamicResource Motion_FullBody}"
                                    Style="{StaticResource HeaderText}"
                                    Margin="5"
@@ -181,10 +178,76 @@
                     <StackPanel Orientation="Horizontal"
                                 Margin="5"
                                 >
+                        <TextBlock Text="{DynamicResource Motion_ShoulderAndBack}"
+                                   Style="{StaticResource HeaderText}"
+                                   Margin="5"
+                                   />
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetShoulderAndBackMotionSettingCommand}"
+                                />
+                    </StackPanel>
 
-                        <md:PackIcon Kind="HumanGreeting"
-                                     Style="{StaticResource SettingHeaderPackIcon}"
-                                     />
+                    <CheckBox Margin="15,0" 
+                              Content="{DynamicResource Motion_Arm_EnableShoulderModify}"
+                              IsChecked="{Binding EnableShoulderMotionModify.Value}"
+                              />
+
+                    <Grid Margin="5,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Margin="20,0,5,0"
+                                   IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                   Text="{DynamicResource Motion_Arm_ShoulderRotationOffset}"/>
+                        <Slider Grid.Row="0" Grid.Column="1"
+                                x:Name="sliderShoulderRotationOffset"
+                                Minimum="-200"
+                                Maximum="200"
+                                SmallChange="1"
+                                LargeChange="10"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                Value="{Binding ShoulderRotationOffset.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="0" Grid.Column="2"
+                                 IsEnabled="{Binding EnableShoulderMotionModify.Value}"
+                                 Text="{Binding Value, ElementName=sliderShoulderRotationOffset}"
+                                 />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="{DynamicResource Motion_FullBody_SpineAngleOffset}"/>
+                        <Slider Grid.Row="1" Grid.Column="1"
+                                x:Name="sliderSpineAngleOffset"
+                                Minimum="-100"
+                                Maximum="100"
+                                SmallChange="1"
+                                LargeChange="10"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding SpineAngleOffset.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderSpineAngleOffset}"
+                                 />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                >
 
                         <TextBlock Text="{DynamicResource Motion_Arm}"
                                    Style="{StaticResource HeaderText}"
@@ -195,12 +258,6 @@
                                 Command="{Binding ResetArmMotionSettingCommand}"
                                 />
                     </StackPanel>
-
-
-                    <CheckBox Margin="15,0" 
-                              Content="{DynamicResource Motion_Arm_EnableShoulderModify}"
-                              IsChecked="{Binding EnableShoulderMotionModify.Value}"
-                              />
 
 
                     <Grid Margin="5,0,0,10">
@@ -325,9 +382,6 @@
                     <StackPanel Orientation="Horizontal"
                                 Margin="5"
                                 >
-                        <md:PackIcon Kind="Hand"
-                                     Style="{StaticResource SettingHeaderPackIcon}"
-                                     />
                         <TextBlock Text="{DynamicResource Motion_Hand}"
                                    Margin="5"
                                    Style="{StaticResource HeaderText}"
@@ -395,9 +449,6 @@
                     <StackPanel Orientation="Horizontal"
                                 Margin="5">
 
-                        <md:PackIcon Kind="TimerSand" 
-                                     Style="{StaticResource SettingHeaderPackIcon}"
-                                     />
                         <TextBlock Text="{DynamicResource Motion_Wait}"
                                    Style="{StaticResource HeaderText}"
                                    Margin="5"

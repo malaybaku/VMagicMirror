@@ -23,6 +23,8 @@
 
         public bool EnableTwistBodyMotion { get; set; } = false;
 
+        public int SpineAngleOffset { get; set; } = 0;
+
         public bool EnableCustomHandDownPose { get; set; } = false;
 
         //NOTE: jsonがUnityから飛んでくるのを保持するだけ
@@ -54,6 +56,7 @@
         // NOTE: X/Yいずれもcentimeter単位
         public int HandTrackingMotionOffsetX { get; set; } = 0;
         public int HandTrackingMotionOffsetY { get; set; } = 0;
+        public int HandTrackingHeadPoseAdjustFactor { get; set; } = 25;
 
 
         public string CameraDeviceName { get; set; } = "";
@@ -116,6 +119,7 @@
 
         public bool EnableHidRandomTyping { get; set; } = false;
         public bool EnableShoulderMotionModify { get; set; } = true;
+        public int ShoulderRotationOffset { get; set; } = 0;
         public bool EnableHandDownTimeout { get; set; } = true;
 
         public int WaistWidth { get; set; } = 30;
@@ -201,13 +205,19 @@
             GamepadMotionMode = 0;
 
             EnableHidRandomTyping = false;
-            EnableShoulderMotionModify = true;
             EnableHandDownTimeout = true;
             WaistWidth = 30;
             ElbowCloseStrength = 30;
             EnableFpsAssumedRightHand = false;
             ShowPresentationPointer = false;
             PresentationArmRadiusMin = 20;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            SpineAngleOffset = 0;
+            EnableShoulderMotionModify = true;
+            ShoulderRotationOffset = 0;
         }
 
         public void ResetHandSetting()
@@ -234,6 +244,7 @@
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

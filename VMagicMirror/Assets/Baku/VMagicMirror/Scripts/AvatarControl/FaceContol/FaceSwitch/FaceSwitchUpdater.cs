@@ -102,7 +102,7 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var expressionKeys = info.instance.Vrm.Expression.LoadExpressionMap().Keys;
+            var expressionKeys = info.Instance.Vrm.Expression.LoadExpressionMap().Keys;
             _faceSwitch.AvatarBlendShapeNames = expressionKeys.Select(k =>
                 {
                     var result = k.Name;

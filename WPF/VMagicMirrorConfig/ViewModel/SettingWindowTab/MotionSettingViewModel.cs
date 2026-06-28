@@ -26,6 +26,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetArmMotionSettingCommand = new ActionCommand(
                  () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetArmSetting)
                  );
+            ResetShoulderAndBackMotionSettingCommand = new ActionCommand(
+                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetShoulderAndBackSetting)
+                 );
             ResetHandMotionSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetHandSetting)
                 );
@@ -158,11 +161,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
+        public RProperty<int> SpineAngleOffset => _model.SpineAngleOffset;
         public RProperty<bool> EnableCustomHandDownPose => _model.EnableCustomHandDownPose;
         public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;
 
         public RProperty<bool> EnableHidRandomTyping => _model.EnableHidRandomTyping;
         public RProperty<bool> EnableShoulderMotionModify => _model.EnableShoulderMotionModify;
+        public RProperty<int> ShoulderRotationOffset => _model.ShoulderRotationOffset;
         public RProperty<bool> EnableHandDownTimeout => _model.EnableHandDownTimeout;
         public RProperty<int> WaistWidth => _model.WaistWidth;
         public RProperty<int> ElbowCloseStrength => _model.ElbowCloseStrength;
@@ -184,6 +189,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public ActionCommand ResetCustomHandDownPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
+        public ActionCommand ResetShoulderAndBackMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }
         public ActionCommand ResetWaitMotionSettingCommand { get; }
     }

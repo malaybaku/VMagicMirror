@@ -42,14 +42,23 @@ You need to turn on `Always-Hands-Down Mode` and enable `Free Layout Mode` to ed
 
 </div>
 
+#### Shoulder / Back
+{: .doc-sec2 }
+
+Set shoulder and back motion.
+
+`Modify shoulder motion`: Turn on to apply shoulder motion adjustment along with arm motions such as typing and mouse operation. This option is enabled by default, but you can turn it off if it does not suit your avatar.
+
+`Shoulder lift offset`: Adjust how much the shoulders are raised when `Modify shoulder motion` is enabled. Larger values raise the shoulders more, and smaller values lower them.
+
+`Bend Back`: Adjust back bending and stretching. Use this when the avatar posture looks too bent forward or too arched backward.
+
 #### Arm
 {: .doc-sec2 }
 
 `Enable Typing / Mouse Motion`: On by default. If turned off, the avatar stops to react to typing, mouse pointer move, or gamepad input. If you want to set the avatar always simply standing, turn off this checkbox.
 
 `Random typing to hide key input`: When checked, the avatar keyboard input becomes random to hide what key you pressed actually.
-
-`Modify shoulder motion`: Make shoulder motion richer. Enabled by default.
 
 `Waist width [cm]`: Set how much the avatar put his/her elbow outside.
 

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 var names = string.Join(",",
-                    info.instance.Vrm.Expression.LoadExpressionMap()
+                    info.Instance.Vrm.Expression.LoadExpressionMap()
                         .Keys
                         .Where(k => k.Preset == ExpressionPreset.custom)
                         .Select(k => k.Name)              

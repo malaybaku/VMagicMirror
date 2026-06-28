@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var controlRigBones = info.instance.Runtime.ControlRig.Bones;
+            var controlRigBones = info.Instance.Runtime.ControlRig.Bones;
             _hasLeftEyeBone = controlRigBones.TryGetValue(HumanBodyBones.LeftEye, out var leftEyeBone);
             if (_hasLeftEyeBone && leftEyeBone != null)
             {

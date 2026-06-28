@@ -245,7 +245,8 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">Hand Vertical Offset (cm)</sys:String>
-    
+    <sys:String x:Key="HandTracking_HeadPoseAdjustFactor">Hands Follow Head (%)</sys:String>
+
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>
@@ -384,6 +385,7 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">Enable Twist Motion</sys:String>    
+    <sys:String x:Key="Motion_FullBody_SpineAngleOffset">Bend Back</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">Custom Hand Down Pose</sys:String>    
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Notice">*Pose adjuster appears on Free Layout Mode</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">To edit hand pose,
@@ -391,12 +393,15 @@ Restart (turn off and on) the buddy to get more detailed log.</sys:String>
 - Turn on "Free Layout Mode"</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">Reset Hand Down Pose to Default</sys:String>
     <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">Game Locomotion Setting...</sys:String>
-    
+
+    <sys:String x:Key="Motion_ShoulderAndBack">Shoulder / Back</sys:String>
+
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">Arm</sys:String>    
     <sys:String x:Key="Motion_Arm_EnableHidMotion">Enable Typing / Mouse Motion</sys:String>
     <sys:String x:Key="Motion_Arm_EnableRandomTyping">Random typing to hide key input</sys:String>
     <sys:String x:Key="Motion_Arm_EnableShoulderModify">Modify shoulder motion</sys:String>
+    <sys:String x:Key="Motion_Arm_ShoulderRotationOffset">Shoulder lift offset</sys:String>
     <sys:String x:Key="Motion_Arm_EnableTypingAndMouseTimeout">Down hand when no input</sys:String>
     <sys:String x:Key="Motion_Arm_FpsAssumedRightHand">Enable mouse motion to FPS assumed mode</sys:String>
     <sys:String x:Key="Motion_Arm_FpsAssumedRightHand_Tooltip">When checked right hand motion during playing FPS become more natural, but screen touch or pen tablet operation become become slow</sys:String>
@@ -610,6 +615,7 @@ Translate (2 way):
     <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">Apply When Locomotion is Active</sys:String>
     
     <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Enable">Enable Effect</sys:String>
     <sys:String x:Key="Bloom_Color">Bloom Color</sys:String>
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>

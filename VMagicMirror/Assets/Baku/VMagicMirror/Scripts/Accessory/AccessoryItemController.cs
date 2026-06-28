@@ -23,10 +23,11 @@ namespace Baku.VMagicMirror
         [SerializeField] private AccessoryItem itemPrefab = null;
 
         private Camera _cam;
+        private RuntimeTransformControlFactory _transformControlFactory;
         private IMessageSender _sender;
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
-        private Animator _animator;
+        private VRMAvatarBones _avatarBones;
         private bool _hasModel;
 
         [Inject]
@@ -35,6 +36,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
+            RuntimeTransformControlFactory transformControlFactory,
             FaceSwitchUpdater faceSwitchUpdater,
             DeviceTransformController deviceTransformController,
             WordToMotionAccessoryRequest accessoryRequest,
@@ -43,17 +45,19 @@ namespace Baku.VMagicMirror
             )
         {
             _cam = cam;
+            _transformControlFactory = transformControlFactory;
             _sender = sender;
 
             vrmLoader.VrmLoaded += info =>
             {
-                _items.ForEach(i => i.SetAnimator(info.controlRig));
-                _animator = info.controlRig;
+                _items.ForEach(i => i.SetAvatarBones(info.AvatarBones));
+                _avatarBones = info.AvatarBones;
                 _hasModel = true;
             };
             vrmLoader.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _avatarBones = null;
                 _items.ForEach(i => i.UnsetModel());
             };
             
@@ -169,11 +173,11 @@ namespace Baku.VMagicMirror
             foreach (var file in files)
             {
                 var item = Instantiate(itemPrefab);
-                item.Initialize(_cam, file);
+                item.Initialize(_cam, file, _transformControlFactory);
                 item.FirstEnabled += OnItemFirstEnabled;
                 if (_hasModel)
                 {
-                    item.SetAnimator(_animator);
+                    item.SetAvatarBones(_avatarBones);
                 }
                 _items.Add(item);
             }

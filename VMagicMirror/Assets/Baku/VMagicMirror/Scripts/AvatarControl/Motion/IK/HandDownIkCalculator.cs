@@ -60,21 +60,21 @@ namespace Baku.VMagicMirror.IK
 
         void IInitializable.Initialize()
         {
-            _vrmLoadable.VrmLoaded += info => SetupAvatar(info.animator);
+            _vrmLoadable.VrmLoaded += info => SetupAvatar(info.AvatarBones);
             _vrmLoadable.VrmDisposing += ClearAvatarReference;
             _coroutineSource.StartCoroutine(SetHandPositionsIfHasModel());
         }
 
-        private void SetupAvatar(Animator animator)
+        private void SetupAvatar(VRMAvatarBones avatarBones)
         {
-            _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
-            _rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            _leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+            _hips = avatarBones.Hips;
+            _rightUpperArm = avatarBones.RightUpperArm;
+            _leftUpperArm = avatarBones.LeftUpperArm;
 
             var rightUpperArmPos = _rightUpperArm.position;
-            var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightWristPos = avatarBones.RightHand.position;
             var leftUpperArmPos = _leftUpperArm.position;
-            var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var leftWristPos = avatarBones.LeftHand.position;
             var hipsPos = _hips.position;
 
             _rightArmLength = Vector3.Distance(rightWristPos, rightUpperArmPos);

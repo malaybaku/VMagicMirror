@@ -39,16 +39,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // TODO: 体型計算してるコード、統一したい…
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var target = info.animator;
+            var target = info.Animator;
             
             var rootPosition = target.transform.position;
 
-            var head = target.GetBoneTransform(HumanBodyBones.Head);
-            var leftUpperArm = target.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            var leftWrist = target.GetBoneTransform(HumanBodyBones.LeftHand);
+            var head = info.AvatarBones.Head;
+            var leftUpperArm = info.AvatarBones.LeftUpperArm;
+            var leftWrist = info.AvatarBones.LeftHand;
             
-            var rightUpperArm = target.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            var rightWrist = target.GetBoneTransform(HumanBodyBones.RightHand);
+            var rightUpperArm = info.AvatarBones.RightUpperArm;
+            var rightWrist = info.AvatarBones.RightHand;
 
             var bodyHeight = head.position.y - rootPosition.y;
             var leftArmLength = Vector3.Distance(leftWrist.position, leftUpperArm.position);

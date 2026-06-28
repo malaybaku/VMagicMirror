@@ -85,6 +85,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableNoHandTrackMode(bool enable) => BoolContent(VmmCommands.EnableNoHandTrackMode, enable);
         public static Message EnableGameInputLocomotionMode(bool enable) => BoolContent(VmmCommands.EnableGameInputLocomotionMode, enable);
         public static Message EnableTwistBodyMotion(bool enable) => BoolContent(VmmCommands.EnableTwistBodyMotion, enable);
+        public static Message SetSpineAngleOffset(int offset) => IntContent(VmmCommands.SetSpineAngleOffset, offset);
 
         public static Message EnableCustomHandDownPose(bool enable) => BoolContent(VmmCommands.EnableCustomHandDownPose, enable);
         public static Message SetHandDownModeCustomPose(string poseJson) => StringContent(VmmCommands.SetHandDownModeCustomPose, poseJson);
@@ -98,6 +99,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableHidRandomTyping(bool enable) => BoolContent(VmmCommands.EnableHidRandomTyping, enable);
         public static Message EnableShoulderMotionModify(bool enable) => BoolContent(VmmCommands.EnableShoulderMotionModify, enable);
+        public static Message ShoulderRotationOffset(int offset) => IntContent(VmmCommands.ShoulderRotationOffset, offset);
         public static Message EnableTypingHandDownTimeout(bool enable) => BoolContent(VmmCommands.EnableTypingHandDownTimeout, enable);
         public static Message SetWaistWidth(int waistWidthCentimeter) => IntContent(VmmCommands.SetWaistWidth, waistWidthCentimeter);
         public static Message SetElbowCloseStrength(int strengthPercent) => IntContent(VmmCommands.SetElbowCloseStrength, strengthPercent);
@@ -139,6 +141,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
         public static Message SetHandTrackingMotionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
         public static Message SetHandTrackingMotionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
+        public static Message SetHandTrackingHeadPoseAdjustFactor(int percent) => IntContent(VmmCommands.SetHandTrackingHeadPoseAdjustFactor, percent);
 
 
 
@@ -312,6 +315,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message FixedShadowWhenLocomotionActiveEnable(bool enable) 
             => BoolContent(VmmCommands.FixedShadowWhenLocomotionActiveEnable, enable);
 
+        public static Message BloomEnable(bool enable) => BoolContent(VmmCommands.BloomEnable, enable);
         public static Message BloomColor(int r, int g, int b) => IntArrayContent(VmmCommands.BloomColor, [r, g, b]);
         public static Message BloomIntensity(int intensityPercent) => IntContent(VmmCommands.BloomIntensity, intensityPercent);
         public static Message BloomThreshold(int thresholdPercent) => IntContent(VmmCommands.BloomThreshold, thresholdPercent);

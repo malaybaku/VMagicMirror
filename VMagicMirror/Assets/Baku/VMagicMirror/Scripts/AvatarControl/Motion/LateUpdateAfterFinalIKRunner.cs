@@ -59,8 +59,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftLegIk = info.leftLegIk;
-            _rightLegIk = info.rightLegIk;
+            _leftLegIk = info.LeftLegIk;
+            _rightLegIk = info.RightLegIk;
             _hasModel = true;
         }
 

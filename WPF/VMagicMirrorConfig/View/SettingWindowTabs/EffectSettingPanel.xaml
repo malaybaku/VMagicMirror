@@ -395,6 +395,11 @@
                                 />
                     </StackPanel>
 
+                    <CheckBox Margin="10,5"
+                              Content="{DynamicResource Bloom_Enable}"
+                              IsChecked="{Binding EnableBloom.Value}"
+                              />
+
                     <Grid Margin="5">
                         <Grid.Resources>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">

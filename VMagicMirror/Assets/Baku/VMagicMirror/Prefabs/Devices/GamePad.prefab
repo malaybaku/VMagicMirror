@@ -76,7 +76,6 @@ GameObject:
   - component: {fileID: 5253142755745637109}
   - component: {fileID: 2197838250286941368}
   - component: {fileID: 9160035658810551669}
-  - component: {fileID: 6460605521299412919}
   - component: {fileID: 5626418132133974600}
   - component: {fileID: 3938523069641137890}
   - component: {fileID: 4019206306232422492}
@@ -120,6 +119,7 @@ MonoBehaviour:
   _monoInstallers:
   - {fileID: 4019206306232422492}
   _installerPrefabs: []
+  _findSiblingMonoInstallers: 0
   _autoRun: 1
   _kernel: {fileID: 0}
 --- !u!114 &9160035658810551669
@@ -144,25 +144,7 @@ MonoBehaviour:
   baseRotation: {x: -15, y: 0, z: 0}
   baseScale: 0.8
   bodyRenderer: {fileID: 2569459266424081521}
-  transformControl: {fileID: 6460605521299412919}
   modelScaleTarget: {fileID: 3335174451244510248}
---- !u!114 &6460605521299412919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5253142755745637110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  global: 0
-  useDistance: 1
-  distance: 12
-  xyPlaneMode: 0
-  gizmoRenderer: {fileID: 0}
 --- !u!114 &5626418132133974600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,7 +392,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 0c17954af6b183e40a098f208aaa4fbe,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: ae5b4c35aa6275f43831630af1d4e5ea, type: 2}
     - target: {fileID: -5754084199372789682, guid: 0c17954af6b183e40a098f208aaa4fbe,

@@ -146,7 +146,7 @@ namespace Baku.VMagicMirror
                 }
             });
             
-            vrmLoadable.PreVrmLoaded += info => _renderers = info.renderers;
+            vrmLoadable.PreVrmLoaded += info => _renderers = info.Renderers;
             vrmLoadable.VrmDisposing += () => _renderers = Array.Empty<Renderer>();
         }
 

@@ -43,6 +43,9 @@ namespace Baku.VMagicMirror
         private bool _showEffectDuringVmcpSendEnabled = false;
         private bool _buddyInteractionApiEnabled = false;
 
+        private readonly ReactiveProperty<bool> _bloomEnabled = new(true);
+        private readonly ReactiveProperty<float> _bloomIntensity = new(0.5f);
+        
         private void Awake()
         {
             if (mainLight != null)
@@ -128,10 +131,16 @@ namespace Baku.VMagicMirror
                 message => SetShadowDepthOffset(message.ParseAsCentimeter())
                );
 
-            receiver.AssignCommandHandler(
-                VmmCommands.BloomIntensity,
-                message => SetBloomIntensity(message.ParseAsPercentage())
-                );
+            receiver.BindBoolProperty(VmmCommands.BloomEnable, _bloomEnabled);
+            receiver.BindPercentageProperty(VmmCommands.BloomIntensity, _bloomIntensity);
+            _bloomEnabled.CombineLatest(
+                _bloomIntensity,
+                (enableBloom, intensity) => enableBloom ? intensity : 0f
+                )
+                .DistinctUntilChanged()
+                .Subscribe(SetBloomIntensity)
+                .AddTo(this);
+
             receiver.AssignCommandHandler(
                 VmmCommands.BloomThreshold,
                 message => SetBloomThreshold(message.ParseAsPercentage())

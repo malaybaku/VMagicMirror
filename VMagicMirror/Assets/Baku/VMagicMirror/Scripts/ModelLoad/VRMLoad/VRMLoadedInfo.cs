@@ -1,29 +1,50 @@
-﻿using System;
-using RootMotion.FinalIK;
+﻿using RootMotion.FinalIK;
 using UnityEngine;
 using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
-    [Serializable]
-    public struct VrmLoadedInfo
+    public readonly struct VrmLoadedInfo
     {
-        public CurrentModelVersion modelVersion;
-        public Transform vrmRoot;
-        public Animator animator;
-        public Animator controlRig => animator;
-        //NOTE: property細分化してトレーサビリティとってもいいかも、ExpressionSettingsとか
-        public Vrm10Instance instance;
-        public Vrm10RuntimeExpression RuntimeFacialExpression => instance.Runtime.Expression;
-        public FullBodyBipedIK fbbIk;
-        public LimbIK leftLegIk;
-        public LimbIK rightLegIk;
-
-        public TwistRelaxer leftArmTwistRelaxer;
-        public TwistRelaxer rightArmTwistRelaxer;
+        public VrmLoadedInfo(
+            CurrentModelVersion modelVersion,
+            Transform vrmRoot,
+            Animator animator,
+            Vrm10Instance instance,
+            FullBodyBipedIK fbbIk,
+            LimbIK leftLegIk,
+            LimbIK rightLegIk,
+            TwistRelaxer leftArmTwistRelaxer,
+            TwistRelaxer rightArmTwistRelaxer,
+            Renderer[] renderers
+        )
+        {
+            ModelVersion = modelVersion;
+            VrmRoot = vrmRoot;
+            Animator = animator;
+            Instance = instance;
+            FbbIk = fbbIk;
+            LeftLegIk = leftLegIk;
+            RightLegIk = rightLegIk;
+            LeftArmTwistRelaxer = leftArmTwistRelaxer;
+            RightArmTwistRelaxer = rightArmTwistRelaxer;
+            Renderers = renderers;
+            AvatarBones = new VRMAvatarBones(animator);
+        }
         
-        //[Obsolete("use `FacialExpression` instead")]
-        //public VRMBlendShapeProxy blendShape;
-        public Renderer[] renderers;
+        public CurrentModelVersion ModelVersion { get; }
+        public Transform VrmRoot { get; }
+        public Animator Animator { get; }
+        public VRMAvatarBones AvatarBones { get; }
+        //NOTE: property細分化してトレーサビリティとってもいいかも、ExpressionSettingsとか
+        public Vrm10Instance Instance { get; }
+        public FullBodyBipedIK FbbIk { get; }
+        public LimbIK LeftLegIk { get; }
+        public LimbIK RightLegIk { get; }
+        public TwistRelaxer LeftArmTwistRelaxer { get; }
+        public TwistRelaxer RightArmTwistRelaxer { get; }
+        public Renderer[] Renderers { get; }
+
+        public Vrm10RuntimeExpression RuntimeFacialExpression => Instance.Runtime.Expression;
     }
 }

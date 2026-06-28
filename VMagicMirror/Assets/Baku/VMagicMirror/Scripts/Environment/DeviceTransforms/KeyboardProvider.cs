@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Baku.VMagicMirror.Installer;
-using mattatz.TransformControl;
 using UnityEngine;
 using Zenject;
 
@@ -260,9 +259,6 @@ namespace Baku.VMagicMirror
             4.0f,
             3.0f,
         };
-
-        [SerializeField] private TransformControl transformControl = null;
-        public TransformControl TransformControl => transformControl;
 
         private KeyboardVisibilityView _visibilityView = null;
         public KeyboardVisibilityView GetVisibilityView()

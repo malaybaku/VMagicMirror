@@ -38,6 +38,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.EnableGameInputLocomotionMode, v => SendMessage(MessageFactory.EnableGameInputLocomotionMode(v))
                 );
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(MessageFactory.EnableTwistBodyMotion(v)));
+            SpineAngleOffset = new RProperty<int>(setting.SpineAngleOffset, v => SendMessage(MessageFactory.SetSpineAngleOffset(v)));
             EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(MessageFactory.EnableCustomHandDownPose(v)));
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(MessageFactory.SetHandDownModeCustomPose(v)));
 
@@ -75,6 +76,9 @@ namespace Baku.VMagicMirrorConfig
             HandTrackingMotionScale = new RProperty<int>(setting.HandTrackingMotionScale, v => SendMessage(MessageFactory.SetHandTrackingMotionScale(v)));
             HandTrackingMotionOffsetX = new RProperty<int>(setting.HandTrackingMotionOffsetX, v => SendMessage(MessageFactory.SetHandTrackingMotionOffsetX(v)));
             HandTrackingMotionOffsetY = new RProperty<int>(setting.HandTrackingMotionOffsetY, v => SendMessage(MessageFactory.SetHandTrackingMotionOffsetY(v)));
+            HandTrackingHeadPoseAdjustFactor = new RProperty<int>(
+                setting.HandTrackingHeadPoseAdjustFactor,
+                v => SendMessage(MessageFactory.SetHandTrackingHeadPoseAdjustFactor(v)));
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(MessageFactory.SetCameraDeviceName(v)));
             CalibrateFaceDataHighPower = new RProperty<string>(setting.CalibrateFaceDataHighPower, v => SendMessage(MessageFactory.SetCalibrateFaceDataHighPower(v)));
@@ -142,6 +146,7 @@ namespace Baku.VMagicMirrorConfig
 
             EnableHidRandomTyping = new RProperty<bool>(setting.EnableHidRandomTyping, v => SendMessage(MessageFactory.EnableHidRandomTyping(v)));
             EnableShoulderMotionModify = new RProperty<bool>(setting.EnableShoulderMotionModify, v => SendMessage(MessageFactory.EnableShoulderMotionModify(v)));
+            ShoulderRotationOffset = new RProperty<int>(setting.ShoulderRotationOffset, v => SendMessage(MessageFactory.ShoulderRotationOffset(v)));
             EnableHandDownTimeout = new RProperty<bool>(setting.EnableHandDownTimeout, v => SendMessage(MessageFactory.EnableTypingHandDownTimeout(v)));
             WaistWidth = new RProperty<int>(setting.WaistWidth, v => SendMessage(MessageFactory.SetWaistWidth(v)));
             ElbowCloseStrength = new RProperty<int>(setting.ElbowCloseStrength, v => SendMessage(MessageFactory.SetElbowCloseStrength(v)));
@@ -188,6 +193,8 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableTwistBodyMotion { get; }
 
+        public RProperty<int> SpineAngleOffset { get; }
+
         public RProperty<bool> EnableCustomHandDownPose { get; }
 
         public RProperty<string> CustomHandDownPose { get; }
@@ -221,6 +228,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> HandTrackingMotionScale { get; }
         public RProperty<int> HandTrackingMotionOffsetX { get; }
         public RProperty<int> HandTrackingMotionOffsetY { get; }
+        public RProperty<int> HandTrackingHeadPoseAdjustFactor { get; }
 
 
         public RProperty<string> CameraDeviceName { get; }
@@ -277,6 +285,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableHidRandomTyping { get; }
         public RProperty<bool> EnableShoulderMotionModify { get; }
+        public RProperty<int> ShoulderRotationOffset { get; }
         public RProperty<bool> EnableHandDownTimeout { get; }
 
         public RProperty<int> WaistWidth { get; }
@@ -360,13 +369,20 @@ namespace Baku.VMagicMirrorConfig
             GamepadMotionMode.Value = setting.GamepadMotionMode;
 
             EnableHidRandomTyping.Value = setting.EnableHidRandomTyping;
-            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
             EnableHandDownTimeout.Value = setting.EnableHandDownTimeout;
             WaistWidth.Value = setting.WaistWidth;
             ElbowCloseStrength.Value = setting.ElbowCloseStrength;
             EnableFpsAssumedRightHand.Value = setting.EnableFpsAssumedRightHand;
             ShowPresentationPointer.Value = setting.ShowPresentationPointer;
             PresentationArmRadiusMin.Value = setting.PresentationArmRadiusMin;
+        }
+
+        public void ResetShoulderAndBackSetting()
+        {
+            var setting = MotionSetting.Default;
+            SpineAngleOffset.Value = setting.SpineAngleOffset;
+            EnableShoulderMotionModify.Value = setting.EnableShoulderMotionModify;
+            ShoulderRotationOffset.Value = setting.ShoulderRotationOffset;
         }
 
         public void ResetHandSetting()
@@ -395,6 +411,7 @@ namespace Baku.VMagicMirrorConfig
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();
             ResetWaitMotionSetting();

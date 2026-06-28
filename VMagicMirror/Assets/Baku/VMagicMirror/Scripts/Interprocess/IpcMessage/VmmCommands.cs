@@ -77,6 +77,7 @@
         // Motion, Arm
         EnableHidRandomTyping,
         EnableShoulderMotionModify,
+        ShoulderRotationOffset, // 0.1deg刻みを表す整数値を受け取り、プラスで肩が上がってマイナスで下がる
         EnableTypingHandDownTimeout,
         SetWaistWidth,
         SetElbowCloseStrength,
@@ -99,6 +100,7 @@
         EnableGameInputLocomotionMode,
         EnableTwistBodyMotion,
         EnableBodyLeanZ,
+        SetSpineAngleOffset, // 1deg刻みの値で、Spine ~ UpperChestに回転が分配される
 
         // Motion, Face
         EnableFaceTracking,
@@ -152,6 +154,8 @@
         // +X: 手を体の横に広げる、+Y: 手を上げる
         SetHandTrackingOffsetX,
         SetHandTrackingOffsetY,
+        // percentベースで、頭の姿勢によってハンドトラッキングのIK姿勢が連動する強さを指定する
+        SetHandTrackingHeadPoseAdjustFactor,
 
         // Motion, GameInput
         UseGamepadForGameInput,
@@ -225,6 +229,7 @@
         FixedShadowAlwaysEnable,
         FixedShadowWhenLocomotionActiveEnable,
 
+        BloomEnable,
         BloomIntensity,
         BloomThreshold,
         BloomColor,

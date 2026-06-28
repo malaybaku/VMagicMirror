@@ -21,8 +21,8 @@ namespace Baku.VMagicMirror.IK
         {
             _vrmLoadable.VrmLoaded += info =>
             {
-                var leftFoot = info.controlRig.GetBoneTransform(HumanBodyBones.LeftFoot);
-                var rightFoot = info.controlRig.GetBoneTransform(HumanBodyBones.RightFoot);
+                var leftFoot = info.AvatarBones.LeftFoot;
+                var rightFoot = info.AvatarBones.RightFoot;
                 _defaultLeftFootPosition = leftFoot.position;
                 _defaultRightFootPosition = rightFoot.position;
 

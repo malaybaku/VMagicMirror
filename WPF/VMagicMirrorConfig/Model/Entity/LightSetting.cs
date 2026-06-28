@@ -62,6 +62,7 @@
 
         #region Bloom
 
+        public bool EnableBloom { get; set; } = true;
         public int BloomIntensity { get; set; } = 50;
         public int BloomThreshold { get; set; } = 100;
 

@@ -248,7 +248,8 @@
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
-    
+    <sys:String x:Key="HandTracking_HeadPoseAdjustFactor">頭の動きで手も動かす (%)</sys:String>
+
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:
@@ -384,18 +385,22 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
+    <sys:String x:Key="Motion_FullBody_SpineAngleOffset">背中を曲げる</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">手を下げた位置を手動で調整</sys:String>    
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">手の位置を編集するには
 「つねに手下げモード」がオンの状態で
 フリーレイアウトモードを有効にします</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">手の位置をデフォルトにリセット</sys:String>
     <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">ゲーム入力の詳細設定…</sys:String>
-    
+
+    <sys:String x:Key="Motion_ShoulderAndBack">肩・背中</sys:String>
+
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>
     <sys:String x:Key="Motion_Arm_EnableHidMotion">タイピング / マウス動作を反映</sys:String>
     <sys:String x:Key="Motion_Arm_EnableRandomTyping">打鍵をランダム化して入力を隠す</sys:String>
     <sys:String x:Key="Motion_Arm_EnableShoulderModify">肩モーションの補正を有効化</sys:String>
+    <sys:String x:Key="Motion_Arm_ShoulderRotationOffset">肩の上がり具合を調整</sys:String>
     <sys:String x:Key="Motion_Arm_EnableTypingAndMouseTimeout">入力がないとき手をおろす</sys:String>
     <sys:String x:Key="Motion_Arm_FpsAssumedRightHand">右手のマウス動作をFPS対策モードにする</sys:String>
     <sys:String x:Key="Motion_Arm_FpsAssumedRightHand_Tooltip">オンにするとPC用のFPSを遊ぶときのマウス動作が自然になりますが、ペンタブ作業や画面タッチへの反応が悪くなります。</sys:String>
@@ -610,6 +615,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Shadow_FixedShadow_UseOnLocomotion">下半身モーションの適用時には適用</sys:String>
         
     <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Enable">エフェクトを有効化</sys:String>
     <sys:String x:Key="Bloom_Color">Bloomの色</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>

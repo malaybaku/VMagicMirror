@@ -199,8 +199,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
         {
-            _animator = obj.animator;
-            _vrmRoot = obj.vrmRoot;
+            _animator = obj.Animator;
+            _vrmRoot = obj.VrmRoot;
             _baseLayerIndex = _animator.GetLayerIndex("Base");
 
             _hasModel = true;

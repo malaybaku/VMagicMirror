@@ -137,7 +137,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _animator = info.animator;
+            _animator = info.Animator;
             for (var i = 0; i < (int)HumanBodyBones.LastBone - 1; i++)
             {
                 var bone = (HumanBodyBones)i;

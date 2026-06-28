@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             _vrmLoadable.VrmLoaded += info =>
             {
-                var a = info.animator;
+                var a = info.Animator;
                 for (var i = FingerIndexStart; i < FingerIndexEnd; i++)
                 {
                     var bone = (HumanBodyBones)i;

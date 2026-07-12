@@ -48,7 +48,9 @@ namespace Baku.VMagicMirrorConfig
                 v => SendMessage(MessageFactory.SetTrackingLostFaceSwitchSetting(v)));
             DisableFaceTrackingHorizontalFlip = new RProperty<bool>(setting.DisableFaceTrackingHorizontalFlip, v => SendMessage(MessageFactory.DisableFaceTrackingHorizontalFlip(v)));
 
-            EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamExpressionTracking(v)));
+            EnableWebCamHighPowerMode = new RProperty<bool>(
+                setting.EnableWebCamHighPowerMode,
+                v => SendMessage(MessageFactory.EnableWebCamExpressionTracking(v)));
             EnableWebCamApplyBlink = new RProperty<bool>(setting.EnableWebCamApplyBlink, v => SendMessage(MessageFactory.EnableWebCamApplyBlink(v)));
             EnableWebCamQuickMotion = new RProperty<bool>(setting.EnableWebCamQuickMotion, v => SendMessage(MessageFactory.EnableWebCamQuickMotion(v)));
             WebCamMouseLookAtMode = new RProperty<int>(setting.WebCamMouseLookAtMode, v => SendMessage(MessageFactory.SetWebCamMouseLookAtMode(v)));
@@ -59,6 +61,9 @@ namespace Baku.VMagicMirrorConfig
             EnableImageBasedElbowTracking = new RProperty<bool>(
                 setting.EnableImageBasedElbowTracking,
                 v => SendMessage(MessageFactory.EnableImageBasedElbowTracking(v)));
+            AlwaysUseSingleMediaPipeTask = new RProperty<bool>(
+                setting.AlwaysUseSingleMediaPipeTask,
+                v => SendMessage(MessageFactory.EnableAlwaysUseSingleMediaPipeTask(v)));
             ShowEffectDuringHandTracking = new RProperty<bool>(
                 setting.ShowEffectDuringHandTracking,
                 v => SendMessage(MessageFactory.ShowEffectDuringHandTracking(v)));
@@ -187,6 +192,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> WebCamMouseLookAtMode { get; }
         public RProperty<bool> EnableImageBasedHandTracking { get; }
         public RProperty<bool> EnableImageBasedElbowTracking { get; }
+        public RProperty<bool> AlwaysUseSingleMediaPipeTask { get; }
         public RProperty<bool> ShowEffectDuringHandTracking { get; }
         public RProperty<bool> DisableHandTrackingHorizontalFlip { get; }
         public RProperty<bool> EnableSendHandTrackingResult { get; }
@@ -195,7 +201,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> HandTrackingMotionOffsetX { get; }
         public RProperty<int> HandTrackingMotionOffsetY { get; }
         public RProperty<int> HandTrackingHeadPoseAdjustFactor { get; }
-
 
         public RProperty<string> CameraDeviceName { get; }
 
@@ -295,6 +300,7 @@ namespace Baku.VMagicMirrorConfig
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableImageBasedHandTracking.Value = setting.EnableImageBasedHandTracking;
             EnableImageBasedElbowTracking.Value = setting.EnableImageBasedElbowTracking;
+            AlwaysUseSingleMediaPipeTask.Value = setting.AlwaysUseSingleMediaPipeTask;
 
             EnableLipSync.Value = setting.EnableLipSync;
             LipSyncMicrophoneDeviceName.Value = setting.LipSyncMicrophoneDeviceName;

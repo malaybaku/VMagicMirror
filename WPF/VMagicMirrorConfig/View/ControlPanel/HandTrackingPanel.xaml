@@ -166,6 +166,36 @@
                                  />
                     </Grid>
 
+                    <StackPanel Margin="15,10,15,0"
+                                Orientation="Horizontal">
+                        <CheckBox VerticalContentAlignment="Center"
+                                  Content="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask}"
+                                  IsChecked="{Binding AlwaysUseSingleMediaPipeTask.Value}"
+                                  Margin="20,0,5,0"
+                                  />
+                        <Button Margin="4,0,0,0"
+                                Width="NaN"
+                                Padding="2"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTipService.InitialShowDelay="0"
+                                Click="OnCrashPreventionHelpButtonClicked"
+                                MouseLeave="OnCrashPreventionHelpButtonMouseLeave">
+                            <md:PackIcon Width="18"
+                                         Height="18"
+                                         Kind="QuestionMarkCircleOutline"
+                                         />
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    <TextBlock MaxWidth="320"
+                                               TextWrapping="Wrap"
+                                               Text="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask_Description}"
+                                               />
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+                    </StackPanel>
+
                     <CheckBox Margin="35,20,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_ShowAreaChecker}" 

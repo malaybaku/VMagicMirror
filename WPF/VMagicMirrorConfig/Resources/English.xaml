@@ -90,6 +90,7 @@
     <sys:String x:Key="FaceTracker_WebCamera_Title">Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_Instruction">Track your face by web camera.</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">Track facial expressions by camera</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">Expression tracking is temporarily disabled for stability while hand tracking is enabled with Crash prevention mode.</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">Apply blink detected by camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
     <sys:String x:Key="FaceTracker_EnableMicrophone">Use microphone</sys:String>
@@ -239,6 +240,10 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_EnableElbowTracking">Enable Elbow Tracking (Experimental) </sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">Crash prevention mode</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description" xml:space="preserve">This option changes internal behavior when using tracking your face and hands with a webcam at the same time.
+If your PC causes crash in the case, please turn on this option.
+Facial expression tracking is temporarily disabled in this mode.</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
     <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>

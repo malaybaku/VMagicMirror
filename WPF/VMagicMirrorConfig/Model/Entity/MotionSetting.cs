@@ -57,6 +57,7 @@
 
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool EnableImageBasedElbowTracking { get; set; } = false;
+        public bool AlwaysUseSingleMediaPipeTask { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
         public int HandTrackingMotionScale { get; set; } = 100;
@@ -164,6 +165,7 @@
             DisableFaceTrackingHorizontalFlip = false;
             EnableImageBasedHandTracking = false;
             EnableImageBasedElbowTracking = false;
+            AlwaysUseSingleMediaPipeTask = false;
 
             EnableLipSync = true;
             LipSyncMicrophoneDeviceName = "";

@@ -131,6 +131,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableImageBasedHandTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedHandTracking, enable);
         public static Message EnableImageBasedElbowTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedElbowTracking, enable);
+        public static Message EnableAlwaysUseSingleMediaPipeTask(bool enable) => BoolContent(VmmCommands.EnableAlwaysUseSingleMediaPipeTask, enable);
 
         public static Message ShowEffectDuringHandTracking(bool enable) => BoolContent(VmmCommands.ShowEffectDuringHandTracking, enable);
         //Faceと同じく、disableという言い回しに注意

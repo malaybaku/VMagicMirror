@@ -328,6 +328,9 @@
         
         // Debug
         DebugSendLargeData,
+
+        // MediaPipe tracking compatibility option
+        EnableAlwaysUseSingleMediaPipeTask,
         
         // Unused: 取りうるコマンドIDの最大値が分かるように定義している
         LastCommandId,

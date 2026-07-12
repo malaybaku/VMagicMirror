@@ -91,6 +91,7 @@
     <sys:String x:Key="FaceTracker_WebCamera_Instruction">webカメラを用いて顔トラッキングを行います。</sys:String>
 
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">表情をカメラでトラッキング</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">MediaPipeのタスクを1つだけ使用する設定とハンドトラッキングが有効なため、カメラによる表情トラッキングは利用できません。</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">カメラで検出したまばたきを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
     <sys:String x:Key="FaceTracker_EnableMicrophone">マイクをオン</sys:String>
@@ -242,6 +243,8 @@
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_EnableElbowTracking">肘もトラッキングする (Experimental) </sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">MediaPipeのタスクを常に1つだけ使用する</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description">複数のMediaPipeタスクを実行するとクラッシュする環境向けの互換設定です。処理負荷が必ず下がるとは限りません。</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>

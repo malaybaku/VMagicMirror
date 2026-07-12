@@ -91,6 +91,17 @@
                                 IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                 IsChecked="{Binding EnableImageBasedElbowTracking.Value}"
                                 />
+                    <CheckBox Margin="35,0,10,0"
+                                VerticalContentAlignment="Center"
+                                Content="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask}"
+                                IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
+                                IsChecked="{Binding AlwaysUseSingleMediaPipeTask.Value}"
+                                />
+                    <TextBlock Margin="55,0,10,5"
+                               TextWrapping="Wrap"
+                               Opacity="0.7"
+                               Text="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask_Description}"
+                               />
                     <CheckBox Margin="35,0,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_DisableHorizontalFlip}" 

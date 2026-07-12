@@ -1,7 +1,7 @@
 ﻿using Baku.VMagicMirror.MediaPipeTracker;
-using R3;
 using UnityEngine;
 using UniVRM10;
+using R3;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -22,12 +22,8 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _config;
         private MediaPipeBlink _mediaPipeBlink;
         private MediaPipeEyeJitter _mediaPipeEyeJitter;
+        private readonly ReactiveProperty<bool> _enableWebCamApplyBlink = new(true);
 
-        // TODO: 今このオプションは使えていないが、高品質/ExTrackerについてoptionalに有効化できるようにしたい。
-        // - 軽量では常にAutoBlinkでよい
-        // - フラグ自体はこのクラスから引っ越してもよい (_config内に入れるのが無難かも)
-        private readonly ReactiveProperty<bool> AutoBlinkOnWebCamLowPower = new(true);
-        
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, 
@@ -41,10 +37,13 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
-            receiver.BindBoolProperty(VmmCommands.AutoBlinkDuringFaceTracking, AutoBlinkOnWebCamLowPower);
             receiver.AssignCommandHandler(
                 VmmCommands.FaceDefaultFun,
                 message => DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
+            );
+            receiver.BindBoolProperty(
+                VmmCommands.EnableWebCamApplyBlink,
+                _enableWebCamApplyBlink
             );
         }
         
@@ -67,9 +66,7 @@ namespace Baku.VMagicMirror
             {
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
                 // NOTE: ここでIsTrackedも検証しておくパターンもアリ
-                FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
-                // NOTE: MediaPipeの軽量モードは諸説ある (_autoBlinkを強制する or 設定次第にする)
-                FaceControlModes.WebCamLowPower => autoBlink.BlinkSource,
+                FaceControlModes.WebCam when _enableWebCamApplyBlink.Value => _mediaPipeBlink.BlinkSource,
                 _ => autoBlink.BlinkSource
             };
 
@@ -91,12 +88,21 @@ namespace Baku.VMagicMirror
                     _mediaPipeEyeJitter.IsActive = false;
                     randomEyeJitter.IsActive = false;
                     break;
-                case FaceControlModes.WebCamHighPower when _mediaPipeEyeJitter.IsEnabledAndTracked:
+                case FaceControlModes.WebCam
+                    when _enableWebCamApplyBlink.Value &&
+                         _mediaPipeEyeJitter.IsEnabledAndTracked &&
+                         _config.WebCamMouseLookAtModeValue is not WebCamMouseLookAtModes.Always:
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = true;
                     randomEyeJitter.IsActive = false;
                     break;
-                case FaceControlModes.ExternalTracker or FaceControlModes.WebCamHighPower:
+                case FaceControlModes.WebCam
+                    when _config.WebCamMouseLookAtModeValue is WebCamMouseLookAtModes.Always:
+                    externalTrackEyeJitter.IsActive = false;
+                    _mediaPipeEyeJitter.IsActive = false;
+                    randomEyeJitter.IsActive = true;
+                    break;
+                case FaceControlModes.ExternalTracker or FaceControlModes.WebCam:
                     // NOTE: 「トラッキングしてれば目の動きが取れるはずのモードでトラッキングロスしてる」のときは眼球運動は止めてしまう
                     externalTrackEyeJitter.IsActive = false;
                     _mediaPipeEyeJitter.IsActive = false;

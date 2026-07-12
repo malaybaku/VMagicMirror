@@ -7,6 +7,10 @@
         public const int KeyboardMouseMotionPresentation = 1;
         public const int KeyboardMouseMotionPenTablet = 2;
 
+        public const int WebCamMouseLookAtModeCameraOffOnly = 0;
+        public const int WebCamMouseLookAtModeAlways = 1;
+        public const int WebCamMouseLookAtModeNever = 2;
+
 
         /// <summary>
         /// NOTE: 規約としてこの値は書き換えません。
@@ -36,8 +40,6 @@
 
         public bool EnableFaceTracking { get; set; } = true;
 
-        public bool AutoBlinkDuringFaceTracking { get; set; } = true;
-
         public bool EnableBodyLeanZ { get; set; } = false;
 
         public bool EnableBlinkAdjust { get; set; } = true;
@@ -47,7 +49,12 @@
 
         public bool DisableFaceTrackingHorizontalFlip { get; set; } = false;
 
+        // NOTE: 設定ファイル互換のため名称は据え置きだが、実体は「表情をカメラでトラッキング」するかどうかを表す。
         public bool EnableWebCamHighPowerMode { get; set; } = false;
+        public bool EnableWebCamApplyBlink { get; set; } = true;
+        public bool EnableWebCamQuickMotion { get; set; } = true;
+        public int WebCamMouseLookAtMode { get; set; } = WebCamMouseLookAtModeCameraOffOnly;
+
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool EnableImageBasedElbowTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
@@ -87,10 +94,6 @@
         #endregion
 
         #region Eye
-
-        public bool UseLookAtPointNone { get; set; } = false;
-        public bool UseLookAtPointMousePointer { get; set; } = true;
-        public bool UseLookAtPointMainCamera { get; set; } = false;
 
         public bool MoveEyesDuringFaceClipApplied { get; set; } = false;
         public bool UseAvatarEyeBoneMap { get; set; } = true;
@@ -154,7 +157,6 @@
         {
             EnableFaceTracking = true;
             CameraDeviceName = "";
-            AutoBlinkDuringFaceTracking = true;
             EnableBodyLeanZ = false;
 
             EnableVoiceBasedMotion = true;
@@ -169,6 +171,9 @@
             AdjustLipSyncByVolume = true;
 
             EnableWebCamHighPowerMode = false;
+            EnableWebCamApplyBlink = true;
+            EnableWebCamQuickMotion = true;
+            WebCamMouseLookAtMode = WebCamMouseLookAtModeCameraOffOnly;
             EnableWebCameraHighPowerModeLipSync = false;
             // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
             // FaceEyeSettingのリセットと紐づける必要はない
@@ -181,9 +186,6 @@
         public void ResetFaceEyeSetting()
         {
             EnableBlinkAdjust = true;
-            UseLookAtPointNone = false;
-            UseLookAtPointMousePointer = true;
-            UseLookAtPointMainCamera = false;
 
             MoveEyesDuringFaceClipApplied = false;
             UseAvatarEyeBoneMap = true;

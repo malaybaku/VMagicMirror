@@ -39,6 +39,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private FaceControlConfiguration _config;
         //private ExternalTrackerDataSource _externalTracker;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
+        private MediaPipeTrackerRuntimeSettingsRepository _settings;
         private CurrentFramerateChecker _framerateChecker;
         private readonly BiQuadFilterVector3 _positionFilter = new();
         
@@ -52,19 +53,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void Initialize(
             FaceControlConfiguration config,
             MediaPipeKinematicSetter mediaPipeKinematicSetter,
+            MediaPipeTrackerRuntimeSettingsRepository settings,
             CurrentFramerateChecker framerateChecker)
         {
             _config = config;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
+            _settings = settings;
             _framerateChecker = framerateChecker;
             
             _framerateChecker.CurrentFramerate
-                .CombineLatest(_config.HeadMotionControlMode, 
-                    (framerate, headMotionControlMode) => (framerate, headMotionControlMode))
+                .CombineLatest(_settings.EnableQuickMotion,
+                    (framerate, enableQuickMotion) => (framerate, enableQuickMotion))
                 .Subscribe(value =>
                 {
-                    var (frameRate, headMotionControlMode) = value;
-                    var cutOffFrequency = headMotionControlMode is FaceControlModes.WebCamHighPower
+                    var (frameRate, enableQuickMotion) = value;
+                    var cutOffFrequency = enableQuickMotion
                         ? positionFilterCutOffFrequency
                         : positionFilterCutOffFrequencySlow;
                     _positionFilter.SetUpAsLowPassFilter(frameRate, cutOffFrequency);
@@ -125,7 +128,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void Update()
         {
-            if (_config.HeadMotionControlModeValue is not (FaceControlModes.WebCamHighPower or FaceControlModes.WebCamLowPower))
+            if (_config.HeadMotionControlModeValue is not FaceControlModes.WebCam)
             {
                 BodyOffset = Vector3.zero;
                 _positionFilter.ResetValue(Vector3.zero);

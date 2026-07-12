@@ -13,13 +13,6 @@ namespace Baku.VMagicMirrorConfig
 
     class MotionSettingModel : SettingModelBase<MotionSetting>
     {
-        static class LookAtStyles
-        {
-            public const string UseLookAtPointNone = nameof(UseLookAtPointNone);
-            public const string UseLookAtPointMousePointer = nameof(UseLookAtPointMousePointer);
-            public const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
-        }
-
         public MotionSettingModel() : this(
             ModelResolver.Instance.Resolve<IMessageSender>(),
             ModelResolver.Instance.Resolve<IMessageReceiver>())
@@ -43,7 +36,6 @@ namespace Baku.VMagicMirrorConfig
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(MessageFactory.SetHandDownModeCustomPose(v)));
 
             EnableFaceTracking = new RProperty<bool>(setting.EnableFaceTracking, v => SendMessage(MessageFactory.EnableFaceTracking(v)));
-            AutoBlinkDuringFaceTracking = new RProperty<bool>(setting.AutoBlinkDuringFaceTracking, v => SendMessage(MessageFactory.AutoBlinkDuringFaceTracking(v)));
             EnableBodyLeanZ = new RProperty<bool>(setting.EnableBodyLeanZ, v => SendMessage(MessageFactory.EnableBodyLeanZ(v)));
             EnableBlinkAdjust = new RProperty<bool>(setting.EnableBlinkAdjust, v =>
             {
@@ -56,7 +48,10 @@ namespace Baku.VMagicMirrorConfig
                 v => SendMessage(MessageFactory.SetTrackingLostFaceSwitchSetting(v)));
             DisableFaceTrackingHorizontalFlip = new RProperty<bool>(setting.DisableFaceTrackingHorizontalFlip, v => SendMessage(MessageFactory.DisableFaceTrackingHorizontalFlip(v)));
 
-            EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamHighPowerMode(v)));
+            EnableWebCamHighPowerMode = new RProperty<bool>(setting.EnableWebCamHighPowerMode, v => SendMessage(MessageFactory.EnableWebCamExpressionTracking(v)));
+            EnableWebCamApplyBlink = new RProperty<bool>(setting.EnableWebCamApplyBlink, v => SendMessage(MessageFactory.EnableWebCamApplyBlink(v)));
+            EnableWebCamQuickMotion = new RProperty<bool>(setting.EnableWebCamQuickMotion, v => SendMessage(MessageFactory.EnableWebCamQuickMotion(v)));
+            WebCamMouseLookAtMode = new RProperty<int>(setting.WebCamMouseLookAtMode, v => SendMessage(MessageFactory.SetWebCamMouseLookAtMode(v)));
 
             EnableImageBasedHandTracking = new RProperty<bool>(
                 setting.EnableImageBasedHandTracking,
@@ -93,7 +88,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.DisableBlendShapeInterpolate, v => SendMessage(MessageFactory.DisableBlendShapeInterpolate(v)));
             
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
-                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
+                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCamApplyLipSync(v)));
 
             WebCamEyeOpenBlinkValue = new RProperty<int>(
                 setting.WebCamEyeOpenBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeOpenBlinkValue(v)));
@@ -103,37 +98,6 @@ namespace Baku.VMagicMirrorConfig
                 setting.WebCamEyeApplySameBlinkValueBothEye, v => SendMessage(MessageFactory.SetWebCamEyeApplySameBlinkBothEye(v)));
             WebCamEyeApplyCorrectionToPerfectSync = new RProperty<bool>(
                 setting.WebCamEyeApplyCorrectionToPerfectSync, v => SendMessage(MessageFactory.SetWebCamEyeApplyCorrectionToPerfectSync(v)));
-
-            //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
-            UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointNone));
-                    UseLookAtPointMousePointer?.Set(false);
-                    UseLookAtPointMainCamera?.Set(false);
-                }
-            });
-
-            UseLookAtPointMousePointer = new RProperty<bool>(setting.UseLookAtPointMousePointer, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointMousePointer));
-                    UseLookAtPointNone.Value = false;
-                    UseLookAtPointMainCamera?.Set(false);
-                }
-            });
-
-            UseLookAtPointMainCamera = new RProperty<bool>(setting.UseLookAtPointMainCamera, v =>
-            {
-                if (v)
-                {
-                    SendMessage(MessageFactory.LookAtStyle(LookAtStyles.UseLookAtPointMainCamera));
-                    UseLookAtPointNone.Value = false;
-                    UseLookAtPointMousePointer.Value = false;
-                }
-            });
 
             UseAvatarEyeBoneMap = new RProperty<bool>(setting.UseAvatarEyeBoneMap, v => SendMessage(MessageFactory.SetUseAvatarEyeBoneMap(v)));
             EyeBoneRotationScale = new RProperty<int>(setting.EyeBoneRotationScale, v => SendMessage(MessageFactory.SetEyeBoneRotationScale(v)));
@@ -207,8 +171,6 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableFaceTracking { get; }
 
-        public RProperty<bool> AutoBlinkDuringFaceTracking { get; }
-
         public RProperty<bool> EnableBodyLeanZ { get; }
 
         public RProperty<bool> EnableBlinkAdjust { get; }
@@ -218,7 +180,11 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> DisableFaceTrackingHorizontalFlip { get; }
 
+        // NOTE: 設定ファイル互換のため名称は据え置きだが、実体は「表情をカメラでトラッキング」するかどうかを表す。
         public RProperty<bool> EnableWebCamHighPowerMode { get; }
+        public RProperty<bool> EnableWebCamApplyBlink { get; }
+        public RProperty<bool> EnableWebCamQuickMotion { get; }
+        public RProperty<int> WebCamMouseLookAtMode { get; }
         public RProperty<bool> EnableImageBasedHandTracking { get; }
         public RProperty<bool> EnableImageBasedElbowTracking { get; }
         public RProperty<bool> ShowEffectDuringHandTracking { get; }
@@ -257,10 +223,6 @@ namespace Baku.VMagicMirrorConfig
         #endregion
 
         #region Eye
-
-        public RProperty<bool> UseLookAtPointNone { get; }
-        public RProperty<bool> UseLookAtPointMousePointer { get; }
-        public RProperty<bool> UseLookAtPointMainCamera { get; }
 
         public RProperty<bool> UseAvatarEyeBoneMap { get; }
         public RProperty<int> EyeBoneRotationScale { get; }
@@ -325,7 +287,9 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             EnableFaceTracking.Value = setting.EnableFaceTracking;
             CameraDeviceName.Value = setting.CameraDeviceName;
-            AutoBlinkDuringFaceTracking.Value = setting.AutoBlinkDuringFaceTracking;
+            EnableWebCamApplyBlink.Value = setting.EnableWebCamApplyBlink;
+            EnableWebCamQuickMotion.Value = setting.EnableWebCamQuickMotion;
+            WebCamMouseLookAtMode.Value = setting.WebCamMouseLookAtMode;
 
             EnableVoiceBasedMotion.Value = setting.EnableVoiceBasedMotion;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
@@ -342,9 +306,6 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = MotionSetting.Default;
             EnableBlinkAdjust.Value = setting.EnableBlinkAdjust;
-            UseLookAtPointNone.Value = setting.UseLookAtPointNone;
-            UseLookAtPointMousePointer.Value = setting.UseLookAtPointMousePointer;
-            UseLookAtPointMainCamera.Value = setting.UseLookAtPointMainCamera;
 
             MoveEyesDuringFaceClipApplied.Value = setting.MoveEyesDuringFaceClipApplied;
             UseAvatarEyeBoneMap.Value = setting.UseAvatarEyeBoneMap;
@@ -461,6 +422,9 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
+            EnableWebCamApplyBlink.Value = setting.EnableWebCamApplyBlink;
+            EnableWebCamQuickMotion.Value = setting.EnableWebCamQuickMotion;
+            WebCamMouseLookAtMode.Value = setting.WebCamMouseLookAtMode;
             EnableBodyLeanZ.Value = setting.EnableBodyLeanZ;
         }
 

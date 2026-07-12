@@ -92,7 +92,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // 書いてる通りだが、MediaPipeの表情を使わない状態に切り替わる場合は直ちにブレンドシェイプをリセットしておく。
             // これにより、webカメラを使ってないときのTickの処理がちょっと減る
             _faceControlConfig.BlendShapeControlMode
-                .Select(mode => mode is FaceControlModes.WebCamHighPower)
+                .Select(mode => mode is FaceControlModes.WebCam)
                 .DistinctUntilChanged()
                 .Where(v => !v)
                 .Subscribe(_ =>
@@ -114,7 +114,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
 
                 // トラッキングロス時はゆっくり値をゼロに戻す
-                if (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower &&
+                if (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCam &&
                     !_isTracked.Value &&
                     _trackLostTime > _settings.TrackingLostPoseAndFacialResetWait)
                 {

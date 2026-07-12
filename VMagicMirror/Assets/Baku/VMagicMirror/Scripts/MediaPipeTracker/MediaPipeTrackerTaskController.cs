@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // IPCで直接受け取る値
         private readonly ReactiveProperty<bool> _faceTrackingEnabled = new(true);
         private readonly ReactiveProperty<string> _cameraDeviceName = new("");
-        private readonly ReactiveProperty<bool> _useWebCamHighPowerMode = new();
+        private readonly ReactiveProperty<bool> _useWebCamExpressionTracking = new();
         private readonly ReactiveProperty<bool> _useHandTracking = new();
         private readonly ReactiveProperty<bool> _useElbowTracking = new();
         private readonly ReactiveProperty<bool> _useExternalTracking = new();
@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             SubscribeIpcMessages();
             SubscribeTaskRunningFlags();
-            SubscribeHighPowerModeFlag();
+            SubscribeExpressionTrackingFlag();
             SetupTaskAndWebCamTextureActiveStatus();
         }
 
@@ -77,10 +77,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             _receiver.BindBoolProperty(VmmCommands.EnableFaceTracking, _faceTrackingEnabled);
             _receiver.BindStringProperty(VmmCommands.SetCameraDeviceName, _cameraDeviceName);
-            _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _useWebCamHighPowerMode);
+            _receiver.BindBoolProperty(VmmCommands.EnableWebCamExpressionTracking, _useWebCamExpressionTracking);
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedElbowTracking, _useElbowTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _useExternalTracking);
+            _receiver.BindBoolProperty(VmmCommands.EnableWebCamQuickMotion, _settingsRepository.EnableQuickMotion);
             
             // NOTE: WPF側ではパーフェクトシンクのon/offフラグは一種類だけである…というスタンスを取っているので、その値を拾う。
             // が、Unity目線だと「webcamでパーフェクトシンクするか否か」と「ExTrackerでパーフェクトシンクするか否か」が共通のフラグという
@@ -91,7 +92,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
 
             _receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCameraHighPowerModeLipSync,
+                VmmCommands.EnableWebCamApplyLipSync,
                 m => _settingsRepository.SetShouldUseLipSyncResult(m.ToBoolean())
                 );
             
@@ -201,9 +202,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .AddTo(this);
         }
 
-        private void SubscribeHighPowerModeFlag()
+        private void SubscribeExpressionTrackingFlag()
         {
-            _useWebCamHighPowerMode
+            _useWebCamExpressionTracking
                 .Subscribe(value =>
                 {
                     _face.SetBlendShapeOutputActive(value);

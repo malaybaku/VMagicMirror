@@ -19,7 +19,6 @@ namespace Baku.VMagicMirror
         
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
-        [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
 
         private GamepadHandIKGenerator GamepadHandIk => handIkIntegrator.GamepadHand;
         
@@ -61,10 +60,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.PresentationArmRadiusMin,
                 message =>
                     handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter()
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.LookAtStyle,
-                message => headIkIntegrator.SetLookAtStyle(message.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableGamepad,

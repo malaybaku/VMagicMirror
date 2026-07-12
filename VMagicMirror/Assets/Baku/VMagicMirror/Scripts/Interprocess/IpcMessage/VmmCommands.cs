@@ -105,7 +105,6 @@
         // Motion, Face
         EnableFaceTracking,
         SetCameraDeviceName,
-        AutoBlinkDuringFaceTracking,
         EnableHeadRotationBasedBlinkAdjust,
         EnableLipSyncBasedBlinkAdjust,
         EnableVoiceBasedMotion,
@@ -121,9 +120,12 @@
         DisableBlendShapeInterpolate,
         SetTrackingLostFaceSwitchSetting,
 
-        // Motion, Face, WebCam high power mode
-        EnableWebCamHighPowerMode,
-        EnableWebCameraHighPowerModeLipSync,
+        // Motion, Face, WebCam
+        EnableWebCamExpressionTracking,
+        EnableWebCamApplyBlink,
+        EnableWebCamApplyLipSync,
+        EnableWebCamQuickMotion,
+        SetWebCamMouseLookAtMode,
 
         SetWebCamEyeOpenBlinkValue,
         SetWebCamEyeCloseBlinkValue,
@@ -139,7 +141,6 @@
         AdjustLipSyncByVolume,
 
         // Motion, Eye
-        LookAtStyle,
         SetUseAvatarEyeBoneMap,
         SetEyeBoneRotationScale,
         SetEyeBoneRotationScaleWithMap,

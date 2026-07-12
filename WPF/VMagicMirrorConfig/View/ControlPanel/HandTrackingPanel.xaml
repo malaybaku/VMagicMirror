@@ -166,7 +166,7 @@
                                  />
                     </Grid>
 
-                    <StackPanel Margin="35,20,10,0"
+                    <StackPanel Margin="15,10,15,0"
                                 Orientation="Horizontal">
                         <CheckBox VerticalContentAlignment="Center"
                                   Content="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask}"

@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             // 顔から見たカメラの位置: これが実際にはキャリブレーションデータとして保存される
             var faceToCameraPose = MediapipeMathUtil.GetInvertedPose(cameraToFacePose);
-            
+
             // NOTE: matrixがあるのでlandmarkも必ず存在する前提
             var noseLandmark = result.faceLandmarks.landmarks[0];
             var faceCenterNormalizedPosition

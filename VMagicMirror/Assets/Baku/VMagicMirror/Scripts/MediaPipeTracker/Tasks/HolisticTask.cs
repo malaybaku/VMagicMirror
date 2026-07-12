@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
@@ -26,6 +27,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private HolisticLandmarker _landmarker;
 
         private HolisticTaskMode _taskMode;
+        private int _taskVersion;
+
         public enum HolisticTaskMode
         {
             FaceAndHand,
@@ -75,6 +78,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         protected override void OnStartTask()
         {
+            var taskVersion = Interlocked.Increment(ref _taskVersion);
+
+            void OnResultForCurrentTask(
+                in HolisticLandmarkerResult result,
+                Image image,
+                long timestamp)
+                => OnResult(taskVersion, in result);
+
             var options = new HolisticLandmarkerOptions(
                 baseOptions: new BaseOptions(
                     modelAssetPath: FilePathUtil.GetModelFilePath(ModelFileName)
@@ -85,13 +96,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 minPoseDetectionConfidence: 0.6f,
                 // HolisticのBlendShapeはFaceLandmarkerより品質が低いため、意図的に使わない
                 outputFaceBlendshapes: false,
-                resultCallback: OnResult
+                resultCallback: OnResultForCurrentTask
             );
             _landmarker = HolisticLandmarker.CreateFromOptions(options);
         }
 
         protected override void OnStopTask()
         {
+            Interlocked.Increment(ref _taskVersion);
             ((IDisposable)_landmarker)?.Dispose();
             _landmarker = null;
         }
@@ -107,34 +119,38 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _landmarker?.DetectAsync(image, source.TimestampMilliseconds);
         }
 
-        private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
+        private void OnResult(int taskVersion, in HolisticLandmarkerResult result)
         {
-            if (!IsActive) return;
+            if (!IsActive || taskVersion != Volatile.Read(ref _taskVersion))
+            {
+                return;
+            }
+
             switch (_taskMode)
             {
                 case HolisticTaskMode.FaceAndHand:
-                    OnFaceResult(result, image, timestamp);
-                    OnHandAndElbowResult(result, image, timestamp, false);
+                    OnFaceResult(result);
+                    OnHandAndElbowResult(result, false);
                     break;
                 case HolisticTaskMode.HandAndElbow:
-                    OnHandAndElbowResult(result, image, timestamp, true);
+                    OnHandAndElbowResult(result, true);
                     break;
                 case HolisticTaskMode.FaceHandAndElbow:
-                    OnFaceResult(result, image, timestamp);
-                    OnHandAndElbowResult(result, image, timestamp, true);
+                    OnFaceResult(result);
+                    OnHandAndElbowResult(result, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private void OnFaceResult(in HolisticLandmarkerResult result, Image image, long timestamp)
+        private void OnFaceResult(in HolisticLandmarkerResult result)
         {
             _resultHandler.OnFaceLandmarkResult(
                 result, WebCamTextureWidth, WebCamTextureHeight);
         }
 
-        private void OnHandAndElbowResult(in HolisticLandmarkerResult result, Image image, long timestamp, bool useElbowPose)
+        private void OnHandAndElbowResult(in HolisticLandmarkerResult result, bool useElbowPose)
         {
             var hasLeftHand =
                 result.HasLeftHandResult() &&
@@ -191,7 +207,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 SetElbowPose(result.poseLandmarks, hasLeftHand, hasRightHand, hasPose);
             }
         }
-        
+
         //TODO: 開き具合ではなく幾何的な角度を計算するように直す。
         //(11~16 のindexを使う、という情報を保全したいので一旦commitしてるけど実装はほぼ全修正になる予定)
         private void SetElbowPose(NormalizedLandmarks poseLandmarks, bool hasLeftHand, bool hasRightHand, bool hasPose)
@@ -202,7 +218,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 MediaPipeKinematicSetter.SetRightShoulderToElbow(null);
                 return;
             }
-            
+
             //NOTE: 手自体が検出出来てない場合、肘のRateは0扱いする
             if (hasLeftHand)
             {

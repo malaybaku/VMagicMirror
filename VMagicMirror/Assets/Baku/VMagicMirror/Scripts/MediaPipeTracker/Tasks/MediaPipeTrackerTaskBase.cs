@@ -258,7 +258,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _mediaPipeKinematicSetter.ClearHeadPose();
                 return;
             }
-            
+
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(
                 faceTransformationMatrix, _calibrator.GetCalibrationData());
             _mediaPipeKinematicSetter.SetHeadPose6Dof(headPose);

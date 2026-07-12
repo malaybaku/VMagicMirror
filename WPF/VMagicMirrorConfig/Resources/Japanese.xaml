@@ -91,7 +91,7 @@
     <sys:String x:Key="FaceTracker_WebCamera_Instruction">webカメラを用いて顔トラッキングを行います。</sys:String>
 
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">表情をカメラでトラッキング</sys:String>
-    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">MediaPipeのタスクを1つだけ使用する設定とハンドトラッキングが有効なため、カメラによる表情トラッキングは利用できません。</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">ハンドトラッキングが「クラッシュ対策モード」つきで有効なため、安定性のため表情トラッキングが無効になっています。</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">カメラで検出したまばたきを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
     <sys:String x:Key="FaceTracker_EnableMicrophone">マイクをオン</sys:String>

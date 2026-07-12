@@ -192,40 +192,6 @@
 
                     </StackPanel>
 
-                    <Expander Header="{DynamicResource FaceTracker_WebCamera_Detail}"
-                              Margin="15,5,10,5">
-                        <StackPanel Margin="15,5,0,0">
-                            <CheckBox Margin="0,0,10,0"
-                                      IsChecked="{Binding EnableWebCamQuickMotion.Value}"
-                                      Content="{DynamicResource FaceTracker_WebCamera_QuickMotion}"
-                                      />
-                            <CheckBox Margin="0,0,10,0"
-                                      IsChecked="{Binding EnableBodyLeanZ.Value}"
-                                      Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
-                                      />
-
-                            <Grid Margin="0,10,0,5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="0"
-                                           Text="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
-                                           Margin="0,5,10,5"
-                                           />
-
-                                <ComboBox Grid.Column="1"
-                                          HorizontalAlignment="Stretch"
-                                          ItemsSource="{Binding WebCamMouseLookAtModeItems}"
-                                          SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
-                                          DisplayMemberPath="DisplayName"
-                                          md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
-                                          />
-                            </Grid>
-                        </StackPanel>
-                    </Expander>
-
                     <Grid>
                         <Button Width="NaN" 
                                 HorizontalAlignment="Left"
@@ -238,6 +204,63 @@
                             </StackPanel>
                         </Button>
                     </Grid>
+
+                    <ToggleButton x:Name="WebCameraDetailToggle"
+                                  Style="{StaticResource MahApps.Styles.Button}"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="15,5,10,0"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="0"
+                                  Height="25"
+                                  HorizontalContentAlignment="Left"
+                                  Padding="0">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Width="15" Margin="3,0">
+                                <md:PackIcon Kind="ChevronRight"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding IsChecked, ElementName=WebCameraDetailToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}" />
+                                <md:PackIcon Kind="ChevronDown"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding IsChecked, ElementName=WebCameraDetailToggle, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                            <TextBlock Text="{DynamicResource FaceTracker_WebCamera_Detail}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <StackPanel Margin="30,5,10,5"
+                                Visibility="{Binding IsChecked, ElementName=WebCameraDetailToggle, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <CheckBox Margin="0,0,10,0"
+                                  IsChecked="{Binding EnableWebCamQuickMotion.Value}"
+                                  Content="{DynamicResource FaceTracker_WebCamera_QuickMotion}"
+                                  />
+                        <CheckBox Margin="0,0,10,0"
+                                  IsChecked="{Binding EnableBodyLeanZ.Value}"
+                                  Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
+                                  />
+
+                        <Grid Margin="0,10,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                       Margin="0,5,10,5"
+                                       />
+
+                            <ComboBox Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      ItemsSource="{Binding WebCamMouseLookAtModeItems}"
+                                      SelectedItem="{Binding SelectedWebCamMouseLookAtMode, Mode=TwoWay}"
+                                      DisplayMemberPath="DisplayName"
+                                      md:HintAssist.Hint="{DynamicResource FaceTracker_WebCamMouseLookAtMode}"
+                                      />
+                        </Grid>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

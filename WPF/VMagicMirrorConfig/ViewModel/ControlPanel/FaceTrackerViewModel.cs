@@ -267,9 +267,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetWebCameraHighPowerModeSettingsCommand => _resetWebCameraHighPowerModeSettingsCommand ??= new ActionCommand(ResetWebCameraHighPowerModeSettings);
         private void ResetWebCameraHighPowerModeSettings()
         {
-            _motionModel.ResetWebCameraHighPowerModeSettings();
-            // NOTE: 歴史的経緯により、このフラグはMotionの一部じゃないことになっているのだが、UI上はこの値もリセットされてないと直感に反するのでリセットしておく
-            _exTrackerModel.EnableExternalTrackerPerfectSync.Value = ExternalTrackerSetting.Default.EnableExternalTrackerPerfectSync;
+            SettingResetUtils.ResetSingleCategoryAsync(() =>
+            {
+                _motionModel.ResetWebCameraHighPowerModeSettings();
+                // NOTE: 歴史的経緯により、このフラグはMotionの一部じゃないことになっているのだが、UI上はこの値もリセットされてないと直感に反するのでリセットしておく
+                _exTrackerModel.EnableExternalTrackerPerfectSync.Value = ExternalTrackerSetting.Default.EnableExternalTrackerPerfectSync;
+            });
         }
 
         private ActionCommand? _openEyeCalibrationWindowCommand;

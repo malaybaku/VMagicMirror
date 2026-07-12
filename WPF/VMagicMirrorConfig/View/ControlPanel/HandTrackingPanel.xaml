@@ -171,6 +171,7 @@
                         <CheckBox VerticalContentAlignment="Center"
                                   Content="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask}"
                                   IsChecked="{Binding AlwaysUseSingleMediaPipeTask.Value}"
+                                  Margin="20,0,5,0"
                                   />
                         <Button Margin="4,0,0,0"
                                 Width="NaN"

@@ -240,8 +240,9 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_EnableElbowTracking">Enable Elbow Tracking (Experimental) </sys:String>
-    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">Always use only one MediaPipe task</sys:String>
-    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description">Compatibility option for environments that crash when multiple MediaPipe tasks run. It does not necessarily reduce processing load.</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">Crash prevention mode</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description" xml:space="preserve">Enabling this option makes crashes less likely when tracking your face and hands with a webcam at the same time.
+Facial expressions will not be tracked in this mode.</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
     <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>

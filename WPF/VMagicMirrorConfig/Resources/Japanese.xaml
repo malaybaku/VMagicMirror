@@ -243,8 +243,10 @@
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_EnableElbowTracking">肘もトラッキングする (Experimental) </sys:String>
-    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">MediaPipeのタスクを常に1つだけ使用する</sys:String>
-    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description">複数のMediaPipeタスクを実行するとクラッシュする環境向けの互換設定です。処理負荷が必ず下がるとは限りません。</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">クラッシュ対策モード</sys:String>
+    <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description" xml:space="preserve">このオプションをオンにすると、
+顔と手を同時にwebカメラでトラッキングしたときクラッシュしにくくなります。
+ただし、この場合に表情がトラッキングされなくなります。</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>

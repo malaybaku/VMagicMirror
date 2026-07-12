@@ -106,6 +106,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             StopTask();
             OnStartTask();
+            UnityEngine.Debug.Log($"MediaPipe's StartTask called for type: {GetType().Name}");
 
             // NOTE: OnResult的なやつが発火するまでIO<T>を無視するような実装もアリだが、
             // Mediapipeのdocによるとコールバックの発火側もよしなにdropすることがあるらしく、無視したらしたで面倒そうなので素通しする。

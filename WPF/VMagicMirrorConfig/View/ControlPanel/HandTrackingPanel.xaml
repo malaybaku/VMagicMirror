@@ -170,7 +170,6 @@
                                 Orientation="Horizontal">
                         <CheckBox VerticalContentAlignment="Center"
                                   Content="{DynamicResource HandTracking_AlwaysUseSingleMediaPipeTask}"
-                                  IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                   IsChecked="{Binding AlwaysUseSingleMediaPipeTask.Value}"
                                   />
                         <Button Margin="4,0,0,0"

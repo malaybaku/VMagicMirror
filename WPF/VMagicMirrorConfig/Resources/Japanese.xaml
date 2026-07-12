@@ -91,7 +91,7 @@
     <sys:String x:Key="FaceTracker_WebCamera_Instruction">webカメラを用いて顔トラッキングを行います。</sys:String>
 
     <sys:String x:Key="FaceTracker_WebCamera_EnableExpressionTracking">表情をカメラでトラッキング</sys:String>
-    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">ハンドトラッキングが「クラッシュ対策モード」つきで有効なため、安定性のため表情トラッキングが無効になっています。</sys:String>
+    <sys:String x:Key="FaceTracker_WebCamera_ExpressionTrackingDisabledBySingleTaskMode">ハンドトラッキングが「クラッシュ対策モード」つきで有効なため、安定性のため表情トラッキングが一時的に無効になっています。</sys:String>
     <sys:String x:Key="FaceTracker_WebCamera_ApplyBlink">カメラで検出したまばたきを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
     <sys:String x:Key="FaceTracker_EnableMicrophone">マイクをオン</sys:String>
@@ -246,7 +246,7 @@
     <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask">クラッシュ対策モード</sys:String>
     <sys:String x:Key="HandTracking_AlwaysUseSingleMediaPipeTask_Description" xml:space="preserve">このオプションをオンにすると、
 顔と手を同時にwebカメラでトラッキングしたときクラッシュしにくくなります。
-ただし、この場合に表情がトラッキングされなくなります。</sys:String>
+ただし、この場合は表情トラッキングが一時的に無効になります。</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>

@@ -137,14 +137,14 @@
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource FaceTracker_WebCamera_ApplyBlink}"
                                       IsChecked="{Binding EnableWebCamApplyBlink.Value}"
-                                      IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
+                                      IsEnabled="{Binding IsWebCamExpressionTrackingActive.Value}"
                                       />
                             <Button Grid.Column="2"
                                     Width="NaN"
                                     Margin="5,0,5,0"
                                     Content="{DynamicResource FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow}"
                                     Command="{Binding OpenEyeCalibrationWindowCommand}"
-                                    IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
+                                    IsEnabled="{Binding IsWebCamExpressionTrackingActive.Value}"
                                     />
                         </Grid>
 
@@ -152,7 +152,7 @@
                                   VerticalContentAlignment="Center"
                                   Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}"
                                   IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
-                                  IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
+                                  IsEnabled="{Binding IsWebCamExpressionTrackingActive.Value}"
                                   />
 
                         <Grid Margin="0,0,0,5">
@@ -166,7 +166,7 @@
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
                                       IsChecked="{Binding EnablePerfectSync.Value}"
-                                      IsEnabled="{Binding EnableWebCamExpressionTracking.Value}"
+                                      IsEnabled="{Binding IsWebCamExpressionTrackingActive.Value}"
                                       />
                             <Button Grid.Row="1"
                                     HorizontalAlignment="Left"

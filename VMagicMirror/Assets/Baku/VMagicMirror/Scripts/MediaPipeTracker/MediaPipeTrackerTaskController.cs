@@ -210,17 +210,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private void SubscribeExpressionTrackingFlag()
         {
             _useWebCamExpressionTracking
-                .CombineLatest(
-                    _alwaysUseSingleMediaPipeTask,
-                    _useHandTracking,
-                    (requested, alwaysSingleTask, useHandTracking) =>
-                        requested && !(alwaysSingleTask && useHandTracking))
-                .DistinctUntilChanged()
-                .Subscribe(effectiveValue =>
+                .Subscribe(value =>
                 {
-                    _face.SetBlendShapeOutputActive(effectiveValue);
-                    _handAndFace.SetBlendShapeOutputActive(effectiveValue);
-                    _handAndFaceWithElbow.SetBlendShapeOutputActive(effectiveValue);
+                    _face.SetBlendShapeOutputActive(value);
+                    _handAndFace.SetBlendShapeOutputActive(value);
+                    _handAndFaceWithElbow.SetBlendShapeOutputActive(value);
                 })
                 .AddTo(this);
         }

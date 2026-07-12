@@ -95,11 +95,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
             _motionModel.EnableImageBasedHandTracking.AddWeakEventHandler(OnHandTrackingEnabledChanged);
+            _motionModel.AlwaysUseSingleMediaPipeTask.AddWeakEventHandler(OnAlwaysUseSingleMediaPipeTaskChanged);
             _motionModel.WebCamMouseLookAtMode.AddWeakEventHandler(OnWebCamMouseLookAtModeChanged);
             _motionModel.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
             _motionModel.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
             UpdateBaseMode();
+            UpdateSingleMediaPipeTaskRestriction();
             UpdateWebCamMouseLookAtMode();
 
             LoadFaceSwitchSetting();
@@ -138,7 +140,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        private void OnHandTrackingEnabledChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
+        private void OnHandTrackingEnabledChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateBaseMode();
+            UpdateSingleMediaPipeTaskRestriction();
+        }
+
+        private void OnAlwaysUseSingleMediaPipeTaskChanged(object? sender, PropertyChangedEventArgs e)
+            => UpdateSingleMediaPipeTaskRestriction();
 
         private void OnWebCamHighPowerModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
@@ -167,6 +176,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             FaceSwitchLimited.Value = !exTrackerEnabled && webCamExpressionTrackingEnabled;
             FaceSwitchHasLimitation.Value = FaceSwitchLimited.Value;
             // NOTE: ExTrackerはModelのフラグを素通ししているのでそのまんまでOK
+        }
+
+        private void UpdateSingleMediaPipeTaskRestriction()
+        {
+            IsWebCamExpressionTrackingDisabledBySingleTaskMode.Value =
+                _motionModel.AlwaysUseSingleMediaPipeTask.Value &&
+                _motionModel.EnableImageBasedHandTracking.Value;
         }
 
 
@@ -217,6 +233,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // NOTE: 歴史的経緯で名前がねじれてるけど意図的です
         public RProperty<bool> EnableWebCamera => _motionModel.EnableFaceTracking;
         public RProperty<bool> EnableWebCamExpressionTracking => _motionModel.EnableWebCamHighPowerMode;
+        public RProperty<bool> IsWebCamExpressionTrackingDisabledBySingleTaskMode { get; } = new(false);
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
         public RProperty<string> WebCameraDeviceName { get; }

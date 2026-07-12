@@ -55,13 +55,21 @@ namespace Baku.VMagicMirrorConfig
 
             EnableImageBasedHandTracking = new RProperty<bool>(
                 setting.EnableImageBasedHandTracking,
-                v => SendMessage(MessageFactory.EnableImageBasedHandTracking(v)));
+                v =>
+                {
+                    SendMessage(MessageFactory.EnableImageBasedHandTracking(v));
+                    DisableWebCamExpressionTrackingIfSingleTaskModeRequires();
+                });
             EnableImageBasedElbowTracking = new RProperty<bool>(
                 setting.EnableImageBasedElbowTracking,
                 v => SendMessage(MessageFactory.EnableImageBasedElbowTracking(v)));
             AlwaysUseSingleMediaPipeTask = new RProperty<bool>(
                 setting.AlwaysUseSingleMediaPipeTask,
-                v => SendMessage(MessageFactory.EnableAlwaysUseSingleMediaPipeTask(v)));
+                v =>
+                {
+                    SendMessage(MessageFactory.EnableAlwaysUseSingleMediaPipeTask(v));
+                    DisableWebCamExpressionTrackingIfSingleTaskModeRequires();
+                });
             ShowEffectDuringHandTracking = new RProperty<bool>(
                 setting.ShowEffectDuringHandTracking,
                 v => SendMessage(MessageFactory.ShowEffectDuringHandTracking(v)));
@@ -199,6 +207,14 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> HandTrackingMotionOffsetX { get; }
         public RProperty<int> HandTrackingMotionOffsetY { get; }
         public RProperty<int> HandTrackingHeadPoseAdjustFactor { get; }
+
+        private void DisableWebCamExpressionTrackingIfSingleTaskModeRequires()
+        {
+            if (AlwaysUseSingleMediaPipeTask.Value && EnableImageBasedHandTracking.Value)
+            {
+                EnableWebCamHighPowerMode.Value = false;
+            }
+        }
 
 
         public RProperty<string> CameraDeviceName { get; }

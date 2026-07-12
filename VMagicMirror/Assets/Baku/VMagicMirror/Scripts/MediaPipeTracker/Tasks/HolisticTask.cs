@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
@@ -27,7 +26,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private HolisticLandmarker _landmarker;
 
         private HolisticTaskMode _taskMode;
-        private int _taskVersion;
 
         public enum HolisticTaskMode
         {
@@ -78,14 +76,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         protected override void OnStartTask()
         {
-            var taskVersion = Interlocked.Increment(ref _taskVersion);
-
-            void OnResultForCurrentTask(
-                in HolisticLandmarkerResult result,
-                Image image,
-                long timestamp)
-                => OnResult(taskVersion, in result);
-
             var options = new HolisticLandmarkerOptions(
                 baseOptions: new BaseOptions(
                     modelAssetPath: FilePathUtil.GetModelFilePath(ModelFileName)
@@ -96,14 +86,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 minPoseDetectionConfidence: 0.6f,
                 // HolisticのBlendShapeはFaceLandmarkerより品質が低いため、意図的に使わない
                 outputFaceBlendshapes: false,
-                resultCallback: OnResultForCurrentTask
+                resultCallback: OnResult
             );
             _landmarker = HolisticLandmarker.CreateFromOptions(options);
         }
 
         protected override void OnStopTask()
         {
-            Interlocked.Increment(ref _taskVersion);
             ((IDisposable)_landmarker)?.Dispose();
             _landmarker = null;
         }
@@ -119,9 +108,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _landmarker?.DetectAsync(image, source.TimestampMilliseconds);
         }
 
-        private void OnResult(int taskVersion, in HolisticLandmarkerResult result)
+        private void OnResult(in HolisticLandmarkerResult result, Image image, long timestamp)
         {
-            if (!IsActive || taskVersion != Volatile.Read(ref _taskVersion))
+            if (!IsActive)
             {
                 return;
             }

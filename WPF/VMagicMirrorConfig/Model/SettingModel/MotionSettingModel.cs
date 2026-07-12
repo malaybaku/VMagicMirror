@@ -50,28 +50,20 @@ namespace Baku.VMagicMirrorConfig
 
             EnableWebCamHighPowerMode = new RProperty<bool>(
                 setting.EnableWebCamHighPowerMode,
-                _ => SendEffectiveWebCamExpressionTrackingState());
+                v => SendMessage(MessageFactory.EnableWebCamExpressionTracking(v)));
             EnableWebCamApplyBlink = new RProperty<bool>(setting.EnableWebCamApplyBlink, v => SendMessage(MessageFactory.EnableWebCamApplyBlink(v)));
             EnableWebCamQuickMotion = new RProperty<bool>(setting.EnableWebCamQuickMotion, v => SendMessage(MessageFactory.EnableWebCamQuickMotion(v)));
             WebCamMouseLookAtMode = new RProperty<int>(setting.WebCamMouseLookAtMode, v => SendMessage(MessageFactory.SetWebCamMouseLookAtMode(v)));
 
             EnableImageBasedHandTracking = new RProperty<bool>(
                 setting.EnableImageBasedHandTracking,
-                v =>
-                {
-                    SendMessage(MessageFactory.EnableImageBasedHandTracking(v));
-                    SendEffectiveWebCamExpressionTrackingState();
-                });
+                v => SendMessage(MessageFactory.EnableImageBasedHandTracking(v)));
             EnableImageBasedElbowTracking = new RProperty<bool>(
                 setting.EnableImageBasedElbowTracking,
                 v => SendMessage(MessageFactory.EnableImageBasedElbowTracking(v)));
             AlwaysUseSingleMediaPipeTask = new RProperty<bool>(
                 setting.AlwaysUseSingleMediaPipeTask,
-                v =>
-                {
-                    SendMessage(MessageFactory.EnableAlwaysUseSingleMediaPipeTask(v));
-                    SendEffectiveWebCamExpressionTrackingState();
-                });
+                v => SendMessage(MessageFactory.EnableAlwaysUseSingleMediaPipeTask(v)));
             ShowEffectDuringHandTracking = new RProperty<bool>(
                 setting.ShowEffectDuringHandTracking,
                 v => SendMessage(MessageFactory.ShowEffectDuringHandTracking(v)));
@@ -209,14 +201,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> HandTrackingMotionOffsetX { get; }
         public RProperty<int> HandTrackingMotionOffsetY { get; }
         public RProperty<int> HandTrackingHeadPoseAdjustFactor { get; }
-
-        private void SendEffectiveWebCamExpressionTrackingState()
-        {
-            var temporarilyDisabled =
-                AlwaysUseSingleMediaPipeTask.Value && EnableImageBasedHandTracking.Value;
-            SendMessage(MessageFactory.EnableWebCamExpressionTracking(
-                EnableWebCamHighPowerMode.Value && !temporarilyDisabled));
-        }
 
         public RProperty<string> CameraDeviceName { get; }
 

@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v5.1.0
+{: .doc-sec2 }
+
+2026/07/30
+
+* Add: Added the `Hand Tracking` > `Crash prevention mode` option as a workaround for crashes that occur on some PCs when face and hand tracking are used simultaneously with a webcam. Enabling this option reduces the likelihood of crashes, but disables webcam-based facial expression tracking.
+* Change: Unified webcam face tracking by removing the previous distinction between `Web Camera (Lite)` and `Web Camera (High Power)`.
+* Removed: Removed the `User` option that made the avatar always look toward the camera during webcam face tracking.
+
+
 #### v5.0.1
 {: .doc-sec2 }
 

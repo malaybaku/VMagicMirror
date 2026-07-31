@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// - ブレンドシェイプクリップ名はhinzkaさんのセットアップに倣う
     /// - 歴史的経緯で外部トラッキング(≒iFacialMocap連携)の一種のような扱いになってるが、下記3種類に対応を拡張予定で、実際にそうしたらクラスの移動やrenameをする予定
     ///   - 外部トラッキング
-    ///   - 高負荷モードのwebカメラでのトラッキング
+    ///   - Webカメラによる表情トラッキング
     ///   - VMCPで十分な数のブレンドシェイプを受信しているときのトラッキング
     /// </remarks>
     public class ExternalTrackerPerfectSync : MonoBehaviour
@@ -48,10 +48,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         public bool IsConnected => 
             (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
-            (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower && _mediaPipeFacialValueRepository.IsTracked);
+            (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCam && _mediaPipeFacialValueRepository.IsTracked);
 
         private readonly ReactiveProperty<bool> _isExternalTrackerPerfectSyncEnabled = new();
-        private ReadOnlyReactiveProperty<bool> WebCamHighPowerModePerfectSyncEnabled => 
+        private ReadOnlyReactiveProperty<bool> WebCamPerfectSyncEnabled =>
             _mediaPipeTrackerRuntimeSettings.ShouldUsePerfectSyncResult;
 
         [Inject]
@@ -99,16 +99,16 @@ namespace Baku.VMagicMirror.ExternalTracker
             _isExternalTrackerPerfectSyncEnabled
                 .Subscribe(v => _faceControlConfig.UseExternalTrackerPerfectSync = v)
                 .AddTo(this);
-            WebCamHighPowerModePerfectSyncEnabled
-                .Subscribe(v => _faceControlConfig.UseWebCamHighPowerModePerfectSync = v)
+            WebCamPerfectSyncEnabled
+                .Subscribe(v => _faceControlConfig.UseWebCamPerfectSync = v)
                 .AddTo(this);
 
             _faceControlConfig.BlendShapeControlMode.CombineLatest(
                     _isExternalTrackerPerfectSyncEnabled,
-                    WebCamHighPowerModePerfectSyncEnabled,
+                    WebCamPerfectSyncEnabled,
                     (mode, exTrackerPerfectSync, webCamPerfectSync) =>
                         (mode is FaceControlModes.ExternalTracker && exTrackerPerfectSync) ||
-                        (mode is FaceControlModes.WebCamHighPower && webCamPerfectSync)
+                        (mode is FaceControlModes.WebCam && webCamPerfectSync)
                 )
                 .Subscribe(isActive =>
                 {
@@ -123,7 +123,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                     _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
                     (mode, exTrackerLipSync, webCamLipSync) =>
                         (mode is FaceControlModes.ExternalTracker && exTrackerLipSync) ||
-                        (mode is FaceControlModes.WebCamHighPower && webCamLipSync)
+                        (mode is FaceControlModes.WebCam && webCamLipSync)
                 )
                 .Subscribe(usePerfectSyncLipSync => PreferWriteMouthBlendShape = usePerfectSyncLipSync)
                 .AddTo(this);
@@ -140,7 +140,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
                 var result = 
                     (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
-                    (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCamHighPower &&
+                    (_faceControlConfig.BlendShapeControlMode.CurrentValue is FaceControlModes.WebCam &&
                         _mediaPipeFacialValueRepository.IsTracked);
                 return result;
             }

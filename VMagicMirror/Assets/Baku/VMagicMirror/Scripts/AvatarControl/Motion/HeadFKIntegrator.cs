@@ -28,8 +28,7 @@ namespace Baku.VMagicMirror
                 externalTrackerAttitude.IsActive = true;
                 mediaPipeFaceAttitude.IsActive = false;
                 break;
-            case FaceControlModes.WebCamLowPower:
-            case FaceControlModes.WebCamHighPower:
+            case FaceControlModes.WebCam:
                 externalTrackerAttitude.IsActive = false;
                 mediaPipeFaceAttitude.IsActive = true;
                 break;

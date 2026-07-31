@@ -173,7 +173,6 @@
     <sys:String x:Key="Motion_Face_CameraName">相机</sys:String>    
     <sys:String x:Key="Motion_Face_Calibration">修正姿势和表情</sys:String>    
     <sys:String x:Key="Motion_Face_EnableBodyLeanZ">启用面部跟踪中的前后移动</sys:String>    
-    <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">在面部跟踪过程中也自动眨眼</sys:String>
     <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">关闭左右翻转</sys:String>
     <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">手和脸一起跟踪</sys:String>
     <sys:String x:Key="Motion_Face_EnableWebCamHighPowerMode">高分辨率模式（测试)</sys:String>
@@ -194,10 +193,6 @@
             
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">眼·视线</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">视线的伊东</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">鼠标</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">用户</sys:String>
     <sys:String x:Key="Motion_Eye_RotScale">眼睛的运动幅度[%]</sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(参考）眼球的大致可动范围: </sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg]</sys:String>

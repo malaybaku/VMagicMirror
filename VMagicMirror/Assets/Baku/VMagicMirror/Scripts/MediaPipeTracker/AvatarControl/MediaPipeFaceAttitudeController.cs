@@ -40,8 +40,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
-        private FaceControlConfiguration _config;
         private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
+        private MediaPipeTrackerRuntimeSettingsRepository _settings;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
         private CurrentFramerateChecker _framerateChecker;
@@ -52,17 +52,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
-            FaceControlConfiguration faceControlConfig,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
             MediaPipeKinematicSetter mediaPipeKinematicSetter,
+            MediaPipeTrackerRuntimeSettingsRepository settings,
             CurrentFramerateChecker framerateChecker
             )
         {
-            _config = faceControlConfig;
             _gameInputBodyMotionController = gameInputBodyMotionController;
             _carHandleBasedFk = carHandleBasedFk;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
+            _settings = settings;
             _framerateChecker = framerateChecker;
 
             vrmLoadable.VrmLoaded += info =>
@@ -82,12 +82,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             _framerateChecker.CurrentFramerate
                 .CombineLatest(
-                    _config.HeadMotionControlMode, 
-                    (framerate, mode) => (framerate, mode))
+                    _settings.EnableQuickMotion,
+                    (framerate, enableQuickMotion) => (framerate, enableQuickMotion))
                 .Subscribe(value =>
                 {
-                    var (framerate, mode) = value;
-                    var cutoffFrequency = mode is FaceControlModes.WebCamHighPower
+                    var (framerate, enableQuickMotion) = value;
+                    var cutoffFrequency = enableQuickMotion
                         ? headRotationCutOffFrequency
                         : headRotationCutOffFrequencySlow;
                     _rotationFilter.SetUpAsLowPassFilter(framerate, cutoffFrequency);

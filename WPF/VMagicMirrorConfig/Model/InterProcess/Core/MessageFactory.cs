@@ -120,7 +120,6 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableFaceTracking(bool enable) => BoolContent(VmmCommands.EnableFaceTracking, enable);
         public static Message SetCameraDeviceName(string deviceName) => StringContent(VmmCommands.SetCameraDeviceName, deviceName);
-        public static Message AutoBlinkDuringFaceTracking(bool enable) => BoolContent(VmmCommands.AutoBlinkDuringFaceTracking, enable);
         public static Message EnableBodyLeanZ(bool enable) => BoolContent(VmmCommands.EnableBodyLeanZ, enable);
         public static Message EnableLipSyncBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableLipSyncBasedBlinkAdjust, enable);
         public static Message EnableHeadRotationBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableHeadRotationBasedBlinkAdjust, enable);
@@ -132,6 +131,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message EnableImageBasedHandTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedHandTracking, enable);
         public static Message EnableImageBasedElbowTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedElbowTracking, enable);
+        public static Message EnableAlwaysUseSingleMediaPipeTask(bool enable) => BoolContent(VmmCommands.EnableAlwaysUseSingleMediaPipeTask, enable);
 
         public static Message ShowEffectDuringHandTracking(bool enable) => BoolContent(VmmCommands.ShowEffectDuringHandTracking, enable);
         //Faceと同じく、disableという言い回しに注意
@@ -145,7 +145,10 @@ namespace Baku.VMagicMirrorConfig
 
 
 
-        public static Message EnableWebCamHighPowerMode(bool enable) => BoolContent(VmmCommands.EnableWebCamHighPowerMode, enable);
+        public static Message EnableWebCamExpressionTracking(bool enable) => BoolContent(VmmCommands.EnableWebCamExpressionTracking, enable);
+        public static Message EnableWebCamApplyBlink(bool enable) => BoolContent(VmmCommands.EnableWebCamApplyBlink, enable);
+        public static Message EnableWebCamQuickMotion(bool enable) => BoolContent(VmmCommands.EnableWebCamQuickMotion, enable);
+        public static Message SetWebCamMouseLookAtMode(int mode) => IntContent(VmmCommands.SetWebCamMouseLookAtMode, mode);
 
         public static Message FaceDefaultFun(int percentage) => IntContent(VmmCommands.FaceDefaultFun, percentage);
         public static Message FaceNeutralClip(string clipName) => StringContent(VmmCommands.FaceNeutralClip, clipName);
@@ -153,7 +156,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message DisableBlendShapeInterpolate(bool enable) => BoolContent(VmmCommands.DisableBlendShapeInterpolate, enable);
         
-        public static Message EnableWebCameraHighPowerModeLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeLipSync, enable);
+        public static Message EnableWebCamApplyLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCamApplyLipSync, enable);
 
         public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
         public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);
@@ -183,7 +186,6 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static Message MicrophoneDeviceNames() => None(VmmCommands.MicrophoneDeviceNames);
 
-        public static Message LookAtStyle(string v) => StringContent(VmmCommands.LookAtStyle, v);
         public static Message EnableEyeMotionDuringClipApplied(bool enable) => BoolContent(VmmCommands.EnableEyeMotionDuringClipApplied, enable);
         public static Message SetUseAvatarEyeBoneMap(bool use) => BoolContent(VmmCommands.SetUseAvatarEyeBoneMap, use);
         public static Message SetEyeBoneRotationScale(int percent) => IntContent(VmmCommands.SetEyeBoneRotationScale, percent);

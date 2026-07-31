@@ -21,9 +21,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         void ITickable.Tick()
         {
-            // NOTE: Webカメラ高負荷トラッキングさえ有効ならばUpdateしちゃう…というスタイルもある。
+            // NOTE: Webカメラによる表情トラッキングさえ有効ならばUpdateしちゃう…というスタイルもある。
             // 動作としてはトラッキングロス時にFace SwitchがリセットされてればOK
-            if (_config.BlendShapeControlMode.CurrentValue is not FaceControlModes.WebCamHighPower || 
+            if (_config.BlendShapeControlMode.CurrentValue is not FaceControlModes.WebCam ||
                 !_facialValue.IsTracked)
             {
                 return;

@@ -114,11 +114,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         public RProperty<int> MicrophoneVolumeValue => _microphoneStatus.MicrophoneVolumeValue;
         public RProperty<int> MicrophoneSensitivity => _setting.MicrophoneSensitivity;
 
-        public RProperty<bool> UseLookAtPointMousePointer => _setting.UseLookAtPointMousePointer;
-        public RProperty<bool> UseLookAtPointMainCamera => _setting.UseLookAtPointMainCamera;
-        public RProperty<bool> UseLookAtPointNone => _setting.UseLookAtPointNone;
-
-
         public RProperty<bool> EnableExternalTracking => _externalTrackerSetting.EnableExternalTracking;
 
         public ActionCommand CalibrateFaceCommand { get; }

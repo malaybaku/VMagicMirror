@@ -17,7 +17,9 @@ namespace Baku.VMagicMirror
         private readonly VMCPHeadPose _vmcpHeadPose;
 
         private readonly ReactiveProperty<bool> _enableWebCamTracking = new(true);
-        private readonly ReactiveProperty<bool> _enableWebCamHighPowerMode = new(false);
+        private readonly ReactiveProperty<bool> _enableWebCamExpressionTracking = new(false);
+        private readonly ReactiveProperty<bool> _enableImageBasedHandTracking = new(false);
+        private readonly ReactiveProperty<bool> _alwaysUseSingleMediaPipeTask = new(false);
         private readonly ReactiveProperty<bool> _enableExTracker = new(false);
         private readonly ReactiveProperty<bool> _enableVmcpUpperBodyAdditionalMove = new(false);
 
@@ -37,14 +39,26 @@ namespace Baku.VMagicMirror
         public override void Initialize()
         {
             _receiver.BindBoolProperty(VmmCommands.EnableFaceTracking, _enableWebCamTracking);
-            _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _enableWebCamHighPowerMode);
+            _receiver.BindBoolProperty(VmmCommands.EnableWebCamExpressionTracking, _enableWebCamExpressionTracking);
+            _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableImageBasedHandTracking);
+            _receiver.BindBoolProperty(VmmCommands.EnableAlwaysUseSingleMediaPipeTask, _alwaysUseSingleMediaPipeTask);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _enableExTracker);
             _receiver.BindBoolProperty(VmmCommands.EnableVMCPUpperBodyAdditionalMove, _enableVmcpUpperBodyAdditionalMove);
-            
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamMouseLookAtMode,
+                message => _config.SetWebCamMouseLookAtMode(message.ToInt())
+            );
+
+            var webCamExpressionTrackingActive = _enableWebCamExpressionTracking.CombineLatest(
+                _enableImageBasedHandTracking,
+                _alwaysUseSingleMediaPipeTask,
+                (expressionTracking, handTracking, singleTask) =>
+                    expressionTracking && !(handTracking && singleTask));
+
             _vmcpHeadPose.IsActive.CombineLatest(
                 _vmcpBlendShape.IsActive,
                 _enableWebCamTracking,
-                _enableWebCamHighPowerMode,
+                webCamExpressionTrackingActive,
                 _enableExTracker,
                 _enableVmcpUpperBodyAdditionalMove,
                 (a0, a1, a2, a3, a4, a5) => Unit.Default
@@ -66,15 +80,17 @@ namespace Baku.VMagicMirror
             var motionMode = 
                 (_vmcpHeadPose.IsActive.CurrentValue && !_enableVmcpUpperBodyAdditionalMove.CurrentValue) ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                (_enableWebCamTracking.Value && _enableWebCamHighPowerMode.Value) ? FaceControlModes.WebCamHighPower :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
+                _enableWebCamTracking.Value ? FaceControlModes.WebCam :
                 FaceControlModes.None;
 
-            var blendShapeMode = 
+            var webCamExpressionTrackingActive =
+                _enableWebCamExpressionTracking.Value &&
+                !(_enableImageBasedHandTracking.Value && _alwaysUseSingleMediaPipeTask.Value);
+
+            var blendShapeMode =
                 _vmcpBlendShape.IsActive.CurrentValue ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                (_enableWebCamTracking.Value && _enableWebCamHighPowerMode.Value) ? FaceControlModes.WebCamHighPower :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
+                (_enableWebCamTracking.Value && webCamExpressionTrackingActive) ? FaceControlModes.WebCam :
                 FaceControlModes.None;
             
             _config.SetFaceControlMode(motionMode, blendShapeMode, useAdditionalVmcpHeadMotion);

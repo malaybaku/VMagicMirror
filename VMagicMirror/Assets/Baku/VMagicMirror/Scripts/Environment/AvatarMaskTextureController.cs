@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using R3;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -13,6 +15,9 @@ namespace Baku.VMagicMirror
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly Camera _targetCamera;
+        private readonly List<Renderer[]> _accessoryRenderers = new();
+
+        private Renderer[] _avatarRenderers = Array.Empty<Renderer>();
 
         // NOTE: Unityのnull checkをしたくないので明示的にフラグを持つ
         private bool _hasRenderTexture;
@@ -28,7 +33,7 @@ namespace Baku.VMagicMirror
         public bool IsReady => _useAvatarMask.Value && _hasRenderTexture;
         
         public Renderer[] AvatarRenderers { get; private set; } = Array.Empty<Renderer>();
-        public bool HasAvatar => AvatarRenderers.Length > 0;
+        public bool HasAvatar => _avatarRenderers.Length > 0;
         public RTHandle AvatarMaskHandle { get; private set; }
         public RTHandle AvatarMaskDepthHandle { get; private set; }
 
@@ -43,8 +48,16 @@ namespace Baku.VMagicMirror
 
         public override void Initialize()
         {
-            _vrmLoadable.VrmLoaded += info => AvatarRenderers = info.Renderers ?? Array.Empty<Renderer>();
-            _vrmLoadable.VrmDisposing += () => AvatarRenderers = Array.Empty<Renderer>();
+            _vrmLoadable.VrmLoaded += info =>
+            {
+                _avatarRenderers = info.Renderers ?? Array.Empty<Renderer>();
+                RebuildAvatarRenderers();
+            };
+            _vrmLoadable.VrmDisposing += () =>
+            {
+                _avatarRenderers = Array.Empty<Renderer>();
+                RebuildAvatarRenderers();
+            };
 
             _useAvatarDropShadow
                 .CombineLatest(_useAvatarOffsetRim, (x, y) => x || y)
@@ -82,6 +95,34 @@ namespace Baku.VMagicMirror
         
         public void SetAvatarDropShadowEnabled(bool enable) => _useAvatarDropShadow.Value = enable;
         public void SetAvatarOffsetRimEnabled(bool enable) => _useAvatarOffsetRim.Value = enable;
+
+        public void RegisterAccessoryRenderers(Renderer[] renderers)
+        {
+            if (renderers == null || renderers.Length == 0 || _accessoryRenderers.Contains(renderers))
+            {
+                return;
+            }
+
+            _accessoryRenderers.Add(renderers);
+            RebuildAvatarRenderers();
+        }
+
+        public void UnregisterAccessoryRenderers(Renderer[] renderers)
+        {
+            if (renderers == null || !_accessoryRenderers.Remove(renderers))
+            {
+                return;
+            }
+
+            RebuildAvatarRenderers();
+        }
+
+        private void RebuildAvatarRenderers()
+        {
+            AvatarRenderers = _avatarRenderers
+                .Concat(_accessoryRenderers.SelectMany(renderers => renderers))
+                .ToArray();
+        }
         
         private void EnsureMaskTextures()
         {

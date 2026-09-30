@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v5.1.1
+{: .doc-sec2 }
+
+2026/Sep/30
+
+* Fix: Fixed an issue where GLB accessories were not reflected in the avatar shadow and rim light effects.
+
+
 #### v5.1.0
 {: .doc-sec2 }
 

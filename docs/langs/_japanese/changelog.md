@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v5.1.1
+{: .doc-sec2 }
+
+2026/09/30
+
+* 修正: GLB形式のアクセサリーがアバターの影およびリムライトの描画に反映されない問題を修正しました。
+
+
 #### v5.1.0
 {: .doc-sec2 }
 

@@ -30,6 +30,9 @@ namespace Baku.VMagicMirror
         private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
         private RuntimeTransformControlFactory _transformControlFactory = null;
+        private AvatarMaskTextureController _avatarMaskTextureController = null;
+        private Renderer[] _accessoryRenderers = Array.Empty<Renderer>();
+        private bool _accessoryRenderersRegistered;
         private RuntimeTransformControlHandle _transformControl = null;
 
         private VRMAvatarBones _avatarBones;
@@ -136,12 +139,14 @@ namespace Baku.VMagicMirror
                     var glbObj = glbContext.Object;
                     glbObj.transform.SetParent(modelParent, false);
                     _fileActions = glbContext.Actions;
+                    SetAccessoryRenderers(glbObj);
                     break;
                 case AccessoryType.Gltf:
                     var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
                     var gltfObj = gltfContext.Object;
                     gltfObj.transform.SetParent(modelParent, false);
                     _fileActions = gltfContext.Actions;
+                    SetAccessoryRenderers(gltfObj);
                     break;
                 case AccessoryType.NumberedPng:
                     InitializeAnimatableImage(_file);
@@ -149,6 +154,11 @@ namespace Baku.VMagicMirror
                 default:
                     LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
                     break;
+            }
+
+            if (ShouldBeVisible)
+            {
+                RegisterAccessoryRenderers();
             }
             
             _fileActions?.UpdateLayout(ItemLayout);
@@ -159,11 +169,16 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="cam"></param>
         /// <param name="file"></param>
-        public void Initialize(Camera cam, AccessoryFile file, RuntimeTransformControlFactory transformControlFactory)
+        public void Initialize(
+            Camera cam,
+            AccessoryFile file,
+            RuntimeTransformControlFactory transformControlFactory,
+            AvatarMaskTextureController avatarMaskTextureController)
         {
             _cam = cam;
             _file = file;
             _transformControlFactory = transformControlFactory;
+            _avatarMaskTextureController = avatarMaskTextureController;
             _transformControlFactory.DisableExisting(transform);
 
             SetVisibility(false);
@@ -173,6 +188,7 @@ namespace Baku.VMagicMirror
         public void Dispose()
         {
             ReleaseTransformControl();
+            UnregisterAccessoryRenderers();
             _fileActions?.Dispose();
             Destroy(gameObject);
         }
@@ -241,6 +257,35 @@ namespace Baku.VMagicMirror
             _blinkCts.Dispose();
 
             ReleaseTransformControl();
+            UnregisterAccessoryRenderers();
+        }
+
+        private void SetAccessoryRenderers(GameObject root)
+        {
+            UnregisterAccessoryRenderers();
+            _accessoryRenderers = root.GetComponentsInChildren<Renderer>(true);
+        }
+
+        private void RegisterAccessoryRenderers()
+        {
+            if (_accessoryRenderersRegistered || _accessoryRenderers.Length == 0)
+            {
+                return;
+            }
+
+            _avatarMaskTextureController.RegisterAccessoryRenderers(_accessoryRenderers);
+            _accessoryRenderersRegistered = true;
+        }
+
+        private void UnregisterAccessoryRenderers()
+        {
+            if (!_accessoryRenderersRegistered)
+            {
+                return;
+            }
+
+            _avatarMaskTextureController?.UnregisterAccessoryRenderers(_accessoryRenderers);
+            _accessoryRenderersRegistered = false;
         }
 
         private void InitializeImage(AccessoryFile file)
@@ -290,6 +335,7 @@ namespace Baku.VMagicMirror
             _fileActions?.OnVisibilityChanged(visible);
             if (_file == null || !visible)
             {
+                UnregisterAccessoryRenderers();
                 imageRenderer.gameObject.SetActive(false);
                 modelParent.gameObject.SetActive(false);
                 ReleaseTransformControl();
@@ -307,6 +353,7 @@ namespace Baku.VMagicMirror
                 case AccessoryType.Gltf:
                     imageRenderer.gameObject.SetActive(false);
                     modelParent.gameObject.SetActive(true);
+                    RegisterAccessoryRenderers();
                     break;
                 default:
                     imageRenderer.gameObject.SetActive(false);

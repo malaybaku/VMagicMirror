@@ -148,7 +148,7 @@ namespace Baku.VMagicMirror
                 source = IsMovrm(path) ? new MovrmLoadSource(path) : null;
                 var bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
                 //コールバックが呼ばれて終わり、インスタンスはすぐ捨てる
-                instance = await Vrm10.LoadBytesAsync(bytes,
+                instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.None,
                     false,
@@ -211,7 +211,7 @@ namespace Baku.VMagicMirror
             Vrm10Instance instance = null;
             try
             {
-                instance = await Vrm10.LoadBytesAsync(bytes,
+                instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
                     true,

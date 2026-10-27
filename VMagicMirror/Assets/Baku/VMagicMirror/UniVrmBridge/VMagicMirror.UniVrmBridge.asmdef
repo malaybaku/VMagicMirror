@@ -1,0 +1,6 @@
+{
+  "name": "VMagicMirror.UniVrmBridge",
+  "rootNamespace": "Baku.VMagicMirror",
+  "references": ["UniGLTF", "UniGLTF.Utils", "VRM10"],
+  "autoReferenced": true
+}

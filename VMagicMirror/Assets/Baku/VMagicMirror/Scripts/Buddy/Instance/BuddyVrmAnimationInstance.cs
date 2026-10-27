@@ -41,7 +41,7 @@ namespace Baku.VMagicMirror.Buddy
                 using var data = new AutoGltfFileParser(fullPath).Parse();
                 var vrmAnimationData = new VrmAnimationData(data);
                 using var loader = new VrmAnimationImporter(vrmAnimationData);
-                gltfInstance = await loader.LoadAsync(new ImmediateCaller());
+                gltfInstance = await UniVrmLoader.LoadAnimationAsync(loader);
                 var instance = gltfInstance.GetComponent<Vrm10AnimationInstance>();
                 var animation = gltfInstance.GetComponent<Animation>();
                 instance.ShowBoxMan(false);

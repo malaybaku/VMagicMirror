@@ -133,7 +133,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 var dialog = new OpenFileDialog()
                 {
                     Title = "Open VRM file",
-                    Filter = "VRM files (*.vrm)|*.vrm|All files (*.*)|*.*",
+                    Filter = "VRM files (*.vrm;*.mouv)|*.vrm;*.mouv|All files (*.*)|*.*",
                     Multiselect = false,
                 };
 
@@ -146,7 +146,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void LoadVrmByFilePath(string? filePath)
         {
-            if (filePath != null && File.Exists(filePath) && Path.GetExtension(filePath) == ".vrm")
+            if (filePath != null && File.Exists(filePath) &&
+                (string.Equals(Path.GetExtension(filePath), ".vrm", System.StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(Path.GetExtension(filePath), ".mouv", System.StringComparison.OrdinalIgnoreCase)))
             {
                 await _avatarLoader.LoadVrm(() => filePath, _preferenceSetting.SkipLocalVrmLicenseCheck.Value);
             }

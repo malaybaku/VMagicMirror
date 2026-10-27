@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror.Buddy
             Vrm10Instance instance = null;
             try
             {
-                instance = await Vrm10.LoadBytesAsync(bytes,
+                instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
                     true,

@@ -223,7 +223,7 @@ namespace Baku.VMagicMirror
                         using var data = new AutoGltfFileParser(fileItem.FilePath).Parse();
                         var vrmAnimationData = new VrmAnimationData(data);
                         using var loader = new VrmAnimationImporter(vrmAnimationData);
-                        var instance = await loader.LoadAsync(new ImmediateCaller());
+                        var instance = await UniVrmLoader.LoadAnimationAsync(loader);
                         var vrm10AnimationInstance = instance.GetComponent<Vrm10AnimationInstance>();
                         vrm10AnimationInstance.ShowBoxMan(false);
 

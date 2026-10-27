@@ -44,6 +44,7 @@ namespace Baku.VMagicMirror
         private readonly CancellationTokenSource _cts = new();
 
         private Vrm10Instance _instance = null;
+        private MouvLoadSource _mouvSource;
         
         private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
         public ReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
@@ -118,7 +119,14 @@ namespace Baku.VMagicMirror
             _disposable.Dispose();
             _cts?.Cancel();
             _cts?.Dispose();
+            ReleaseCurrentVrm();
         }
+
+        private static bool IsMouv(string path) =>
+            string.Equals(Path.GetExtension(path), ".mouv", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsSupportedModel(string path) => IsMouv(path) ||
+            string.Equals(Path.GetExtension(path), ".vrm", StringComparison.OrdinalIgnoreCase);
         
         private async UniTaskVoid LoadModelForPreview(string path)
         {
@@ -127,18 +135,20 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (Path.GetExtension(path).ToLower() != ".vrm")
+            if (!IsSupportedModel(path))
             {
                 LogOutput.Instance.Write($"unknown file type: {path}");
                 return;
             }
 
             Vrm10Instance instance = null;
+            MouvLoadSource source = null;
             try
             {
-                var bytes = File.ReadAllBytes(path);
+                source = IsMouv(path) ? new MouvLoadSource(path) : null;
+                var bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
                 //コールバックが呼ばれて終わり、インスタンスはすぐ捨てる
-                instance = await Vrm10.LoadBytesAsync(bytes,
+                instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.None,
                     false,
@@ -157,6 +167,7 @@ namespace Baku.VMagicMirror
                 {
                     Object.Destroy(instance.gameObject);
                 }
+                source?.Dispose();
             }
         }
 
@@ -170,7 +181,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (Path.GetExtension(path).ToLower() != ".vrm")
+            if (!IsSupportedModel(path))
             {
                 NotifyLoadModelFromFileEnded();
                 LogOutput.Instance.Write($"unknown file type: {path}");
@@ -178,25 +189,29 @@ namespace Baku.VMagicMirror
             }
 
             byte[] bytes;
+            MouvLoadSource source = null;
             try
             { 
-                bytes = File.ReadAllBytes(path);
+                source = IsMouv(path) ? new MouvLoadSource(path) : null;
+                bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
             }
             catch (Exception ex)
             {
+                source?.Dispose();
                 NotifyLoadModelFromFileEnded();
                 HandleLoadError(ex);
                 return;
             }
 
-            await LoadModelFromBytesAsync(bytes);
+            await LoadModelFromBytesAsync(bytes, source);
         }
 
-        private async UniTask LoadModelFromBytesAsync(byte[] bytes)
+        private async UniTask LoadModelFromBytesAsync(byte[] bytes, MouvLoadSource source = null)
         {
+            Vrm10Instance instance = null;
             try
             {
-                var instance = await Vrm10.LoadBytesAsync(bytes,
+                instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
                     true,
@@ -204,6 +219,8 @@ namespace Baku.VMagicMirror
                     vrmMetaInformationCallback: OnMetaDetectedForModelLoad,
                     ct: _cts.Token
                 );
+
+                source?.Apply(instance);
 
                 //NOTE: VRM 0.xのcontext.EnableUpdateWhenOffscreen();に相当する。
                 //LoadBytesAsyncの一貫で実行されてそうだったら消してもいい
@@ -215,13 +232,23 @@ namespace Baku.VMagicMirror
                 _sender.SendCommand(
                     MessageFactory.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
                 );
-                SetModel(instance);
+                SetModel(instance, source);
+                source = null;
                 NotifyLoadModelFromFileEnded();
             }
             catch (Exception ex)
             {
+                if (instance != null)
+                {
+                    if (_instance == instance) ReleaseCurrentVrm();
+                    else Object.Destroy(instance.gameObject);
+                }
                 NotifyLoadModelFromFileEnded();
                 HandleLoadError(ex);
+            }
+            finally
+            {
+                source?.Dispose();
             }
         }
         
@@ -282,6 +309,8 @@ namespace Baku.VMagicMirror
             // _controlRig?.Dispose();
             // _controlRig = null;
 
+            _mouvSource?.Dispose();
+            _mouvSource = null;
             if (_instance != null)
             {
                 Object.Destroy(_instance.gameObject);
@@ -290,7 +319,7 @@ namespace Baku.VMagicMirror
             _modelVersion.Value = CurrentModelVersion.Unloaded;
         }
 
-        private void SetModel(Vrm10Instance instance)
+        private void SetModel(Vrm10Instance instance, MouvLoadSource source = null)
         {
             ReleaseCurrentVrm();
 
@@ -300,6 +329,7 @@ namespace Baku.VMagicMirror
             }
 
             _instance = instance;
+            _mouvSource = source;
             //NOTE: Script Execution OrderをVMM側で制御したいので。
             instance.UpdateType = Vrm10Instance.UpdateTypes.None;
             var go = instance.gameObject;

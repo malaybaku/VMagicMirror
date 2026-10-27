@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
     /// Use the normal VMM VRM importer so metadata and non-overridden materials behave as usual.
     /// All calls must run on Unity's main thread.
     /// </summary>
-    internal sealed class MovrmLoadSource : IDisposable
+    internal sealed class MouvLoadSource : IDisposable
     {
         private sealed class Entry
         {
@@ -28,13 +28,13 @@ namespace Baku.VMagicMirror
         private bool _disposed;
         public MaterialOverrideData Data { get; }
 
-        public MovrmLoadSource(string path)
+        public MouvLoadSource(string path)
         {
             _path = Path.GetFullPath(path);
             if (!Bundles.TryGetValue(_path, out _entry))
             {
                 var bundle = AssetBundle.LoadFromFile(_path);
-                if (!bundle) throw new IOException($"Could not load MOVRM AssetBundle: {_path}");
+                if (!bundle) throw new IOException($"Could not load MOUV AssetBundle: {_path}");
                 _entry = new Entry { Bundle = bundle };
                 Bundles.Add(_path, _entry);
             }

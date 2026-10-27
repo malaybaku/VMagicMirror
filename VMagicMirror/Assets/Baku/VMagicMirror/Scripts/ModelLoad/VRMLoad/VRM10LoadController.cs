@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
         private readonly CancellationTokenSource _cts = new();
 
         private Vrm10Instance _instance = null;
-        private MovrmLoadSource _movrmSource;
+        private MouvLoadSource _mouvSource;
         
         private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
         public ReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
@@ -142,10 +142,10 @@ namespace Baku.VMagicMirror
             }
 
             Vrm10Instance instance = null;
-            MovrmLoadSource source = null;
+            MouvLoadSource source = null;
             try
             {
-                source = IsMouv(path) ? new MovrmLoadSource(path) : null;
+                source = IsMouv(path) ? new MouvLoadSource(path) : null;
                 var bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
                 //コールバックが呼ばれて終わり、インスタンスはすぐ捨てる
                 instance = await UniVrmLoader.LoadBytesAsync(bytes,
@@ -189,10 +189,10 @@ namespace Baku.VMagicMirror
             }
 
             byte[] bytes;
-            MovrmLoadSource source = null;
+            MouvLoadSource source = null;
             try
             { 
-                source = IsMouv(path) ? new MovrmLoadSource(path) : null;
+                source = IsMouv(path) ? new MouvLoadSource(path) : null;
                 bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
             }
             catch (Exception ex)
@@ -206,7 +206,7 @@ namespace Baku.VMagicMirror
             await LoadModelFromBytesAsync(bytes, source);
         }
 
-        private async UniTask LoadModelFromBytesAsync(byte[] bytes, MovrmLoadSource source = null)
+        private async UniTask LoadModelFromBytesAsync(byte[] bytes, MouvLoadSource source = null)
         {
             Vrm10Instance instance = null;
             try
@@ -309,8 +309,8 @@ namespace Baku.VMagicMirror
             // _controlRig?.Dispose();
             // _controlRig = null;
 
-            _movrmSource?.Dispose();
-            _movrmSource = null;
+            _mouvSource?.Dispose();
+            _mouvSource = null;
             if (_instance != null)
             {
                 Object.Destroy(_instance.gameObject);
@@ -319,7 +319,7 @@ namespace Baku.VMagicMirror
             _modelVersion.Value = CurrentModelVersion.Unloaded;
         }
 
-        private void SetModel(Vrm10Instance instance, MovrmLoadSource source = null)
+        private void SetModel(Vrm10Instance instance, MouvLoadSource source = null)
         {
             ReleaseCurrentVrm();
 
@@ -329,7 +329,7 @@ namespace Baku.VMagicMirror
             }
 
             _instance = instance;
-            _movrmSource = source;
+            _mouvSource = source;
             //NOTE: Script Execution OrderをVMM側で制御したいので。
             instance.UpdateType = Vrm10Instance.UpdateTypes.None;
             var go = instance.gameObject;

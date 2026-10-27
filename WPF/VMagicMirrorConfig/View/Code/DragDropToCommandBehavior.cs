@@ -70,7 +70,7 @@ namespace Baku.VMagicMirrorConfig.View
                 (e.Data.GetData(DataFormats.FileDrop) is string[] fileNames &&
                     fileNames.Length == 1 &&
                     (string.Equals(Path.GetExtension(fileNames[0]), ".vrm", System.StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(Path.GetExtension(fileNames[0]), ".movrm", System.StringComparison.OrdinalIgnoreCase)))
+                     string.Equals(Path.GetExtension(fileNames[0]), ".mouv", System.StringComparison.OrdinalIgnoreCase)))
                 ? DragDropEffects.Copy
                 : DragDropEffects.None;
 

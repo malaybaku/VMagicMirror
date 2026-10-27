@@ -122,10 +122,10 @@ namespace Baku.VMagicMirror
             ReleaseCurrentVrm();
         }
 
-        private static bool IsMovrm(string path) =>
-            string.Equals(Path.GetExtension(path), ".movrm", StringComparison.OrdinalIgnoreCase);
+        private static bool IsMouv(string path) =>
+            string.Equals(Path.GetExtension(path), ".mouv", StringComparison.OrdinalIgnoreCase);
 
-        private static bool IsSupportedModel(string path) => IsMovrm(path) ||
+        private static bool IsSupportedModel(string path) => IsMouv(path) ||
             string.Equals(Path.GetExtension(path), ".vrm", StringComparison.OrdinalIgnoreCase);
         
         private async UniTaskVoid LoadModelForPreview(string path)
@@ -145,7 +145,7 @@ namespace Baku.VMagicMirror
             MovrmLoadSource source = null;
             try
             {
-                source = IsMovrm(path) ? new MovrmLoadSource(path) : null;
+                source = IsMouv(path) ? new MovrmLoadSource(path) : null;
                 var bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
                 //コールバックが呼ばれて終わり、インスタンスはすぐ捨てる
                 instance = await UniVrmLoader.LoadBytesAsync(bytes,
@@ -192,7 +192,7 @@ namespace Baku.VMagicMirror
             MovrmLoadSource source = null;
             try
             { 
-                source = IsMovrm(path) ? new MovrmLoadSource(path) : null;
+                source = IsMouv(path) ? new MovrmLoadSource(path) : null;
                 bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
             }
             catch (Exception ex)

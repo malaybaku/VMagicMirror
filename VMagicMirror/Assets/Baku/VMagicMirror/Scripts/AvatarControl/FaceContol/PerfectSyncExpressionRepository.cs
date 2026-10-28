@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
         private Vrm10Instance _instance;
         private VRM10Object _originalVrm;
         private VRM10Object _runtimeVrm;
-        private bool _ignoreCase;
+        private bool _caseSensitive;
 
         public Vrm10Instance Instance => _instance;
         public VRM10ExpressionMap OriginalMap { get; private set; }
@@ -46,14 +46,14 @@ namespace Baku.VMagicMirror
                 Rebuild();
             };
             _vrmLoadable.VrmDisposing += Release;
-            _receiver.AssignCommandHandler(VmmCommands.SetPerfectSyncIgnoreCase, command =>
+            _receiver.AssignCommandHandler(VmmCommands.SetPerfectSyncExpressionCaseSensitive, command =>
             {
                 var value = command.ToBoolean();
-                if (_ignoreCase == value)
+                if (_caseSensitive == value)
                 {
                     return;
                 }
-                _ignoreCase = value;
+                _caseSensitive = value;
                 if (_instance != null)
                 {
                     Rebuild();
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror
 
         private void Rebuild()
         {
-            var aliases = _ignoreCase
+            var aliases = !_caseSensitive
                 ? PerfectSyncExpressionNames.ResolveAliases(
                     OriginalMap.Keys.Where(k => k.Preset == ExpressionPreset.custom).Select(k => k.Name),
                     ExternalTrackerPerfectSync.Keys.BlendShapeNames).ToArray()

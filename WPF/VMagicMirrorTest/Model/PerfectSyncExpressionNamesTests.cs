@@ -51,14 +51,25 @@ namespace Baku.VMagicMirror.Test
         }
 
         [Test]
-        public void OlderSettingsLeaveCompatibilityOptionDisabled()
+        public void OlderSettingsDefaultToCaseInsensitiveAndExplicitChoiceIsSaved()
         {
-            var setting = Newtonsoft.Json.JsonConvert.DeserializeObject<VMagicMirrorConfig.ExternalTrackerSetting>("{}");
-            Assert.That(setting.PerfectSyncIgnoreCase, Is.False);
-            setting.PerfectSyncIgnoreCase = true;
-            var restored = Newtonsoft.Json.JsonConvert.DeserializeObject<VMagicMirrorConfig.ExternalTrackerSetting>(
+            var setting = Newtonsoft.Json.JsonConvert.DeserializeObject<VMagicMirrorConfig.MotionSetting>("{}");
+            Assert.That(setting.PerfectSyncExpressionCaseSensitive, Is.False);
+            setting.PerfectSyncExpressionCaseSensitive = true;
+            var restored = Newtonsoft.Json.JsonConvert.DeserializeObject<VMagicMirrorConfig.MotionSetting>(
                 Newtonsoft.Json.JsonConvert.SerializeObject(setting));
-            Assert.That(restored.PerfectSyncIgnoreCase, Is.True);
+            Assert.That(restored.PerfectSyncExpressionCaseSensitive, Is.True);
+            restored.ResetToDefault();
+            Assert.That(restored.PerfectSyncExpressionCaseSensitive, Is.False);
+        }
+
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public void CheckboxAndStoredCaseSensitivityAreInvertedInBothDirections(bool stored, bool check)
+        {
+            var converter = new VMagicMirrorConfig.View.BooleanReverseConverter();
+            Assert.That(converter.Convert(stored, typeof(bool), null, CultureInfo.InvariantCulture), Is.EqualTo(check));
+            Assert.That(converter.ConvertBack(check, typeof(bool), null, CultureInfo.InvariantCulture), Is.EqualTo(stored));
         }
     }
 }

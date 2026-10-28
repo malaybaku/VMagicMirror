@@ -200,13 +200,6 @@
                                     Content="{DynamicResource ExTracker_HowTo_PerfectSync}"
                                     />
                         </Grid>
-                        <CheckBox Margin="25,0,0,5"
-                                  VerticalContentAlignment="Center"
-                                  HorizontalContentAlignment="Stretch"
-                                  IsChecked="{Binding PerfectSyncIgnoreCase.Value}"
-                                  >
-                            <TextBlock Text="{DynamicResource PerfectSync_IgnoreCase}" TextWrapping="Wrap"/>
-                        </CheckBox>
 
                     </StackPanel>
 
@@ -370,14 +363,6 @@
                                     Content="{DynamicResource ExTracker_HowTo_PerfectSync}"
                                     />
                     </Grid>
-
-                    <CheckBox Margin="40,0,0,5"
-                              VerticalContentAlignment="Center"
-                              HorizontalContentAlignment="Stretch"
-                              IsChecked="{Binding PerfectSyncIgnoreCase.Value}"
-                              >
-                        <TextBlock Text="{DynamicResource PerfectSync_IgnoreCase}" TextWrapping="Wrap"/>
-                    </CheckBox>
 
                     <Grid Margin="0,15,0,5">
                         <StackPanel Orientation="Horizontal" Margin="5">

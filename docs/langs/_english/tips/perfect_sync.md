@@ -176,7 +176,7 @@ After the setup, export the VRM.
 #### Models with different capitalization in expression names
 {: .doc-sec2 }
 
-If your model defines an expression such as `mouthFunnel` instead of `MouthFunnel`, enable `Ignore case in Perfect Sync expression names` in the face tracking settings to use it.
+If your model defines an expression such as `mouthFunnel` instead of `MouthFunnel`, it can be used when `Ignore case in Perfect Sync expression names` is enabled under `Face` > `Perfect Sync` in the advanced settings. This option is enabled by default.
 
 Correct behavior is not guaranteed if multiple expressions differ only in capitalization.
 

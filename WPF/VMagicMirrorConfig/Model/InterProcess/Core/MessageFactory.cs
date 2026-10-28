@@ -374,7 +374,7 @@ namespace Baku.VMagicMirrorConfig
         public static Message ExTrackerEnable(bool enable) => BoolContent(VmmCommands.ExTrackerEnable, enable);
         public static Message ExTrackerEnableLipSync(bool enable) => BoolContent(VmmCommands.ExTrackerEnableLipSync, enable);
         public static Message ExTrackerEnablePerfectSync(bool enable) => BoolContent(VmmCommands.ExTrackerEnablePerfectSync, enable);
-        public static Message SetPerfectSyncIgnoreCase(bool enable) => BoolContent(VmmCommands.SetPerfectSyncIgnoreCase, enable);
+        public static Message SetPerfectSyncExpressionCaseSensitive(bool enable) => BoolContent(VmmCommands.SetPerfectSyncExpressionCaseSensitive, enable);
         //public static Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg(VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync, enable);
         public static Message ExTrackerCalibrate() => None(VmmCommands.ExTrackerCalibrate);
         //NOTE: このdataについて詳細

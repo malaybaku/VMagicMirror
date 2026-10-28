@@ -115,6 +115,7 @@
 
     <sys:String x:Key="ExTracker_Enable_PerfectSync">パーフェクトシンクを使用</sys:String>
     <sys:String x:Key="PerfectSync_IgnoreCase">パーフェクトシンク用の表情キーを大文字・小文字を区別せずに扱う</sys:String>
+    <sys:String x:Key="Motion_Face_PerfectSync">パーフェクトシンク</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">VRoid用のデフォルト設定を使う(※VRoidモデルでのみ動作)</sys:String>
     <sys:String x:Key="ExTracker_HowTo_PerfectSync">パーフェクトシンクとは? (Webページを開きます)</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_MissingBlendShape_Header">モデルがパーフェクトシンク未対応のようです (クリックで詳細)</sys:String>

@@ -16,7 +16,6 @@
         public bool EnableExternalTracking { get; set; } = false;
         public bool EnableExternalTrackerLipSync { get; set; } = true;
         public bool EnableExternalTrackerPerfectSync { get; set; } = false;
-        public bool PerfectSyncIgnoreCase { get; set; } = false;
 
         // アプリ別の設定 (※今んとこIPを一方的に表示するだけなのであんまり難しい事はないです)
         public int TrackSourceType { get; set; } = 0;

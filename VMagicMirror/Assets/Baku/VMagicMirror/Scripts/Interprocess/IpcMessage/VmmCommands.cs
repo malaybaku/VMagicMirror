@@ -332,6 +332,9 @@
         // MediaPipe tracking compatibility option
         EnableAlwaysUseSingleMediaPipeTask,
         
+        // Perfect Sync compatibility options (append to preserve existing command IDs)
+        SetPerfectSyncExpressionCaseSensitive,
+
         // Unused: 取りうるコマンドIDの最大値が分かるように定義している
         LastCommandId,
     }

@@ -38,6 +38,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetFaceBlendShapeSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetFaceBlendShapeSetting)
                 );
+            ResetPerfectSyncSettingCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetPerfectSyncSetting));
 
             if (IsInDesignMode)
             {
@@ -116,6 +118,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> FaceOffsetClip => _model.FaceOffsetClip;
 
         public RProperty<bool> DisableBlendShapeInterpolate => _model.DisableBlendShapeInterpolate;
+        public RProperty<bool> PerfectSyncExpressionCaseSensitive => _model.PerfectSyncExpressionCaseSensitive;
 
         #endregion
 
@@ -161,6 +164,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetFaceBasicSettingCommand { get; }
         public ActionCommand ResetFaceEyeSettingCommand { get; }
         public ActionCommand ResetFaceBlendShapeSettingCommand { get; }
+        public ActionCommand ResetPerfectSyncSettingCommand { get; }
 
         private void ResetFaceBasicSetting()
         {

@@ -15,6 +15,7 @@
         <vm:FaceSettingViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:Lv50Converter x:Key="Lv50Converter"/>
@@ -440,6 +441,22 @@
                             Margin="5"
                             />
                     </Grid>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="{DynamicResource Motion_Face_PerfectSync}"
+                                   Style="{StaticResource HeaderText}" Margin="5"/>
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetPerfectSyncSettingCommand}"/>
+                    </StackPanel>
+                    <CheckBox Margin="15,5"
+                              HorizontalContentAlignment="Stretch"
+                              IsChecked="{Binding PerfectSyncExpressionCaseSensitive.Value, Mode=TwoWay,
+                                                  Converter={StaticResource BooleanReverseConverter}}">
+                        <TextBlock Text="{DynamicResource PerfectSync_IgnoreCase}" TextWrapping="Wrap"/>
+                    </CheckBox>
                 </StackPanel>
             </Border>
         </StackPanel>

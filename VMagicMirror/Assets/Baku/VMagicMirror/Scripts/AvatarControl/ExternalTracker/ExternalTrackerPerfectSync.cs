@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         private MediaPipeFacialValueRepository _mediaPipeFacialValueRepository;
         private MediaPipeTrackerRuntimeSettingsRepository _mediaPipeTrackerRuntimeSettings;
 
-        //モデル本来のクリップ一覧
+        // 互換性設定による補完を含む、現在利用可能なクリップ一覧
         private VRM10ExpressionMap _modelBasedMap = null;
         
         private bool _hasModel = false;
@@ -62,7 +62,8 @@ namespace Baku.VMagicMirror.ExternalTracker
             ExternalTrackerDataSource externalTracker,
             MediaPipeFacialValueRepository mediaPipeFacialValueRepository,
             MediaPipeTrackerRuntimeSettingsRepository mediaPipeTrackerRuntimeSettings,
-            FaceControlConfiguration faceControlConfig
+            FaceControlConfiguration faceControlConfig,
+            PerfectSyncExpressionRepository expressions
             )
         {
             _sender = sender;
@@ -72,10 +73,10 @@ namespace Baku.VMagicMirror.ExternalTracker
             _mediaPipeFacialValueRepository = mediaPipeFacialValueRepository;
             _mediaPipeTrackerRuntimeSettings = mediaPipeTrackerRuntimeSettings;
 
-            vrmLoadable.VrmLoaded += info =>
+            expressions.ExpressionsChanged += () =>
             {
-                //参照じゃなくて値コピーしとくことに注意(なにかと安全なので)
-                _modelBasedMap = info.Instance.Vrm.Expression.LoadExpressionMap();
+                // 設定切替でも有効な一覧と警告を更新する。
+                _modelBasedMap = expressions.EffectiveMap;
                 NonPerfectSyncKeys = LoadNonPerfectSyncKeys();
                 _hasModel = true;
                 ParseClipCompletenessToSendMessage();

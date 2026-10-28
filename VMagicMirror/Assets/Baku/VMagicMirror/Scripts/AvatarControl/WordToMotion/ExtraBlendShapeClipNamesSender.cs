@@ -9,12 +9,12 @@ namespace Baku.VMagicMirror
     public class ExtraBlendShapeClipNamesSender : MonoBehaviour
     {
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageSender sender)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageSender sender, PerfectSyncExpressionRepository expressions)
         {
             vrmLoadable.VrmLoaded += info =>
             {
                 var names = string.Join(",",
-                    info.Instance.Vrm.Expression.LoadExpressionMap()
+                    expressions.OriginalMap
                         .Keys
                         .Where(k => k.Preset == ExpressionPreset.custom)
                         .Select(k => k.Name)              

@@ -113,6 +113,8 @@
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    
 
     <sys:String x:Key="ExTracker_Enable_PerfectSync">Use Perfect Sync</sys:String>
+    <sys:String x:Key="PerfectSync_IgnoreCase">Ignore case in Perfect Sync expression names</sys:String>
+    <sys:String x:Key="Motion_Face_PerfectSync">Perfect Sync</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">Perfect sync with VRoid's default setting</sys:String>
     <sys:String x:Key="ExTracker_HowTo_PerfectSync">About Perfect Sync (open web page)</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_MissingBlendShape_Header">The model does not support perfect sync (click for detail)</sys:String>

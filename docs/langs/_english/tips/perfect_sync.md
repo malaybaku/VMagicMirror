@@ -173,6 +173,13 @@ If you do not create blendshape in Step 1 for some BlendShapeClip, then leave th
 After the setup, export the VRM.
 
 
+#### Models with different capitalization in expression names
+{: .doc-sec2 }
+
+If your model defines an expression such as `mouthFunnel` instead of `MouthFunnel`, it can be used when `Ignore case in Perfect Sync expression names` is enabled under `Face` > `Perfect Sync` in the advanced settings. This option is enabled by default.
+
+Correct behavior is not guaranteed if multiple expressions differ only in capitalization.
+
 #### References
 {: .doc-sec2 }
 

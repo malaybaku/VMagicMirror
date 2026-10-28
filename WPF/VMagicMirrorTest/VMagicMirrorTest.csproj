@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VMagicMirrorConfig\VMagicMirrorConfig.csproj" />
+    <Compile Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\AvatarControl\FaceContol\PerfectSyncExpressionNames.cs" Link="Shared/PerfectSyncExpressionNames.cs" />
   </ItemGroup>
 
 </Project>

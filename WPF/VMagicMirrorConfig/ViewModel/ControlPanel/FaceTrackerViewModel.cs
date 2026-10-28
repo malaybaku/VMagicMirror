@@ -225,6 +225,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         // NOTE: パーフェクトシンクのオン/オフはExTrackerとwebcam(高精度)の双方で同じ値を使う。
         public RProperty<bool> EnablePerfectSync => _exTrackerModel.EnableExternalTrackerPerfectSync;
+        public RProperty<bool> PerfectSyncIgnoreCase => _exTrackerModel.PerfectSyncIgnoreCase;
 
         #endregion
 
@@ -293,6 +294,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _motionModel.ResetWebCameraHighPowerModeSettings();
                 // NOTE: 歴史的経緯により、このフラグはMotionの一部じゃないことになっているのだが、UI上はこの値もリセットされてないと直感に反するのでリセットしておく
                 _exTrackerModel.EnableExternalTrackerPerfectSync.Value = ExternalTrackerSetting.Default.EnableExternalTrackerPerfectSync;
+                _exTrackerModel.PerfectSyncIgnoreCase.Value = ExternalTrackerSetting.Default.PerfectSyncIgnoreCase;
             });
         }
 

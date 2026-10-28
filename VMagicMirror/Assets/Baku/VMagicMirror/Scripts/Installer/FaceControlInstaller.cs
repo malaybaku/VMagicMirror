@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror.Installer
 
             // NOTE: VoiceOnOffがFaceの一種かというとかなりアヤシイが、LipSyncとの関連が強いのでここでBindしてる
             container.BindInterfacesAndSelfTo<VoiceOnOffParser>().AsSingle();
+            container.BindInterfacesAndSelfTo<PerfectSyncExpressionRepository>().AsSingle();
             container.BindInterfacesAndSelfTo<ExpressionAccumulator>().AsSingle();
             container.Bind<EyeLookAt>().AsSingle();
             container.BindInterfacesTo<EyeLookAtUpdater>().AsSingle();

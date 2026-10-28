@@ -64,9 +64,9 @@ namespace Baku.VMagicMirror
             _eyeBoneResetter = eyeBoneResetter;
         }
         
-        public void Initialize(VRM10ObjectExpression expression)
+        public void Initialize(VRM10ExpressionMap originalExpressions)
         {
-            _allBlendShapeKeys = expression.LoadExpressionMap().Keys.ToArray();
+            _allBlendShapeKeys = originalExpressions.Keys.ToArray();
         }
 
         public void DisposeProxy()

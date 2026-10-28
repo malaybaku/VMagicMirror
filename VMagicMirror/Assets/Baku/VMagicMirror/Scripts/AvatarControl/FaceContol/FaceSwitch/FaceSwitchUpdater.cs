@@ -52,6 +52,7 @@ namespace Baku.VMagicMirror
         private const float FaceSwitchMinimumKeepDuration = 0.5f;
 
         private readonly IVRMLoadable _vrmLoadable;
+        private readonly PerfectSyncExpressionRepository _expressions;
         private readonly IMessageReceiver _messageReceiver;
         private readonly FaceSwitchExtractor _faceSwitch;
         private readonly FaceControlConfiguration _config;
@@ -63,13 +64,15 @@ namespace Baku.VMagicMirror
             IMessageReceiver messageReceiver,
             FaceSwitchExtractor faceSwitch,
             FaceControlConfiguration config,
-            EyeBoneAngleSetter eyeBoneSetter)
+            EyeBoneAngleSetter eyeBoneSetter,
+            PerfectSyncExpressionRepository expressions)
         {
             _vrmLoadable = vrmLoadable;
             _messageReceiver = messageReceiver;
             _faceSwitch = faceSwitch;
             _config = config;
             _eyeBoneSetter = eyeBoneSetter;
+            _expressions = expressions;
         }
         
         private bool _hasModel;
@@ -102,7 +105,7 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var expressionKeys = info.Instance.Vrm.Expression.LoadExpressionMap().Keys;
+            var expressionKeys = _expressions.OriginalMap.Keys;
             _faceSwitch.AvatarBlendShapeNames = expressionKeys.Select(k =>
                 {
                     var result = k.Name;

@@ -28,6 +28,8 @@ namespace Baku.VMagicMirrorConfig
                 );
 
             TrackSourceType = new RProperty<int>(setting.TrackSourceType, i => SendMessage(MessageFactory.ExTrackerSetSource(i)));
+            PerfectSyncIgnoreCase = new RProperty<bool>(
+                setting.PerfectSyncIgnoreCase, b => SendMessage(MessageFactory.SetPerfectSyncIgnoreCase(b)));
             //NOTE: このアドレスはコマンド実行時に使うため、書き換わってもメッセージは送らない
             IFacialMocapTargetIpAddress = new RProperty<string>(setting.IFacialMocapTargetIpAddress);
 
@@ -50,6 +52,7 @@ namespace Baku.VMagicMirrorConfig
 
         // NOTE: 歴史的経緯により、webcam (高精度)でのパーフェクトシンクのon/offもフラグの実体としてはコレになる
         public RProperty<bool> EnableExternalTrackerPerfectSync { get; }
+        public RProperty<bool> PerfectSyncIgnoreCase { get; }
 
         // アプリ別設定
         public RProperty<int> TrackSourceType { get; }
@@ -120,6 +123,7 @@ namespace Baku.VMagicMirrorConfig
             var setting = ExternalTrackerSetting.Default;
             EnableExternalTrackerLipSync.Value = setting.EnableExternalTrackerLipSync;
             EnableExternalTrackerPerfectSync.Value = setting.EnableExternalTrackerPerfectSync;
+            PerfectSyncIgnoreCase.Value = setting.PerfectSyncIgnoreCase;
             TrackSourceType.Value = setting.TrackSourceType;
             IFacialMocapTargetIpAddress.Value = setting.IFacialMocapTargetIpAddress;
             CalibrateData.Value = setting.CalibrateData;

@@ -334,6 +334,7 @@
         
         // Perfect Sync compatibility options (append to preserve existing command IDs)
         SetPerfectSyncExpressionCaseSensitive,
+        SetPerfectSyncUseMeshBlendShapes,
 
         // Unused: 取りうるコマンドIDの最大値が分かるように定義している
         LastCommandId,

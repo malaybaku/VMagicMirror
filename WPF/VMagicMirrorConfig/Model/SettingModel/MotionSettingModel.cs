@@ -26,6 +26,9 @@ namespace Baku.VMagicMirrorConfig
             PerfectSyncExpressionCaseSensitive = new RProperty<bool>(
                 setting.PerfectSyncExpressionCaseSensitive,
                 value => SendMessage(MessageFactory.SetPerfectSyncExpressionCaseSensitive(value)));
+            PerfectSyncUseMeshBlendShapes = new RProperty<bool>(
+                setting.PerfectSyncUseMeshBlendShapes,
+                value => SendMessage(MessageFactory.SetPerfectSyncUseMeshBlendShapes(value)));
 
             //NOTE: 長大になってるのはプロパティの初期化仕様によるもの。半手動でテキスト変換して作ってます
 
@@ -217,6 +220,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
         public RProperty<bool> PerfectSyncExpressionCaseSensitive { get; }
+        public RProperty<bool> PerfectSyncUseMeshBlendShapes { get; }
 
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         
@@ -335,6 +339,7 @@ namespace Baku.VMagicMirrorConfig
         public void ResetPerfectSyncSetting()
         {
             PerfectSyncExpressionCaseSensitive.Value = MotionSetting.Default.PerfectSyncExpressionCaseSensitive;
+            PerfectSyncUseMeshBlendShapes.Value = MotionSetting.Default.PerfectSyncUseMeshBlendShapes;
         }
 
         public void ResetArmSetting()

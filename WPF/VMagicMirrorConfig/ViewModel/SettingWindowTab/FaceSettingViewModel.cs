@@ -119,6 +119,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> DisableBlendShapeInterpolate => _model.DisableBlendShapeInterpolate;
         public RProperty<bool> PerfectSyncExpressionCaseSensitive => _model.PerfectSyncExpressionCaseSensitive;
+        public RProperty<bool> PerfectSyncUseMeshBlendShapes => _model.PerfectSyncUseMeshBlendShapes;
 
         #endregion
 

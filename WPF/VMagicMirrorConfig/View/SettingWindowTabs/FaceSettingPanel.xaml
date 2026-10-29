@@ -457,6 +457,11 @@
                                                   Converter={StaticResource BooleanReverseConverter}}">
                         <TextBlock Text="{DynamicResource PerfectSync_IgnoreCase}" TextWrapping="Wrap"/>
                     </CheckBox>
+                    <CheckBox Margin="15,5"
+                              HorizontalContentAlignment="Stretch"
+                              IsChecked="{Binding PerfectSyncUseMeshBlendShapes.Value}">
+                        <TextBlock Text="{DynamicResource PerfectSync_UseMeshBlendShapes}" TextWrapping="Wrap"/>
+                    </CheckBox>
                 </StackPanel>
             </Border>
         </StackPanel>

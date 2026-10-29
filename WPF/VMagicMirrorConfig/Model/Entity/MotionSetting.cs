@@ -84,6 +84,7 @@
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;
         public bool PerfectSyncExpressionCaseSensitive { get; set; } = false;
+        public bool PerfectSyncUseMeshBlendShapes { get; set; } = false;
 
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = true;
 
@@ -207,6 +208,7 @@
         public void ResetPerfectSyncSetting()
         {
             PerfectSyncExpressionCaseSensitive = false;
+            PerfectSyncUseMeshBlendShapes = false;
         }
 
         public void ResetArmSetting()

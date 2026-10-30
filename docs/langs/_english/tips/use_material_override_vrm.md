@@ -83,6 +83,10 @@ Open `Tools > Material Overridable VRM > URP Export Setup` and follow the dialog
 
 Save the configured scene.
 
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_export_inspector.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
+
 <div class="note-area" markdown="1">
 
 **NOTE**
@@ -99,6 +103,10 @@ Export may fail if a replacement material directly references a texture embedded
 3. Check the Scene or Game view to confirm that the intended parts use the replacement materials and that colors, textures, and other visual settings look correct.
 4. Press the Play button again to exit Play Mode.
 
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_playmode_preview.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
+
 Bindings cannot be changed while the preview is active. To make corrections, exit Play Mode, change the settings, and preview again. Changes made during Play Mode are lost when it ends, so adjust materials and Bindings in Edit Mode.
 
 The preview restores the original materials when it ends. The `Override` assignments you made in Edit Mode are still used for export.
@@ -109,6 +117,10 @@ The preview restores the original materials when it ends. The `Override` assignm
 1. With Play Mode stopped, set the build target to Windows. Use `File > Build Profiles` in Unity 6 or `File > Build Settings` in Unity 2022 to check and switch the target.
 2. Select the model's root and press `Export...` on `MaterialOverrideSource`.
 3. Choose a destination and file name to export the `.mouv` file.
+
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
 
 #### 5. Load the File in VMagicMirror
 {: .doc-sec2 }

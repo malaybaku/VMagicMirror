@@ -82,6 +82,10 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 
 設定したシーンを保存します。
 
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_export_inspector.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
+
 <div class="note-area" markdown="1">
 
 **NOTE**
@@ -98,6 +102,10 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 3. SceneビューやGameビューで、意図した部分にマテリアルが適用されていること、色やテクスチャなどの見た目に問題がないことを確認します。
 4. 確認後、再生ボタンをもう一度押して Play Modeを終了します。
 
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_playmode_preview.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
+
 プレビュー中はBindingsを変更できません。修正する場合はPlay Modeを終了してから設定を変更し、もう一度プレビューしてください。Play Mode中の設定変更は終了時に失われるため、マテリアルやBindingsの調整はEdit Modeで行ってください。
 
 プレビューを終了すると表示は元のマテリアルに戻りますが、Edit Modeで指定した `Override` はエクスポートに使用されます。
@@ -108,6 +116,10 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 1. Play Modeを終了した状態で、ビルドターゲットを Windows にします。Unity 6では `File > Build Profiles`、Unity 2022では `File > Build Settings` で確認・切り替えできます。
 2. モデルのルートを選択し、`MaterialOverrideSource` の `Export...` を押します。
 3. 保存先とファイル名を指定して、`.mouv` ファイルを出力します。
+
+<div class="row">
+{% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
+</div>
 
 #### 5. VMagicMirrorで読み込む
 {: .doc-sec2 }

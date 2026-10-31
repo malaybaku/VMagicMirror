@@ -39,7 +39,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 エクスポートには [MaterialOverrideVrm](https://github.com/malaybaku/MaterialOverrideVrm) のテンプレートプロジェクトを使います。必要なパッケージとURPの設定が用意されています。モデルや差し替え用マテリアルは含まれていません。
 
-1. [v0.2.0のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.2.0)から、`MaterialOverrideVrm-Unity6-v0.2.0.zip` をダウンロードして展開します。
+1. [v0.3.0のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.0)から、`MaterialOverrideVrm-Unity6-v0.3.0.zip` をダウンロードして展開します。
 2. Unity Hubで Unity 6000.3.13f1 (Unity 6.3 LTS) をインストールします。
 3. Unity Hubのプロジェクト追加から、展開したフォルダ内の `Assets`、`Packages`、`ProjectSettings` が入ったプロジェクトフォルダを選択し、上記のUnityバージョンで開きます。パッケージの取得とインポートの完了を待ちます。
 4. Projectウィンドウから `Assets/Scenes/Export.unity` を開きます。
@@ -48,7 +48,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 **NOTE**
 
-Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.2.0.zip` をUnity 2022.3.22f1 で開いても作業できます。
+Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.3.0.zip` をUnity 2022.3.22f1 で開いても作業できます。
 
 </div>
 
@@ -68,7 +68,7 @@ Unity 2022を使う場合は、同じリリースページにある `MaterialOve
 続いて `Window > Package Manager` の `+` から `Add package from git URL...` を選び、次のURLでパッケージを導入します。
 
 ```text
-https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.2.0
+https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0
 ```
 
 パッケージを入れるだけではURPに切り替わりません。 Unity 6では `Packages/manifest.json` の `dependencies` に `"com.unity.render-pipelines.universal": "17.3.0"` も指定してください（Unity 2022ではURP 14.0.10を使用します）。

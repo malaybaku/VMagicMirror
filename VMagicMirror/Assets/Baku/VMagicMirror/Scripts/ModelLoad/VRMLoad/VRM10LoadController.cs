@@ -149,9 +149,9 @@ namespace Baku.VMagicMirror
                 var bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
                 //コールバックが呼ばれて終わり、インスタンスはすぐ捨てる
                 instance = await UniVrmLoader.LoadBytesAsync(bytes,
-                    true,
-                    ControlRigGenerationOption.None,
-                    false,
+                    canLoadVrm0X: true, // .mouv can also contain the original VRM 0.x binary.
+                    controlRigGenerationOption: ControlRigGenerationOption.None,
+                    showMeshes: false,
                     materialGenerator: new VmmUrpVrm10MaterialDescriptorGenerator(),
                     vrmMetaInformationCallback: OnMetaDetectedForPreview,
                     ct: _cts.Token
@@ -212,9 +212,9 @@ namespace Baku.VMagicMirror
             try
             {
                 instance = await UniVrmLoader.LoadBytesAsync(bytes,
-                    true,
-                    ControlRigGenerationOption.Generate,
-                    true,
+                    canLoadVrm0X: true, // Migrate embedded VRM 0.x before applying .mouv material overrides.
+                    controlRigGenerationOption: ControlRigGenerationOption.Generate,
+                    showMeshes: source == null, // Keep .mouv hidden until its overrides have been applied.
                     materialGenerator: new VmmUrpVrm10MaterialDescriptorGenerator(),
                     vrmMetaInformationCallback: OnMetaDetectedForModelLoad,
                     ct: _cts.Token

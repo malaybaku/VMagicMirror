@@ -17,7 +17,6 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 <div class="doc-ul" markdown="1">
 
 - VMagicMirror v5.2.0以上が必要です。
-- 元のモデルには **VRM 1.0** を使用します。VRM 0.xの場合は、あらかじめVRM 1.0として出力し直してください。
 - 差し替えるマテリアルには、**URP (Universal Render Pipeline) に対応するシェーダー**が必要です。任意のシェーダーや設定での表示を保証するものではありません。
 - この方法でマテリアルを適用した場合、VRMの MaterialBindingによる表情（マテリアルの色やUVを変える表情など）の動作は保証されません。
 - 書き出しには元のVRMのデータを使用します。Unity上でメッシュ、ボーン、コンポーネントなどを変更・追加しても、それらの変更を持ち込む用途には使えません。
@@ -71,7 +70,7 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 #### 2. VRMと差し替え用マテリアルを準備する
 {: .doc-sec2 }
 
-1. 元の VRM 1.0ファイルをProjectウィンドウの `Assets` 以下へ追加し、インポートの完了を待ちます。
+1. 元のVRMファイルをProjectウィンドウの `Assets` 以下へ追加し、インポートの完了を待ちます。
 2. インポートしたモデルのPrefabをHierarchyへドラッグ＆ドロップしてシーンに配置し、位置を原点 `(0, 0, 0)` にします。
 3. 使用するURP対応シェーダー、マテリアル、テクスチャをプロジェクトへインポートします。マテリアルのシェーダーや各パラメータを調整します。
 4. Hierarchyでモデルのルート（一番親のGameObject）を選択し、Inspectorの `Add Component` から `MaterialOverrideSource` を追加します。

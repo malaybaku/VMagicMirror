@@ -18,7 +18,6 @@ You can use a VRM as the base model and replace just its materials with material
 <div class="doc-ul" markdown="1">
 
 - Requires VMagicMirror v5.2.0 or later.
-- The source model must be **VRM 1.0**. If you have a VRM 0.x model, re-export it as VRM 1.0 first.
 - Replacement materials must use shaders that support **URP (Universal Render Pipeline)**. Correct rendering is not guaranteed for every shader or configuration.
 - VRM expressions that use MaterialBinding, such as expressions that change material colors or UVs, are not guaranteed to work with material overrides.
 - Export uses the original VRM data. Changes or additions to meshes, bones, components, and other model features in Unity are not included.
@@ -72,7 +71,7 @@ Open `Tools > Material Overridable VRM > URP Export Setup` and follow the dialog
 #### 2. Prepare the VRM and Replacement Materials
 {: .doc-sec2 }
 
-1. Add the original VRM 1.0 file under `Assets` in the Project window and wait for importing to finish.
+1. Add the original VRM file under `Assets` in the Project window and wait for importing to finish.
 2. Drag the imported model prefab into the Hierarchy to place it in the scene, and set its position to the origin `(0, 0, 0)`.
 3. Import your URP-compatible shaders, materials, and textures into the project. Set the shaders and parameters on your materials.
 4. Select the model's root (its top-level GameObject) in the Hierarchy, then use `Add Component` in the Inspector to add `MaterialOverrideSource`.

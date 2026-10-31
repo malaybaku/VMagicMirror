@@ -13,6 +13,7 @@ namespace Baku.VMagicMirror.WordToMotion
         public const float IkFadeDuration = 0.5f;
         
         private readonly IVRMLoadable _vrmLoadable;
+        private readonly PerfectSyncExpressionRepository _expressions;
         private readonly IWordToMotionPlayer[] _players;
         private readonly WordToMotionBlendShape _blendShape;
         private readonly TaskBasedIkWeightFader _ikWeightCrossFade;
@@ -30,7 +31,8 @@ namespace Baku.VMagicMirror.WordToMotion
             VMCPNaiveBoneTransfer vmcpNaiveBoneTransfer,
             FingerController fingerController,
             WordToMotionAccessoryRequest accessoryRequest,
-            WordToMotionEventBroker eventBroker)
+            WordToMotionEventBroker eventBroker,
+            PerfectSyncExpressionRepository expressions)
         {
             _vrmLoadable = vrmLoadable;
             _players = players.ToArray();
@@ -40,6 +42,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _fingerController = fingerController;
             _accessoryRequest = accessoryRequest;
             _eventBroker = eventBroker;
+            _expressions = expressions;
         }
 
         public override void Initialize()
@@ -59,7 +62,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _vrmLoadable.VrmDisposing -= OnVrmUnloaded;
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info) => _blendShape.Initialize(info.Instance.Vrm.Expression);
+        private void OnVrmLoaded(VrmLoadedInfo info) => _blendShape.Initialize(_expressions.OriginalMap);
 
         private void OnVrmUnloaded() => _blendShape.DisposeProxy();
 

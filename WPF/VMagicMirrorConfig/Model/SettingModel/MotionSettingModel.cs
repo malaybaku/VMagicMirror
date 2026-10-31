@@ -23,6 +23,12 @@ namespace Baku.VMagicMirrorConfig
         public MotionSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var setting = MotionSetting.Default;
+            PerfectSyncExpressionCaseSensitive = new RProperty<bool>(
+                setting.PerfectSyncExpressionCaseSensitive,
+                value => SendMessage(MessageFactory.SetPerfectSyncExpressionCaseSensitive(value)));
+            PerfectSyncUseMeshBlendShapes = new RProperty<bool>(
+                setting.PerfectSyncUseMeshBlendShapes,
+                value => SendMessage(MessageFactory.SetPerfectSyncUseMeshBlendShapes(value)));
 
             //NOTE: 長大になってるのはプロパティの初期化仕様によるもの。半手動でテキスト変換して作ってます
 
@@ -213,6 +219,8 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
+        public RProperty<bool> PerfectSyncExpressionCaseSensitive { get; }
+        public RProperty<bool> PerfectSyncUseMeshBlendShapes { get; }
 
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         
@@ -328,6 +336,12 @@ namespace Baku.VMagicMirrorConfig
             DisableBlendShapeInterpolate.Value = setting.DisableBlendShapeInterpolate;
         }
 
+        public void ResetPerfectSyncSetting()
+        {
+            PerfectSyncExpressionCaseSensitive.Value = MotionSetting.Default.PerfectSyncExpressionCaseSensitive;
+            PerfectSyncUseMeshBlendShapes.Value = MotionSetting.Default.PerfectSyncUseMeshBlendShapes;
+        }
+
         public void ResetArmSetting()
         {
             var setting = MotionSetting.Default;
@@ -378,6 +392,7 @@ namespace Baku.VMagicMirrorConfig
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetPerfectSyncSetting();
             ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();

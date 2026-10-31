@@ -12,6 +12,6 @@ namespace Baku.VMagicMirrorConfig.View
                 : Binding.DoNothing;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+            => Convert(value, targetType, parameter, culture);
     }
 }

@@ -14,23 +14,25 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<ExpressionKey, float> _values = new();
         private readonly HashSet<ExpressionKey> _keys = new();
         private readonly IVRMLoadable _vrmLoadable;
+        private readonly PerfectSyncExpressionRepository _expressions;
 
         private bool _hasModel;
         private Vrm10RuntimeExpression _expression;
         
         public event Action<IReadOnlyDictionary<ExpressionKey, float>> PreApply; 
 
-        public ExpressionAccumulator(IVRMLoadable vrmLoadable)
+        public ExpressionAccumulator(IVRMLoadable vrmLoadable, PerfectSyncExpressionRepository expressions)
         {
             _vrmLoadable = vrmLoadable;
+            _expressions = expressions;
         }
 
         public void Initialize()
         {
-            _vrmLoadable.VrmLoaded += info =>
+            _expressions.ExpressionsChanged += () =>
             {
-                _expression = info.Instance.Runtime.Expression;
-                var exprMap = info.Instance.Vrm.Expression.LoadExpressionMap();
+                _expression = _expressions.Instance.Runtime.Expression;
+                var exprMap = _expressions.EffectiveMap;
 
                 _values.Clear();
                 _keys.Clear();
@@ -46,6 +48,8 @@ namespace Baku.VMagicMirror
             {
                 _hasModel = false;
                 _expression = null;
+                _values.Clear();
+                _keys.Clear();
             };
         }
 

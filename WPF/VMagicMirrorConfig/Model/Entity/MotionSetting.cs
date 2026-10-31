@@ -83,6 +83,8 @@
         public string FaceOffsetClip { get; set; } = "";
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;
+        public bool PerfectSyncExpressionCaseSensitive { get; set; } = false;
+        public bool PerfectSyncUseMeshBlendShapes { get; set; } = false;
 
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = true;
 
@@ -203,6 +205,12 @@
             DisableBlendShapeInterpolate = false;
         }
 
+        public void ResetPerfectSyncSetting()
+        {
+            PerfectSyncExpressionCaseSensitive = false;
+            PerfectSyncUseMeshBlendShapes = false;
+        }
+
         public void ResetArmSetting()
         {
             KeyboardAndMouseMotionMode = 0;
@@ -248,6 +256,7 @@
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();
+            ResetPerfectSyncSetting();
             ResetShoulderAndBackSetting();
             ResetArmSetting();
             ResetHandSetting();

@@ -44,7 +44,8 @@ namespace Baku.VMagicMirror
         
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver, IVRMLoadable vrmLoadable, EyeBoneAngleSetter eyeBoneAngleSetter)
+            IMessageReceiver receiver, IVRMLoadable vrmLoadable, EyeBoneAngleSetter eyeBoneAngleSetter,
+            PerfectSyncExpressionRepository expressions)
         {
             _eyeBoneAngleSetter = eyeBoneAngleSetter;
             
@@ -54,7 +55,7 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _expressionMap = info.Instance.Vrm.Expression.LoadExpressionMap();
+                _expressionMap = expressions.OriginalMap;
                 //CheckBinaryClips(_expressionMap);
                 _hasModel = true;
             };

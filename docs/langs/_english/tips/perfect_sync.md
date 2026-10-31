@@ -173,6 +173,25 @@ If you do not create blendshape in Step 1 for some BlendShapeClip, then leave th
 After the setup, export the VRM.
 
 
+#### Models with different capitalization in expression names
+{: .doc-sec2 }
+
+If your model defines an expression such as `mouthFunnel` instead of `MouthFunnel`, it can be used when `Ignore case in Perfect Sync expression names` is enabled under `Face` > `Perfect Sync` in the advanced settings. This option is enabled by default.
+
+Correct behavior is not guaranteed if multiple expressions differ only in capitalization.
+
+#### Models with mesh blendshapes but no corresponding expressions
+{: .doc-sec2 }
+
+Enable `Use Perfect Sync blendshapes in meshes when expressions are missing` under `Face` > `Perfect Sync` in the advanced settings to supplement missing expressions from mesh blendshapes with matching names. This option is off by default. Blendshape names are matched without case sensitivity.
+
+For example, the left-eye blink (`EyeBlinkLeft`) is resolved in the following order. Once a match is found, lower-priority candidates are not used.
+
+1. A VRM expression (BlendShapeClip or Expression) named exactly `EyeBlinkLeft`.
+2. If `Ignore case in Perfect Sync expression names` is enabled, a VRM expression whose name differs only in capitalization, such as `eyeBlinkLeft`.
+3. If `Use Perfect Sync blendshapes in meshes when expressions are missing` is enabled, a mesh blendshape with a matching name, such as `eyeBlinkLeft`.
+4. If none of these is found, the left-eye blink generally does not work through Perfect Sync.
+
 #### References
 {: .doc-sec2 }
 

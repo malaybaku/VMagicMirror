@@ -8,6 +8,17 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v5.2.0
+{: .doc-sec2 }
+
+2026/Oct/31
+
+* Add: Added support for loading `.mouv` (Material Override Unity VRM) files, which replace the materials of a VRM model. Models can now be displayed with URP-compatible shaders other than MToon. See [Apply non-MToon shaders to a VRM](../tips/use_material_override_vrm) for details.
+* Add: Added an option to ignore case in Perfect Sync expression names. It is available under `Face` > `Perfect Sync` in the advanced settings and is enabled by default.
+* Add: Added an option to supplement missing Perfect Sync expressions with mesh blendshapes. It is available under `Face` > `Perfect Sync` in the advanced settings and is off by default.
+* Change: Internally updated UniVRM to 0.131.4.
+
+
 #### v5.1.1
 {: .doc-sec2 }
 

@@ -40,7 +40,7 @@ You can use a VRM as the base model and replace just its materials with material
 
 Use the template project provided by [MaterialOverrideVrm](https://github.com/malaybaku/MaterialOverrideVrm). It includes the required packages and URP settings. Models and replacement materials are not included.
 
-1. Download `MaterialOverrideVrm-Unity6-v0.2.0.zip` from the [v0.2.0 release page](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.2.0) and extract it.
+1. Download `MaterialOverrideVrm-Unity6-v0.3.0.zip` from the [v0.3.0 release page](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.0) and extract it.
 2. Install Unity 6000.3.13f1 (Unity 6.3 LTS) using Unity Hub.
 3. In Unity Hub, add the extracted project folder containing `Assets`, `Packages`, and `ProjectSettings`, then open it with the Unity version above. Wait for package downloads and importing to finish.
 4. Open `Assets/Scenes/Export.unity` from the Project window.
@@ -49,7 +49,7 @@ Use the template project provided by [MaterialOverrideVrm](https://github.com/ma
 
 **NOTE**
 
-If you use Unity 2022, you can instead download `MaterialOverrideVrm-Unity2022-v0.2.0.zip` from the same release page and open it with Unity 2022.3.22f1.
+If you use Unity 2022, you can instead download `MaterialOverrideVrm-Unity2022-v0.3.0.zip` from the same release page and open it with Unity 2022.3.22f1.
 
 </div>
 
@@ -69,7 +69,7 @@ Add the following UniVRM dependencies to `dependencies` in `Packages/manifest.js
 Then open `Window > Package Manager`, select `+ > Add package from git URL...`, and install the package using this URL:
 
 ```text
-https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.2.0
+https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0
 ```
 
 Installing the package alone does not switch the project to URP. For Unity 6, also specify `"com.unity.render-pipelines.universal": "17.3.0"` in `dependencies` in `Packages/manifest.json` (use URP 14.0.10 for Unity 2022).

@@ -214,7 +214,7 @@ namespace Baku.VMagicMirror
                 instance = await UniVrmLoader.LoadBytesAsync(bytes,
                     canLoadVrm0X: true, // Migrate embedded VRM 0.x before applying .mouv material overrides.
                     controlRigGenerationOption: ControlRigGenerationOption.Generate,
-                    showMeshes: true,
+                    showMeshes: source == null, // Keep .mouv hidden until its overrides have been applied.
                     materialGenerator: new VmmUrpVrm10MaterialDescriptorGenerator(),
                     vrmMetaInformationCallback: OnMetaDetectedForModelLoad,
                     ct: _cts.Token

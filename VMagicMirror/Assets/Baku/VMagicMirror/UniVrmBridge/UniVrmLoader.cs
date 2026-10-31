@@ -23,7 +23,8 @@ namespace Baku.VMagicMirror
         /// </summary>
         public static byte[] GetVrm10BytesForMaterialOverride(byte[] bytes)
         {
-            using var parsed = new GlbLowLevelParser("", bytes).Parse();
+            // Migration writes into accessor buffers. Never let it modify the shared bundle bytes.
+            using var parsed = new GlbLowLevelParser("", (byte[])bytes.Clone()).Parse();
             if (Vrm10Data.Parse(parsed) != null) return bytes;
 
             using var migrated = Vrm10Data.Migrate(parsed, out var vrm, out var migration);
@@ -43,7 +44,9 @@ namespace Baku.VMagicMirror
             Action<Texture2D, Meta, Vrm0Meta> vrmMetaInformationCallback = null,
             CancellationToken ct = default)
         {
-            return Vrm10.LoadBytesAsync(bytes, canLoadVrm0X, controlRigGenerationOption, showMeshes,
+            // UniVRM can modify its input during coordinate conversion, including VRM 0.x migration.
+            // Keep callers' bytes reusable for previews, repeated loads and override validation.
+            return Vrm10.LoadBytesAsync((byte[])bytes.Clone(), canLoadVrm0X, controlRigGenerationOption, showMeshes,
                 materialGenerator: materialGenerator,
                 vrmMetaInformationCallback: vrmMetaInformationCallback == null
                     ? null

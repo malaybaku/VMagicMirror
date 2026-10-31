@@ -61,6 +61,7 @@ namespace Baku.VMagicMirror
             if (ReferenceEquals(bytes, Data.VrmBytes))
             {
                 _lease = MaterialOverrideApplicator.Apply(instance.GetComponent<RuntimeGltfInstance>(), Data);
+                instance.GetComponent<RuntimeGltfInstance>().ShowMeshes();
                 return;
             }
 
@@ -74,6 +75,7 @@ namespace Baku.VMagicMirror
                 migratedData.VrmBytes = bytes;
                 migratedData.Bindings = Data.Bindings;
                 _lease = MaterialOverrideApplicator.Apply(instance.GetComponent<RuntimeGltfInstance>(), migratedData);
+                instance.GetComponent<RuntimeGltfInstance>().ShowMeshes();
             }
             finally
             {

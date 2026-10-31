@@ -10,6 +10,8 @@ This page explains how to create a `.mouv` (Material Override Unity VRM) file wi
 
 These steps are for users who already have a VRM model and non-MToon material assets they want to apply, for example after converting a VRChat avatar to VRM.
 
+Both VRM 1.0 and VRM 0.x models are supported, but VRM 1.0 is recommended for better stability.
+
 #### Features and Limitations
 {: .doc-sec2 }
 

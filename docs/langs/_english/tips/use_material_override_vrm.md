@@ -25,6 +25,14 @@ You can use a VRM as the base model and replace just its materials with material
 
 </div>
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+`.mouv` files contain compiled shader data. Before redistributing a `.mouv` file, check that the terms of use for the shaders it includes allow redistribution in this form.
+
+</div>
+
 #### 1. Open the Template Project
 {: .doc-sec2 }
 

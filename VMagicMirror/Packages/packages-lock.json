@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.baxter.material-override-vrm": {
-      "version": "https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.1.0",
+      "version": "https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -9,7 +9,7 @@
         "com.vrmc.gltf": "0.131.4",
         "com.vrmc.vrm": "0.131.4"
       },
-      "hash": "1065e235495018cee3ecbfde9f89165a8ce00a8c"
+      "hash": "edeace174bb2757c19c6bc37f3f87124e4db6904"
     },
     "com.beans.deform": {
       "version": "https://github.com/keenanwoodall/Deform.git",

@@ -127,6 +127,16 @@ The preview restores the original materials when it ends. The `Override` assignm
 2. Select the model's root and press `Export...` on `MaterialOverrideSource`.
 3. Choose a destination and file name to export the `.mouv` file.
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+If you switched a project from the Built-in Render Pipeline to URP, such as a project for a VRChat avatar, some shaders, including lilToon, may require explicit shader regeneration after the switch. The pipeline switch may take place when you follow the prompts shown after pressing `Export...`.
+
+If the shaders have not been regenerated, the exported `.mouv` may load in VMagicMirror without any errors, but the model itself may be invisible. If shadows are enabled, only the shadow may appear. If you encounter this symptom, first confirm that the project's Render Pipeline is set to URP, then follow your shader's instructions to regenerate it for URP and export the `.mouv` again.
+
+</div>
+
 <div class="row">
 {% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
 </div>

@@ -126,6 +126,16 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 2. モデルのルートを選択し、`MaterialOverrideSource` の `Export...` を押します。
 3. 保存先とファイル名を指定して、`.mouv` ファイルを出力します。
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+VRChatアバター用のプロジェクトなど、Built-in Render PipelineからURPへ切り替えたプロジェクトでは、lilToonなど一部のシェーダーで、切り替え後に明示的なシェーダーの再生成が必要になる場合があります。Render Pipelineの切り替えは、`Export...` を押した際の案内に従って行う場合もあります。
+
+シェーダーを再生成していないと、出力した `.mouv` をVMagicMirrorで読み込んでもエラーが出ず、モデル本体が表示されない場合があります。シャドウが有効な場合は、影だけが表示されることもあります。この症状が出た場合は、プロジェクトのRender PipelineがURPになっていることを確認したうえで、使用するシェーダーの案内に従ってURP向けにシェーダーを再生成し、もう一度 `.mouv` をエクスポートしてください。
+
+</div>
+
 <div class="row">
 {% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}
 </div>

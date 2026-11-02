@@ -346,6 +346,10 @@ namespace Baku.VMagicMirror
                 // NOTE: セルフシャドウを一応切っているが、URPではこのプロパティにあまり意味はない
                 r.receiveShadows = false;
             }
+            
+            // NOTE: このへんの設定がないと、Tポーズの肩～手の初期姿勢に依存して一部のモデルの腕がハンドトラッキングで暴れやすい
+            setupResult.Fbbik.solver.leftArmMapping.updatePlaneRotations = false;
+            setupResult.Fbbik.solver.rightArmMapping.updatePlaneRotations = false;
 
             var info = new VrmLoadedInfo(
                 _modelVersion.Value,

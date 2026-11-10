@@ -987,4 +987,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <!-- NOTE: メインのdocとレポジトリが違うので注意 --> 
     <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
+    <sys:String x:Key="ModelLoad_Loading_Format">モデルをロードしています: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_Slow_Format">モデルのロードに通常より時間がかかっています: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_VerySlow">モデルのロードに非常に時間がかかっています。しばらく待っても完了しない場合は、アプリケーションの再起動をお試しください。</sys:String>
 </ResourceDictionary>

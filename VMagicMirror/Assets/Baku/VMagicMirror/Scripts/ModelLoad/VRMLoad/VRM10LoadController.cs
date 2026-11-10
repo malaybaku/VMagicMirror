@@ -90,6 +90,7 @@ namespace Baku.VMagicMirror
                 {
                     if (_preloadData.ShouldIgnoreNonPreloadData)
                     {
+                        _sender.SendCommand(Message.None(VmmServerCommands.LocalModelLoadEnded));
                         return;
                     }
 
@@ -171,7 +172,11 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void NotifyLoadModelFromFileEnded() => LocalVrmLoadEnded?.Invoke();
+        private void NotifyLoadModelFromFileEnded()
+        {
+            _sender.SendCommand(Message.None(VmmServerCommands.LocalModelLoadEnded));
+            LocalVrmLoadEnded?.Invoke();
+        }
 
         private async UniTaskVoid LoadModelFromFileAsync(string path)
         {
@@ -234,7 +239,6 @@ namespace Baku.VMagicMirror
                 );
                 SetModel(instance, source);
                 source = null;
-                NotifyLoadModelFromFileEnded();
             }
             catch (Exception ex)
             {
@@ -243,12 +247,12 @@ namespace Baku.VMagicMirror
                     if (_instance == instance) ReleaseCurrentVrm();
                     else Object.Destroy(instance.gameObject);
                 }
-                NotifyLoadModelFromFileEnded();
                 HandleLoadError(ex);
             }
             finally
             {
-                source?.Dispose();
+                try { source?.Dispose(); }
+                finally { NotifyLoadModelFromFileEnded(); }
             }
         }
         

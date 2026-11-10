@@ -81,6 +81,10 @@
         </metro:WindowCommands>
     </metro:MetroWindow.RightWindowCommands>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <dragablz:TabablzControl 
             x:Name="MainTabControl"             
             Style="{StaticResource ControlPanelTabControl}"
@@ -208,6 +212,21 @@
                 <view:HandTrackingPanel />
             </TabItem>
         </dragablz:TabablzControl>
+        <Border Grid.Row="1" Background="{StaticResource DefaultBackground}"
+                BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="0,1,0,0"
+                Visibility="{Binding IsLocalModelLoading.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="16,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Width="20" Height="20" IsIndeterminate="{Binding IsLocalModelLoading.Value}"
+                             VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Margin="8,0,0,0" TextWrapping="Wrap"
+                           Text="{Binding LocalModelLoadMessage.Value}"/>
+            </Grid>
+        </Border>
         <md:Snackbar MessageQueue="{x:Static vmm:SnackbarWrapper.SnackbarMessageQueue}"
                      HorizontalAlignment="Center"
                      Margin="20,0"

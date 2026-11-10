@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
     /// <summary>
     /// UnityからWPFに送信するCommand,Queryの一覧
@@ -36,6 +36,9 @@ namespace Baku.VMagicMirror
         NotifyBuddy3DLayout,
         NotifyBuddyLog,
         
+        // Local file loading finished (including failure or ignored requests).
+        LocalModelLoadEnded,
+
         // == LastCommandIdは常に最後尾に定義しておく ==
         LastCommandId,
     }

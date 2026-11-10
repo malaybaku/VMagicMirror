@@ -984,4 +984,7 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <!-- NOTE: メインのdocとレポジトリが違い、かつローカライズしてない(JP only)ことに注意 --> 
     <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
+    <sys:String x:Key="ModelLoad_Loading_Format">Loading model: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_Slow_Format">The model is taking longer than usual to load: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_VerySlow">The model is taking a very long time to load. If loading does not finish after waiting a while, try restarting the application.</sys:String>
 </ResourceDictionary>

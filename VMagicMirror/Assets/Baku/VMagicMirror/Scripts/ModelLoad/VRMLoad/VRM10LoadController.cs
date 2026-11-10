@@ -197,14 +197,6 @@ namespace Baku.VMagicMirror
             MouvLoadSource source = null;
             try
             { 
-                // DEBUG: ローカルモデルの長時間ロード表示を確認するための遅延。0秒で無効化。
-                const int debugLoadDelaySeconds = 5;
-                await UniTask.Delay(TimeSpan.FromSeconds(debugLoadDelaySeconds),
-                    ignoreTimeScale: true, cancellationToken: _cts.Token);
-
-                // DEBUG: ファイル読み込み失敗時のエラー表示とロード状態の解除を確認する。
-                throw new IOException("DEBUG: Simulated local model file read failure.");
-
                 source = IsMouv(path) ? new MouvLoadSource(path) : null;
                 bytes = source != null ? source.Data.VrmBytes : File.ReadAllBytes(path);
             }

@@ -13,11 +13,17 @@ namespace Baku.VMagicMirror
         private const float SpeedDumpFactor = 0.98f;
 
         //最終的に胴体ヨーは頭ヨーの何倍であるべきか、という値
-        private float GoalRate => EnableTwistMotion ? -0.2f : 0.3f;
+        // 100%を超えた分は肩より動きを大きくし、かつ素早く動くようにする
+        private float GoalRate => EnableTwistMotion
+            ? -0.2f * (TwistMotionStrength + Mathf.Max(0f, TwistMotionStrength - 1f))
+            : 0.3f;
         //ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか
-        private float SpeedLerpFactor => EnableTwistMotion ? 18f : 12f;
+        private float SpeedLerpFactor => EnableTwistMotion
+            ? 18f * Mathf.Lerp(1f, 3f, TwistMotionStrength - 1f)
+            : 12f;
         
         public bool EnableTwistMotion { get; set; }
+        public float TwistMotionStrength { get; set; } = 1f;
         
         private float _speedDegreePerSec = 0;
         public float YawAngleDegree { get; private set; }

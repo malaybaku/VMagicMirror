@@ -392,12 +392,18 @@
                                 Command="{Binding OpenGameInputSettingWindowCommand}"
                                 />
 
-                            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                      Margin="10,3"
-                                      Visibility="{Binding EnableGameInputLocomotion.Value,
-                                                     Converter={StaticResource BooleanReverseToVisibilityConverter}}"
-                                      IsChecked="{Binding EnableTwistBodyMotion.Value}"
-                                      Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
+                            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding EnableGameInputLocomotion.Value, Converter={StaticResource BooleanReverseToVisibilityConverter}}">
+                                <CheckBox Margin="10,3"
+                                          IsChecked="{Binding EnableTwistBodyMotion.Value}"
+                                          Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
+                                <DockPanel Margin="15,3,5,3" Visibility="{Binding EnableTwistBodyMotion.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{DynamicResource Motion_FullBody_TwistBodyMotionStrength}" VerticalAlignment="Center"/>
+                                    <TextBox DockPanel.Dock="Right" Width="36" TextAlignment="Right" VerticalAlignment="Center"
+                                               Text="{Binding Value, ElementName=sliderTwistBodyMotionStrength}"/>
+                                    <Slider x:Name="sliderTwistBodyMotionStrength" Margin="8,0" Minimum="0" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True"
+                                            Value="{Binding TwistBodyMotionStrength.Value, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
                             
                             <TextBlock Grid.Row="3" Grid.Column="0"
                                        Text="{DynamicResource Motion_Arm_MouseAndKeyMode}"/>

@@ -161,6 +161,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
+        public RProperty<int> TwistBodyMotionStrength => _model.TwistBodyMotionStrength;
 
         public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
 

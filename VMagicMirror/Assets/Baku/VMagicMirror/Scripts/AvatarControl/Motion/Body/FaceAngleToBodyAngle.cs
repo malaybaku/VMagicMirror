@@ -56,6 +56,14 @@ namespace Baku.VMagicMirror
                     _roll.EnableTwistMotion = enableTwistBodyMotion;
                     _yaw.EnableTwistMotion = enableTwistBodyMotion;
                 });
+            receiver.AssignCommandHandler(
+                VmmCommands.SetTwistBodyMotionStrength,
+                c =>
+                {
+                    var strength = Mathf.Clamp(c.ParseAsPercentage(), 0f, 2f);
+                    _roll.TwistMotionStrength = strength;
+                    _yaw.TwistMotionStrength = strength;
+                });
         }
 
         private void Update()

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
     public sealed class FaceRollToBodyRoll
     {
         //最終的に胴体ロールは頭ロールの何倍であるべきか、という値
-        private float GoalRate => EnableTwistMotion ? -0.05f : 0.1f;
+        private float GoalRate => EnableTwistMotion ? -0.05f * TwistMotionStrength : 0.1f;
 
         //ゴールに持ってくときの速度基準にする時定数っぽいやつ
         private const float TimeFactor = 0.3f;
@@ -17,9 +17,12 @@ namespace Baku.VMagicMirror
         private const float SpeedDumpFactor = 0.95f;
 
         //ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか
-        private float SpeedLerpFactor => EnableTwistMotion ? 24f : 18f;
+        private float SpeedLerpFactor => EnableTwistMotion
+            ? 24f * Mathf.Lerp(1f, 3f, TwistMotionStrength - 1f) // 大きくひねる場合、素早いほうが見た目がよいので素早くする
+            : 18f;
         
         public bool EnableTwistMotion { get; set; }
+        public float TwistMotionStrength { get; set; } = 1f;
         
         private float _speedDegreePerSec = 0;
         public float RollAngleDegree { get; private set; }

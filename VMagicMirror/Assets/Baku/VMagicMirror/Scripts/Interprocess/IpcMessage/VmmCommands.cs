@@ -336,6 +336,8 @@
         SetPerfectSyncExpressionCaseSensitive,
         SetPerfectSyncUseMeshBlendShapes,
 
+        SetTwistBodyMotionStrength,
+
         // Unused: 取りうるコマンドIDの最大値が分かるように定義している
         LastCommandId,
     }

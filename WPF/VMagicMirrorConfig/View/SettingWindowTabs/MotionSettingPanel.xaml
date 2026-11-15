@@ -74,10 +74,18 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                  Margin="5,0"
-                                  IsChecked="{Binding EnableTwistBodyMotion.Value}"
-                                  Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
+                        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                            <CheckBox Margin="5,0"
+                                      IsChecked="{Binding EnableTwistBodyMotion.Value}"
+                                      Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
+                            <DockPanel Margin="15,3,5,3" IsEnabled="{Binding EnableTwistBodyMotion.Value}">
+                                <TextBlock Text="{DynamicResource Motion_FullBody_TwistBodyMotionStrength}" VerticalAlignment="Center"/>
+                                <TextBox DockPanel.Dock="Right" Width="36" TextAlignment="Right" VerticalAlignment="Center"
+                                           Text="{Binding Value, ElementName=sliderTwistBodyMotionStrength}"/>
+                                <Slider x:Name="sliderTwistBodyMotionStrength" Margin="8,0" Minimum="0" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True"
+                                        Value="{Binding TwistBodyMotionStrength.Value, Mode=TwoWay}"/>
+                            </DockPanel>
+                        </StackPanel>
                         
                         <TextBlock Grid.Row="2" Grid.Column="0"
                                        Text="{DynamicResource Motion_Arm_MouseAndKeyMode}"/>

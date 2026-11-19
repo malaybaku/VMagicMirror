@@ -40,7 +40,7 @@ You can use a VRM as the base model and replace just its materials with material
 
 Use the template project provided by [MaterialOverrideVrm](https://github.com/malaybaku/MaterialOverrideVrm). It includes the required packages and URP settings. Models and replacement materials are not included.
 
-1. Download `MaterialOverrideVrm-Unity6-v0.2.0.zip` from the [v0.2.0 release page](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.2.0) and extract it.
+1. Download `MaterialOverrideVrm-Unity6-v0.3.0.zip` from the [v0.3.0 release page](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.0) and extract it.
 2. Install Unity 6000.3.13f1 (Unity 6.3 LTS) using Unity Hub.
 3. In Unity Hub, add the extracted project folder containing `Assets`, `Packages`, and `ProjectSettings`, then open it with the Unity version above. Wait for package downloads and importing to finish.
 4. Open `Assets/Scenes/Export.unity` from the Project window.
@@ -49,7 +49,7 @@ Use the template project provided by [MaterialOverrideVrm](https://github.com/ma
 
 **NOTE**
 
-If you use Unity 2022, you can instead download `MaterialOverrideVrm-Unity2022-v0.2.0.zip` from the same release page and open it with Unity 2022.3.22f1.
+If you use Unity 2022, you can instead download `MaterialOverrideVrm-Unity2022-v0.3.0.zip` from the same release page and open it with Unity 2022.3.22f1.
 
 </div>
 
@@ -69,7 +69,7 @@ Add the following UniVRM dependencies to `dependencies` in `Packages/manifest.js
 Then open `Window > Package Manager`, select `+ > Add package from git URL...`, and install the package using this URL:
 
 ```text
-https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.2.0
+https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0
 ```
 
 Installing the package alone does not switch the project to URP. For Unity 6, also specify `"com.unity.render-pipelines.universal": "17.3.0"` in `dependencies` in `Packages/manifest.json` (use URP 14.0.10 for Unity 2022).
@@ -126,6 +126,16 @@ The preview restores the original materials when it ends. The `Override` assignm
 1. With Play Mode stopped, set the build target to Windows. Use `File > Build Profiles` in Unity 6 or `File > Build Settings` in Unity 2022 to check and switch the target.
 2. Select the model's root and press `Export...` on `MaterialOverrideSource`.
 3. Choose a destination and file name to export the `.mouv` file.
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+If you switched a project from the Built-in Render Pipeline to URP, such as a project for a VRChat avatar, some shaders, including lilToon, may require explicit shader regeneration after the switch. The pipeline switch may take place when you follow the prompts shown after pressing `Export...`.
+
+If the shaders have not been regenerated, the exported `.mouv` may load in VMagicMirror without any errors, but the model itself may be invisible. If shadows are enabled, only the shadow may appear. If you encounter this symptom, first confirm that the project's Render Pipeline is set to URP, then follow your shader's instructions to regenerate it for URP and export the `.mouv` again.
+
+</div>
 
 <div class="row">
 {% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}

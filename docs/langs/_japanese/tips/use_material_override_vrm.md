@@ -39,7 +39,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 エクスポートには [MaterialOverrideVrm](https://github.com/malaybaku/MaterialOverrideVrm) のテンプレートプロジェクトを使います。必要なパッケージとURPの設定が用意されています。モデルや差し替え用マテリアルは含まれていません。
 
-1. [v0.2.0のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.2.0)から、`MaterialOverrideVrm-Unity6-v0.2.0.zip` をダウンロードして展開します。
+1. [v0.3.0のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.0)から、`MaterialOverrideVrm-Unity6-v0.3.0.zip` をダウンロードして展開します。
 2. Unity Hubで Unity 6000.3.13f1 (Unity 6.3 LTS) をインストールします。
 3. Unity Hubのプロジェクト追加から、展開したフォルダ内の `Assets`、`Packages`、`ProjectSettings` が入ったプロジェクトフォルダを選択し、上記のUnityバージョンで開きます。パッケージの取得とインポートの完了を待ちます。
 4. Projectウィンドウから `Assets/Scenes/Export.unity` を開きます。
@@ -48,7 +48,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 **NOTE**
 
-Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.2.0.zip` をUnity 2022.3.22f1 で開いても作業できます。
+Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.3.0.zip` をUnity 2022.3.22f1 で開いても作業できます。
 
 </div>
 
@@ -68,7 +68,7 @@ Unity 2022を使う場合は、同じリリースページにある `MaterialOve
 続いて `Window > Package Manager` の `+` から `Add package from git URL...` を選び、次のURLでパッケージを導入します。
 
 ```text
-https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.2.0
+https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0
 ```
 
 パッケージを入れるだけではURPに切り替わりません。 Unity 6では `Packages/manifest.json` の `dependencies` に `"com.unity.render-pipelines.universal": "17.3.0"` も指定してください（Unity 2022ではURP 14.0.10を使用します）。
@@ -125,6 +125,16 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 1. Play Modeを終了した状態で、ビルドターゲットを Windows にします。Unity 6では `File > Build Profiles`、Unity 2022では `File > Build Settings` で確認・切り替えできます。
 2. モデルのルートを選択し、`MaterialOverrideSource` の `Export...` を押します。
 3. 保存先とファイル名を指定して、`.mouv` ファイルを出力します。
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+VRChatアバター用のプロジェクトなど、Built-in Render PipelineからURPへ切り替えたプロジェクトでは、lilToonなど一部のシェーダーで、切り替え後に明示的なシェーダーの再生成が必要になる場合があります。Render Pipelineの切り替えは、`Export...` を押した際の案内に従って行う場合もあります。
+
+シェーダーを再生成していないと、出力した `.mouv` をVMagicMirrorで読み込んでもエラーが出ず、モデル本体が表示されない場合があります。シャドウが有効な場合は、影だけが表示されることもあります。この症状が出た場合は、プロジェクトのRender PipelineがURPになっていることを確認したうえで、使用するシェーダーの案内に従ってURP向けにシェーダーを再生成し、もう一度 `.mouv` をエクスポートしてください。
+
+</div>
 
 <div class="row">
 {% include docimg.html file="/images/tips/mouv_export_button.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}

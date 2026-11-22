@@ -42,7 +42,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 エクスポートには [MaterialOverrideVrm](https://github.com/malaybaku/MaterialOverrideVrm) のテンプレートプロジェクトを使います。必要なパッケージとURPの設定が用意されています。モデルや差し替え用マテリアルは含まれていません。
 
-1. [v0.3.0のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.0)から、`MaterialOverrideVrm-Unity6-v0.3.0.zip` をダウンロードして展開します。
+1. [v0.3.4のリリースページ](https://github.com/malaybaku/MaterialOverrideVrm/releases/tag/v0.3.4)から、`MaterialOverrideVrm-Unity6-v0.3.4.zip` をダウンロードして展開します。
 2. Unity Hubで Unity 6000.3.13f1 (Unity 6.3 LTS) をインストールします。
 3. Unity Hubのプロジェクト追加から、展開したフォルダ内の `Assets`、`Packages`、`ProjectSettings` が入ったプロジェクトフォルダを選択し、上記のUnityバージョンで開きます。パッケージの取得とインポートの完了を待ちます。
 4. Projectウィンドウから `Assets/Scenes/Export.unity` を開きます。
@@ -51,7 +51,7 @@ VRMをベースに、マテリアルだけを好きなものに差し替えて�
 
 **NOTE**
 
-Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.3.0.zip` をUnity 2022.3.22f1 で開いても作業できます。
+Unity 2022を使う場合は、同じリリースページにある `MaterialOverrideVrm-Unity2022-v0.3.4.zip` をUnity 2022.3.22f1 で開いても作業できます。
 
 </div>
 
@@ -71,12 +71,12 @@ Unity 2022を使う場合は、同じリリースページにある `MaterialOve
 続いて `Window > Package Manager` の `+` から `Add package from git URL...` を選び、次のURLでパッケージを導入します。
 
 ```text
-https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.0
+https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.material-override-vrm#v0.3.4
 ```
 
 パッケージを入れるだけではURPに切り替わりません。 Unity 6では `Packages/manifest.json` の `dependencies` に `"com.unity.render-pipelines.universal": "17.3.0"` も指定してください（Unity 2022ではURP 14.0.10を使用します）。
 
-`Tools > Material Overridable VRM > URP Export Setup` を開き、ダイアログに従ってURP設定を適用してください。既存のマテリアルは自動変換されないため、差し替え用マテリアルもURP対応のものを準備します。
+`Tools > Material Override VRM > URP Export Setup` を開き、ダイアログに従ってURP設定を適用してください。既存のマテリアルは自動変換されないため、差し替え用マテリアルもURP対応のものを準備します。
 
 </div>
 
@@ -113,6 +113,8 @@ https://github.com/malaybaku/MaterialOverrideVrm.git?path=/Packages/com.baxter.m
 2. Hierarchyでモデルのルートを選択し、Inspectorの `MaterialOverrideSource` にある `Preview Material Override (Play Mode)` を押します。
 3. SceneビューやGameビューで、意図した部分にマテリアルが適用されていること、色やテクスチャなどの見た目に問題がないことを確認します。
 4. 確認後、再生ボタンをもう一度押して Play Modeを終了します。
+
+URPが有効でない場合は、プレビューを開始できません。ダイアログが表示されたらPlay Modeを終了し、`Tools > Material Override VRM > URP Export Setup` からURPを設定して、再度プレビューを実行してください。
 
 <div class="row">
 {% include docimg.html file="/images/tips/mouv_playmode_preview.png" customclass="col l12 m12 s12" imgclass="fit-doc-img" %}

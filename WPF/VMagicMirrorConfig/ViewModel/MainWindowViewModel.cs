@@ -35,6 +35,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public RProperty<bool> ShowVmcpTab { get; }
+        public RProperty<bool> IsLocalModelLoading => _avatarLoader.IsLocalModelLoading;
+        public RProperty<string> LocalModelLoadMessage => _avatarLoader.LocalModelLoadMessage;
 
         public async void Initialize()
         {
@@ -121,6 +123,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 LogOutput.Instance.Write("AutoSave Completed.");
             }
             _settingModel.Automation.Dispose();
+            _avatarLoader.StopLoadStatus();
             _messageIo.Dispose();
             _runtimeHelper.Dispose();
             LargePointerController.Instance.Close();

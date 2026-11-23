@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Baku.MaterialOverridableVrm;
 using UniGLTF;
@@ -9,7 +8,8 @@ using UnityEngine;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// Keeps bundle assets alive until the model's override materials are released.
+    /// Keeps loaded assets alive until the model's override materials are released.
+    /// The bundle itself is detached immediately so the same file can be overwritten and reloaded.
     /// Use the normal VMM VRM importer so metadata and non-overridden materials behave as usual.
     /// Embedded VRM 0.x is migrated by that importer; validate overrides against the migrated layout.
     /// Do not use the package's MaterialOverrideImporter here, which has a separate VRM loading path.
@@ -17,41 +17,31 @@ namespace Baku.VMagicMirror
     /// </summary>
     internal sealed class MouvLoadSource : IDisposable
     {
-        private sealed class Entry
-        {
-            public AssetBundle Bundle;
-            public int Users;
-        }
-
-        private static readonly Dictionary<string, Entry> Bundles = new(StringComparer.OrdinalIgnoreCase);
-        private readonly string _path;
-        private readonly Entry _entry;
         private MaterialOverrideLease _lease;
         private bool _disposed;
-        public MaterialOverrideData Data { get; }
+        public MaterialOverrideData Data { get; private set; }
 
         public MouvLoadSource(string path)
         {
-            _path = Path.GetFullPath(path);
-            if (!Bundles.TryGetValue(_path, out _entry))
-            {
-                var bundle = AssetBundle.LoadFromFile(_path);
-                if (!bundle) throw new IOException($"Could not load MOUV AssetBundle: {_path}");
-                _entry = new Entry { Bundle = bundle };
-                Bundles.Add(_path, _entry);
-            }
-            _entry.Users++;
+            var fullPath = Path.GetFullPath(path);
+            var bundle = AssetBundle.LoadFromFile(fullPath);
+            if (!bundle) throw new IOException($"Could not load MOUV AssetBundle: {fullPath}");
+            var loaded = false;
             try
             {
-                var assets = _entry.Bundle.LoadAllAssets<MaterialOverrideData>();
+                var assets = bundle.LoadAllAssets<MaterialOverrideData>();
                 if (assets.Length != 1) throw new InvalidDataException("Expected exactly one MaterialOverrideData asset.");
                 Data = assets[0];
                 MaterialOverrideApplicator.Validate(Data);
+                loaded = true;
             }
-            catch
+            finally
             {
-                Dispose();
-                throw;
+                // Keep this load's data and its material/texture/shader dependencies, but release
+                // the bundle identity and file handle before any asynchronous VRM import starts.
+                // A subsequent preview or load must read the file again, even at the same path.
+                // On failure no model owns these assets, so unload them together with the bundle.
+                bundle.Unload(!loaded);
             }
         }
 
@@ -90,9 +80,16 @@ namespace Baku.VMagicMirror
             _disposed = true;
             if (_lease) _lease.Dispose();
             _lease = null;
-            if (--_entry.Users != 0) return;
-            Bundles.Remove(_path);
-            _entry.Bundle.Unload(true);
+            var data = Data;
+            Data = null;
+            if (data)
+            {
+                if (Application.isPlaying) UnityEngine.Object.Destroy(data);
+                else UnityEngine.Object.DestroyImmediate(data);
+            }
+            // Unload(false) detached the assets from their bundle. Reclaim unused dependencies
+            // through Unity's reference tracking so assets still used by another model survive.
+            Resources.UnloadUnusedAssets();
         }
     }
 }

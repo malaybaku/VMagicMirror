@@ -1,6 +1,8 @@
 ﻿using Baku.VMagicMirror;
 using System;
 using System.IO;
+using System.Diagnostics;
+using System.Windows.Threading;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,10 +30,49 @@ namespace Baku.VMagicMirrorConfig
 
             //このイベントの繋ぎを無関係な別クラスでやってもOK
             saveFileManager.VRoidModelLoadRequested += id => LoadSavedVRoidModelAsync(id, false);
+            saveFileManager.LocalModelLoadRequested += path => LoadLocalModel(path);
+            _loadTimer.Tick += (_, _) => UpdateLoadStatus();
+            LanguageSelector.Instance.LanguageChanged += UpdateLoadStatus;
         }
 
         private readonly RootSettingModel _setting;
         private readonly IMessageSender _sender;
+
+        public RProperty<bool> IsLocalModelLoading { get; } = new(false);
+        public RProperty<string> LocalModelLoadMessage { get; } = new("");
+        private readonly DispatcherTimer _loadTimer = new() { Interval = TimeSpan.FromSeconds(1) };
+        private readonly Stopwatch _loadElapsed = new();
+        private string _loadingFileName = "";
+        private bool _isLocalLoadConfirmationActive;
+
+        // All local load entry points use this method to avoid overlapping requests.
+        public bool LoadLocalModel(string path)
+        {
+            if (IsLocalModelLoading.Value || _isVRoidHubUiActive || !File.Exists(path)) return false;
+            _loadingFileName = Path.GetFileName(path);
+            _loadElapsed.Restart();
+            IsLocalModelLoading.Value = true;
+            UpdateLoadStatus();
+            _loadTimer.Start();
+            _sender.SendMessage(MessageFactory.OpenVrm(path));
+            return true;
+        }
+
+        private void UpdateLoadStatus()
+        {
+            if (!IsLocalModelLoading.Value) return;
+            var key = _loadElapsed.Elapsed.TotalSeconds >= 20 ? "ModelLoad_VerySlow" :
+                _loadElapsed.Elapsed.TotalSeconds >= 10 ? "ModelLoad_Slow_Format" : "ModelLoad_Loading_Format";
+            LocalModelLoadMessage.Value = string.Format(LocalizedString.GetString(key), _loadingFileName);
+        }
+
+        public void StopLoadStatus()
+        {
+            _loadTimer.Stop();
+            _loadElapsed.Reset();
+            IsLocalModelLoading.Value = false;
+            LocalModelLoadMessage.Value = "";
+        }
 
         private bool _isVRoidHubUiActive;
         private bool? _windowTransparentBeforeLoadProcess;
@@ -42,6 +83,9 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
+                case VmmServerCommands.LocalModelLoadEnded:
+                    StopLoadStatus();
+                    break;
                 case VmmServerCommands.VRoidModelLoadCompleted:
                     //WPF側のダイアログによるUIガードを終了: _isVRoidHubUiActiveフラグは別のとこで折るのでここでは無視でOK
                     if (_isVRoidHubUiActive)
@@ -74,6 +118,8 @@ namespace Baku.VMagicMirrorConfig
         /// <param name="getFilePathProcess"></param>
         public async Task LoadVrm(Func<string> getFilePathProcess, bool skipLicenceCheck)
         {
+            if (IsLocalModelLoading.Value || _isLocalLoadConfirmationActive || _isVRoidHubUiActive) return;
+
             if (!skipLicenceCheck)
             {
                 PrepareShowUiOnUnity();
@@ -98,7 +144,7 @@ namespace Baku.VMagicMirrorConfig
             // とくに「ロードしますか？」の確認ダイアログも省くのは、確認時にファイルパスとかが出ない挙動であり確認を挟む意義が薄いため。
             if (skipLicenceCheck)
             {
-                _sender.SendMessage(MessageFactory.OpenVrm(filePath));
+                LoadLocalModel(filePath);
                 //NOTE: この時点だとモデルのロードの成否が不明なため、
                 //Unityからロード成功を通知されるまでは記録しないのも手
                 _setting.OnLocalModelLoaded(filePath);
@@ -116,6 +162,7 @@ namespace Baku.VMagicMirrorConfig
 
                 try
                 {
+                    _isLocalLoadConfirmationActive = true;
                     var res = await MessageBoxWrapper.Instance.ShowAsync(
                         indication.Title,
                         indication.Content,
@@ -125,7 +172,7 @@ namespace Baku.VMagicMirrorConfig
 
                     if (res)
                     {
-                        _sender.SendMessage(MessageFactory.OpenVrm(filePath));
+                        LoadLocalModel(filePath);
                         //NOTE: この時点だとモデルのロードの成否が不明なため、
                         //Unityからロード成功を通知されるまでは記録しないのも手
                         _setting.OnLocalModelLoaded(filePath);
@@ -137,6 +184,7 @@ namespace Baku.VMagicMirrorConfig
                 }
                 finally
                 {
+                    _isLocalLoadConfirmationActive = false;
                     EndShowUiOnUnity();
                 }
             }
@@ -144,6 +192,7 @@ namespace Baku.VMagicMirrorConfig
 
         public async Task ConnectToVRoidHubAsync()
         {
+            if (IsLocalModelLoading.Value || _isLocalLoadConfirmationActive || _isVRoidHubUiActive) return;
             PrepareShowUiOnUnity();
 
             _sender.SendMessage(MessageFactory.OpenVRoidSdkUi());
@@ -164,13 +213,13 @@ namespace Baku.VMagicMirrorConfig
         {
             if (File.Exists(_setting.LastVrmLoadFilePath))
             {
-                _sender.SendMessage(MessageFactory.OpenVrm(_setting.LastVrmLoadFilePath));
+                LoadLocalModel(_setting.LastVrmLoadFilePath);
             }
         }
 
         public async void LoadSavedVRoidModelAsync(string modelId, bool fromAutoSave)
         {
-            if (string.IsNullOrEmpty(modelId))
+            if (IsLocalModelLoading.Value || _isLocalLoadConfirmationActive || _isVRoidHubUiActive || string.IsNullOrEmpty(modelId))
             {
                 return;
             }

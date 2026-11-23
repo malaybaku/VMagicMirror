@@ -8,6 +8,17 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v5.3.0
+{: .doc-sec2 }
+
+2026/Nov/23
+
+* Add: Added a slider to adjust the strength of the twist motion. Use `Twist strength [%]` under `Motion` on the `Streaming` tab, or under `Motion` > `Upper Body` in the advanced settings.
+* Add: The control panel now shows the loading status when loading an avatar from a local `.vrm` or `.mouv` file.
+* Fix: You can now overwrite the `.mouv` file for the currently loaded avatar and reload it from the same path to apply your changes.
+* Fix: Fixed an issue that caused the arms of some avatars to rotate unnaturally during hand tracking.
+
+
 #### v5.2.0
 {: .doc-sec2 }
 

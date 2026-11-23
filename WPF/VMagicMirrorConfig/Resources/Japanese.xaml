@@ -391,6 +391,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
+    <sys:String x:Key="Motion_FullBody_TwistBodyMotionStrength">ひねりの強さ [%]</sys:String>
     <sys:String x:Key="Motion_FullBody_SpineAngleOffset">背中を曲げる</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">手を下げた位置を手動で調整</sys:String>    
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">手の位置を編集するには
@@ -987,4 +988,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <!-- NOTE: メインのdocとレポジトリが違うので注意 --> 
     <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
+    <sys:String x:Key="ModelLoad_Loading_Format">モデルをロードしています: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_Slow_Format">モデルのロードに通常より時間がかかっています: {0}</sys:String>
+    <sys:String x:Key="ModelLoad_VerySlow">モデルのロードに非常に時間がかかっています。しばらく待っても完了しない場合は、アプリケーションの再起動をお試しください。</sys:String>
 </ResourceDictionary>

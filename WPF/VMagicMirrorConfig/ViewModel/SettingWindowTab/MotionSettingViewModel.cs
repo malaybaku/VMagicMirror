@@ -161,6 +161,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
+        public RProperty<int> TwistBodyMotionStrength => _model.TwistBodyMotionStrength;
         public RProperty<int> SpineAngleOffset => _model.SpineAngleOffset;
         public RProperty<bool> EnableCustomHandDownPose => _model.EnableCustomHandDownPose;
         public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;

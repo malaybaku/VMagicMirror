@@ -28,6 +28,7 @@ namespace Baku.VMagicMirrorConfig
         private readonly IMessageSender _sender;
 
         public event Action<string>? VRoidModelLoadRequested;
+        public event Func<string, bool>? LocalModelLoadRequested;
 
         /// <summary> 
         /// ユーザーがフォーカスしていると考えられるファイルのインデックスを取得します。
@@ -96,8 +97,10 @@ namespace Baku.VMagicMirrorConfig
                 )
             {
                 LogOutput.Instance.Write($"Load Local VRM, setting no={index}, automation={fromAutomation}, path={loadedVrmPath}");
-                _sender.SendMessage(MessageFactory.OpenVrm(loadedVrmPath));
-                _setting.OnLocalModelLoaded(loadedVrmPath);
+                if (LocalModelLoadRequested?.Invoke(loadedVrmPath) == true)
+                {
+                    _setting.OnLocalModelLoaded(loadedVrmPath);
+                }
             }
             else if(content != SettingFileReadContent.NonCharacter && 
                 loadedVRoidModelId != prevVRoidModelId && 

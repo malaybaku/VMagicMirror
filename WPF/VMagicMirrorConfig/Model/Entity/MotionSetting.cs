@@ -26,6 +26,7 @@
         public bool EnableGameInputLocomotionMode { get; set; } = false;
 
         public bool EnableTwistBodyMotion { get; set; } = false;
+        public int TwistBodyMotionStrength { get; set; } = 100;
 
         public int SpineAngleOffset { get; set; } = 0;
 
@@ -251,6 +252,7 @@
             EnableNoHandTrackMode = false;
             EnableGameInputLocomotionMode = false;
             EnableTwistBodyMotion = false;
+            TwistBodyMotionStrength = 100;
             EnableCustomHandDownPose = false;
             CustomHandDownPose = "";
             ResetFaceBasicSetting();

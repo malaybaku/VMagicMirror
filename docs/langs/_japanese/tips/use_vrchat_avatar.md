@@ -10,6 +10,8 @@ title: VRChatアバターをVMagicMirrorで使用する
 
 {% include docimg.html file="/images/tips/use_vrchat_avatar_example.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 
+使用アバター：[しなの](https://booth.pm/ja/items/6106863)（@ぽんでろ）
+
 <div class="note-area" markdown="1">
 
 - このTipsの機能を使うにはVMagicMirror v5.2.0以上が必要です。推奨バージョンは5.3.0以上です。

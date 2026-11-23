@@ -6,13 +6,13 @@ title: VRChatアバターをVMagicMirrorで使用する
 # Tips: VRChatアバターをVMagicMirrorで使用する
 {: .no_toc }
 
-このページでは、VRChat向けにセットアップされているアバターをVMagicMirrorで使用する方法を説明します。
+このページでは、VRChat向けにセットアップされているアバターをVMagicMirror向けに変換して使用する方法を説明します。
 
-<div markdown="1">
+<div class="note-area" markdown="1">
 
 - このTipsの機能を使うにはVMagicMirror v5.2.0以上が必要です。推奨バージョンは5.3.0以上です。
-- このTipsで記載した機能はエディションによる制限はありません。無償版と有償版で同様に動作します。
-- このTipsページではUnityやVRC SDK, VCC/ALCOMの基本的な知識を前提として説明を省略している部分があります。
+- このTipsで記載した機能はエディションによる制限はなく、無償版と有償版で同様に動作します。
+- このTipsページではUnityやVRC SDK, VCC/ALCOMの基本的な知識があることを前提としています。
 
 </div>
 
@@ -38,7 +38,7 @@ VRChatアバターをVMagicMirrorで使用するには以下いずれかのフ�
 
 </div>
 
-`.mouv` はユーザー定義シェーダーの持ち込みを目的とするファイルで、現時点(2026/11)では実質的にVMagicMirror専用のファイルフォーマットです。
+`.mouv` はユーザー定義シェーダーの持ち込みサポートを目的とするファイルであり、現時点(2026/11)では実質的にVMagicMirror専用のファイルフォーマットです。
 
 <div class="note-area" markdown="1">
 

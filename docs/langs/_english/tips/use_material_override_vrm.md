@@ -8,7 +8,9 @@ lang: en
 
 This page explains how to create a `.mouv` (Material Override Unity VRM) file with replacement materials and display it in VMagicMirror.
 
-These steps are for users who already have a VRM model and non-MToon material assets they want to apply, for example after converting a VRChat avatar to VRM.
+Follow these steps if you already have a VRM model and the non-MToon materials you want to apply.
+
+If you are exporting an avatar from a VRChat Unity project, see [Use a VRChat Avatar in VMagicMirror](../use_vrchat_avatar).
 
 Both VRM 1.0 and VRM 0.x models are supported, but VRM 1.0 is recommended for better stability.
 

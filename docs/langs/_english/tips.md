@@ -34,6 +34,8 @@ Basic usage is in [Get Started](../get_started), and setting window detail is in
 
 [Load a VRM with Shaders Other Than MToon](./use_material_override_vrm)
 
+[Use a VRChat Avatar in VMagicMirror](./use_vrchat_avatar)
+
 [How to get GLB Data for Accessory Feature](./get_glb_data)
 
 [Use MToon material in GLB Accessory](./use_mtoon_defined_glb)

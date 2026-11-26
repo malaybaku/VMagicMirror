@@ -118,18 +118,16 @@ Once loaded, a `.mouv` avatar works like a VRM avatar apart from its materials. 
 
 Perfect Sync lets your avatar follow subtle facial movements using a webcam or a Face ID–enabled iPhone or iPad. See [Perfect Sync](../perfect_sync) for expression setup and [External Tracking](../../docs/external_tracker) for instructions on connecting an iPhone or iPad app.
 
-If you are adding ARKit blendshapes to a VRChat avatar, there are two ways to make them available to Perfect Sync. Either method can use a subset of the 52 shapes. If you can choose the blendshape names, the first method is simpler.
+When exporting an avatar from a Unity project, make sure the model has blendshapes that map to the ARKit expressions you want to use. You can use all 52 expressions or just a subset. Other expression sets, such as VRCFT, can also be mapped to these expressions. For example, the [Vtuber ARKit52 FacialTracking BlendShapeKey AddOn](https://charlotta.booth.pm/items/6961828) adds 52 ARKit blendshapes to supported avatars. See the product page for compatible avatars, setup instructions, and terms of use.
 
-<div class="doc-ul" markdown="1">
+Follow the [setup instructions for the VRChat package](https://github.com/malaybaku/MaterialOverrideVrmVRC/blob/main/README_usage.md#perfect-sync-expressions) to assign the blendshapes to VRM expressions, then re-export the avatar to use it with Perfect Sync.
 
-1. Add the blendshapes directly to the model using the names listed in [Perfect Sync](../perfect_sync).
-2. Add the blendshapes to the model, then define the corresponding VRM expressions under `Custom Expression` in `VRM Export Description` before exporting. Use the [Perfect Sync expression names](../perfect_sync) for the shapes you want to track.
+<div class="note-area" markdown="1">
+
+**Note on mesh blendshapes without corresponding VRM expressions**
+
+If your existing `.vrm` or `.mouv` file has no VRM expression defined for a facial movement you want to track, Perfect Sync can use a blendshape on the mesh directly if it has the corresponding ARKit name. In the advanced settings, go to `Face` > `Perfect Sync` and enable `Use Perfect Sync blendshapes in meshes when expressions are missing`.
+
+If [Avatar Optimizer](https://github.com/anatawa12/AvatarOptimizer) removes or merges blendshapes during VRM export, the exported mesh may no longer contain those blendshapes under their original names. The VMagicMirror option above cannot use a blendshape that has been removed or renamed. If you use Avatar Optimizer, be sure to set up VRM expressions as described above.
 
 </div>
-
-For example, the [Vtuber ARKit52 FacialTracking BlendShapeKey AddOn](https://charlotta.booth.pm/items/6961828) adds 52 ARKit blendshapes to supported avatar models. The product page lists compatible avatars, setup instructions, and terms of use.
-
-If you use the first method, check these two settings:
-
-- [Avatar Optimizer](https://github.com/anatawa12/AvatarOptimizer) may remove Perfect Sync blendshapes during VRM export. To keep them, make sure a component recognized by the VRChat SDK references those blendshapes.
-- By default, VMagicMirror ignores blendshapes without a corresponding VRM expression. In the advanced settings, open `Face` > `Perfect Sync` and enable `Use Perfect Sync blendshapes in meshes when expressions are missing`.

@@ -126,18 +126,16 @@ VRChat向けのUnityプロジェクトから `.mouv` を作成するには、[Ma
 
 VMagicMirrorでは細かな顔の動きを反映するためパーフェクトシンクをサポートしており、webカメラまたはFace ID対応のiPhone / iPadによってパーフェクトシンクを利用できます。表情の準備と設定については [パーフェクトシンク](../perfect_sync) を、iPhone/iPadアプリとの接続については [外部トラッキングアプリとの連携](../../docs/external_tracker)を参照してください。
 
-VRChatアバターにARKit相当のブレンドシェイプ情報を導入する場合、以下いずれかの方法でパーフェクトシンク用の表情を導入します。いずれの場合も、52種類のうち一部だけを定義して使うこともできます。ブレンドシェイプの名称を調整できる場合、1がより簡易な手順となります。
+Unityプロジェクトからアバターを出力する場合、まずモデルに対してARKitの表情に対応付けられるブレンドシェイプを全部(52種類)、または一部適用します。VRCFTなど、ARKitと異なる表情セットも利用できます。例えば [Vtuber ARKit52 FacialTracking BlendShapeKey AddOn](https://charlotta.booth.pm/items/6961828) では、対応アバターのモデルに52種類のARKitブレンドシェイプを追加できます。具体的な対応アバター、導入方法、利用条件などは商品ページを確認してください。
 
-<div class="doc-ul" markdown="1">
+その後、 [VRChat用パッケージの設定手順](https://github.com/malaybaku/MaterialOverrideVrmVRC/blob/main/README_usage.md#perfect-sync-expressions) に沿って用意したブレンドシェイプをVRMの表情(Expression)に割り当てたのち、アバターを再エクスポートすることで、パーフェクトシンクに対応したモデルを作成できます。
 
-1. [パーフェクトシンク](../perfect_sync) に記載した52種類のブレンドシェイプ名でモデル自体にブレンドシェイプを導入する
-2. 1に準ずる操作を行ったうえで、[パーフェクトシンク](../perfect_sync) に記載した52種類のブレンドシェイプに対応するVRM Expressionを `VRM Export Description` の `Custom Expression` に定義し、その状態でアバターをエクスポートする
+<div class="note-area" markdown="1">
+
+**NOTE: ブレンドシェイプは存在するがVRMのExpressionを紐づけていない場合**
+
+手元の `.vrm` や `.mouv` に使いたい表情のExpressionが定義されていなくても、メッシュそのものにARKitに準拠した名称のブレンドシェイプがあれば、それを用いてパーフェクトシンクを利用できます。VMagicMirrorの詳細設定で `顔・表情` > `パーフェクトシンク` > `未定義の表情をメッシュのブレンドシェイプで補う` をオンにすることで、ブレンドシェイプを直接取得してパーフェクトシンクを動作させられます。
+
+ただし、VRMの出力時に [Avatar Optimizer](https://github.com/anatawa12/AvatarOptimizer) を用いてブレンドシェイプを削除・統合していると、ブレンドシェイプが無くなったりリネームされたりするため、上記のVMagicMirrorのオプションは機能しなくなります。Avatar Optimizerを使う場合、必ず前述した手順に沿ってExpressionをセットアップしてください。
 
 </div>
-
-例えば [Vtuber ARKit52 FacialTracking BlendShapeKey AddOn](https://charlotta.booth.pm/items/6961828) では対応するアバターのモデルに52種類のARKitブレンドシェイプを追加できます。具体的な対応アバター、導入方法、利用条件などは商品ページを確認してください。
-
-1の方法を用いる場合、下記に注意してください。
-
-- [Avatar Optimizer](https://github.com/anatawa12/AvatarOptimizer) を使用すると、VRMの生成中にパーフェクトシンク用のブレンドシェイプが削除されてしまうことがあります。これを防ぐには、パーフェクトシンク用のブレンドシェイプをVRC SDKで認識されるコンポーネントから参照された状態にしておきます。
-- VMagicMirrorはデフォルトではVRM Expressionで定義されないブレンドシェイプを無視します。そのため、パーフェクトシンク用のブレンドシェイプを取得させるには詳細設定ウィンドウの `顔・表情` > `パーフェクトシンク` > `未定義の表情をメッシュのブレンドシェイプで補う` をオンにします
